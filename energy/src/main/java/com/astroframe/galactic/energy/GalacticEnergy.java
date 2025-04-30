@@ -91,13 +91,18 @@ public class GalacticEnergy extends AbstractModuleIntegration {
     private void commonSetup(final FMLCommonSetupEvent event) {
         info("Running Galactic Expansion Energy common setup");
         
-        // Register energy blocks, items, and tile entities
-        // Will be implemented when energy-specific classes are created
-        // For example: registerFromClasses(EnergyBlocks.class, EnergyItems.class);
+        // Register energy storages, networks, and other components
+        registerFromClasses(
+            com.astroframe.galactic.energy.registry.EnergyRegistrations.class
+        );
         
         // Process energy tags
-        // Will be implemented when energy-specific classes are created
-        // For example: processTagsFromClasses(EnergyBlocks.class, EnergyItems.class);
+        processTagsFromClasses(
+            com.astroframe.galactic.energy.registry.EnergyRegistrations.class
+        );
+        
+        // Initialize the EnergyRegistry singleton
+        com.astroframe.galactic.energy.registry.EnergyRegistry.getInstance();
         
         // Log registry statistics
         logRegistryStatistics();
