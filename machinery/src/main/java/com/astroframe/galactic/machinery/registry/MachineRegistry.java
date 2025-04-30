@@ -1,206 +1,88 @@
 package com.astroframe.galactic.machinery.registry;
 
-import com.astroframe.galactic.core.registry.Registry;
-import com.astroframe.galactic.core.registry.RegistryEntry;
 import com.astroframe.galactic.core.registry.RegistryManager;
-import com.astroframe.galactic.energy.api.EnergyStorage;
-import com.astroframe.galactic.energy.api.EnergyType;
-import com.astroframe.galactic.energy.registry.EnergyRegistry;
 import com.astroframe.galactic.machinery.GalacticMachinery;
 import com.astroframe.galactic.machinery.api.Machine;
-import com.astroframe.galactic.machinery.api.MachineType;
-import com.astroframe.galactic.machinery.implementation.GeneratorMachine;
-import com.astroframe.galactic.machinery.implementation.ProcessorMachine;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraft.core.registries.Registries;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
- * Registry for machines in the Galactic Expansion mod.
- * This provides methods for registering and accessing machines.
+ * Registry for machine types and related objects.
+ * Manages registration of machine blocks, block entities, and recipes.
  */
 public class MachineRegistry {
-    
-    private static final MachineRegistry INSTANCE = new MachineRegistry();
-    
-    private final Registry<Machine> machineRegistry;
-    private final Map<MachineType, Registry<Machine>> machineTypeRegistries = new HashMap<>();
+    private final Map<String, Supplier<? extends Machine>> machineTypes = new HashMap<>();
+    private final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES;
     
     /**
-     * Private constructor to enforce singleton pattern.
+     * Constructor for MachineRegistry.
      */
-    private MachineRegistry() {
-        RegistryManager manager = RegistryManager.getInstance();
-        
-        // Get or create the main machine registry
-        machineRegistry = manager.getRegistry("machine")
-                .map(registry -> {
-                    @SuppressWarnings({"unchecked", "rawtypes"})
-                    Registry<Machine> r = (Registry<Machine>) (Registry) registry;
-                    return r;
-                })
-                .orElseGet(() -> {
-                    @SuppressWarnings("unchecked")
-                    Registry<Machine> r = (Registry<Machine>) (Registry<?>) manager.createRegistry("machine");
-                    return r;
-                });
-        
-        // Create registries for each machine type
-        for (MachineType type : MachineType.values()) {
-            String registryName = "machine_" + type.getId();
-            Registry<Machine> typeRegistry = manager.getRegistry(registryName)
-                    .map(registry -> {
-                        @SuppressWarnings({"unchecked", "rawtypes"})
-                        Registry<Machine> r = (Registry<Machine>) (Registry) registry;
-                        return r;
-                    })
-                    .orElseGet(() -> {
-                        @SuppressWarnings("unchecked")
-                        Registry<Machine> r = (Registry<Machine>) (Registry<?>) manager.createRegistry(registryName);
-                        return r;
-                    });
-            machineTypeRegistries.put(type, typeRegistry);
-        }
+    public MachineRegistry() {
+        BLOCK_ENTITY_TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, GalacticMachinery.MOD_ID);
     }
     
     /**
-     * Get the singleton instance of the MachineRegistry.
+     * Registers all content with the mod registry.
      * 
-     * @return The MachineRegistry instance
+     * @param registry The mod registry
      */
-    public static MachineRegistry getInstance() {
-        return INSTANCE;
+    public void registerAllContent(RegistryManager registry) {
+        registry.addRegister(BLOCK_ENTITY_TYPES);
     }
     
     /**
-     * Register a machine.
+     * Registers all machine types.
+     * Called during the setup phase.
+     */
+    public void registerMachineTypes() {
+        // Machine types will be registered here
+        
+        GalacticMachinery.LOGGER.info("Registered " + machineTypes.size() + " machine types");
+    }
+    
+    /**
+     * Registers a machine type.
      * 
-     * @param id The identifier for the machine
-     * @param machine The machine to register
-     * @return The registry entry that was created
+     * @param id The machine type ID
+     * @param supplier The machine supplier
      */
-    public RegistryEntry<Machine> registerMachine(String id, Machine machine) {
-        // Register in the main registry
-        RegistryEntry<Machine> entry = machineRegistry.register(GalacticMachinery.MOD_ID, id, machine);
-        
-        // Also register in the type-specific registry if we know the type
-        if (machine instanceof com.astroframe.galactic.machinery.implementation.BaseMachine) {
-            MachineType type = ((com.astroframe.galactic.machinery.implementation.BaseMachine) machine).getType();
-            Registry<Machine> typeRegistry = machineTypeRegistries.get(type);
-            
-            if (typeRegistry != null) {
-                typeRegistry.register(GalacticMachinery.MOD_ID, id, machine);
-            }
-        }
-        
-        return entry;
+    public void registerMachineType(String id, Supplier<? extends Machine> supplier) {
+        machineTypes.put(id, supplier);
     }
     
     /**
-     * Create and register a generator machine.
+     * Gets a machine type by ID.
      * 
-     * @param id The identifier for the generator
-     * @param name The name of the generator
-     * @param energyType The type of energy this generator produces
-     * @param capacity The energy storage capacity
-     * @param efficiency The efficiency of this generator (0.0 to 1.0)
-     * @param processingTime The base time (in ticks) it takes to complete one generation cycle
-     * @param energyProduced The amount of energy produced per cycle
-     * @param maxFuel The maximum amount of fuel this generator can hold
-     * @return The registered generator machine
+     * @param id The machine type ID
+     * @return The machine supplier
      */
-    public GeneratorMachine createGenerator(String id, String name, EnergyType energyType,
-                                         int capacity, float efficiency, int processingTime,
-                                         int energyProduced, int maxFuel) {
-        // Create an energy storage for the generator
-        EnergyStorage storage = EnergyRegistry.getInstance()
-                .createStorage(id + "_storage", capacity, capacity, 0, energyType);
-        
-        // Create the generator
-        GeneratorMachine generator = new GeneratorMachine(
-                name, storage, efficiency, processingTime, energyProduced, maxFuel);
-        
-        // Register the generator
-        registerMachine(id, generator);
-        
-        return generator;
+    public Supplier<? extends Machine> getMachineType(String id) {
+        return machineTypes.get(id);
     }
     
     /**
-     * Create and register a processor machine.
+     * Gets the block entity types registry.
      * 
-     * @param id The identifier for the processor
-     * @param name The name of the processor
-     * @param energyType The type of energy this processor consumes
-     * @param capacity The energy storage capacity
-     * @param efficiency The efficiency of this processor (0.0 to 1.0)
-     * @param processingTime The base time (in ticks) it takes to complete one processing cycle
-     * @param energyPerTick The amount of energy consumed per tick while active
-     * @param inputSlots The number of input slots
-     * @param outputSlots The number of output slots
-     * @return The registered processor machine
+     * @return The block entity types registry
      */
-    public ProcessorMachine createProcessor(String id, String name, EnergyType energyType,
-                                         int capacity, float efficiency, int processingTime,
-                                         int energyPerTick, int inputSlots, int outputSlots) {
-        // Create an energy storage for the processor
-        EnergyStorage storage = EnergyRegistry.getInstance()
-                .createStorage(id + "_storage", capacity, capacity, capacity, energyType);
-        
-        // Create the processor
-        ProcessorMachine processor = new ProcessorMachine(
-                name, storage, efficiency, processingTime, energyPerTick, inputSlots, outputSlots);
-        
-        // Register the processor
-        registerMachine(id, processor);
-        
-        return processor;
+    public DeferredRegister<BlockEntityType<?>> getBlockEntityTypes() {
+        return BLOCK_ENTITY_TYPES;
     }
     
     /**
-     * Get a machine by its registry ID.
+     * Registers a block entity type.
      * 
-     * @param id The registry ID
-     * @return An Optional containing the machine if found, or empty if not found
+     * @param name The block entity type name
+     * @param supplier The block entity type supplier
+     * @param <T> The block entity type
+     * @return A supplier for the registered block entity type
      */
-    public Optional<Machine> getMachine(String id) {
-        return machineRegistry.get(id);
-    }
-    
-    /**
-     * Get all machines of a specific type.
-     * 
-     * @param type The machine type
-     * @return A collection of machines of the specified type
-     */
-    public Collection<Machine> getMachinesByType(MachineType type) {
-        Registry<Machine> typeRegistry = machineTypeRegistries.get(type);
-        
-        if (typeRegistry == null) {
-            return java.util.Collections.emptyList();
-        }
-        
-        return typeRegistry.getValues();
-    }
-    
-    /**
-     * Get all registered machines.
-     * 
-     * @return A collection of all machines
-     */
-    public Collection<Machine> getAllMachines() {
-        return machineRegistry.getValues();
-    }
-    
-    /**
-     * Process all registered machines for one tick.
-     * This should be called once per game tick.
-     */
-    public void tickMachines() {
-        for (Machine machine : machineRegistry.getValues()) {
-            machine.tick();
-        }
+    public <T extends BlockEntityType<?>> Supplier<T> registerBlockEntityType(String name, Supplier<T> supplier) {
+        return BLOCK_ENTITY_TYPES.register(name, supplier);
     }
 }
