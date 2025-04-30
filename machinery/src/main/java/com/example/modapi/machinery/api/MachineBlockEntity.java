@@ -21,6 +21,8 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 
 /**
  * Base block entity class for machines.
