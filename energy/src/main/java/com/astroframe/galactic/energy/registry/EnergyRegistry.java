@@ -38,12 +38,7 @@ public class EnergyRegistry {
         networkRegistry = manager.<EnergyNetwork>getRegistry("energy_network")
                 .orElseGet(() -> manager.<EnergyNetwork>createRegistry("energy_network"));
         
-        // Create default networks for each energy type
-        for (EnergyType type : EnergyType.values()) {
-            BaseEnergyNetwork network = new BaseEnergyNetwork(type);
-            registerNetwork("default_" + type.getId(), network);
-            defaultNetworks.put(type, network);
-        }
+        // Networks will be created when accessed with a valid Level reference
     }
     
     /**
@@ -97,11 +92,13 @@ public class EnergyRegistry {
      * Create and register a basic energy network.
      * 
      * @param id The identifier for the network
+     * @param level The level (dimension) this network exists in
      * @param type The type of energy this network handles
      * @return The registered network
      */
-    public EnergyNetwork createNetwork(String id, EnergyType type) {
-        BaseEnergyNetwork network = new BaseEnergyNetwork(type);
+    public EnergyNetwork createNetwork(String id, Level level, EnergyType type) {
+        ResourceLocation networkId = new ResourceLocation(GalacticEnergy.MOD_ID, id);
+        BaseEnergyNetwork network = new BaseEnergyNetwork(networkId, level, type);
         registerNetwork(id, network);
         return network;
     }
@@ -127,13 +124,24 @@ public class EnergyRegistry {
     }
     
     /**
-     * Get the default network for a specific energy type.
+     * Get the default network for a specific energy type in a specific level.
+     * If a default network does not exist for this type in this level, one will be created.
      * 
      * @param type The energy type
+     * @param level The level (dimension) for this network
      * @return The default network for that type
      */
-    public EnergyNetwork getDefaultNetwork(EnergyType type) {
-        return defaultNetworks.get(type);
+    public EnergyNetwork getDefaultNetwork(EnergyType type, Level level) {
+        EnergyNetwork network = defaultNetworks.get(type);
+        if (network == null) {
+            String id = "default_" + type.getId();
+            ResourceLocation networkId = new ResourceLocation(GalacticEnergy.MOD_ID, id);
+            BaseEnergyNetwork newNetwork = new BaseEnergyNetwork(networkId, level, type);
+            registerNetwork(id, newNetwork);
+            defaultNetworks.put(type, newNetwork);
+            return newNetwork;
+        }
+        return network;
     }
     
     /**

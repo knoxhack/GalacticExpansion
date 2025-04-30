@@ -134,7 +134,7 @@ public class CachedEnergyNetwork implements EnergyNetwork {
         EnergyStorage destStorage = nodes.get(destination);
         
         if (sourceStorage == null || destStorage == null) {
-            return new EnergyTransferResult(false, 0, "One or both nodes do not exist in the network");
+            return new EnergyTransferResult(0, "One or both nodes do not exist in the network", EnergyTransferResult.Status.INVALID_SOURCE);
         }
         
         // Check if the chunks are loaded
@@ -142,7 +142,7 @@ public class CachedEnergyNetwork implements EnergyNetwork {
         ChunkPos destChunk = new ChunkPos(destination);
         
         if (!isChunkLoaded(sourceChunk) || !isChunkLoaded(destChunk)) {
-            return new EnergyTransferResult(false, 0, "One or both nodes are in unloaded chunks");
+            return new EnergyTransferResult(0, "One or both nodes are in unloaded chunks", EnergyTransferResult.Status.PATH_BLOCKED);
         }
         
         // Apply rate limiting if not simulating
@@ -161,7 +161,7 @@ public class CachedEnergyNetwork implements EnergyNetwork {
             if (currentTransferred + amount > rateLimit) {
                 int allowed = (int)(rateLimit - currentTransferred);
                 if (allowed <= 0) {
-                    return new EnergyTransferResult(false, 0, "Rate limit exceeded for source node");
+                    return new EnergyTransferResult(0, "Rate limit exceeded for source node", EnergyTransferResult.Status.CAPACITY_EXCEEDED);
                 }
                 amount = allowed;
             }

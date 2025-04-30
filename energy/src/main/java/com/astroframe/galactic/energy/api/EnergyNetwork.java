@@ -183,4 +183,13 @@ public interface EnergyNetwork {
     default void onChunkStatusChange(ChunkPos chunkPos, boolean loaded) {
         // Default empty implementation
     }
+    
+    /**
+     * Process the network for one game tick.
+     * This includes transferring energy between nodes, balancing storage,
+     * and any other periodic operations.
+     */
+    default void tick() {
+        // Default empty implementation
+    }
 }
