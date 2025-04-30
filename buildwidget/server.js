@@ -131,7 +131,7 @@ function processGradleOutput(output) {
   buildStatus.lastUpdate = new Date().toISOString();
   
   // Parse modules and tasks
-  const taskMatch = output.match(/> Task :(\\w+):(\\w+)/);
+  const taskMatch = output.match(/> Task :(\w+):(\w+)/);
   if (taskMatch && taskMatch.length >= 3) {
     const module = taskMatch[1];
     const task = taskMatch[2];
@@ -154,7 +154,7 @@ function processGradleOutput(output) {
   }
   
   // Check for task completion
-  const taskCompleteMatch = output.match(/> Task :(\\w+):(\\w+) (UP-TO-DATE|FROM-CACHE|SKIPPED|FAILED|NO-SOURCE)/);
+  const taskCompleteMatch = output.match(/> Task :(\w+):(\w+) (UP-TO-DATE|FROM-CACHE|SKIPPED|FAILED|NO-SOURCE)/);
   if (taskCompleteMatch && taskCompleteMatch.length >= 4) {
     const module = taskCompleteMatch[1];
     const task = taskCompleteMatch[2];
@@ -177,7 +177,7 @@ function processGradleOutput(output) {
   
   // Look for build summary to update progress
   if (output.includes('actionable tasks:')) {
-    const progressMatch = output.match(/(\\d+) actionable tasks: (\\d+) executed/);
+    const progressMatch = output.match(/(\d+) actionable tasks: (\d+) executed/);
     if (progressMatch && progressMatch.length >= 3) {
       const total = parseInt(progressMatch[1], 10);
       const executed = parseInt(progressMatch[2], 10);

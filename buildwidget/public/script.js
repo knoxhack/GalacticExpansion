@@ -27,27 +27,36 @@ function connectWebSocket() {
     
     socket.onopen = () => {
         console.log('WebSocket connection established');
-        clearInterval(reconnectInterval);
+        if (reconnectInterval) {
+            clearInterval(reconnectInterval);
+            reconnectInterval = null;
+        }
         // Request initial status
         socket.send(JSON.stringify({ type: 'requestStatus' }));
     };
     
     socket.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        
-        if (message.type === 'status') {
-            updateBuildStatus(message.data);
+        try {
+            const message = JSON.parse(event.data);
+            
+            if (message.type === 'status') {
+                updateBuildStatus(message.data);
+            }
+        } catch (error) {
+            console.error('Error parsing WebSocket message:', error);
         }
     };
     
     socket.onclose = () => {
         console.log('WebSocket connection closed');
         // Try to reconnect
-        reconnectInterval = setInterval(() => {
-            if (socket.readyState === WebSocket.CLOSED) {
-                connectWebSocket();
-            }
-        }, 5000);
+        if (!reconnectInterval) {
+            reconnectInterval = setInterval(() => {
+                if (!socket || socket.readyState === WebSocket.CLOSED) {
+                    connectWebSocket();
+                }
+            }, 3000);
+        }
     };
     
     socket.onerror = (error) => {
