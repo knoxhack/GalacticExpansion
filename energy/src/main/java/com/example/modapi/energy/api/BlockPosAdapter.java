@@ -28,8 +28,8 @@ public class BlockPosAdapter {
      * @param position The WorldPosition to convert
      * @return The equivalent BlockPos
      */
-    public static BlockPos toBlockPos(WorldPosition position) {
-        return new BlockPos(position.getX(), position.getY(), position.getZ());
+    public static net.minecraft.core.BlockPos toBlockPos(WorldPosition position) {
+        return new net.minecraft.core.BlockPos(position.getX(), position.getY(), position.getZ());
     }
     
     /**

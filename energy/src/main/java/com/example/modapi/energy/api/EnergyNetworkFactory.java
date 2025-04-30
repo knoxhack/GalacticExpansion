@@ -38,19 +38,8 @@ public class EnergyNetworkFactory {
         Level customLevel = BlockPosAdapter.toCustomLevel(level);
         com.astroframe.galactic.energy.api.EnergyType newType;
         
-        // Map old energy types to new energy types
-        switch (type) {
-            case FORGE_ENERGY:
-            case REDSTONE_FLUX:
-                newType = com.astroframe.galactic.energy.api.EnergyType.ELECTRICAL;
-                break;
-            case MODAPI_ENERGY:
-                newType = com.astroframe.galactic.energy.api.EnergyType.QUANTUM;
-                break;
-            default:
-                newType = com.astroframe.galactic.energy.api.EnergyType.ELECTRICAL;
-                break;
-        }
+        // Convert the old energy type to the new energy type
+        newType = EnergyTypeAdapter.toNewType(type);
         
         com.astroframe.galactic.energy.api.EnergyNetwork network = 
             new CachedEnergyNetwork(newType, customLevel);

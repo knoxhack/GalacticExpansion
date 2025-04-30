@@ -1,9 +1,7 @@
 package com.example.modapi.energy.api;
 
-import com.astroframe.galactic.energy.api.EnergyType;
-import com.astroframe.galactic.energy.api.energynetwork.Level;
-import com.astroframe.galactic.energy.implementation.CachedEnergyNetwork;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 import java.util.*;
 

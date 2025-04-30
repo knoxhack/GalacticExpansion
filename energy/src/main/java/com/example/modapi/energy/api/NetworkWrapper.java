@@ -52,35 +52,45 @@ public class NetworkWrapper {
     }
     
     /**
-     * Adds a node to the network at the specified position.
+     * Adds a storage to the network at the specified position.
      * 
      * @param pos The position
-     * @return True if the node was added
+     * @param storage The energy storage
      */
-    public boolean addNode(BlockPos pos) {
+    public void addStorage(net.minecraft.core.BlockPos pos, EnergyStorage storage) {
         WorldPosition position = BlockPosAdapter.toWorldPosition(pos, level);
-        return network.addNode(position);
+        network.addStorage(position, storage);
     }
     
     /**
-     * Removes a node from the network at the specified position.
+     * Removes a storage from the network at the specified position.
      * 
      * @param pos The position
-     * @return True if the node was removed
      */
-    public boolean removeNode(BlockPos pos) {
+    public void removeStorage(net.minecraft.core.BlockPos pos) {
         WorldPosition position = BlockPosAdapter.toWorldPosition(pos, level);
-        return network.removeNode(position);
+        network.removeStorage(position);
     }
     
     /**
-     * Checks if a node exists at the specified position.
+     * Checks if a storage exists at the specified position.
      * 
      * @param pos The position
-     * @return True if a node exists
+     * @return True if a storage exists
      */
-    public boolean hasNode(BlockPos pos) {
+    public boolean hasStorage(net.minecraft.core.BlockPos pos) {
         WorldPosition position = BlockPosAdapter.toWorldPosition(pos, level);
-        return network.hasNode(position);
+        return network.hasStorage(position);
+    }
+    
+    /**
+     * Gets the storage at the specified position.
+     * 
+     * @param pos The position
+     * @return The energy storage, or null if none exists
+     */
+    public EnergyStorage getStorage(net.minecraft.core.BlockPos pos) {
+        WorldPosition position = BlockPosAdapter.toWorldPosition(pos, level);
+        return network.getStorage(position);
     }
 }
