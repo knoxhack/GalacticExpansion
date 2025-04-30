@@ -11,7 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.registries.ForgeRegistries;
 
 /**
  * Central registry for managing mod components.
@@ -23,8 +22,8 @@ public class ModRegistry {
     private final List<DeferredRegister<?>> registers = new ArrayList<>();
     
     // Deferred registers for common Minecraft objects
-    private final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, ModApiCore.MOD_ID);
-    private final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ModApiCore.MOD_ID);
+    private final DeferredRegister<Block> BLOCKS = DeferredRegister.create(net.minecraft.core.registries.Registries.BLOCK, ModApiCore.MOD_ID);
+    private final DeferredRegister<Item> ITEMS = DeferredRegister.create(net.minecraft.core.registries.Registries.ITEM, ModApiCore.MOD_ID);
     
     /**
      * Constructor for ModRegistry.

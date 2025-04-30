@@ -89,10 +89,7 @@ public class TagManager {
      */
     @SuppressWarnings("unchecked")
     public <T> Tag<T> getOrCreateTag(String typeKey, String id) {
-        return getTag(typeKey, id).orElseGet(() -> {
-            Tag<T> newTag = (Tag<T>) createTag(typeKey, id);
-            return newTag;
-        });
+        return getTag(typeKey, id).orElseGet(() -> createTag(typeKey, id));
     }
     
     /**

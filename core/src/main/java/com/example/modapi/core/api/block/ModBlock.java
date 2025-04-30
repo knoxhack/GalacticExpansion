@@ -43,6 +43,6 @@ public class ModBlock extends Block {
      * @return The default properties
      */
     public static Properties defaultProperties() {
-        return Properties.of().mapColor(MapColor.STONE).strength(1.5F, 6.0F);
+        return Block.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.STONE).strength(1.5F, 6.0F);
     }
 }
