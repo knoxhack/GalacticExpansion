@@ -306,9 +306,9 @@ public class CachedEnergyNetwork implements EnergyNetwork {
     /**
      * Reconstructs the path from the cameFrom map
      */
-    private List<BlockPos> reconstructPath(Map<BlockPos, BlockPos> cameFrom, BlockPos source, BlockPos destination) {
-        List<BlockPos> path = new ArrayList<>();
-        BlockPos current = destination;
+    private List<net.minecraft.core.BlockPos> reconstructPath(Map<net.minecraft.core.BlockPos, net.minecraft.core.BlockPos> cameFrom, net.minecraft.core.BlockPos source, net.minecraft.core.BlockPos destination) {
+        List<net.minecraft.core.BlockPos> path = new ArrayList<>();
+        net.minecraft.core.BlockPos current = destination;
         
         while (!current.equals(source)) {
             path.add(current);
@@ -323,7 +323,7 @@ public class CachedEnergyNetwork implements EnergyNetwork {
     /**
      * Gets all adjacent positions (six directions)
      */
-    private List<BlockPos> getAdjacentPositions(BlockPos pos) {
+    private List<net.minecraft.core.BlockPos> getAdjacentPositions(net.minecraft.core.BlockPos pos) {
         return List.of(
             pos.above(),
             pos.below(),
