@@ -96,7 +96,7 @@ public class ConfigManager {
                 GSON.toJson(CONFIGS.get(modId), writer);
             }
         } catch (IOException e) {
-            GalacticCore.LOGGER.error("Failed to save config for " + modId, e);
+            LOGGER.error("Failed to save config for " + modId, e);
         }
     }
     
@@ -123,7 +123,7 @@ public class ConfigManager {
      */
     public static void resetToDefault(String modId) {
         if (!DEFAULT_CONFIGS.containsKey(modId)) {
-            GalacticCore.LOGGER.warn("Attempted to reset non-existent config for " + modId);
+            LOGGER.warn("Attempted to reset non-existent config for " + modId);
             return;
         }
         
