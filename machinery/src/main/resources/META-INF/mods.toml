@@ -20,7 +20,7 @@ Provides a framework for creating energy-powered machines.
 [[dependencies.modapi_machinery]]
     modId="neoforge"
     mandatory=true
-    versionRange="[1.21.5,)"
+    versionRange="[21.5.0-beta,)"
     ordering="NONE"
     side="BOTH"
 

@@ -20,7 +20,7 @@ Demonstrates how to use the core, energy, and machinery modules.
 [[dependencies.modapi_example]]
     modId="neoforge"
     mandatory=true
-    versionRange="[1.21.5,)"
+    versionRange="[21.5.0-beta,)"
     ordering="NONE"
     side="BOTH"
 
