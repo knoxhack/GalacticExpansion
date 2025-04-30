@@ -42,7 +42,7 @@ public abstract class MachineBlock extends Block implements EntityBlock {
         super(properties);
         this.blockEntityType = blockEntityType;
         
-        // Set default state
+        // Set default state with horizontal direction
         registerDefaultState(stateDefinition.any()
                 .setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH)
                 .setValue(ACTIVE, false));
@@ -51,13 +51,13 @@ public abstract class MachineBlock extends Block implements EntityBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(FACING, ACTIVE);
+        builder.add(HorizontalDirectionalBlock.FACING, ACTIVE);
     }
     
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return defaultBlockState()
-                .setValue(FACING, context.getHorizontalDirection().getOpposite());
+                .setValue(HorizontalDirectionalBlock.FACING, context.getHorizontalDirection().getOpposite());
     }
     
     // This method implements Block.use
