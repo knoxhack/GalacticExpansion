@@ -4,7 +4,6 @@ import com.astroframe.galactic.core.GalacticCore;
 import com.astroframe.galactic.core.registry.tag.Tag;
 import com.astroframe.galactic.core.registry.tag.TagManager;
 import com.astroframe.galactic.core.registry.tag.annotation.TaggedWith;
-import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -23,6 +22,21 @@ public class RegistryManagerTest {
 
     private RegistryManager registryManager;
     private TagManager tagManager;
+    
+    /* For test purposes only */
+    private static class ResourceLocation {
+        private final String namespace;
+        private final String path;
+        
+        public ResourceLocation(String namespace, String path) {
+            this.namespace = namespace;
+            this.path = path;
+        }
+        
+        public static ResourceLocation fromNamespaceAndPath(String namespace, String path) {
+            return new ResourceLocation(namespace, path);
+        }
+    }
 
     @BeforeEach
     void setUp() {
@@ -83,8 +97,8 @@ public class RegistryManagerTest {
         }
         
         TaggedTestObject obj = new TaggedTestObject("tagged_object");
-        ResourceLocation id = new ResourceLocation("galacticexpansion", "tagged_object");
-        ResourceLocation tagId = new ResourceLocation("galacticexpansion", "test_tag");
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath("galacticexpansion", "tagged_object");
+        ResourceLocation tagId = ResourceLocation.fromNamespaceAndPath("galacticexpansion", "test_tag");
         
         // Register object and process its tags
         registryManager.register(id, obj);
