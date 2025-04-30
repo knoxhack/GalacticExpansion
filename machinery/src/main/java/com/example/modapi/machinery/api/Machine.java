@@ -1,6 +1,7 @@
 package com.example.modapi.machinery.api;
 
-import com.example.modapi.energy.api.IEnergyHandler;
+import com.astroframe.galactic.energy.api.EnergyType;
+import com.astroframe.galactic.energy.api.IEnergyHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 

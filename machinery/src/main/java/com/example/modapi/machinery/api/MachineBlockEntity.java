@@ -23,8 +23,6 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.common.util.LogicalSidedProvider;
-import net.neoforged.neoforge.registries.callback.Provider;
 
 /**
  * Base block entity class for machines.
@@ -301,8 +299,8 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
     }
     
     @Override
-    public EnergyUnit getEnergyUnit() {
-        return energyStorage.getEnergyUnit();
+    public EnergyType getEnergyType() {
+        return energyStorage.getEnergyType();
     }
     
     /**
