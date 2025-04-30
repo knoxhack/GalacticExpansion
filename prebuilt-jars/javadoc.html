@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Galactic Expansion API Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .module {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .class {
+            background-color: #f5f5f5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+        }
+        .method {
+            margin-left: 20px;
+            border-left: 3px solid #ccc;
+            padding-left: 15px;
+            margin-bottom: 10px;
+        }
+        code {
+            background-color: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Galactic Expansion API Documentation</h1>
+        <p>
+            Version: 1.0.0<br>
+            Created by: AstroFrame Team
+        </p>
+        
+        <div class="module">
+            <h2>Core Module</h2>
+            <p>The core API module that provides basic functionality to the Galactic Expansion mod.</p>
+            
+            <div class="class">
+                <h3>SimpleCore</h3>
+                <p>A simple core class for the Galactic Expansion mod.</p>
+                
+                <div class="method">
+                    <h4>getVersion()</h4>
+                    <p>Get the version of the Galactic Expansion mod.</p>
+                    <pre><code>public static String getVersion()</code></pre>
+                    <p>Returns: The version string</p>
+                </div>
+                
+                <div class="method">
+                    <h4>initialize()</h4>
+                    <p>Initialize the core module.</p>
+                    <pre><code>public static void initialize()</code></pre>
+                </div>
+            </div>
+            
+            <div class="class">
+                <h3>ResourceManager</h3>
+                <p>Manages resources for the Galactic Expansion mod.</p>
+                
+                <div class="method">
+                    <h4>register(String id, Object resource)</h4>
+                    <p>Register a resource with the resource manager.</p>
+                    <pre><code>public static void register(String id, Object resource)</code></pre>
+                    <p>Parameters:</p>
+                    <ul>
+                        <li><code>id</code> - The resource ID</li>
+                        <li><code>resource</code> - The resource object</li>
+                    </ul>
+                </div>
+                
+                <div class="method">
+                    <h4>getResource(String id)</h4>
+                    <p>Get a resource by ID.</p>
+                    <pre><code>public static Object getResource(String id)</code></pre>
+                    <p>Parameters:</p>
+                    <ul>
+                        <li><code>id</code> - The resource ID</li>
+                    </ul>
+                    <p>Returns: The resource object, or null if not found</p>
+                </div>
+                
+                <div class="method">
+                    <h4>hasResource(String id)</h4>
+                    <p>Check if a resource exists.</p>
+                    <pre><code>public static boolean hasResource(String id)</code></pre>
+                    <p>Parameters:</p>
+                    <ul>
+                        <li><code>id</code> - The resource ID</li>
+                    </ul>
+                    <p>Returns: True if the resource exists, false otherwise</p>
+                </div>
+                
+                <div class="method">
+                    <h4>getResourceCount()</h4>
+                    <p>Get the count of registered resources.</p>
+                    <pre><code>public static int getResourceCount()</code></pre>
+                    <p>Returns: The number of registered resources</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="module">
+            <h2>Energy Module</h2>
+            <p>The energy systems module that provides energy management functionality to the Galactic Expansion mod.</p>
+            
+            <div class="class">
+                <h3>EnergySystem</h3>
+                <p>A simple energy system for the Galactic Expansion mod.</p>
+                
+                <div class="method">
+                    <h4>EnergySystem()</h4>
+                    <p>Create a new energy system with the default capacity.</p>
+                    <pre><code>public EnergySystem()</code></pre>
+                </div>
+                
+                <div class="method">
+                    <h4>EnergySystem(int capacity)</h4>
+                    <p>Create a new energy system with the specified capacity.</p>
+                    <pre><code>public EnergySystem(int capacity)</code></pre>
+                    <p>Parameters:</p>
+                    <ul>
+                        <li><code>capacity</code> - The maximum energy capacity</li>
+                    </ul>
+                </div>
+                
+                <div class="method">
+                    <h4>getVersion()</h4>
+                    <p>Get the version of the energy system.</p>
+                    <pre><code>public static String getVersion()</code></pre>
+                    <p>Returns: The version string</p>
+                </div>
+                
+                <div class="method">
+                    <h4>getEnergy()</h4>
+                    <p>Get the current energy level.</p>
+                    <pre><code>public int getEnergy()</code></pre>
+                    <p>Returns: The current energy level</p>
+                </div>
+                
+                <div class="method">
+                    <h4>getCapacity()</h4>
+                    <p>Get the maximum energy capacity.</p>
+                    <pre><code>public int getCapacity()</code></pre>
+                    <p>Returns: The maximum energy capacity</p>
+                </div>
+                
+                <div class="method">
+                    <h4>addEnergy(int amount)</h4>
+                    <p>Add energy to the system.</p>
+                    <pre><code>public int addEnergy(int amount)</code></pre>
+                    <p>Parameters:</p>
+                    <ul>
+                        <li><code>amount</code> - The amount of energy to add</li>
+                    </ul>
+                    <p>Returns: The amount of energy actually added</p>
+                </div>
+                
+                <div class="method">
+                    <h4>extractEnergy(int amount)</h4>
+                    <p>Extract energy from the system.</p>
+                    <pre><code>public int extractEnergy(int amount)</code></pre>
+                    <p>Parameters:</p>
+                    <ul>
+                        <li><code>amount</code> - The amount of energy to extract</li>
+                    </ul>
+                    <p>Returns: The amount of energy actually extracted</p>
+                </div>
+                
+                <div class="method">
+                    <h4>initialize()</h4>
+                    <p>Initialize the energy module.</p>
+                    <pre><code>public static void initialize()</code></pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="module">
+            <h2>Machinery Module</h2>
+            <p>The machinery module that provides machine functionality to the Galactic Expansion mod.</p>
+            
+            <div class="class">
+                <h3>Machine</h3>
+                <p>A simple machine implementation for the Galactic Expansion mod.</p>
+                
+                <div class="method">
+                    <h4>Machine(String name, int energyCapacity)</h4>
+                    <p>Create a new machine with the specified name and energy capacity.</p>
+                    <pre><code>public Machine(String name, int energyCapacity)</code></pre>
+                    <p>Parameters:</p>
+                    <ul>
+                        <li><code>name</code> - The machine name</li>
+                        <li><code>energyCapacity</code> - The energy capacity of the machine</li>
+                    </ul>
+                </div>
+                
+                <div class="method">
+                    <h4>getVersion()</h4>
+                    <p>Get the version of the machinery module.</p>
+                    <pre><code>public static String getVersion()</code></pre>
+                    <p>Returns: The version string</p>
+                </div>
+                
+                <div class="method">
+                    <h4>getName()</h4>
+                    <p>Get the machine name.</p>
+                    <pre><code>public String getName()</code></pre>
+                    <p>Returns: The machine name</p>
+                </div>
+                
+                <div class="method">
+                    <h4>getEnergySystem()</h4>
+                    <p>Get the machine's energy system.</p>
+                    <pre><code>public EnergySystem getEnergySystem()</code></pre>
+                    <p>Returns: The energy system</p>
+                </div>
+                
+                <div class="method">
+                    <h4>isRunning()</h4>
+                    <p>Check if the machine is running.</p>
+                    <pre><code>public boolean isRunning()</code></pre>
+                    <p>Returns: True if the machine is running, false otherwise</p>
+                </div>
+                
+                <div class="method">
+                    <h4>start()</h4>
+                    <p>Start the machine.</p>
+                    <pre><code>public boolean start()</code></pre>
+                    <p>Returns: True if the machine was started, false otherwise</p>
+                </div>
+                
+                <div class="method">
+                    <h4>stop()</h4>
+                    <p>Stop the machine.</p>
+                    <pre><code>public void stop()</code></pre>
+                </div>
+                
+                <div class="method">
+                    <h4>process(int energyCost)</h4>
+                    <p>Process a work cycle, consuming energy.</p>
+                    <pre><code>public boolean process(int energyCost)</code></pre>
+                    <p>Parameters:</p>
+                    <ul>
+                        <li><code>energyCost</code> - The energy cost of processing</li>
+                    </ul>
+                    <p>Returns: True if processing was successful, false if not enough energy</p>
+                </div>
+                
+                <div class="method">
+                    <h4>initialize()</h4>
+                    <p>Initialize the machinery module.</p>
+                    <pre><code>public static void initialize()</code></pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="module">
+            <h2>Example Module</h2>
+            <p>An example mod that demonstrates the use of the Galactic Expansion API.</p>
+            
+            <div class="class">
+                <h3>ExampleMod</h3>
+                <p>An example mod that demonstrates the use of the Galactic Expansion API.</p>
+                
+                <div class="method">
+                    <h4>getVersion()</h4>
+                    <p>Get the version of the example mod.</p>
+                    <pre><code>public static String getVersion()</code></pre>
+                    <p>Returns: The version string</p>
+                </div>
+                
+                <div class="method">
+                    <h4>initialize()</h4>
+                    <p>Initialize the example mod.</p>
+                    <pre><code>public static void initialize()</code></pre>
+                </div>
+                
+                <div class="method">
+                    <h4>createSolarPanel()</h4>
+                    <p>Create a solar panel machine.</p>
+                    <pre><code>public static Machine createSolarPanel()</code></pre>
+                    <p>Returns: A new solar panel machine</p>
+                </div>
+                
+                <div class="method">
+                    <h4>createElectricFurnace()</h4>
+                    <p>Create an electric furnace machine.</p>
+                    <pre><code>public static Machine createElectricFurnace()</code></pre>
+                    <p>Returns: A new electric furnace machine</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

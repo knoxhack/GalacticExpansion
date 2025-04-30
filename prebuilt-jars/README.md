@@ -6,11 +6,33 @@ This directory contains pre-built JAR files for the Galactic Expansion mod:
 - `galacticexpansion-energy-1.0.0.jar` - The energy systems module 
 - `galacticexpansion-machinery-1.0.0.jar` - The machinery module
 - `galacticexpansion-example-1.0.0.jar` - Example mod implementation
+- `galacticexpansion-all-1.0.0.jar` - All modules combined into a single JAR
 
 ## Installation
 
 To install the mod, place the JAR files in your Minecraft mods folder. The core module is required
-for all other modules to function.
+for all other modules to function. Alternatively, you can use the combined JAR file
+`galacticexpansion-all-1.0.0.jar` which includes all modules.
+
+## Testing
+
+You can test the combined JAR file by running:
+
+```bash
+java -jar galacticexpansion-all-1.0.0.jar
+```
+
+This will run the example mod's main method, demonstrating energy transfer between machines.
+
+## Module Dependencies
+
+The dependency structure is as follows:
+
+```
+core <-- energy <-- machinery <-- example
+```
+
+Each module depends on all modules to its left in the diagram.
 
 ## Building from Source
 
