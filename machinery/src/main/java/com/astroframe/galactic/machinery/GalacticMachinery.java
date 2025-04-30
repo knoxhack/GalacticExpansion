@@ -113,8 +113,6 @@ public class GalacticMachinery extends AbstractModuleIntegration {
         info("Galactic Expansion Machinery common setup complete");
     }
     
-
-    
     /**
      * Log statistics about the machinery registries and tags.
      */
