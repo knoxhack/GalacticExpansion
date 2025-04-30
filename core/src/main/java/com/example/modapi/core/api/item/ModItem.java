@@ -23,7 +23,7 @@ public class ModItem extends Item {
      * @return A new item
      */
     public static ModItem create() {
-        return new ModItem(new Properties());
+        return new ModItem(new Item.Properties());
     }
     
     /**

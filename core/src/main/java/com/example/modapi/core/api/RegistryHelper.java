@@ -26,7 +26,7 @@ public class RegistryHelper {
      * @return A new resource location
      */
     public static ResourceLocation registryName(Module module, String name) {
-        return new ResourceLocation(ModApiCore.MOD_ID, module.getModuleId() + "/" + name);
+        return ResourceLocation.fromNamespaceAndPath(ModApiCore.MOD_ID, module.getModuleId() + "/" + name);
     }
     
     /**
@@ -69,7 +69,7 @@ public class RegistryHelper {
     public static Supplier<Item> registerBlockItem(Module module, String name, Supplier<? extends Block> blockSupplier) {
         return ModApiCore.getInstance().getRegistry().registerItem(
             module.getModuleId() + "_" + name, 
-            () -> new BlockItem(blockSupplier.get(), new Item.Properties()));
+            () -> new net.minecraft.world.item.BlockItem(blockSupplier.get(), new net.minecraft.world.item.Item.Properties()));
     }
     
     /**
