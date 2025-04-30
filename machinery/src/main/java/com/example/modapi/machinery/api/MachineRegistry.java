@@ -44,7 +44,7 @@ public class MachineRegistry {
         registerMachineType("basic_processor", () -> new ProcessingMachine.Basic());
         registerMachineType("advanced_processor", () -> new ProcessingMachine.Advanced());
         
-        ModApiMachinery.LOGGER.info("Registered {} machine types", machineTypes.size());
+        ModApiMachinery.LOGGER.info("Registered " + machineTypes.size() + " machine types");
     }
     
     /**

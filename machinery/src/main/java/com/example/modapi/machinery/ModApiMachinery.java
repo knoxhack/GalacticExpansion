@@ -8,7 +8,6 @@ import com.example.modapi.machinery.api.MachineRegistry;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /**
  * The main mod class for the ModApi Machinery module.
@@ -33,8 +32,15 @@ public class ModApiMachinery implements Module {
         // Register this module with the core
         ModApiCore.getInstance().getRegistry().registerModule(this);
         
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        modEventBus.addListener(this::setup);
+        // Get the mod event bus using reflection to avoid import issues
+        try {
+            Class<?> fmlClass = Class.forName("net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext");
+            Object fmlContext = fmlClass.getMethod("get").invoke(null);
+            IEventBus modEventBus = (IEventBus) fmlContext.getClass().getMethod("getModEventBus").invoke(fmlContext);
+            modEventBus.addListener(this::setup);
+        } catch (Exception e) {
+            LOGGER.error("Failed to register event listener", e);
+        }
         
         LOGGER.info("ModApi Machinery initialized");
     }
