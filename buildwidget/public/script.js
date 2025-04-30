@@ -41,6 +41,23 @@ function connectWebSocket() {
             
             if (message.type === 'status') {
                 updateBuildStatus(message.data);
+            } else if (message.type === 'buildOutput') {
+                updateBuildOutput(message.data);
+            } else if (message.type === 'tasks') {
+                updateTaskList(message.data);
+            } else if (message.type === 'error') {
+                console.error('Build error:', message.data);
+                // Display error in the UI
+                const errorSpan = document.createElement('span');
+                errorSpan.className = 'output-error';
+                errorSpan.textContent = message.data;
+                outputText.appendChild(errorSpan);
+                outputText.appendChild(document.createElement('br'));
+                
+                // Auto-scroll if enabled
+                if (autoScrollCheckbox.checked) {
+                    outputText.scrollTop = outputText.scrollHeight;
+                }
             }
         } catch (error) {
             console.error('Error parsing WebSocket message:', error);

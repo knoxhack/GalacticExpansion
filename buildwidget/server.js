@@ -30,6 +30,9 @@ let buildStatus = {
   buildOutput: []
 };
 
+// Store connected clients
+const clients = new Map();
+
 // Handle WebSocket connections
 wss.on('connection', (ws) => {
   console.log('Client connected');
@@ -38,6 +41,27 @@ wss.on('connection', (ws) => {
   const sendStatus = () => {
     if (ws.readyState === ws.OPEN) {
       ws.send(JSON.stringify({ type: 'status', data: buildStatus }));
+    }
+  };
+  
+  // Send build output to client
+  const sendBuildOutput = (output) => {
+    if (ws.readyState === ws.OPEN) {
+      ws.send(JSON.stringify({ type: 'buildOutput', data: output }));
+    }
+  };
+  
+  // Send task updates to client
+  const sendTaskUpdates = (tasks) => {
+    if (ws.readyState === ws.OPEN) {
+      ws.send(JSON.stringify({ type: 'tasks', data: tasks }));
+    }
+  };
+  
+  // Send error message to client
+  const sendError = (errorMessage) => {
+    if (ws.readyState === ws.OPEN) {
+      ws.send(JSON.stringify({ type: 'error', data: errorMessage }));
     }
   };
   
@@ -50,20 +74,35 @@ wss.on('connection', (ws) => {
       const data = JSON.parse(message);
       
       if (data.type === 'startBuild') {
-        startBuild(data.gradleCommand || 'clean build');
+        startBuild(data.gradleCommand || 'clean build')
+          .catch(error => sendError(`Build failed: ${error.message}`));
       } else if (data.type === 'stopBuild') {
         stopBuild();
       } else if (data.type === 'requestStatus') {
         sendStatus();
+      } else if (data.type === 'requestOutput') {
+        sendBuildOutput(buildStatus.buildOutput);
+      } else if (data.type === 'requestTasks') {
+        sendTaskUpdates(buildStatus.tasks);
       }
     } catch (err) {
       console.error('Error handling message:', err);
+      sendError(`Error processing request: ${err.message}`);
     }
   });
   
   // Handle client disconnection
   ws.on('close', () => {
     console.log('Client disconnected');
+    clients.delete(ws);
+  });
+  
+  // Store client functions for broadcasting
+  clients.set(ws, {
+    sendStatus,
+    sendBuildOutput,
+    sendTaskUpdates,
+    sendError
   });
 });
 
@@ -124,11 +163,17 @@ async function startBuild(gradleCommand) {
 
 // Process Gradle output and extract build status information
 function processGradleOutput(output) {
+  // Create output line
+  const outputLine = { type: 'info', message: output };
+  
   // Add to build output
-  buildStatus.buildOutput.push({ type: 'info', message: output });
+  buildStatus.buildOutput.push(outputLine);
   
   // Update last update timestamp
   buildStatus.lastUpdate = new Date().toISOString();
+  
+  // Broadcast just the new output line for efficiency
+  broadcastOutput([outputLine]);
   
   // Parse modules and tasks
   const taskMatch = output.match(/> Task :(\w+):(\w+)/);
@@ -214,9 +259,28 @@ function stopBuild() {
 
 // Broadcast build status to all connected clients
 function broadcastStatus() {
-  wss.clients.forEach((client) => {
+  // Broadcast full status update to all connected clients
+  clients.forEach((handlers, client) => {
     if (client.readyState === client.OPEN) {
-      client.send(JSON.stringify({ type: 'status', data: buildStatus }));
+      handlers.sendStatus();
+    }
+  });
+}
+
+// Broadcast build output only
+function broadcastOutput(output) {
+  clients.forEach((handlers, client) => {
+    if (client.readyState === client.OPEN) {
+      handlers.sendBuildOutput(output);
+    }
+  });
+}
+
+// Broadcast error message
+function broadcastError(errorMessage) {
+  clients.forEach((handlers, client) => {
+    if (client.readyState === client.OPEN) {
+      handlers.sendError(errorMessage);
     }
   });
 }
