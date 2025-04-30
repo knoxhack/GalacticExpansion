@@ -26,7 +26,7 @@ public class RegistryHelper {
      * @return A new resource location
      */
     public static ResourceLocation registryName(Module module, String name) {
-        return new ResourceLocation(ModApiCore.MOD_ID, module.getModuleId() + "/" + name);
+        return ResourceLocation.of(ModApiCore.MOD_ID, module.getModuleId() + "/" + name);
     }
     
     /**

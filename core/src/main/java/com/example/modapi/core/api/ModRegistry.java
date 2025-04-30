@@ -124,7 +124,7 @@ public class ModRegistry {
      * @return A new resource location
      */
     public static ResourceLocation resource(String path) {
-        return new ResourceLocation(ModApiCore.MOD_ID, path);
+        return ResourceLocation.of(ModApiCore.MOD_ID, path);
     }
     
     /**

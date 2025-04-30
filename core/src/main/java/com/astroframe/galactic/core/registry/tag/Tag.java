@@ -81,7 +81,7 @@ public class Tag<T> {
      * @param collection The collection of entries to add
      * @return This tag for method chaining
      */
-    public Tag<T> addAll(Collection<RegistryEntry<T>> collection) {
+    public Tag<T> addAllEntries(Collection<RegistryEntry<T>> collection) {
         for (RegistryEntry<T> entry : collection) {
             add(entry);
         }
