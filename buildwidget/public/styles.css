@@ -328,3 +328,31 @@ pre {
         opacity: 1;
     }
 }
+
+.connection-notice {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    border-radius: 4px;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.connection-notice.success {
+    background-color: var(--success-color);
+}
+
+.connection-notice.error {
+    background-color: var(--danger-color);
+}
+
+.connection-notice.warning {
+    background-color: var(--warning-color);
+    color: var(--text-color);
+}
