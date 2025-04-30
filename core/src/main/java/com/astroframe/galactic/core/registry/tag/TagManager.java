@@ -85,8 +85,9 @@ public class TagManager {
      * @param id The unique identifier for the tag
      * @return The existing or newly created tag
      */
+    @SuppressWarnings("unchecked")
     public <T> Tag<T> getOrCreateTag(String typeKey, String id) {
-        return getTag(typeKey, id).orElseGet(() -> createTag(typeKey, id));
+        return getTag(typeKey, id).orElseGet(() -> (Tag<T>) createTag(typeKey, id));
     }
     
     /**

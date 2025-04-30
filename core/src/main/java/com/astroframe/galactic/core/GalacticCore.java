@@ -12,6 +12,19 @@ import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+// Temporary mock classes for development without NeoForge dependencies
+// These will be removed once we have the actual NeoForge dependencies
+class FMLJavaModLoadingContext {
+    public static FMLJavaModLoadingContext get() { return new FMLJavaModLoadingContext(); }
+    public ModEventBus getModEventBus() { return new ModEventBus(); }
+}
+class ModEventBus {
+    public <T> void addListener(Consumer<T> listener) {}
+}
+interface Consumer<T> {
+    void accept(T t);
+}
+
 /**
  * The main class for the Galactic Expansion Core module.
  * This provides core functionality that other modules can build upon.

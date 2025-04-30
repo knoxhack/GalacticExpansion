@@ -109,13 +109,17 @@ public interface ModuleIntegration {
      * @param value The object to register
      * @return The registry entry that was created
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     default <T> com.astroframe.galactic.core.registry.RegistryEntry<T> register(
             String registryName, String path, T value) {
         
-        Registry<T> registry = getRegistry(registryName)
+        Registry<?> baseRegistry = getRegistry(registryName)
                 .orElseThrow(() -> new IllegalArgumentException("Registry '" + registryName + "' not found"));
         
-        return registry.register(getModId(), path, value);
+        // Use raw type to bypass generic type checking
+        Registry rawRegistry = baseRegistry;
+        
+        return rawRegistry.register(getModId(), path, value);
     }
     
     /**

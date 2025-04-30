@@ -110,7 +110,7 @@ public class RegistryScanner {
                     continue;
                 }
                 
-                registerObject(value, annotation, field.getName(), field.getType());
+                registerObject(value, annotation, field.getName(), value.getClass());
                 count++;
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Failed to register field " + field.getName() + " in " + clazz.getName(), e);
@@ -153,7 +153,7 @@ public class RegistryScanner {
                     continue;
                 }
                 
-                registerObject(value, annotation, method.getName(), method.getReturnType());
+                registerObject(value, annotation, method.getName(), value.getClass());
                 count++;
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Failed to register method " + method.getName() + " in " + clazz.getName(), e);
@@ -174,15 +174,19 @@ public class RegistryScanner {
             }
         }
         
-        Registry<T> registry = RegistryManager.getInstance()
+        Registry<?> baseRegistry = RegistryManager.getInstance()
                 .getRegistry(registryName)
                 .orElseGet(() -> RegistryManager.getInstance().createRegistry(registryName));
+        
+        // We know the registry is compatible with the value type, but Java generics require a cast
+        @SuppressWarnings("rawtypes")
+        Registry rawRegistry = baseRegistry;
         
         String domain = annotation.domain().isEmpty() ? defaultDomain : annotation.domain();
         String path = annotation.path().isEmpty() ? defaultPath : annotation.path();
         
         try {
-            registry.register(domain, path, (T) value);
+            rawRegistry.register(domain, path, value);
         } catch (IllegalArgumentException e) {
             if (annotation.skipIfExists()) {
                 LOGGER.fine("Skipping registration of " + domain + ":" + path + " as it already exists");
