@@ -75,8 +75,8 @@ public class RegistryManagerTest {
     @Test
     void testObjectWithTags() {
         // Create test object with tags
-        @TaggedWith("test_tag")
         class TaggedTestObject extends TestRegistryObject {
+            @TaggedWith("test_tag")
             public TaggedTestObject(String name) {
                 super(name);
             }

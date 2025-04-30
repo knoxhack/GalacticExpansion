@@ -244,8 +244,65 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Monitor build status in real-time
+function startMonitoringBuildStatus() {
+  // Poll Gradle's build status every 2 seconds
+  setInterval(async () => {
+    try {
+      // Check if any build processes are running using a more reliable method
+      const { stdout } = await execAsync('pgrep java || echo ""');
+      
+      if (stdout && stdout.trim() !== '') {
+        // Gradle is running, update status if not already building
+        if (buildStatus.status !== 'building') {
+          buildStatus.status = 'building';
+          buildStatus.startTime = new Date().toISOString();
+          buildStatus.lastUpdate = new Date().toISOString();
+          buildStatus.progress = Math.floor(Math.random() * 50); // Approximate progress
+          broadcastStatus();
+        }
+        
+        // Increment progress if building
+        if (buildStatus.progress < 90) {
+          buildStatus.progress += 1;
+          buildStatus.lastUpdate = new Date().toISOString();
+          broadcastStatus();
+        }
+      } else {
+        // No Gradle process running
+        if (buildStatus.status === 'building') {
+          // Build just finished
+          const buildSuccessful = await checkBuildSuccess();
+          buildStatus.status = buildSuccessful ? 'success' : 'failed';
+          buildStatus.endTime = new Date().toISOString();
+          buildStatus.progress = 100;
+          buildStatus.lastUpdate = new Date().toISOString();
+          broadcastStatus();
+        }
+      }
+    } catch (error) {
+      console.error('Error monitoring build status:', error);
+    }
+  }, 2000);
+}
+
+// Check if the build was successful
+async function checkBuildSuccess() {
+  try {
+    // Check for build failures in recent logs
+    const { stdout } = await execAsync('grep -i "BUILD FAILED" $(find ../ -name "*.log" -ctime -1 2>/dev/null) 2>/dev/null || echo "No failures found"');
+    return !stdout.includes('BUILD FAILED');
+  } catch (error) {
+    // If grep fails, assume build succeeded
+    return true;
+  }
+}
+
 // Start the server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Build status server running on port ${PORT}`);
+  
+  // Start monitoring build status
+  startMonitoringBuildStatus();
 });

@@ -144,6 +144,9 @@ function updateBuildOutput(output) {
         span.className = `output-${line.type}`;
         span.textContent = line.message;
         outputText.appendChild(span);
+        
+        // Add line break after each message
+        outputText.appendChild(document.createElement('br'));
     });
     
     // Auto-scroll to bottom
