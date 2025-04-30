@@ -21,6 +21,24 @@ import org.gradle.BuildResult
 import groovy.json.JsonOutput
 
 /**
+ * Simple class to store data about task execution.
+ */
+class TaskExecutionData {
+    String taskPath
+    boolean finished = false
+    boolean success = false
+    boolean skipped = false
+    boolean upToDate = false
+    boolean noSource = false
+    long startTime = System.currentTimeMillis()
+    long endTime = 0
+    
+    TaskExecutionData(String taskPath) {
+        this.taskPath = taskPath
+    }
+}
+
+/**
  * Gradle plugin that reports build status in real-time to a WebSocket server.
  * This enables real-time build monitoring through a web interface.
  */
@@ -118,21 +136,6 @@ class BuildStatusPlugin implements Plugin<Project> {
         } catch (Exception e) {
             // Silently fail, don't disrupt the build
             project.logger.warn("Failed to send build status update: ${e.message}")
-        }
-    }
-    
-    private static class TaskExecutionData {
-        String taskPath
-        boolean finished = false
-        boolean success = false
-        boolean skipped = false
-        boolean upToDate = false
-        boolean noSource = false
-        long startTime = System.currentTimeMillis()
-        long endTime = 0
-        
-        TaskExecutionData(String taskPath) {
-            this.taskPath = taskPath
         }
     }
 }
