@@ -30,7 +30,7 @@ let buildStatus = {
   buildOutput: []
 };
 
-// Store connected clients
+// Store connected clients with their handlers
 const clients = new Map();
 
 // Handle WebSocket connections
@@ -109,18 +109,19 @@ wss.on('connection', (ws) => {
 // Start Gradle build
 async function startBuild(gradleCommand) {
   // Reset build status
+  const now = new Date();
   buildStatus = {
     status: 'building',
     progress: 0,
-    startTime: new Date().toISOString(),
+    startTime: now.toISOString(),
     tasks: {},
     modules: {
-      core: { status: 'pending' },
-      energy: { status: 'pending' },
-      machinery: { status: 'pending' },
-      example: { status: 'pending' }
+      core: { status: 'pending', lastUpdate: now.toISOString() },
+      energy: { status: 'pending', lastUpdate: now.toISOString() },
+      machinery: { status: 'pending', lastUpdate: now.toISOString() },
+      example: { status: 'pending', lastUpdate: now.toISOString() }
     },
-    lastUpdate: new Date().toISOString(),
+    lastUpdate: now.toISOString(),
     buildOutput: []
   };
   
@@ -322,15 +323,29 @@ function startMonitoringBuildStatus() {
           buildStatus.status = 'building';
           buildStatus.startTime = new Date().toISOString();
           buildStatus.lastUpdate = new Date().toISOString();
-          buildStatus.progress = Math.floor(Math.random() * 50); // Approximate progress
+          buildStatus.progress = 0; // Start at 0%
           broadcastStatus();
         }
         
-        // Increment progress if building
-        if (buildStatus.progress < 90) {
-          buildStatus.progress += 1;
-          buildStatus.lastUpdate = new Date().toISOString();
-          broadcastStatus();
+        // Calculate more accurate progress based on time elapsed
+        if (buildStatus.progress < 99) {
+          // Get elapsed time in seconds
+          const startTime = new Date(buildStatus.startTime);
+          const now = new Date();
+          const elapsedSeconds = Math.floor((now - startTime) / 1000);
+          
+          // Estimate progress using a logarithmic curve that approaches 99% 
+          // but never reaches 100% until completion
+          const estimatedProgress = Math.min(
+            99, 
+            Math.floor(30 * Math.log10(1 + elapsedSeconds / 2))
+          );
+          
+          if (estimatedProgress > buildStatus.progress) {
+            buildStatus.progress = estimatedProgress;
+            buildStatus.lastUpdate = new Date().toISOString();
+            broadcastStatus();
+          }
         }
       } else {
         // No Gradle process running
