@@ -5,7 +5,7 @@ import com.example.modapi.machinery.ModApiMachinery;
 import com.example.modapi.machinery.common.ProcessingMachine;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
+import net.minecraft.core.registries.Registries;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ public class MachineRegistry {
      * Constructor for MachineRegistry.
      */
     public MachineRegistry() {
-        BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, ModApiMachinery.MOD_ID);
+        BLOCK_ENTITY_TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, ModApiMachinery.MOD_ID);
     }
     
     /**

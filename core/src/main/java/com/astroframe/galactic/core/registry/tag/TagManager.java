@@ -87,14 +87,17 @@ public class TagManager {
      * @param id The unique identifier for the tag
      * @return The existing or newly created tag
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public <T> Tag<T> getOrCreateTag(String typeKey, String id) {
-        return getTag(typeKey, id).orElseGet(() -> {
+        Optional<Tag<T>> existingTag = getTag(typeKey, id);
+        if (existingTag.isPresent()) {
+            return existingTag.get();
+        } else {
             Tag<T> tag = new Tag<>(id);
             Map<String, Tag<?>> tags = tagsByType.computeIfAbsent(typeKey, k -> new HashMap<>());
             tags.put(id, tag);
             return tag;
-        });
+        }
     }
     
     /**
