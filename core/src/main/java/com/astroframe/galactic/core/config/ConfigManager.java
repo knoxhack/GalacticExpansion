@@ -1,6 +1,7 @@
 package com.astroframe.galactic.core.config;
 
-import com.astroframe.galactic.core.GalacticCore;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -22,6 +23,7 @@ import java.util.function.Supplier;
  */
 public class ConfigManager {
 
+    private static final Logger LOGGER = LogManager.getLogger(ConfigManager.class);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Map<String, Object> CONFIGS = new HashMap<>();
     private static final Map<String, Supplier<Object>> DEFAULT_CONFIGS = new HashMap<>();
@@ -63,10 +65,10 @@ public class ConfigManager {
             T config = GSON.fromJson(reader, configClass);
             CONFIGS.put(modId, config);
         } catch (IOException e) {
-            GalacticCore.LOGGER.error("Failed to load config for " + modId, e);
+            LOGGER.error("Failed to load config for " + modId, e);
             resetToDefault(modId);
         } catch (JsonSyntaxException e) {
-            GalacticCore.LOGGER.error("Invalid config syntax for " + modId + ", resetting to default", e);
+            LOGGER.error("Invalid config syntax for " + modId + ", resetting to default", e);
             resetToDefault(modId);
         }
     }
@@ -78,7 +80,7 @@ public class ConfigManager {
      */
     public static void save(String modId) {
         if (!CONFIGS.containsKey(modId)) {
-            GalacticCore.LOGGER.warn("Attempted to save non-existent config for " + modId);
+            LOGGER.warn("Attempted to save non-existent config for " + modId);
             return;
         }
         

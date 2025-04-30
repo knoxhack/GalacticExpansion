@@ -32,7 +32,7 @@ public class GalacticCore {
     /**
      * Logger for the core module.
      */
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
     
     /**
      * Registry scanner instance for automatic registration.
