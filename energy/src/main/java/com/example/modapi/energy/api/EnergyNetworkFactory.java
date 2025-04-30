@@ -1,6 +1,5 @@
 package com.example.modapi.energy.api;
 
-import com.astroframe.galactic.energy.api.EnergyType;
 import com.astroframe.galactic.energy.api.energynetwork.Level;
 import com.astroframe.galactic.energy.implementation.CachedEnergyNetwork;
 import java.util.UUID;
@@ -21,7 +20,7 @@ public class EnergyNetworkFactory {
     public static EnergyNetworkSimplified createNetwork(UUID networkId, net.minecraft.world.level.Level level) {
         Level customLevel = BlockPosAdapter.toCustomLevel(level);
         com.astroframe.galactic.energy.api.EnergyNetwork network = 
-            new CachedEnergyNetwork(EnergyType.ELECTRICAL, customLevel);
+            new CachedEnergyNetwork(com.astroframe.galactic.energy.api.EnergyType.ELECTRICAL, customLevel);
         
         NetworkWrapper wrapper = new NetworkWrapper(network, level);
         return new EnergyNetworkSimplified(networkId, wrapper);

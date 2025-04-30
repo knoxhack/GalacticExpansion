@@ -31,15 +31,14 @@ public class EnergyTypeAdapter {
      * @return The old energy type
      */
     public static EnergyType toOldType(com.astroframe.galactic.energy.api.EnergyType newType) {
-        switch (newType) {
-            case ELECTRICAL:
-                return EnergyType.FORGE_ENERGY;
-            case THERMAL:
-                return EnergyType.REDSTONE_FLUX;
-            case QUANTUM:
-                return EnergyType.MODAPI_ENERGY;
-            default:
-                return EnergyType.FORGE_ENERGY;
+        if (newType == com.astroframe.galactic.energy.api.EnergyType.ELECTRICAL) {
+            return EnergyType.FORGE_ENERGY;
+        } else if (newType == com.astroframe.galactic.energy.api.EnergyType.THERMAL) {
+            return EnergyType.REDSTONE_FLUX;
+        } else if (newType == com.astroframe.galactic.energy.api.EnergyType.QUANTUM) {
+            return EnergyType.MODAPI_ENERGY;
+        } else {
+            return EnergyType.FORGE_ENERGY;
         }
     }
 }

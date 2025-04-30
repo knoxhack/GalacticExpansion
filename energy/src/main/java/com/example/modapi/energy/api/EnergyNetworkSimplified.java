@@ -42,7 +42,7 @@ public class EnergyNetworkSimplified {
      * @return The energy type
      */
     public EnergyType getEnergyType() {
-        return EnergyType.valueOf(wrapper.getEnergyType().name());
+        return EnergyTypeAdapter.toOldType(wrapper.getEnergyType());
     }
     
     /**
