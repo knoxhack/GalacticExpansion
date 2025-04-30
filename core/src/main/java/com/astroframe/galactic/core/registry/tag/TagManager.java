@@ -1,8 +1,10 @@
 package com.astroframe.galactic.core.registry.tag;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -189,9 +191,16 @@ public class TagManager {
         // Create a raw predicate to avoid type safety issues
         Predicate rawPredicate = predicate;
         
-        return allTags.stream()
-                .filter(rawPredicate)
-                .collect(Collectors.toList());
+        // Use explicit typing for the result collection to avoid type safety issues
+        List<Tag<T>> result = new ArrayList<>();
+        
+        for (Tag<T> tag : allTags) {
+            if (rawPredicate.test(tag)) {
+                result.add(tag);
+            }
+        }
+        
+        return result;
     }
     
     /**
