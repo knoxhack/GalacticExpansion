@@ -1,28 +1,63 @@
 package com.astroframe.galactic.energy.api;
 
 /**
- * Interface for blocks or entities that can handle energy.
- * Represents anything that can store, provide, or consume energy.
- * This extends EnergyStorage to provide a common interface for all energy-related components.
+ * Interface for objects that handle energy.
+ * These can be energy providers, consumers, or both.
  */
-public interface IEnergyHandler extends EnergyStorage {
-    /**
-     * Gets the amount of energy currently stored.
-     * This is an alias for getEnergy() for compatibility with external API.
-     * 
-     * @return Stored energy
-     */
-    default int getEnergyStored() {
-        return getEnergy();
-    }
+public interface IEnergyHandler {
     
     /**
-     * Gets the maximum amount of energy that can be stored.
-     * This is an alias for getMaxEnergy() for compatibility with external API.
+     * Get the amount of energy currently stored.
      * 
-     * @return Maximum energy
+     * @return The amount of energy
      */
-    default int getMaxEnergyStored() {
-        return getMaxEnergy();
+    int getEnergyStored();
+    
+    /**
+     * Get the maximum amount of energy that can be stored.
+     * 
+     * @return The maximum energy
+     */
+    int getMaxEnergyStored();
+    
+    /**
+     * Add energy to the storage.
+     * 
+     * @param energy The amount to add
+     * @param simulate If true, the addition will only be simulated
+     * @return The amount of energy that was (or would have been) added
+     */
+    int receiveEnergy(int energy, boolean simulate);
+    
+    /**
+     * Remove energy from the storage.
+     * 
+     * @param energy The amount to remove
+     * @param simulate If true, the extraction will only be simulated
+     * @return The amount of energy that was (or would have been) extracted
+     */
+    int extractEnergy(int energy, boolean simulate);
+    
+    /**
+     * Whether this storage can have energy extracted.
+     * 
+     * @return True if this can extract energy
+     */
+    boolean canExtract();
+    
+    /**
+     * Whether this storage can receive energy.
+     * 
+     * @return True if this can receive energy
+     */
+    boolean canReceive();
+    
+    /**
+     * Get the energy unit for this handler.
+     * 
+     * @return The energy unit
+     */
+    default EnergyUnit getEnergyUnit() {
+        return EnergyUnit.GALACTIC_ENERGY_UNIT;
     }
 }

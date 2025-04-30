@@ -3,13 +3,14 @@ package com.astroframe.galactic.energy.implementation;
 import com.astroframe.galactic.energy.api.EnergyNetwork;
 import com.astroframe.galactic.energy.api.EnergyStorage;
 import com.astroframe.galactic.energy.api.EnergyType;
+import com.astroframe.galactic.energy.api.energynetwork.WorldChunk;
 import com.astroframe.galactic.energy.api.energynetwork.WorldPosition;
-import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Implementation of EnergyNetwork that caches the energy handlers in the network.
@@ -18,7 +19,7 @@ import java.util.Map;
 public class CachedEnergyNetwork implements EnergyNetwork {
     
     private final EnergyType energyType;
-    private final Level level;
+    private final com.astroframe.galactic.energy.api.energynetwork.Level level;
     private final Map<WorldPosition, EnergyStorage> storages = new HashMap<>();
     private final List<EnergyStorage> providers = new ArrayList<>();
     private final List<EnergyStorage> consumers = new ArrayList<>();
@@ -29,7 +30,7 @@ public class CachedEnergyNetwork implements EnergyNetwork {
      * @param energyType The type of energy this network handles
      * @param level The level (dimension) this network exists in
      */
-    public CachedEnergyNetwork(EnergyType energyType, Level level) {
+    public CachedEnergyNetwork(EnergyType energyType, com.astroframe.galactic.energy.api.energynetwork.Level level) {
         this.energyType = energyType;
         this.level = level;
     }
