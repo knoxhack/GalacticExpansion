@@ -32,11 +32,11 @@ public class EnergyRegistry {
     private EnergyRegistry() {
         RegistryManager manager = RegistryManager.getInstance();
         
-        storageRegistry = manager.getRegistry("energy_storage")
-                .orElseGet(() -> manager.createRegistry("energy_storage"));
+        storageRegistry = manager.<EnergyStorage>getRegistry("energy_storage")
+                .orElseGet(() -> manager.<EnergyStorage>createRegistry("energy_storage"));
         
-        networkRegistry = manager.getRegistry("energy_network")
-                .orElseGet(() -> manager.createRegistry("energy_network"));
+        networkRegistry = manager.<EnergyNetwork>getRegistry("energy_network")
+                .orElseGet(() -> manager.<EnergyNetwork>createRegistry("energy_network"));
         
         // Create default networks for each energy type
         for (EnergyType type : EnergyType.values()) {

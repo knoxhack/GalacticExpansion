@@ -35,7 +35,7 @@ public class GalacticMachinery extends AbstractModuleIntegration {
         info("Initializing Galactic Expansion Machinery");
         
         // Register event listeners
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
+        net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         
         // Initialize machinery-specific registries
         initializeRegistries();
@@ -79,7 +79,7 @@ public class GalacticMachinery extends AbstractModuleIntegration {
      * 
      * @param event The common setup event
      */
-    private void commonSetup(final FMLCommonSetupEvent event) {
+    private void commonSetup(final net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) {
         info("Running Galactic Expansion Machinery common setup");
         
         // Register machinery components using annotation-based registration

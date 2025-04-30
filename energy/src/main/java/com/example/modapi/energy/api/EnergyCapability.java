@@ -17,7 +17,7 @@ public class EnergyCapability {
     /**
      * Resource location for the energy capability.
      */
-    public static final ResourceLocation ENERGY_CAPABILITY = new ResourceLocation(ModApiEnergy.MOD_ID, "energy");
+    public static final ResourceLocation ENERGY_CAPABILITY = ResourceLocation.fromNamespaceAndPath(ModApiEnergy.MOD_ID, "energy");
     
     /**
      * A capability that provides energy handling.

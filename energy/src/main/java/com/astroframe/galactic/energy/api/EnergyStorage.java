@@ -58,4 +58,14 @@ public interface EnergyStorage {
      * @return The energy type
      */
     EnergyType getEnergyType();
+    
+    /**
+     * Get the fill level as a percentage (0.0 to 1.0).
+     * 
+     * @return The fill level
+     */
+    default float getFillLevel() {
+        int maxEnergy = getMaxEnergy();
+        return maxEnergy > 0 ? (float) getEnergy() / maxEnergy : 0;
+    }
 }
