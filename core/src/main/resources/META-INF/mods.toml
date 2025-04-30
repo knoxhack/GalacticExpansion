@@ -16,13 +16,13 @@ description='''A modular Minecraft mod API for Neoforge 1.21.5'''
 [[dependencies.galacticcore]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.21.4, 1.22)"
+    versionRange="[1.21.5, 1.22)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.galacticcore]]
     modId="neoforge"
     mandatory=true
-    versionRange="[21.4.0-beta,)"
+    versionRange="[21.5.0-beta,)"
     ordering="NONE"
     side="BOTH"

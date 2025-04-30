@@ -8,19 +8,7 @@ import com.astroframe.galactic.core.registry.tag.TagManager;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
-
-// Temporary mock classes for development without NeoForge dependencies
-// These will be removed once we have the actual NeoForge dependencies
-class FMLJavaModLoadingContext {
-    public static FMLJavaModLoadingContext get() { return new FMLJavaModLoadingContext(); }
-    public ModEventBus getModEventBus() { return new ModEventBus(); }
-}
-class ModEventBus {
-    public <T> void addListener(Consumer<T> listener) {}
-}
-interface Consumer<T> {
-    void accept(T t);
-}
+import net.neoforged.bus.api.IEventBus;
 
 /**
  * The main class for the Galactic Expansion Energy module.

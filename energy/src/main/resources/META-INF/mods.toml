@@ -20,7 +20,7 @@ Provides energy storage and transfer functionality.
 [[dependencies.modapi_energy]]
     modId="neoforge"
     mandatory=true
-    versionRange="[1.21.5,)"
+    versionRange="[21.5.0-beta,)"
     ordering="NONE"
     side="BOTH"
 
