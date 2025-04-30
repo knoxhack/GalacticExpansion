@@ -19,14 +19,13 @@ public class EnergyCapability {
     /**
      * Resource location for the energy capability.
      */
-    public static final ResourceLocation ENERGY_CAPABILITY = 
-        com.astroframe.galactic.energy.api.EnergyCapability.ENERGY_CAPABILITY;
+    public static final String ENERGY_CAPABILITY_ID = 
+        com.astroframe.galactic.energy.api.EnergyCapability.ENERGY_CAPABILITY_ID;
     
     /**
-     * A capability that provides energy handling.
+     * A capability string that identifies the energy capability.
      */
-    public static final net.neoforged.neoforge.capabilities.BlockCapability<IEnergyHandler, Direction> ENERGY = 
-        com.astroframe.galactic.energy.api.EnergyCapability.ENERGY;
+    public static final String ENERGY_CAPABILITY_STRING = "energy_capability";
     
     /**
      * Register the energy capability.

@@ -1,8 +1,5 @@
 package com.astroframe.galactic.energy.registry;
 
-import com.astroframe.galactic.core.registry.Registry;
-import com.astroframe.galactic.core.registry.RegistryEntry;
-import com.astroframe.galactic.core.registry.RegistryManager;
 import com.astroframe.galactic.energy.GalacticEnergy;
 import com.astroframe.galactic.energy.api.EnergyNetwork;
 import com.astroframe.galactic.energy.api.EnergyStorage;
@@ -11,6 +8,7 @@ import com.astroframe.galactic.energy.implementation.BaseEnergyStorage;
 import com.astroframe.galactic.energy.implementation.CachedEnergyNetwork;
 import net.minecraft.world.level.Level;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -23,23 +21,16 @@ public class EnergyRegistry {
     
     private static final EnergyRegistry INSTANCE = new EnergyRegistry();
     
-    private final Registry<EnergyStorage> storageRegistry;
-    private final Registry<EnergyNetwork> networkRegistry;
+    private final Map<String, EnergyStorage> storages = new HashMap<>();
+    private final Map<String, EnergyNetwork> networks = new HashMap<>();
     private final Map<EnergyType, EnergyNetwork> defaultNetworks = new HashMap<>();
     
     /**
      * Private constructor to enforce singleton pattern.
      */
     private EnergyRegistry() {
-        RegistryManager manager = RegistryManager.getInstance();
-        
-        storageRegistry = manager.<EnergyStorage>getRegistry("energy_storage")
-                .orElseGet(() -> manager.<EnergyStorage>createRegistry("energy_storage"));
-        
-        networkRegistry = manager.<EnergyNetwork>getRegistry("energy_network")
-                .orElseGet(() -> manager.<EnergyNetwork>createRegistry("energy_network"));
-        
-        // Networks will be created when accessed with a valid Level reference
+        // Initialize registry
+        GalacticEnergy.LOGGER.info("Initializing Energy Registry");
     }
     
     /**
@@ -56,10 +47,12 @@ public class EnergyRegistry {
      * 
      * @param id The identifier for the storage
      * @param storage The storage to register
-     * @return The registry entry that was created
+     * @return The registered storage
      */
-    public RegistryEntry<EnergyStorage> registerStorage(String id, EnergyStorage storage) {
-        return storageRegistry.register(GalacticEnergy.MOD_ID, id, storage);
+    public EnergyStorage registerStorage(String id, EnergyStorage storage) {
+        String fullId = GalacticEnergy.MOD_ID + ":" + id;
+        storages.put(fullId, storage);
+        return storage;
     }
     
     /**
@@ -74,8 +67,7 @@ public class EnergyRegistry {
      */
     public EnergyStorage createStorage(String id, int capacity, int maxInput, int maxOutput, EnergyType type) {
         BaseEnergyStorage storage = new BaseEnergyStorage(capacity, maxInput, maxOutput, type);
-        registerStorage(id, storage);
-        return storage;
+        return registerStorage(id, storage);
     }
     
     /**
@@ -83,10 +75,12 @@ public class EnergyRegistry {
      * 
      * @param id The identifier for the network
      * @param network The network to register
-     * @return The registry entry that was created
+     * @return The registered network
      */
-    public RegistryEntry<EnergyNetwork> registerNetwork(String id, EnergyNetwork network) {
-        return networkRegistry.register(GalacticEnergy.MOD_ID, id, network);
+    public EnergyNetwork registerNetwork(String id, EnergyNetwork network) {
+        String fullId = GalacticEnergy.MOD_ID + ":" + id;
+        networks.put(fullId, network);
+        return network;
     }
     
     /**
@@ -98,11 +92,9 @@ public class EnergyRegistry {
      * @return The registered network
      */
     public EnergyNetwork createNetwork(String id, Level level, EnergyType type) {
-        ResourceLocation networkId = new ResourceLocation(GalacticEnergy.MOD_ID, id);
         // Create a cached energy network
         EnergyNetwork network = new CachedEnergyNetwork(type, level);
-        registerNetwork(id, network);
-        return network;
+        return registerNetwork(id, network);
     }
     
     /**
@@ -112,7 +104,8 @@ public class EnergyRegistry {
      * @return An Optional containing the storage if found, or empty if not found
      */
     public Optional<EnergyStorage> getStorage(String id) {
-        return storageRegistry.get(id);
+        String fullId = id.contains(":") ? id : GalacticEnergy.MOD_ID + ":" + id;
+        return Optional.ofNullable(storages.get(fullId));
     }
     
     /**
@@ -122,7 +115,8 @@ public class EnergyRegistry {
      * @return An Optional containing the network if found, or empty if not found
      */
     public Optional<EnergyNetwork> getNetwork(String id) {
-        return networkRegistry.get(id);
+        String fullId = id.contains(":") ? id : GalacticEnergy.MOD_ID + ":" + id;
+        return Optional.ofNullable(networks.get(fullId));
     }
     
     /**
@@ -137,7 +131,6 @@ public class EnergyRegistry {
         EnergyNetwork network = defaultNetworks.get(type);
         if (network == null) {
             String id = "default_" + type.getId();
-            ResourceLocation networkId = new ResourceLocation(GalacticEnergy.MOD_ID, id);
             // Create a cached energy network
             EnergyNetwork newNetwork = new CachedEnergyNetwork(type, level);
             registerNetwork(id, newNetwork);
@@ -152,8 +145,26 @@ public class EnergyRegistry {
      * This should be called once per game tick.
      */
     public void tickNetworks() {
-        for (EnergyNetwork network : networkRegistry.getValues()) {
+        for (EnergyNetwork network : networks.values()) {
             network.tick();
         }
+    }
+    
+    /**
+     * Get all registered energy storages.
+     * 
+     * @return Collection of all registered energy storages
+     */
+    public Collection<EnergyStorage> getAllStorages() {
+        return storages.values();
+    }
+    
+    /**
+     * Get all registered energy networks.
+     * 
+     * @return Collection of all registered energy networks
+     */
+    public Collection<EnergyNetwork> getAllNetworks() {
+        return networks.values();
     }
 }

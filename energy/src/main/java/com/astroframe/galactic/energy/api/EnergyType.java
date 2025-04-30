@@ -1,7 +1,5 @@
 package com.astroframe.galactic.energy.api;
 
-import net.minecraft.resources.ResourceLocation;
-
 /**
  * Enumeration of energy types in the Galactic Expansion mod.
  * Different types of energy have different properties and compatibility.
@@ -48,12 +46,12 @@ public enum EnergyType {
     }
     
     /**
-     * Gets the ResourceLocation for this energy type.
+     * Gets the full identifier for this energy type.
      * 
-     * @return The ResourceLocation
+     * @return The full identifier string in the format "namespace:path"
      */
-    public net.minecraft.resources.ResourceLocation getResourceLocation() {
-        return new net.minecraft.resources.ResourceLocation("galacticexpansion", "energy/" + id);
+    public String getFullIdentifier() {
+        return "galacticexpansion:energy/" + id;
     }
     
     /**
