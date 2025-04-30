@@ -1,0 +1,80 @@
+# Gradle
+.gradle/
+build/
+out/
+classes/
+temp-build/
+
+# Eclipse
+*.launch
+.settings/
+.metadata/
+.classpath
+.project
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Visual Studio Code
+.vscode/
+.VSCodeCounter/
+bin/
+.settings/
+.factorypath
+
+# MacOS
+*.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# Minecraft cache and file downloads
+.mixin.out/
+logs/
+downloads/
+prebuilt-jars/
+mdk/
+
+# Local development
+run/
+runs/
+*.log
+
+# Game specific debug info and crash logs
+crash-reports/
+debug.log
+mods.toml.bak
+
+# Node.js for build status widget
+buildwidget/node_modules/
+npm-debug.log
+
+# Java compiled files
+*.class
+hs_err_pid*
+
+# Compiled mods
+*.jar
+!/gradle/wrapper/gradle-wrapper.jar
+
+# Exclude IDE-generated files
+*.launch
+.vscode/
+.settings/
+.classpath
+.project
+
+# Exclude Replit specific files
+.replit
+.cache/
+.upm/
+.breakpoints
+replit.nix
