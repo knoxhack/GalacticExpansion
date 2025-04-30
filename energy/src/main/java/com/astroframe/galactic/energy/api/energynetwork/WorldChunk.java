@@ -1,25 +1,26 @@
 package com.astroframe.galactic.energy.api.energynetwork;
 
-import net.minecraft.core.SectionPos;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 
 /**
  * A wrapper class for chunk positions in the energy network.
- * This provides a layer of abstraction between Minecraft's ChunkPos and our energy network implementation.
+ * This provides a layer of abstraction between Minecraft's chunk position and our energy network implementation.
  */
 public class WorldChunk {
-    private final ChunkPos chunkPos;
+    private final int chunkX;
+    private final int chunkZ;
     private final Level level;
     
     /**
-     * Creates a new WorldChunk.
+     * Creates a new WorldChunk with chunk coordinates.
      * 
-     * @param chunkPos The Minecraft ChunkPos
+     * @param chunkX The chunk X coordinate
+     * @param chunkZ The chunk Z coordinate
      * @param level The Minecraft Level
      */
-    public WorldChunk(ChunkPos chunkPos, Level level) {
-        this.chunkPos = chunkPos;
+    public WorldChunk(int chunkX, int chunkZ, Level level) {
+        this.chunkX = chunkX;
+        this.chunkZ = chunkZ;
         this.level = level;
     }
     
@@ -30,19 +31,27 @@ public class WorldChunk {
      */
     public WorldChunk(WorldPosition position) {
         this.level = position.getLevel();
-        // Use SectionPos to get the chunk coordinates
-        int blockX = position.getX();
-        int blockZ = position.getZ();
-        this.chunkPos = SectionPos.blockToSection(blockX, 0, blockZ).chunk();
+        // Convert block coordinates to chunk coordinates (16 blocks per chunk)
+        this.chunkX = Math.floorDiv(position.getX(), 16);
+        this.chunkZ = Math.floorDiv(position.getZ(), 16);
     }
     
     /**
-     * Gets the wrapped ChunkPos.
+     * Gets the chunk X coordinate.
      * 
-     * @return The ChunkPos
+     * @return The chunk X coordinate
      */
-    public ChunkPos getChunkPos() {
-        return chunkPos;
+    public int getChunkX() {
+        return chunkX;
+    }
+    
+    /**
+     * Gets the chunk Z coordinate.
+     * 
+     * @return The chunk Z coordinate
+     */
+    public int getChunkZ() {
+        return chunkZ;
     }
     
     /**
@@ -60,7 +69,7 @@ public class WorldChunk {
      * @return True if the chunk is loaded
      */
     public boolean isLoaded() {
-        return level.hasChunk(chunkPos.x, chunkPos.z);
+        return level.hasChunk(chunkX, chunkZ);
     }
     
     @Override
@@ -68,16 +77,17 @@ public class WorldChunk {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         WorldChunk other = (WorldChunk) obj;
-        return chunkPos.equals(other.chunkPos) && level.equals(other.level);
+        return chunkX == other.chunkX && chunkZ == other.chunkZ && level.equals(other.level);
     }
     
     @Override
     public int hashCode() {
-        return 31 * chunkPos.hashCode() + level.hashCode();
+        int result = 31 * chunkX + chunkZ;
+        return 31 * result + level.hashCode();
     }
     
     @Override
     public String toString() {
-        return "WorldChunk[" + chunkPos.x + ", " + chunkPos.z + "]";
+        return "WorldChunk[" + chunkX + ", " + chunkZ + "]";
     }
 }

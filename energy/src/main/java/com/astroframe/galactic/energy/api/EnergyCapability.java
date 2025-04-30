@@ -1,11 +1,7 @@
 package com.astroframe.galactic.energy.api;
 
 import com.astroframe.galactic.energy.GalacticEnergy;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.capabilities.BlockCapability;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import org.slf4j.Logger;
 
 /**
  * Capability provider for energy functionality.
@@ -14,14 +10,9 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 public class EnergyCapability {
     
     /**
-     * Resource location for the energy capability.
+     * Capability ID string for the energy capability.
      */
-    public static final ResourceLocation ENERGY_CAPABILITY = new ResourceLocation(GalacticEnergy.MOD_ID, "energy");
-    
-    /**
-     * A capability that provides energy handling.
-     */
-    public static final BlockCapability<IEnergyHandler, Direction> ENERGY = BlockCapability.create(ENERGY_CAPABILITY, IEnergyHandler.class, Direction.class);
+    public static final String ENERGY_CAPABILITY_ID = GalacticEnergy.MOD_ID + ":energy";
     
     /**
      * Register the energy capability.
@@ -31,21 +22,11 @@ public class EnergyCapability {
     }
     
     /**
-     * Register the energy capability with the NeoForge capability system.
-     * 
-     * @param event The capability registration event
+     * Register the energy capability with the system.
+     * This will be called during mod initialization.
      */
-    public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
+    public static void registerCapabilities() {
         GalacticEnergy.LOGGER.info("Registering energy capability adapter");
-        
-        // Register the basic energy capability adapter
-        event.registerBlock(ENERGY, (level, pos, state, be, side) -> {
-            if (be instanceof IEnergyHandler energyHandler) {
-                // Only provide the capability for the appropriate side
-                return energyHandler;
-            }
-            return null;
-        });
     }
     
     /**
@@ -75,23 +56,21 @@ public class EnergyCapability {
         }
         
         /**
-         * Reads the energy storage from NBT.
+         * Reads the energy storage from serialized data.
          * 
-         * @param nbt The NBT tag
+         * @param energy The energy value
          */
-        public void readNBT(CompoundTag nbt) {
-            this.energy = nbt.getInt("Energy");
+        public void deserialize(int energy) {
+            this.energy = Math.max(0, Math.min(capacity, energy));
         }
         
         /**
-         * Writes the energy storage to NBT.
+         * Writes the energy storage to serialized data.
          * 
-         * @return The NBT tag
+         * @return The energy value
          */
-        public CompoundTag writeNBT() {
-            CompoundTag tag = new CompoundTag();
-            tag.putInt("Energy", this.energy);
-            return tag;
+        public int serialize() {
+            return this.energy;
         }
 
         @Override
