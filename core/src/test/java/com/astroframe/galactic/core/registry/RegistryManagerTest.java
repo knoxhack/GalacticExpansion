@@ -10,6 +10,8 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -90,7 +92,7 @@ public class RegistryManagerTest {
     void testObjectWithTags() {
         // Create test object with tags
         class TaggedTestObject extends TestRegistryObject {
-            @TaggedWith("test_tag")
+            @TaggedWith(value="test_tag")
             public TaggedTestObject(String name) {
                 super(name);
             }
@@ -98,18 +100,18 @@ public class RegistryManagerTest {
         
         TaggedTestObject obj = new TaggedTestObject("tagged_object");
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath("galacticexpansion", "tagged_object");
-        ResourceLocation tagId = ResourceLocation.fromNamespaceAndPath("galacticexpansion", "test_tag");
+        String tagId = "test_tag";
         
         // Register object and process its tags
         registryManager.register(id, obj);
         
         // Manually create the tag since we're in a test environment
-        Tag<Object> tag = new Tag<>(tagId);
+        Tag<Object> tag = tagManager.createTag("default", tagId);
         tag.add(obj);
-        tagManager.addTag(tagId, tag);
         
         // Verify tag contains the object
-        Set<Object> taggedObjects = tagManager.getTag(tagId).getAll();
+        Optional<Tag<Object>> tagOpt = tagManager.getTag("default", tagId);
+        Set<Object> taggedObjects = tagOpt.map(Tag::getValues).orElse(Collections.emptySet());
         assertTrue(taggedObjects.contains(obj), "Tag should contain the object");
     }
     
