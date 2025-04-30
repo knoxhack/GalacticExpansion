@@ -268,6 +268,17 @@ public class Tag<T> {
         return values.isEmpty() && children.stream().allMatch(Tag::isEmpty);
     }
     
+    /**
+     * Remove a value from this tag.
+     * This only removes from the direct values, not from children.
+     * 
+     * @param value The value to remove
+     * @return true if the value was removed, false if it wasn't in the tag
+     */
+    public boolean remove(T value) {
+        return values.remove(value);
+    }
+    
     @Override
     public String toString() {
         return "Tag{id='" + id + "', size=" + size() + "}";
