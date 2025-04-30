@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.neoforged.api.distmarker.Provider;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 
@@ -140,11 +140,11 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
     }
     
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, Provider provider) {
+        super.saveAdditional(tag, provider);
         
         // Save inventory
-        ContainerHelper.saveAllItems(tag, this.inventory);
+        ContainerHelper.saveAllItems(tag, this.inventory, provider);
         
         // Save energy
         tag.put("Energy", energyStorage.serializeNBT(new CompoundTag()));
@@ -156,11 +156,11 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
     }
     
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    public void load(CompoundTag tag, Provider provider) {
+        super.load(tag, provider);
         
         // Load inventory
-        ContainerHelper.loadAllItems(tag, this.inventory);
+        ContainerHelper.loadAllItems(tag, this.inventory, provider);
         
         // Load energy
         if (tag.contains("Energy")) {
@@ -178,10 +178,9 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
         return ClientboundBlockEntityDataPacket.create(this);
     }
     
-    @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = new CompoundTag();
-        saveAdditional(tag);
+    public CompoundTag getUpdateTag(net.neoforged.api.distmarker.Provider provider) {
+        CompoundTag tag = super.getUpdateTag(provider);
+        saveAdditional(tag, provider);
         return tag;
     }
     
