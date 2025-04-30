@@ -36,13 +36,15 @@ public class MachineRegistry {
         
         // Get or create the main machine registry
         machineRegistry = manager.getRegistry("machine")
-                .orElseGet(() -> manager.createRegistry("machine"));
+                .map(registry -> (Registry<Machine>) registry)
+                .orElseGet(() -> (Registry<Machine>) manager.createRegistry("machine"));
         
         // Create registries for each machine type
         for (MachineType type : MachineType.values()) {
             String registryName = "machine_" + type.getId();
             Registry<Machine> typeRegistry = manager.getRegistry(registryName)
-                    .orElseGet(() -> manager.createRegistry(registryName));
+                    .map(registry -> (Registry<Machine>) registry)
+                    .orElseGet(() -> (Registry<Machine>) manager.createRegistry(registryName));
             machineTypeRegistries.put(type, typeRegistry);
         }
     }
