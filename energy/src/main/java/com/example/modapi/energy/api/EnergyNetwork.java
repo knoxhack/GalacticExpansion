@@ -1,14 +1,19 @@
 package com.example.modapi.energy.api;
 
+import com.astroframe.galactic.energy.api.EnergyType;
+import com.astroframe.galactic.energy.api.energynetwork.Level;
+import com.astroframe.galactic.energy.implementation.CachedEnergyNetwork;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
 
 import java.util.*;
 
 /**
  * Network system for managing energy transfer between connected energy handlers.
  * Tracks connected machines and distributes energy efficiently.
+ * 
+ * @deprecated Use {@link com.astroframe.galactic.energy.api.EnergyNetwork} instead
  */
+@Deprecated
 public class EnergyNetwork {
     private final Set<BlockPos> connectedBlocks = new HashSet<>();
     private final Map<BlockPos, IEnergyHandler> energyHandlers = new HashMap<>();

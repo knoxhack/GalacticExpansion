@@ -1,10 +1,8 @@
 package com.astroframe.galactic.energy.api.energynetwork;
 
-import net.minecraft.world.level.Level;
-
 /**
  * A wrapper class for chunk positions in the energy network.
- * This provides a layer of abstraction between Minecraft's chunk position and our energy network implementation.
+ * This provides a layer of abstraction between chunk positions and our energy network implementation.
  */
 public class WorldChunk {
     private final int chunkX;
@@ -16,7 +14,7 @@ public class WorldChunk {
      * 
      * @param chunkX The chunk X coordinate
      * @param chunkZ The chunk Z coordinate
-     * @param level The Minecraft Level
+     * @param level The world level
      */
     public WorldChunk(int chunkX, int chunkZ, Level level) {
         this.chunkX = chunkX;
@@ -65,11 +63,13 @@ public class WorldChunk {
     
     /**
      * Checks if this chunk is loaded.
+     * In this implementation, we always assume chunks are loaded
+     * to avoid dependencies on Minecraft.
      * 
-     * @return True if the chunk is loaded
+     * @return True (always loaded in this implementation)
      */
     public boolean isLoaded() {
-        return level.hasChunk(chunkX, chunkZ);
+        return true;
     }
     
     @Override

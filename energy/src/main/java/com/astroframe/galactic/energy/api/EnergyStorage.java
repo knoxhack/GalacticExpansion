@@ -3,26 +3,9 @@ package com.astroframe.galactic.energy.api;
 /**
  * Interface for energy storage.
  * Represents a container for energy that can receive and extract energy.
+ * Extends IEnergyHandler to provide a consistent API for all energy handlers.
  */
-public interface EnergyStorage {
-    
-    /**
-     * Adds energy to the storage.
-     * 
-     * @param amount Maximum amount to receive
-     * @param simulate If true, the addition is only simulated
-     * @return Amount of energy that was (or would have been) received
-     */
-    int receiveEnergy(int amount, boolean simulate);
-    
-    /**
-     * Removes energy from the storage.
-     * 
-     * @param amount Maximum amount to extract
-     * @param simulate If true, the extraction is only simulated
-     * @return Amount of energy that was (or would have been) extracted
-     */
-    int extractEnergy(int amount, boolean simulate);
+public interface EnergyStorage extends IEnergyHandler {
     
     /**
      * Gets the amount of energy currently stored.
@@ -40,37 +23,25 @@ public interface EnergyStorage {
     
     /**
      * Gets the amount of energy currently stored.
-     * Use this alias for compatibility with NeoForge energy API.
+     * Implementation for IEnergyHandler compatibility.
      * 
      * @return Stored energy
      */
+    @Override
     default int getEnergyStored() {
         return getEnergy();
     }
     
     /**
      * Gets the maximum amount of energy that can be stored.
-     * Use this alias for compatibility with NeoForge energy API.
+     * Implementation for IEnergyHandler compatibility.
      * 
      * @return Maximum energy
      */
+    @Override
     default int getMaxEnergyStored() {
         return getMaxEnergy();
     }
-    
-    /**
-     * Returns whether this storage can receive energy.
-     * 
-     * @return True if this storage can receive energy
-     */
-    boolean canReceive();
-    
-    /**
-     * Returns whether this storage can extract energy.
-     * 
-     * @return True if this storage can extract energy
-     */
-    boolean canExtract();
     
     /**
      * Gets the type of energy stored.
@@ -78,4 +49,14 @@ public interface EnergyStorage {
      * @return The energy type
      */
     EnergyType getEnergyType();
+    
+    /**
+     * Get the energy unit for this storage.
+     * 
+     * @return The energy unit
+     */
+    @Override
+    default EnergyUnit getEnergyUnit() {
+        return EnergyUnit.GALACTIC_ENERGY_UNIT;
+    }
 }
