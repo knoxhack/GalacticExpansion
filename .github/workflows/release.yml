@@ -42,13 +42,10 @@ jobs:
           VERSION=${{ env.VERSION }}
           sed -i "s/mod_version=.*/mod_version=$VERSION/" gradle.properties
       
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      
       - name: Build with Gradle
         run: |
-          export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which java))))"
-          ./gradlew clean build
+          chmod +x gradlew
+          ./gradlew clean build --info --stacktrace
       
       - name: Generate changelog
         id: changelog
