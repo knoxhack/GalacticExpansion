@@ -10,7 +10,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
+import net.neoforged.registries.ForgeRegistries;
 
 /**
  * Helper class for registering various game objects.
@@ -26,7 +26,7 @@ public class RegistryHelper {
      * @return A new resource location
      */
     public static ResourceLocation registryName(Module module, String name) {
-        return ResourceLocation.of(ModApiCore.MOD_ID, module.getModuleId() + "/" + name);
+        return new ResourceLocation(ModApiCore.MOD_ID, module.getModuleId() + "/" + name);
     }
     
     /**
@@ -37,7 +37,7 @@ public class RegistryHelper {
      * @param modId The mod ID
      * @return A new deferred register
      */
-    public static <T> DeferredRegister<T> createRegister(net.neoforged.neoforge.registries.IForgeRegistry<T> registry, String modId) {
+    public static <T> DeferredRegister<T> createRegister(net.neoforged.registries.IForgeRegistry<T> registry, String modId) {
         return DeferredRegister.create(registry, modId);
     }
     

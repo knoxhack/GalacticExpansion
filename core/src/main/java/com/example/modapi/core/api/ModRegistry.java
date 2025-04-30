@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
+import net.neoforged.registries.ForgeRegistries;
 
 /**
  * Central registry for managing mod components.
@@ -124,7 +124,7 @@ public class ModRegistry {
      * @return A new resource location
      */
     public static ResourceLocation resource(String path) {
-        return ResourceLocation.of(ModApiCore.MOD_ID, path);
+        return new ResourceLocation(ModApiCore.MOD_ID, path);
     }
     
     /**
