@@ -1,5 +1,6 @@
 package com.astroframe.galactic.energy.api.energynetwork;
 
+import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 
@@ -29,10 +30,10 @@ public class WorldChunk {
      */
     public WorldChunk(WorldPosition position) {
         this.level = position.getLevel();
-        // Create chunk position from block coordinates (x >> 4, z >> 4)
+        // Use SectionPos to get the chunk coordinates
         int blockX = position.getX();
         int blockZ = position.getZ();
-        this.chunkPos = new ChunkPos(blockX >> 4, blockZ >> 4);
+        this.chunkPos = SectionPos.blockToSection(blockX, 0, blockZ).chunk();
     }
     
     /**
