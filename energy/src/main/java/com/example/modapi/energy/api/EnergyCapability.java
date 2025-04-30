@@ -46,7 +46,7 @@ public class EnergyCapability {
                 return energyHandler;
             }
             return null;
-        }, Direction.class);
+        });
     }
     
     /**

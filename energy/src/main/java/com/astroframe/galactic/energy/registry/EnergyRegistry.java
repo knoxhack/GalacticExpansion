@@ -9,6 +9,8 @@ import com.astroframe.galactic.energy.api.EnergyStorage;
 import com.astroframe.galactic.energy.api.EnergyType;
 import com.astroframe.galactic.energy.implementation.BaseEnergyNetwork;
 import com.astroframe.galactic.energy.implementation.BaseEnergyStorage;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 
 import java.util.HashMap;
 import java.util.Map;

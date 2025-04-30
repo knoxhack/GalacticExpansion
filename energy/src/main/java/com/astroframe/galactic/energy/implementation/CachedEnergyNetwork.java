@@ -170,7 +170,7 @@ public class CachedEnergyNetwork implements EnergyNetwork {
         // Find a path between the nodes
         List<BlockPos> path = findPath(source, destination);
         if (path.isEmpty()) {
-            return new EnergyTransferResult(false, 0, "No valid path between nodes");
+            return new EnergyTransferResult(0, "No valid path between nodes", EnergyTransferResult.Status.PATH_BLOCKED);
         }
         
         // Calculate the maximum transferable amount
