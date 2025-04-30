@@ -23,10 +23,17 @@ public @interface TaggedWith {
     String typeKey();
     
     /**
+     * The ID of the specific tag to add the object to.
+     * 
+     * @return The tag ID
+     */
+    String tagId() default "";
+    
+    /**
      * The IDs of the tags to add the object to.
      * Tags will be created if they don't exist.
      * 
      * @return An array of tag IDs
      */
-    String[] value();
+    String[] value() default {};
 }

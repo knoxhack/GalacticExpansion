@@ -32,7 +32,8 @@ public class GalacticEnergy extends AbstractModuleIntegration {
         info("Initializing Galactic Expansion Energy");
         
         // Register event listeners
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modEventBus.addListener(this::commonSetup);
         
         // Initialize energy-specific registries
         initializeRegistries();
