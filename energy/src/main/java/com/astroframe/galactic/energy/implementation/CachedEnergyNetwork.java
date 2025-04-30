@@ -176,19 +176,19 @@ public class CachedEnergyNetwork implements EnergyNetwork {
         // Calculate the maximum transferable amount
         int maxExtract = sourceStorage.extractEnergy(amount, true);
         if (maxExtract <= 0) {
-            return new EnergyTransferResult(false, 0, "Source cannot extract energy");
+            return new EnergyTransferResult(0, "Source cannot extract energy", EnergyTransferResult.Status.SOURCE_CANNOT_EXTRACT);
         }
         
         int maxReceive = destStorage.receiveEnergy(maxExtract, true);
         if (maxReceive <= 0) {
-            return new EnergyTransferResult(false, 0, "Destination cannot receive energy");
+            return new EnergyTransferResult(0, "Destination cannot receive energy", EnergyTransferResult.Status.DESTINATION_CANNOT_RECEIVE);
         }
         
         int transferAmount = Math.min(maxExtract, maxReceive);
         
         // If we're just simulating, return the calculated amount
         if (simulate) {
-            return new EnergyTransferResult(true, transferAmount, "Simulated transfer successful");
+            return new EnergyTransferResult(transferAmount, "Simulated transfer successful", EnergyTransferResult.Status.SUCCESS);
         }
         
         // Perform the actual transfer
@@ -207,10 +207,10 @@ public class CachedEnergyNetwork implements EnergyNetwork {
                 // Put back the energy that wasn't received
                 sourceStorage.receiveEnergy(extracted - received, false);
             }
-            return new EnergyTransferResult(true, received, "Partial transfer: extracted " + extracted + ", received " + received);
+            return new EnergyTransferResult(received, "Partial transfer: extracted " + extracted + ", received " + received, EnergyTransferResult.Status.WARNING);
         }
         
-        return new EnergyTransferResult(true, received, "Transfer successful");
+        return new EnergyTransferResult(received, "Transfer successful", EnergyTransferResult.Status.SUCCESS);
     }
 
     /**

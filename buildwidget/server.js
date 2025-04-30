@@ -291,7 +291,11 @@ async function checkBuildSuccess() {
   try {
     // Check for build failures in recent logs
     const { stdout } = await execAsync('grep -i "BUILD FAILED" $(find ../ -name "*.log" -ctime -1 2>/dev/null) 2>/dev/null || echo "No failures found"');
-    return !stdout.includes('BUILD FAILED');
+    
+    // Also check for compilation errors
+    const compileErrors = await execAsync('grep -i "compilation failed" $(find ../ -name "*.log" -ctime -1 2>/dev/null) 2>/dev/null || echo "No failures found"');
+    
+    return !stdout.includes('BUILD FAILED') && !compileErrors.stdout.includes('compilation failed');
   } catch (error) {
     // If grep fails, assume build succeeded
     return true;
