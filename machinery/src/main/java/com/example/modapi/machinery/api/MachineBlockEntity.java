@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.api.distmarker.Provider;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 
@@ -140,11 +140,11 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
     }
     
     @Override
-    protected void saveAdditional(CompoundTag tag, Provider provider) {
-        super.saveAdditional(tag, provider);
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
         
         // Save inventory
-        ContainerHelper.saveAllItems(tag, this.inventory, provider);
+        ContainerHelper.saveAllItems(tag, this.inventory);
         
         // Save energy
         tag.put("Energy", energyStorage.serializeNBT(new CompoundTag()));
@@ -155,11 +155,12 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
         tag.putBoolean("IsActive", isActive);
     }
     
-    public void load(CompoundTag tag, Provider provider) {
-        super.load(tag, provider);
+    @Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
         
         // Load inventory
-        ContainerHelper.loadAllItems(tag, this.inventory, provider);
+        ContainerHelper.loadAllItems(tag, this.inventory);
         
         // Load energy
         if (tag.contains("Energy")) {
@@ -178,9 +179,9 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
     }
     
     @Override
-    public CompoundTag getUpdateTag(Provider provider) {
-        CompoundTag tag = super.getUpdateTag(provider);
-        saveAdditional(tag, provider);
+    public CompoundTag getUpdateTag() {
+        CompoundTag tag = new CompoundTag();
+        saveAdditional(tag);
         return tag;
     }
     
