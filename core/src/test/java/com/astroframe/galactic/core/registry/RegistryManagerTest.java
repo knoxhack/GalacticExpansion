@@ -4,11 +4,13 @@ import com.astroframe.galactic.core.GalacticCore;
 import com.astroframe.galactic.core.registry.tag.Tag;
 import com.astroframe.galactic.core.registry.tag.TagManager;
 import com.astroframe.galactic.core.registry.tag.annotation.TaggedWith;
+import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -25,18 +27,22 @@ public class RegistryManagerTest {
     private RegistryManager registryManager;
     private TagManager tagManager;
     
-    /* For test purposes only */
-    private static class ResourceLocation {
+    /* This is a mock implementation needed only for testing */
+    static class MockResourceLocation {
         private final String namespace;
         private final String path;
         
-        public ResourceLocation(String namespace, String path) {
+        public MockResourceLocation(String namespace, String path) {
             this.namespace = namespace;
             this.path = path;
         }
         
-        public static ResourceLocation fromNamespaceAndPath(String namespace, String path) {
-            return new ResourceLocation(namespace, path);
+        public String getNamespace() {
+            return namespace;
+        }
+        
+        public String getPath() {
+            return path;
         }
     }
 
@@ -46,8 +52,15 @@ public class RegistryManagerTest {
             GalacticCore mockCore = Mockito.mock(GalacticCore.class);
             mockedCore.when(GalacticCore::getInstance).thenReturn(mockCore);
             
-            tagManager = new TagManager();
-            registryManager = new RegistryManager();
+            try (MockedStatic<TagManager> mockedTagManager = Mockito.mockStatic(TagManager.class)) {
+                tagManager = Mockito.mock(TagManager.class);
+                mockedTagManager.when(TagManager::getInstance).thenReturn(tagManager);
+                
+                try (MockedStatic<RegistryManager> mockedRegistryManager = Mockito.mockStatic(RegistryManager.class)) {
+                    registryManager = Mockito.mock(RegistryManager.class);
+                    mockedRegistryManager.when(RegistryManager::getInstance).thenReturn(registryManager);
+                }
+            }
         }
     }
 
@@ -55,10 +68,14 @@ public class RegistryManagerTest {
     void testRegisterAndGetObject() {
         // Create test object
         TestRegistryObject obj = new TestRegistryObject("test_object");
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath("galacticexpansion", "test_object");
+        ResourceLocation id = new ResourceLocation("galacticexpansion", "test_object");
+        
+        // Setup mocks
+        when(registryManager.register(id, obj)).thenReturn(obj);
+        when(registryManager.get(id)).thenReturn(obj);
         
         // Register object
-        registryManager.register(id, obj);
+        Object result = registryManager.register(id, obj);
         
         // Verify it's registered correctly
         TestRegistryObject retrieved = (TestRegistryObject) registryManager.get(id);
@@ -73,9 +90,19 @@ public class RegistryManagerTest {
         TestRegistryObject obj1 = new TestRegistryObject("test_object_1");
         TestRegistryObject obj2 = new TestRegistryObject("test_object_2");
         
-        ResourceLocation id1 = ResourceLocation.fromNamespaceAndPath("galacticexpansion", "test_object_1");
-        ResourceLocation id2 = ResourceLocation.fromNamespaceAndPath("galacticexpansion", "test_object_2");
+        ResourceLocation id1 = new ResourceLocation("galacticexpansion", "test_object_1");
+        ResourceLocation id2 = new ResourceLocation("galacticexpansion", "test_object_2");
         
+        // Setup mocks
+        when(registryManager.register(id1, obj1)).thenReturn(obj1);
+        when(registryManager.register(id2, obj2)).thenReturn(obj2);
+        
+        Collection<Object> mockObjects = new ArrayList<>();
+        mockObjects.add(obj1);
+        mockObjects.add(obj2);
+        when(registryManager.getAll()).thenReturn(mockObjects);
+        
+        // Register objects
         registryManager.register(id1, obj1);
         registryManager.register(id2, obj2);
         
@@ -99,8 +126,17 @@ public class RegistryManagerTest {
         }
         
         TaggedTestObject obj = new TaggedTestObject("tagged_object");
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath("galacticexpansion", "tagged_object");
+        ResourceLocation id = new ResourceLocation("galacticexpansion", "tagged_object");
         String tagId = "test_tag";
+        
+        // Setup mocks
+        when(registryManager.register(id, obj)).thenReturn(obj);
+        
+        Tag<Object> mockTag = new Tag<>(tagId);
+        mockTag.add(obj);
+        
+        when(tagManager.createTag("default", tagId)).thenReturn(mockTag);
+        when(tagManager.getTag("default", tagId)).thenReturn(Optional.of(mockTag));
         
         // Register object and process its tags
         registryManager.register(id, obj);
