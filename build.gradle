@@ -4,8 +4,22 @@ plugins {
     id 'maven-publish'
     id 'net.neoforged.moddev' version '2.0.78' apply false
     id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
-    id 'com.astroframe.galactic.buildstatus'
+    // Only apply the build status plugin if not in CI environment
+    id 'com.astroframe.galactic.buildstatus' apply false
     id 'com.astroframe.galactic.versioning'
+}
+
+// Check if we're in CI environment
+def isCI = System.getenv("CI") != null && (System.getenv("CI").equalsIgnoreCase("true") || System.getenv("CI") == "1")
+
+// Only apply the build status plugin if not in CI
+if (!isCI) {
+    apply plugin: 'com.astroframe.galactic.buildstatus'
+    
+    // Configure build status widget
+    buildStatusWidget {
+        serverUrl = 'http://localhost:5000'
+    }
 }
 
 allprojects {
@@ -17,11 +31,6 @@ allprojects {
         maven { url = 'https://maven.neoforged.net/releases' }
         gradlePluginPortal()
     }
-}
-
-// Configure build status widget
-buildStatusWidget {
-    serverUrl = 'http://localhost:5000'
 }
 
 subprojects {
