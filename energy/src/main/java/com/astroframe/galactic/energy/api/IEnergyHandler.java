@@ -1,59 +1,59 @@
 package com.astroframe.galactic.energy.api;
 
 /**
- * Interface for energy handling components.
- * Defines methods for energy storage, transfer, and query.
+ * Interface for blocks or entities that can handle energy.
+ * Represents anything that can store, provide, or consume energy.
  */
 public interface IEnergyHandler {
     
     /**
-     * Add energy to the handler.
+     * Adds energy to the handler.
      * 
-     * @param maxReceive Maximum amount of energy to receive
-     * @param simulate If true, the transfer will only be simulated
+     * @param maxReceive Maximum amount to receive
+     * @param simulate If true, the addition is only simulated
      * @return Amount of energy that was (or would have been) received
      */
     int receiveEnergy(int maxReceive, boolean simulate);
     
     /**
-     * Remove energy from the handler.
+     * Removes energy from the handler.
      * 
-     * @param maxExtract Maximum amount of energy to extract
-     * @param simulate If true, the extraction will only be simulated
+     * @param maxExtract Maximum amount to extract
+     * @param simulate If true, the extraction is only simulated
      * @return Amount of energy that was (or would have been) extracted
      */
     int extractEnergy(int maxExtract, boolean simulate);
     
     /**
-     * Get the amount of energy currently stored.
+     * Gets the amount of energy currently stored.
      * 
      * @return Stored energy
      */
     int getEnergyStored();
     
     /**
-     * Get the maximum amount of energy that can be stored.
+     * Gets the maximum amount of energy that can be stored.
      * 
-     * @return Maximum energy capacity
+     * @return Maximum energy
      */
     int getMaxEnergyStored();
     
     /**
-     * Returns whether this storage can have energy extracted.
+     * Returns whether this energy handler can receive energy.
      * 
-     * @return True if extraction is allowed
-     */
-    boolean canExtract();
-    
-    /**
-     * Returns whether this storage can receive energy.
-     * 
-     * @return True if receiving is allowed
+     * @return True if this can receive energy
      */
     boolean canReceive();
     
     /**
-     * Get the energy type this handler uses.
+     * Returns whether this energy handler can extract energy.
+     * 
+     * @return True if this can extract energy
+     */
+    boolean canExtract();
+    
+    /**
+     * Gets the type of energy handled by this energy handler.
      * 
      * @return The energy type
      */

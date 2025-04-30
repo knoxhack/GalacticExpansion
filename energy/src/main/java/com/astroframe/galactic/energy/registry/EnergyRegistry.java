@@ -99,8 +99,9 @@ public class EnergyRegistry {
      * @return The registered network
      */
     public EnergyNetwork createNetwork(String id, Level level, EnergyType type) {
-        ResourceLocation networkId = ResourceLocation.fromNamespaceAndPath(GalacticEnergy.MOD_ID, id);
-        BaseEnergyNetwork network = new BaseEnergyNetwork(networkId, level, type);
+        ResourceLocation networkId = new ResourceLocation(GalacticEnergy.MOD_ID, id);
+        // Create a cached energy network
+        EnergyNetwork network = new CachedEnergyNetwork(type, level);
         registerNetwork(id, network);
         return network;
     }
