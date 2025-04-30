@@ -1,0 +1,14 @@
+plugins {
+    id 'groovy'
+}
+
+repositories {
+    gradlePluginPortal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+}

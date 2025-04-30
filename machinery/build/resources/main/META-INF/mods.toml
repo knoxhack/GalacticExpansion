@@ -1,0 +1,46 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="MIT"
+issueTrackerURL="https://github.com/yourname/modapi/issues"
+
+[[mods]]
+modId="modapi_machinery"
+version="1.0.0"
+displayName="ModAPI Machinery"
+updateJSONURL="https://example.com/updates.json"
+displayURL="https://github.com/yourname/modapi"
+logoFile="modapi_machinery.png"
+credits="Thanks to the Minecraft and NeoForge community"
+authors="Your Name"
+description='''
+Machinery module for the ModAPI system.
+Provides a framework for creating energy-powered machines.
+'''
+
+[[dependencies.modapi_machinery]]
+    modId="neoforge"
+    mandatory=true
+    versionRange="[1.21.5,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.modapi_machinery]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.21.5,1.22)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.modapi_machinery]]
+    modId="modapi_core"
+    mandatory=true
+    versionRange="[1.0.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.modapi_machinery]]
+    modId="modapi_energy"
+    mandatory=true
+    versionRange="[1.0.0,)"
+    ordering="AFTER"
+    side="BOTH"

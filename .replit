@@ -1,0 +1,57 @@
+modules = ["java", "java-21", "nodejs-20"]
+
+[nix]
+channel = "stable-24_05"
+packages = ["unzip", "jdk21_headless"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Build Mod API"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "build-mod"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Build Status Widget"
+
+[[workflows.workflow]]
+name = "Build Mod API"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35 && ./gradlew clean build"
+
+[[workflows.workflow]]
+name = "build-mod"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35 && ./gradlew clean build --no-daemon"
+
+[[workflows.workflow]]
+name = "Build Status Widget"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd buildwidget && node server.js"
+waitForPort = 5000
+
+[deployment]
+run = ["sh", "-c", "export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35 && ./gradlew clean build"]
+
+[[ports]]
+localPort = 5000
+externalPort = 80

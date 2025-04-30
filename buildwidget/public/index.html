@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradle Build Status Widget</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Galactic Expansion Mod</h1>
+            <h2>Build Status Dashboard</h2>
+        </header>
+
+        <div class="build-controls">
+            <div class="control-group">
+                <select id="buildCommand">
+                    <option value="clean build">clean build</option>
+                    <option value="build">build</option>
+                    <option value="test">test</option>
+                    <option value=":core:build">core:build</option>
+                    <option value=":energy:build">energy:build</option>
+                    <option value=":machinery:build">machinery:build</option>
+                    <option value=":example:build">example:build</option>
+                </select>
+                <button id="startBuild" class="btn btn-primary">Start Build</button>
+                <button id="stopBuild" class="btn btn-danger" disabled>Stop Build</button>
+            </div>
+        </div>
+
+        <div class="build-status">
+            <div class="status-header">
+                <h3>Build Status: <span id="buildStatusText">Idle</span></h3>
+                <div class="build-time" id="buildTime"></div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+                <div class="progress-text" id="progressText">0%</div>
+            </div>
+        </div>
+
+        <div class="module-status">
+            <h3>Module Status</h3>
+            <div class="module-grid">
+                <div class="module-card" id="module-core">
+                    <div class="module-name">Core</div>
+                    <div class="module-indicator pending"></div>
+                    <div class="module-task"></div>
+                </div>
+                <div class="module-card" id="module-energy">
+                    <div class="module-name">Energy</div>
+                    <div class="module-indicator pending"></div>
+                    <div class="module-task"></div>
+                </div>
+                <div class="module-card" id="module-machinery">
+                    <div class="module-name">Machinery</div>
+                    <div class="module-indicator pending"></div>
+                    <div class="module-task"></div>
+                </div>
+                <div class="module-card" id="module-example">
+                    <div class="module-name">Example</div>
+                    <div class="module-indicator pending"></div>
+                    <div class="module-task"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="build-output">
+            <h3>Build Output</h3>
+            <div class="output-controls">
+                <button id="clearOutput" class="btn btn-secondary">Clear Output</button>
+                <label for="autoScroll">
+                    <input type="checkbox" id="autoScroll" checked> Auto-scroll
+                </label>
+            </div>
+            <div class="output-container">
+                <pre id="outputText"></pre>
+            </div>
+        </div>
+
+        <div class="task-list">
+            <h3>Recent Tasks</h3>
+            <div class="task-container" id="taskContainer">
+                <!-- Tasks will be added here dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
