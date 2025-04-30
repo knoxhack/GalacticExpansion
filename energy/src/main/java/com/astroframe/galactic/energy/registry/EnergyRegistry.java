@@ -99,7 +99,7 @@ public class EnergyRegistry {
      * @return The registered network
      */
     public EnergyNetwork createNetwork(String id, Level level, EnergyType type) {
-        ResourceLocation networkId = new ResourceLocation(GalacticEnergy.MOD_ID, id);
+        ResourceLocation networkId = ResourceLocation.fromNamespaceAndPath(GalacticEnergy.MOD_ID, id);
         BaseEnergyNetwork network = new BaseEnergyNetwork(networkId, level, type);
         registerNetwork(id, network);
         return network;
@@ -137,7 +137,7 @@ public class EnergyRegistry {
         EnergyNetwork network = defaultNetworks.get(type);
         if (network == null) {
             String id = "default_" + type.getId();
-            ResourceLocation networkId = new ResourceLocation(GalacticEnergy.MOD_ID, id);
+            ResourceLocation networkId = ResourceLocation.fromNamespaceAndPath(GalacticEnergy.MOD_ID, id);
             BaseEnergyNetwork newNetwork = new BaseEnergyNetwork(networkId, level, type);
             registerNetwork(id, newNetwork);
             defaultNetworks.put(type, newNetwork);
