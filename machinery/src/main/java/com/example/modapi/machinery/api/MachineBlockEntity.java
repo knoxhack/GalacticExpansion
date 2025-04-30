@@ -23,7 +23,6 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider.Provider;
 
 /**
  * Base block entity class for machines.
@@ -192,11 +191,11 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
     }
     
     @Override
-    protected void saveAdditional(CompoundTag tag, Provider provider) {
-        super.saveAdditional(tag, provider);
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
         
         // Save inventory
-        ContainerHelper.saveAllItems(tag, this.inventory, provider);
+        ContainerHelper.saveAllItems(tag, this.inventory);
         
         // Save energy
         CompoundTag energyTag = new CompoundTag();
@@ -211,11 +210,11 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
     }
     
     @Override
-    public void load(BlockState state, CompoundTag tag, Provider provider) {
-        super.load(state, tag, provider);
+    public void load(CompoundTag tag) {
+        super.load(tag);
         
         // Load inventory
-        ContainerHelper.loadAllItems(tag, this.inventory, provider);
+        ContainerHelper.loadAllItems(tag, this.inventory);
         
         // We can't directly modify the energy in our anonymous class implementation
         // So we just track the values in the NBT for now
@@ -232,9 +231,9 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
     }
     
     @Override
-    public CompoundTag getUpdateTag(Provider provider) {
-        CompoundTag tag = super.getUpdateTag(provider);
-        saveAdditional(tag, provider);
+    public CompoundTag getUpdateTag() {
+        CompoundTag tag = super.getUpdateTag();
+        saveAdditional(tag);
         return tag;
     }
     
