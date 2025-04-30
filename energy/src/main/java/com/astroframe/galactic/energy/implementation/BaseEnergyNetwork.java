@@ -1,11 +1,9 @@
 package com.astroframe.galactic.energy.implementation;
 
 import com.astroframe.galactic.energy.api.EnergyNetwork;
+import com.astroframe.galactic.energy.api.EnergyStorage;
 import com.astroframe.galactic.energy.api.EnergyType;
-import com.astroframe.galactic.energy.api.IEnergyHandler;
-import com.astroframe.galactic.energy.api.energynetwork.WorldChunk;
 import com.astroframe.galactic.energy.api.energynetwork.WorldPosition;
-
 import java.util.*;
 
 /**
@@ -14,8 +12,7 @@ import java.util.*;
  */
 public abstract class BaseEnergyNetwork implements EnergyNetwork {
     
-    protected final Map<WorldPosition, IEnergyHandler> nodes = new HashMap<>();
-    protected final Map<WorldChunk, Set<WorldPosition>> chunkToNodesMap = new HashMap<>();
+    protected final Map<WorldPosition, EnergyStorage> storages = new HashMap<>();
     protected final EnergyType energyType;
     
     /**
@@ -28,71 +25,39 @@ public abstract class BaseEnergyNetwork implements EnergyNetwork {
     }
     
     @Override
-    public List<IEnergyHandler> getNodes() {
-        return new ArrayList<>(nodes.values());
-    }
-    
-    @Override
-    public Optional<IEnergyHandler> getNode(WorldPosition position) {
-        return Optional.ofNullable(nodes.get(position));
-    }
-    
-    @Override
-    public boolean addNode(IEnergyHandler handler, WorldPosition position) {
-        if (nodes.containsKey(position)) {
-            return false;
-        }
-        
-        // Only add nodes that match this network's energy type
-        if (handler.getEnergyType() != energyType) {
-            return false;
-        }
-        
-        nodes.put(position, handler);
-        
-        // Register in chunk map for efficient loading/unloading
-        WorldChunk chunk = new WorldChunk(position);
-        chunkToNodesMap.computeIfAbsent(chunk, k -> new HashSet<>()).add(position);
-        
-        return true;
-    }
-    
-    @Override
-    public boolean removeNode(WorldPosition position) {
-        IEnergyHandler handler = nodes.remove(position);
-        
-        if (handler != null) {
-            // Remove from chunk mapping
-            WorldChunk chunk = new WorldChunk(position);
-            Set<WorldPosition> chunkNodes = chunkToNodesMap.get(chunk);
-            
-            if (chunkNodes != null) {
-                chunkNodes.remove(position);
-                
-                if (chunkNodes.isEmpty()) {
-                    chunkToNodesMap.remove(chunk);
-                }
-            }
-            
-            return true;
-        }
-        
-        return false;
-    }
-    
-    @Override
-    public void onChunkStatusChange(WorldChunk chunk, boolean loaded) {
-        // Override in subclasses if needed
-    }
-    
-    @Override
     public EnergyType getEnergyType() {
         return energyType;
     }
     
     @Override
-    public boolean areNodesConnected(WorldPosition from, WorldPosition to) {
-        List<WorldPosition> path = findPath(from, to);
-        return !path.isEmpty();
+    public void addStorage(WorldPosition position, EnergyStorage storage) {
+        if (storage.getEnergyType() != energyType) {
+            throw new IllegalArgumentException("Storage energy type does not match network energy type");
+        }
+        
+        storages.put(position, storage);
     }
+    
+    @Override
+    public void removeStorage(WorldPosition position) {
+        storages.remove(position);
+    }
+    
+    @Override
+    public EnergyStorage getStorage(WorldPosition position) {
+        return storages.get(position);
+    }
+    
+    @Override
+    public boolean hasStorage(WorldPosition position) {
+        return storages.containsKey(position);
+    }
+    
+    /**
+     * Process a single tick of energy transfers within the network.
+     * This handles energy distribution from providers to consumers.
+     * Each subclass should implement this based on its specific energy distribution algorithm.
+     */
+    @Override
+    public abstract void tick();
 }

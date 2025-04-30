@@ -7,8 +7,8 @@ import com.astroframe.galactic.energy.GalacticEnergy;
 import com.astroframe.galactic.energy.api.EnergyNetwork;
 import com.astroframe.galactic.energy.api.EnergyStorage;
 import com.astroframe.galactic.energy.api.EnergyType;
-import com.astroframe.galactic.energy.implementation.BaseEnergyNetwork;
 import com.astroframe.galactic.energy.implementation.BaseEnergyStorage;
+import com.astroframe.galactic.energy.implementation.CachedEnergyNetwork;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 
