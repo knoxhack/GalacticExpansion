@@ -20,17 +20,45 @@ let buildStartTime;
 let buildEndTime;
 let timerInterval;
 
-// Connect to WebSocket
+// Connect to WebSocket with improved reconnection logic
 function connectWebSocket() {
     console.log('Connecting to WebSocket...');
+    
+    // Show connection status in UI
+    const connectionNotice = document.createElement('div');
+    connectionNotice.className = 'connection-notice';
+    connectionNotice.textContent = 'Connecting to build server...';
+    document.body.appendChild(connectionNotice);
+    
+    // Create new socket
     socket = new WebSocket(wsUrl);
+    
+    // Set connection timeout
+    const connectionTimeout = setTimeout(() => {
+        if (socket.readyState !== WebSocket.OPEN) {
+            socket.close();
+            connectionNotice.textContent = 'Connection timed out. Retrying...';
+            connectionNotice.className = 'connection-notice error';
+        }
+    }, 5000);
     
     socket.onopen = () => {
         console.log('WebSocket connection established');
+        // Clear timeout and reconnect interval
+        clearTimeout(connectionTimeout);
         if (reconnectInterval) {
             clearInterval(reconnectInterval);
             reconnectInterval = null;
         }
+        
+        // Update UI
+        connectionNotice.textContent = 'Connected to build server';
+        connectionNotice.className = 'connection-notice success';
+        setTimeout(() => {
+            connectionNotice.style.opacity = 0;
+            setTimeout(() => connectionNotice.remove(), 1000);
+        }, 2000);
+        
         // Request initial status
         socket.send(JSON.stringify({ type: 'requestStatus' }));
     };
@@ -39,37 +67,66 @@ function connectWebSocket() {
         try {
             const message = JSON.parse(event.data);
             
-            if (message.type === 'status') {
-                updateBuildStatus(message.data);
-            } else if (message.type === 'buildOutput') {
-                updateBuildOutput(message.data);
-            } else if (message.type === 'tasks') {
-                updateTaskList(message.data);
-            } else if (message.type === 'error') {
-                console.error('Build error:', message.data);
-                // Display error in the UI
-                const errorSpan = document.createElement('span');
-                errorSpan.className = 'output-error';
-                errorSpan.textContent = message.data;
-                outputText.appendChild(errorSpan);
-                outputText.appendChild(document.createElement('br'));
-                
-                // Auto-scroll if enabled
-                if (autoScrollCheckbox.checked) {
-                    outputText.scrollTop = outputText.scrollHeight;
-                }
+            switch(message.type) {
+                case 'status':
+                    updateBuildStatus(message.data);
+                    break;
+                case 'buildOutput':
+                    updateBuildOutput(message.data);
+                    break;
+                case 'tasks':
+                    updateTaskList(message.data);
+                    break;
+                case 'error':
+                    console.error('Build error:', message.data);
+                    // Display error in the UI with timestamp
+                    const errorSpan = document.createElement('span');
+                    errorSpan.className = 'output-error';
+                    const timestamp = new Date().toLocaleTimeString();
+                    errorSpan.textContent = `[${timestamp}] ERROR: ${message.data}`;
+                    outputText.appendChild(errorSpan);
+                    outputText.appendChild(document.createElement('br'));
+                    
+                    // Auto-scroll if enabled
+                    if (autoScrollCheckbox.checked) {
+                        outputText.scrollTop = outputText.scrollHeight;
+                    }
+                    break;
+                default:
+                    console.warn('Unknown message type:', message.type);
             }
         } catch (error) {
             console.error('Error parsing WebSocket message:', error);
         }
     };
     
-    socket.onclose = () => {
-        console.log('WebSocket connection closed');
-        // Try to reconnect
+    socket.onclose = (event) => {
+        console.log(`WebSocket connection closed: ${event.code} ${event.reason}`);
+        clearTimeout(connectionTimeout);
+        
+        // Update UI
+        connectionNotice.textContent = 'Disconnected from build server. Reconnecting...';
+        connectionNotice.className = 'connection-notice error';
+        
+        // Disable build controls
+        startBuildBtn.disabled = true;
+        stopBuildBtn.disabled = true;
+        
+        // Try to reconnect with exponential backoff
         if (!reconnectInterval) {
+            let retryCount = 0;
+            const maxRetries = 10;
+            
             reconnectInterval = setInterval(() => {
                 if (!socket || socket.readyState === WebSocket.CLOSED) {
+                    retryCount++;
+                    if (retryCount > maxRetries) {
+                        // Reset to base interval after max retries
+                        retryCount = 0;
+                        connectionNotice.textContent = 'Connection failed. Still trying...';
+                    }
+                    const backoffTime = Math.min(30, Math.pow(1.5, retryCount));
+                    console.log(`Reconnecting (attempt ${retryCount}) in ${backoffTime.toFixed(1)}s`);
                     connectWebSocket();
                 }
             }, 3000);
@@ -78,6 +135,8 @@ function connectWebSocket() {
     
     socket.onerror = (error) => {
         console.error('WebSocket error:', error);
+        connectionNotice.textContent = 'Connection error. Retrying...';
+        connectionNotice.className = 'connection-notice error';
     };
 }
 

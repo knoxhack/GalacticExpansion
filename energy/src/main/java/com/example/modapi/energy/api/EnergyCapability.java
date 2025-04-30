@@ -1,6 +1,6 @@
 package com.example.modapi.energy.api;
 
-import com.astroframe.galactic.energy.api.EnergyCapability as GalacticEnergyCapability;
+import com.astroframe.galactic.energy.api.EnergyCapability;
 import com.astroframe.galactic.energy.api.IEnergyHandler;
 import com.example.modapi.energy.ModApiEnergy;
 import net.minecraft.core.Direction;
@@ -19,13 +19,14 @@ public class EnergyCapability {
     /**
      * Resource location for the energy capability.
      */
-    public static final ResourceLocation ENERGY_CAPABILITY = GalacticEnergyCapability.ENERGY_CAPABILITY;
+    public static final ResourceLocation ENERGY_CAPABILITY = 
+        com.astroframe.galactic.energy.api.EnergyCapability.ENERGY_CAPABILITY;
     
     /**
      * A capability that provides energy handling.
      */
     public static final net.neoforged.neoforge.capabilities.BlockCapability<IEnergyHandler, Direction> ENERGY = 
-        GalacticEnergyCapability.ENERGY;
+        com.astroframe.galactic.energy.api.EnergyCapability.ENERGY;
     
     /**
      * Register the energy capability.
@@ -34,8 +35,8 @@ public class EnergyCapability {
      */
     @Deprecated
     public static void register() {
-        ModApiEnergy.LOGGER.warn("EnergyCapability.register() is deprecated, use GalacticEnergyCapability.register() instead");
-        GalacticEnergyCapability.register();
+        ModApiEnergy.LOGGER.warn("EnergyCapability.register() is deprecated, use com.astroframe.galactic.energy.api.EnergyCapability.register() instead");
+        com.astroframe.galactic.energy.api.EnergyCapability.register();
     }
     
     /**

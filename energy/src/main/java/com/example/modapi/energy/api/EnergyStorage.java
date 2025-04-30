@@ -35,14 +35,34 @@ public interface EnergyStorage {
      * 
      * @return Stored energy
      */
-    int getEnergyStored();
+    default int getEnergyStored() {
+        return getEnergy();
+    }
     
     /**
      * Gets the maximum amount of energy that can be stored.
      * 
      * @return Maximum energy
      */
-    int getMaxEnergyStored();
+    default int getMaxEnergyStored() {
+        return getMaxEnergy();
+    }
+    
+    /**
+     * Gets the amount of energy currently stored.
+     * This is the new method name used in Galactic Energy.
+     * 
+     * @return Stored energy
+     */
+    int getEnergy();
+    
+    /**
+     * Gets the maximum amount of energy that can be stored.
+     * This is the new method name used in Galactic Energy.
+     * 
+     * @return Maximum energy
+     */
+    int getMaxEnergy();
     
     /**
      * Returns whether this storage can receive energy.
