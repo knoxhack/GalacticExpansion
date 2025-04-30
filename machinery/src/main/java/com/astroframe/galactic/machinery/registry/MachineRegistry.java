@@ -37,8 +37,8 @@ public class MachineRegistry {
         // Get or create the main machine registry
         machineRegistry = manager.getRegistry("machine")
                 .map(registry -> {
-                    @SuppressWarnings("unchecked")
-                    Registry<Machine> r = (Registry<Machine>) registry;
+                    @SuppressWarnings({"unchecked", "rawtypes"})
+                    Registry<Machine> r = (Registry<Machine>) (Registry) registry;
                     return r;
                 })
                 .orElseGet(() -> {
@@ -52,8 +52,8 @@ public class MachineRegistry {
             String registryName = "machine_" + type.getId();
             Registry<Machine> typeRegistry = manager.getRegistry(registryName)
                     .map(registry -> {
-                        @SuppressWarnings("unchecked")
-                        Registry<Machine> r = (Registry<Machine>) registry;
+                        @SuppressWarnings({"unchecked", "rawtypes"})
+                        Registry<Machine> r = (Registry<Machine>) (Registry) registry;
                         return r;
                     })
                     .orElseGet(() -> {

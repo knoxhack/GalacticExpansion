@@ -178,7 +178,8 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
         return ClientboundBlockEntityDataPacket.create(this);
     }
     
-    public CompoundTag getUpdateTag(net.neoforged.api.distmarker.Provider provider) {
+    @Override
+    public CompoundTag getUpdateTag(Provider provider) {
         CompoundTag tag = super.getUpdateTag(provider);
         saveAdditional(tag, provider);
         return tag;

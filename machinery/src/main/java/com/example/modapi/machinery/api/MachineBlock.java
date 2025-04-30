@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+
 import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.function.Supplier;
@@ -26,7 +27,7 @@ import java.util.function.Supplier;
  * Handles common machine block functionality like facing direction and active state.
  */
 public abstract class MachineBlock extends Block implements EntityBlock {
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    // Use appropriate property for facing
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     
     private final Supplier<BlockEntityType<? extends MachineBlockEntity>> blockEntityType;
@@ -59,7 +60,7 @@ public abstract class MachineBlock extends Block implements EntityBlock {
                 .setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
     
-    @Override
+    // This method implements Block.use
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
