@@ -1,91 +1,38 @@
 package com.example.modapi.energy;
 
-import com.example.modapi.core.ModApiCore;
-import com.example.modapi.core.api.Module;
-import com.example.modapi.core.api.ModRegistry;
-import com.example.modapi.core.util.ModLogger;
-import com.example.modapi.energy.api.EnergyCapability;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModLoadingContext;
+import com.astroframe.galactic.energy.GalacticEnergy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * The main mod class for the ModApi Energy module.
- * Provides energy-related functionality building on the core API.
+ * Compatibility class that redirects to the new GalacticEnergy module.
+ * This class exists only for backward compatibility with existing code.
+ * All new code should use GalacticEnergy directly.
+ * 
+ * @deprecated Use {@link com.astroframe.galactic.energy.GalacticEnergy} instead
  */
-@Mod(ModApiEnergy.MOD_ID)
-public class ModApiEnergy implements Module {
-    public static final String MOD_ID = "modapi_energy";
-    public static final ModLogger LOGGER = new ModLogger(MOD_ID);
+@Deprecated
+public class ModApiEnergy {
+    public static final String MOD_ID = GalacticEnergy.MOD_ID;
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     
-    private static ModApiEnergy instance;
+    private static final ModApiEnergy instance = new ModApiEnergy();
     
     /**
-     * Constructor for the energy module.
-     * Registers with the core mod and sets up event listeners.
+     * Constructor for the compatibility layer.
      */
-    public ModApiEnergy() {
-        instance = this;
-        
-        // Register this module with the core
-        ModApiCore.getInstance().getRegistry().registerModule(this);
-        
-        ModContainer container = ModLoadingContext.get().getActiveContainer();
-        IEventBus modEventBus = container.getEventBus();
-        modEventBus.addListener(this::setup);
-        
-        LOGGER.info("ModApi Energy initialized");
+    private ModApiEnergy() {
+        LOGGER.warn("ModApiEnergy is deprecated, use GalacticEnergy instead");
     }
     
     /**
-     * Common setup method called during mod initialization.
+     * Get the singleton instance of this compatibility layer.
      * 
-     * @param event The setup event
+     * @return The singleton instance
+     * @deprecated Use {@link com.astroframe.galactic.energy.GalacticEnergy} instead
      */
-    private void setup(final FMLCommonSetupEvent event) {
-        LOGGER.info("ModApi Energy setup phase");
-        
-        // Register capabilities
-        event.enqueueWork(() -> {
-            EnergyCapability.register();
-        });
-    }
-    
-    /**
-     * Get the singleton instance of the energy module.
-     * 
-     * @return The module instance
-     */
+    @Deprecated
     public static ModApiEnergy getInstance() {
         return instance;
-    }
-
-    @Override
-    public String getModuleId() {
-        return "energy";
-    }
-
-    @Override
-    public String getModuleName() {
-        return "ModApi Energy";
-    }
-
-    @Override
-    public String getModuleVersion() {
-        return "1.0.0";
-    }
-
-    @Override
-    public void registerContent(ModRegistry registry) {
-        // Register energy-related blocks, items, etc.
-        LOGGER.info("Registering energy module content");
-    }
-    
-    @Override
-    public String[] getDependencies() {
-        // This module depends only on the core module
-        return new String[] { "core" };
     }
 }

@@ -1,146 +1,93 @@
 package com.example.modapi.energy.api;
 
-import net.minecraft.nbt.CompoundTag;
+import com.astroframe.galactic.energy.api.EnergyType;
 
 /**
- * Base implementation of an energy storage.
- * Stores energy with a maximum capacity, input and output rates.
+ * Compatibility interface for energy storage.
+ * This interface exists only for backward compatibility with existing code.
+ * All new code should use com.astroframe.galactic.energy.api.EnergyStorage directly.
+ * 
+ * @deprecated Use {@link com.astroframe.galactic.energy.api.EnergyStorage} instead
  */
-public class EnergyStorage implements IEnergyHandler {
-    protected int energy;
-    protected int capacity;
-    protected int maxReceive;
-    protected int maxExtract;
-    protected EnergyUnit unit;
-
+@Deprecated
+public interface EnergyStorage {
+    
     /**
-     * Constructor for EnergyStorage.
+     * Adds energy to the storage.
      * 
-     * @param capacity The maximum energy capacity
-     * @param maxReceive The maximum input rate
-     * @param maxExtract The maximum output rate
-     * @param energy The initial energy amount
-     * @param unit The energy unit
+     * @param maxReceive Maximum amount to receive
+     * @param simulate If true, the addition is only simulated
+     * @return Amount of energy that was (or would have been) received
      */
-    public EnergyStorage(int capacity, int maxReceive, int maxExtract, int energy, EnergyUnit unit) {
-        this.capacity = capacity;
-        this.maxReceive = maxReceive;
-        this.maxExtract = maxExtract;
-        this.energy = Math.max(0, Math.min(capacity, energy));
-        this.unit = unit;
-    }
-
+    int receiveEnergy(int maxReceive, boolean simulate);
+    
     /**
-     * Creates a new energy storage with default values.
+     * Removes energy from the storage.
      * 
-     * @param capacity The maximum capacity
-     * @return A new energy storage
+     * @param maxExtract Maximum amount to extract
+     * @param simulate If true, the extraction is only simulated
+     * @return Amount of energy that was (or would have been) extracted
      */
-    public static EnergyStorage create(int capacity) {
-        return new EnergyStorage(capacity, capacity, capacity, 0, EnergyUnit.FORGE_ENERGY);
-    }
-
+    int extractEnergy(int maxExtract, boolean simulate);
+    
     /**
-     * Creates a new energy storage with custom receive and extract rates.
+     * Gets the amount of energy currently stored.
      * 
-     * @param capacity The maximum capacity
-     * @param maxReceive The maximum input rate
-     * @param maxExtract The maximum output rate
-     * @return A new energy storage
+     * @return Stored energy
      */
-    public static EnergyStorage create(int capacity, int maxReceive, int maxExtract) {
-        return new EnergyStorage(capacity, maxReceive, maxExtract, 0, EnergyUnit.FORGE_ENERGY);
-    }
-
+    int getEnergyStored();
+    
     /**
-     * Creates a new energy storage with custom receive and extract rates and initial energy.
+     * Gets the maximum amount of energy that can be stored.
      * 
-     * @param capacity The maximum capacity
-     * @param maxReceive The maximum input rate
-     * @param maxExtract The maximum output rate
-     * @param energy The initial energy amount
-     * @return A new energy storage
+     * @return Maximum energy
      */
-    public static EnergyStorage create(int capacity, int maxReceive, int maxExtract, int energy) {
-        return new EnergyStorage(capacity, maxReceive, maxExtract, energy, EnergyUnit.FORGE_ENERGY);
-    }
-
-    @Override
-    public int receiveEnergy(int maxReceive, boolean simulate) {
-        if (!canReceive())
-            return 0;
-
-        int energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, maxReceive));
-        if (!simulate)
-            energy += energyReceived;
-        return energyReceived;
-    }
-
-    @Override
-    public int extractEnergy(int maxExtract, boolean simulate) {
-        if (!canExtract())
-            return 0;
-
-        int energyExtracted = Math.min(energy, Math.min(this.maxExtract, maxExtract));
-        if (!simulate)
-            energy -= energyExtracted;
-        return energyExtracted;
-    }
-
-    @Override
-    public int getEnergyStored() {
-        return energy;
-    }
-
-    @Override
-    public int getMaxEnergyStored() {
-        return capacity;
-    }
-
-    @Override
-    public boolean canExtract() {
-        return maxExtract > 0;
-    }
-
-    @Override
-    public boolean canReceive() {
-        return maxReceive > 0;
-    }
-
-    @Override
-    public EnergyUnit getEnergyUnit() {
-        return unit;
-    }
-
+    int getMaxEnergyStored();
+    
     /**
-     * Serializes the energy storage to NBT.
+     * Returns whether this storage can receive energy.
      * 
-     * @param nbt The NBT compound to write to
-     * @return The NBT compound
+     * @return True if this storage can receive energy
      */
-    public CompoundTag serializeNBT(CompoundTag nbt) {
-        nbt.putInt("Energy", energy);
-        nbt.putInt("Capacity", capacity);
-        nbt.putInt("MaxReceive", maxReceive);
-        nbt.putInt("MaxExtract", maxExtract);
-        nbt.putString("Unit", unit.name());
-        return nbt;
-    }
-
+    boolean canReceive();
+    
     /**
-     * Deserializes the energy storage from NBT.
+     * Returns whether this storage can extract energy.
      * 
-     * @param nbt The NBT compound to read from
+     * @return True if this storage can extract energy
      */
-    public void deserializeNBT(CompoundTag nbt) {
-        energy = nbt.getInt("Energy");
-        capacity = nbt.getInt("Capacity");
-        maxReceive = nbt.getInt("MaxReceive");
-        maxExtract = nbt.getInt("MaxExtract");
-        try {
-            unit = EnergyUnit.valueOf(nbt.getString("Unit"));
-        } catch (IllegalArgumentException e) {
-            unit = EnergyUnit.FORGE_ENERGY;
-        }
+    boolean canExtract();
+    
+    /**
+     * Gets the type of energy stored.
+     * 
+     * @return The energy type
+     */
+    EnergyType getEnergyType();
+    
+    /**
+     * Simple enum for energy units.
+     * This is maintained for backward compatibility.
+     */
+    enum EnergyUnit {
+        /**
+         * Standard Forge Energy unit.
+         */
+        FORGE_ENERGY,
+        
+        /**
+         * RF energy unit (compatible with Forge Energy).
+         */
+        RF,
+        
+        /**
+         * EU energy unit (IndustrialCraft 2).
+         */
+        EU,
+        
+        /**
+         * Custom energy unit.
+         */
+        CUSTOM
     }
 }
