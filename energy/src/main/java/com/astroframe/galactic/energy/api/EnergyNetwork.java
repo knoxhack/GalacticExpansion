@@ -1,195 +1,103 @@
 package com.astroframe.galactic.energy.api;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.Level;
+import com.astroframe.galactic.energy.api.energynetwork.WorldChunk;
+import com.astroframe.galactic.energy.api.energynetwork.WorldPosition;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Interface for energy networks.
- * An energy network connects energy sources, consumers, and storage devices
- * in a spatial representation, allowing for pathing and distance-based calculations.
+ * Represents a network of connected energy handlers that can transfer energy between them.
  */
 public interface EnergyNetwork {
     
     /**
-     * Get the unique identifier for this network.
+     * Gets all nodes in the network.
      * 
-     * @return The network ID
+     * @return All nodes in the network
      */
-    ResourceLocation getId();
+    List<IEnergyHandler> getNodes();
     
     /**
-     * Get the energy type this network handles.
+     * Gets the node at the given position.
+     * 
+     * @param position The position
+     * @return The node, if one exists
+     */
+    Optional<IEnergyHandler> getNode(WorldPosition position);
+    
+    /**
+     * Adds a node to the network.
+     * 
+     * @param handler The energy handler to add
+     * @param position The position of the handler
+     * @return True if the node was added
+     */
+    boolean addNode(IEnergyHandler handler, WorldPosition position);
+    
+    /**
+     * Removes a node from the network.
+     * 
+     * @param position The position of the handler to remove
+     * @return True if the node was removed
+     */
+    boolean removeNode(WorldPosition position);
+    
+    /**
+     * Updates the network when a chunk is loaded or unloaded.
+     * 
+     * @param chunk The chunk
+     * @param loaded Whether the chunk is loaded (true) or unloaded (false)
+     */
+    void onChunkStatusChange(WorldChunk chunk, boolean loaded);
+    
+    /**
+     * Gets the type of energy used by this network.
      * 
      * @return The energy type
      */
     EnergyType getEnergyType();
     
     /**
-     * Get the level (dimension) this network exists in.
+     * Distributes energy from sources to sinks within the network.
+     * Called each tick to transfer energy between nodes.
      * 
-     * @return The level
+     * @return The amount of energy transferred
      */
-    Level getLevel();
+    int distributeEnergy();
     
     /**
-     * Add a node to the network at the specified position.
+     * Finds the path from one node to another.
      * 
-     * @param pos The position of the node
-     * @param storage The energy storage at this node
-     * @return true if the node was added, false if a node already exists at that position
+     * @param from The source position
+     * @param to The destination position
+     * @return The path between nodes, or an empty list if no path exists
      */
-    boolean addNode(BlockPos pos, EnergyStorage storage);
+    List<WorldPosition> findPath(WorldPosition from, WorldPosition to);
     
     /**
-     * Remove a node from the network.
+     * Checks if two nodes are connected.
      * 
-     * @param pos The position of the node to remove
-     * @return true if the node was removed, false if no node exists at that position
+     * @param from The source position
+     * @param to The destination position
+     * @return True if the nodes are connected
      */
-    boolean removeNode(BlockPos pos);
+    boolean areNodesConnected(WorldPosition from, WorldPosition to);
     
     /**
-     * Get all node positions in the network.
+     * Gets the energy loss for transferring energy along the given path.
      * 
-     * @return A collection of block positions
+     * @param path The path
+     * @return The energy loss as a percentage (0.0 to 1.0)
      */
-    Collection<BlockPos> getNodes();
+    float getEnergyLoss(List<WorldPosition> path);
     
     /**
-     * Get the energy storage at the specified node.
+     * Gets the energy transfer rate for the given path.
      * 
-     * @param pos The position of the node
-     * @return The energy storage, or null if no node exists at that position
+     * @param path The path
+     * @return The maximum energy transfer rate
      */
-    EnergyStorage getNodeStorage(BlockPos pos);
-    
-    /**
-     * Transfer energy between two nodes in the network.
-     * 
-     * @param source The source node position
-     * @param destination The destination node position
-     * @param amount The maximum amount of energy to transfer
-     * @param simulate If true, the operation will only be simulated
-     * @return The result of the energy transfer operation
-     */
-    EnergyTransferResult transferEnergy(BlockPos source, BlockPos destination, int amount, boolean simulate);
-    
-    /**
-     * Add a storage device to the network.
-     * 
-     * @param storage The storage to add
-     * @return true if the storage was added, false if it was incompatible
-     * @deprecated Use {@link #addNode(BlockPos, EnergyStorage)} instead
-     */
-    @Deprecated
-    default boolean addStorage(EnergyStorage storage) {
-        // Default implementation for backward compatibility
-        return false;
-    }
-    
-    /**
-     * Remove a storage device from the network.
-     * 
-     * @param storage The storage to remove
-     * @return true if the storage was removed, false if it wasn't in the network
-     * @deprecated Use {@link #removeNode(BlockPos)} instead
-     */
-    @Deprecated
-    default boolean removeStorage(EnergyStorage storage) {
-        // Default implementation for backward compatibility
-        return false;
-    }
-    
-    /**
-     * Get all storage devices in the network.
-     * 
-     * @return A collection of storage devices
-     * @deprecated Use {@link #getNodes()} and {@link #getNodeStorage(BlockPos)} instead
-     */
-    @Deprecated
-    default Collection<EnergyStorage> getStorageDevices() {
-        // Default implementation for backward compatibility
-        return java.util.Collections.emptyList();
-    }
-    
-    /**
-     * Add energy to the network.
-     * The energy will be distributed among storage devices.
-     * 
-     * @param amount The amount of energy to add
-     * @param simulate If true, the operation will only be simulated
-     * @return The amount of energy that was (or would have been) added
-     * @deprecated Use {@link #transferEnergy(BlockPos, BlockPos, int, boolean)} instead
-     */
-    @Deprecated
-    default int addEnergy(int amount, boolean simulate) {
-        // Default implementation for backward compatibility
-        return 0;
-    }
-    
-    /**
-     * Extract energy from the network.
-     * The energy will be taken from storage devices.
-     * 
-     * @param amount The maximum amount of energy to extract
-     * @param simulate If true, the operation will only be simulated
-     * @return The amount of energy that was (or would have been) extracted
-     * @deprecated Use {@link #transferEnergy(BlockPos, BlockPos, int, boolean)} instead
-     */
-    @Deprecated
-    default int extractEnergy(int amount, boolean simulate) {
-        // Default implementation for backward compatibility
-        return 0;
-    }
-    
-    /**
-     * Get the total amount of energy stored in the network.
-     * 
-     * @return The total stored energy
-     */
-    default int getEnergy() {
-        return getNodes().stream()
-            .map(this::getNodeStorage)
-            .filter(java.util.Objects::nonNull)
-            .mapToInt(EnergyStorage::getEnergyStored)
-            .sum();
-    }
-    
-    /**
-     * Get the maximum amount of energy that can be stored in the network.
-     * 
-     * @return The maximum energy capacity
-     */
-    default int getMaxEnergy() {
-        return getNodes().stream()
-            .map(this::getNodeStorage)
-            .filter(java.util.Objects::nonNull)
-            .mapToInt(EnergyStorage::getMaxEnergyStored)
-            .sum();
-    }
-    
-    /**
-     * Notifies the network that a chunk's loaded status has changed.
-     * Implementations should handle this to optimize network operations 
-     * with unloaded chunks.
-     * 
-     * @param chunkPos The chunk position that changed
-     * @param loaded Whether the chunk is now loaded (true) or unloaded (false)
-     */
-    default void onChunkStatusChange(ChunkPos chunkPos, boolean loaded) {
-        // Default empty implementation
-    }
-    
-    /**
-     * Process the network for one game tick.
-     * This includes transferring energy between nodes, balancing storage,
-     * and any other periodic operations.
-     */
-    default void tick() {
-        // Default empty implementation
-    }
+    int getTransferRate(List<WorldPosition> path);
 }

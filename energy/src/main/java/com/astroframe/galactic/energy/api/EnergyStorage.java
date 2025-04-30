@@ -1,91 +1,81 @@
 package com.astroframe.galactic.energy.api;
 
 /**
- * Interface for energy storage devices.
- * This defines the basic operations that all energy storage devices should support.
+ * Interface for energy storage.
+ * Represents a container for energy that can receive and extract energy.
  */
 public interface EnergyStorage {
     
     /**
-     * Add energy to the storage.
+     * Adds energy to the storage.
      * 
-     * @param amount The amount of energy to add
-     * @param simulate If true, the operation will only be simulated
-     * @return The amount of energy that was (or would have been) added
+     * @param amount Maximum amount to receive
+     * @param simulate If true, the addition is only simulated
+     * @return Amount of energy that was (or would have been) received
      */
     int receiveEnergy(int amount, boolean simulate);
     
     /**
-     * Remove energy from the storage.
+     * Removes energy from the storage.
      * 
-     * @param amount The maximum amount of energy to remove
-     * @param simulate If true, the operation will only be simulated
-     * @return The amount of energy that was (or would have been) removed
+     * @param amount Maximum amount to extract
+     * @param simulate If true, the extraction is only simulated
+     * @return Amount of energy that was (or would have been) extracted
      */
     int extractEnergy(int amount, boolean simulate);
     
     /**
-     * Get the amount of energy currently stored.
+     * Gets the amount of energy currently stored.
      * 
-     * @return The stored energy
+     * @return Stored energy
      */
     int getEnergy();
     
     /**
-     * Get the amount of energy currently stored.
-     * This is an alias for getEnergy() to maintain compatibility with stream operations.
+     * Gets the maximum amount of energy that can be stored.
      * 
-     * @return The stored energy
+     * @return Maximum energy
+     */
+    int getMaxEnergy();
+    
+    /**
+     * Gets the amount of energy currently stored.
+     * Use this alias for compatibility with NeoForge energy API.
+     * 
+     * @return Stored energy
      */
     default int getEnergyStored() {
         return getEnergy();
     }
     
     /**
-     * Get the maximum amount of energy that can be stored.
+     * Gets the maximum amount of energy that can be stored.
+     * Use this alias for compatibility with NeoForge energy API.
      * 
-     * @return The maximum energy capacity
-     */
-    int getMaxEnergy();
-    
-    /**
-     * Get the maximum amount of energy that can be stored.
-     * This is an alias for getMaxEnergy() to maintain compatibility with stream operations.
-     * 
-     * @return The maximum energy capacity
+     * @return Maximum energy
      */
     default int getMaxEnergyStored() {
         return getMaxEnergy();
     }
     
     /**
-     * Check if this storage can have energy extracted.
+     * Returns whether this storage can receive energy.
      * 
-     * @return true if energy can be extracted, false otherwise
-     */
-    boolean canExtract();
-    
-    /**
-     * Check if this storage can receive energy.
-     * 
-     * @return true if energy can be received, false otherwise
+     * @return True if this storage can receive energy
      */
     boolean canReceive();
     
     /**
-     * Get the type of energy this storage can handle.
+     * Returns whether this storage can extract energy.
+     * 
+     * @return True if this storage can extract energy
+     */
+    boolean canExtract();
+    
+    /**
+     * Gets the type of energy stored.
      * 
      * @return The energy type
      */
     EnergyType getEnergyType();
-    
-    /**
-     * Get the fill level as a percentage (0.0 to 1.0).
-     * 
-     * @return The fill level
-     */
-    default float getFillLevel() {
-        int maxEnergy = getMaxEnergy();
-        return maxEnergy > 0 ? (float) getEnergy() / maxEnergy : 0;
-    }
 }

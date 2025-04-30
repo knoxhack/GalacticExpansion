@@ -1,301 +1,228 @@
 package com.astroframe.galactic.energy.implementation;
 
-import com.astroframe.galactic.energy.api.EnergyNetwork;
-import com.astroframe.galactic.energy.api.EnergyStorage;
-import com.astroframe.galactic.energy.api.EnergyTransferResult;
 import com.astroframe.galactic.energy.api.EnergyType;
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.ChunkPos;
+import com.astroframe.galactic.energy.api.IEnergyHandler;
+import com.astroframe.galactic.energy.api.energynetwork.WorldChunk;
+import com.astroframe.galactic.energy.api.energynetwork.WorldPosition;
 import net.minecraft.world.level.Level;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 /**
- * An optimized implementation of EnergyNetwork that caches network paths and
- * manages energy transfers efficiently. This implementation improves performance
- * by reducing repeated calculations for frequently accessed paths in the network.
- * It also provides chunk-based management to handle unloaded chunks properly.
+ * An energy network implementation that caches paths between nodes.
+ * This provides more efficient energy distribution by avoiding recalculating paths.
  */
-public class CachedEnergyNetwork implements EnergyNetwork {
-
-    private final ResourceLocation id;
-    private final EnergyType energyType;
+public class CachedEnergyNetwork extends BaseEnergyNetwork {
+    
+    private final Map<CachedPathKey, List<WorldPosition>> pathCache = new HashMap<>();
+    private final Map<CachedPathKey, Long> pathExpirations = new HashMap<>();
+    
+    // Path cache expiration time (in milliseconds)
+    private static final long PATH_CACHE_EXPIRATION = 30_000; // 30 seconds
+    
+    // Reference to the level for chunk status checking
     private final Level level;
-    private final Map<BlockPos, EnergyStorage> nodes = new HashMap<>();
-    
-    // Cache for network paths (source → destination)
-    private final Map<CachedPathKey, List<BlockPos>> pathCache = new ConcurrentHashMap<>();
-    
-    // Expiration time for cached paths (in milliseconds)
-    private final Map<CachedPathKey, Long> pathExpirations = new ConcurrentHashMap<>();
-    private final long pathCacheExpiry = TimeUnit.MINUTES.toMillis(5);
-    
-    // Chunk tracking for optimization
-    private final Map<ChunkPos, Set<BlockPos>> chunkToNodesMap = new HashMap<>();
-    
-    // Transfer rate limiting for stability
-    private final Map<BlockPos, Long> lastTransferTimes = new HashMap<>();
-    private final Map<BlockPos, Double> transferRateLimits = new HashMap<>();
-    private final Map<BlockPos, Double> currentPeriodTransferred = new HashMap<>();
-    private final long rateLimitWindow = TimeUnit.SECONDS.toMillis(1);
     
     /**
-     * Constructor for CachedEnergyNetwork
+     * Creates a new CachedEnergyNetwork.
      * 
-     * @param id The network identifier
-     * @param energyType The energy type this network handles
-     * @param level The level/dimension this network exists in
+     * @param energyType The energy type
+     * @param level The level (world)
      */
-    public CachedEnergyNetwork(ResourceLocation id, EnergyType energyType, Level level) {
-        this.id = id;
-        this.energyType = energyType;
+    public CachedEnergyNetwork(EnergyType energyType, Level level) {
+        super(energyType);
         this.level = level;
     }
-
-    @Override
-    public ResourceLocation getId() {
-        return id;
-    }
-
-    @Override
-    public EnergyType getEnergyType() {
-        return energyType;
-    }
-
-    @Override
-    public Level getLevel() {
-        return level;
-    }
-
-    @Override
-    public synchronized boolean addNode(BlockPos pos, EnergyStorage storage) {
-        if (nodes.containsKey(pos)) {
-            return false;
-        }
-        
-        nodes.put(pos, storage);
-        
-        // Add to chunk tracking
-        ChunkPos chunkPos = new ChunkPos(pos);
-        chunkToNodesMap.computeIfAbsent(chunkPos, k -> new HashSet<>()).add(pos);
-        
-        // Invalidate any cached paths that might be affected
-        invalidateCachedPaths();
-        
-        return true;
-    }
-
-    @Override
-    public synchronized boolean removeNode(BlockPos pos) {
-        if (!nodes.containsKey(pos)) {
-            return false;
-        }
-        
-        nodes.remove(pos);
-        
-        // Remove from chunk tracking
-        ChunkPos chunkPos = new ChunkPos(pos);
-        Set<BlockPos> chunkNodes = chunkToNodesMap.get(chunkPos);
-        if (chunkNodes != null) {
-            chunkNodes.remove(pos);
-            if (chunkNodes.isEmpty()) {
-                chunkToNodesMap.remove(chunkPos);
-            }
-        }
-        
-        // Clean up rate limit data
-        lastTransferTimes.remove(pos);
-        transferRateLimits.remove(pos);
-        currentPeriodTransferred.remove(pos);
-        
-        // Invalidate any cached paths that might be affected
-        invalidateCachedPaths();
-        
-        return true;
-    }
-
-    @Override
-    public Collection<BlockPos> getNodes() {
-        return new ArrayList<>(nodes.keySet());
-    }
-
-    @Override
-    public EnergyStorage getNodeStorage(BlockPos pos) {
-        return nodes.get(pos);
-    }
-
-    @Override
-    public synchronized EnergyTransferResult transferEnergy(BlockPos source, BlockPos destination, int amount, boolean simulate) {
-        // Check if the nodes exist
-        EnergyStorage sourceStorage = nodes.get(source);
-        EnergyStorage destStorage = nodes.get(destination);
-        
-        if (sourceStorage == null || destStorage == null) {
-            return new EnergyTransferResult(0, "One or both nodes do not exist in the network", EnergyTransferResult.Status.INVALID_SOURCE);
-        }
-        
-        // Check if the chunks are loaded
-        ChunkPos sourceChunk = new ChunkPos(source);
-        ChunkPos destChunk = new ChunkPos(destination);
-        
-        if (!isChunkLoaded(sourceChunk) || !isChunkLoaded(destChunk)) {
-            return new EnergyTransferResult(0, "One or both nodes are in unloaded chunks", EnergyTransferResult.Status.PATH_BLOCKED);
-        }
-        
-        // Apply rate limiting if not simulating
-        if (!simulate) {
-            long currentTime = System.currentTimeMillis();
-            double rateLimit = transferRateLimits.getOrDefault(source, Double.MAX_VALUE);
-            
-            // Reset rate limit tracking for new periods
-            Long lastTransfer = lastTransferTimes.get(source);
-            if (lastTransfer == null || currentTime - lastTransfer > rateLimitWindow) {
-                currentPeriodTransferred.put(source, 0.0);
-            }
-            
-            // Check if transfer would exceed rate limit
-            double currentTransferred = currentPeriodTransferred.getOrDefault(source, 0.0);
-            if (currentTransferred + amount > rateLimit) {
-                int allowed = (int)(rateLimit - currentTransferred);
-                if (allowed <= 0) {
-                    return new EnergyTransferResult(0, "Rate limit exceeded for source node", EnergyTransferResult.Status.CAPACITY_EXCEEDED);
-                }
-                amount = allowed;
-            }
-        }
-        
-        // Find a path between the nodes
-        List<BlockPos> path = findPath(source, destination);
-        if (path.isEmpty()) {
-            return new EnergyTransferResult(0, "No valid path between nodes", EnergyTransferResult.Status.PATH_BLOCKED);
-        }
-        
-        // Calculate the maximum transferable amount
-        int maxExtract = sourceStorage.extractEnergy(amount, true);
-        if (maxExtract <= 0) {
-            return new EnergyTransferResult(0, "Source cannot extract energy", EnergyTransferResult.Status.SOURCE_CANNOT_EXTRACT);
-        }
-        
-        int maxReceive = destStorage.receiveEnergy(maxExtract, true);
-        if (maxReceive <= 0) {
-            return new EnergyTransferResult(0, "Destination cannot receive energy", EnergyTransferResult.Status.DESTINATION_CANNOT_RECEIVE);
-        }
-        
-        int transferAmount = Math.min(maxExtract, maxReceive);
-        
-        // If we're just simulating, return the calculated amount
-        if (simulate) {
-            return new EnergyTransferResult(transferAmount, "Simulated transfer successful", EnergyTransferResult.Status.SUCCESS);
-        }
-        
-        // Perform the actual transfer
-        int extracted = sourceStorage.extractEnergy(transferAmount, false);
-        int received = destStorage.receiveEnergy(extracted, false);
-        
-        // Update rate limit tracking
-        long currentTime = System.currentTimeMillis();
-        lastTransferTimes.put(source, currentTime);
-        double currentTransferred = currentPeriodTransferred.getOrDefault(source, 0.0);
-        currentPeriodTransferred.put(source, currentTransferred + received);
-        
-        if (extracted != received) {
-            // This should not happen with proper implementations, but handle it anyway
-            if (received < extracted) {
-                // Put back the energy that wasn't received
-                sourceStorage.receiveEnergy(extracted - received, false);
-            }
-            return new EnergyTransferResult(received, "Partial transfer: extracted " + extracted + ", received " + received, EnergyTransferResult.Status.WARNING);
-        }
-        
-        return new EnergyTransferResult(received, "Transfer successful", EnergyTransferResult.Status.SUCCESS);
-    }
-
-    /**
-     * Sets a transfer rate limit for a specific node
-     * 
-     * @param pos The node position
-     * @param ratePerSecond Maximum energy units that can be transferred per second
-     */
-    public void setTransferRateLimit(BlockPos pos, double ratePerSecond) {
-        if (nodes.containsKey(pos)) {
-            transferRateLimits.put(pos, ratePerSecond);
-        }
-    }
     
-    /**
-     * Finds a path between two nodes, using the cache if available
-     * 
-     * @param source The source node
-     * @param destination The destination node
-     * @return A list of BlockPos representing the path, or empty list if no path exists
-     */
-    private List<BlockPos> findPath(BlockPos source, BlockPos destination) {
-        // Check cache first
-        CachedPathKey key = new CachedPathKey(source, destination);
+    @Override
+    public int distributeEnergy() {
+        int totalTransferred = 0;
+        List<WorldPosition> sources = new ArrayList<>();
+        List<WorldPosition> sinks = new ArrayList<>();
         
-        // Clean expired cache entries periodically
+        // First, clean expired path cache entries
         cleanExpiredPathCache();
         
-        // Return from cache if valid
-        Long expiration = pathExpirations.get(key);
-        if (expiration != null && System.currentTimeMillis() < expiration) {
-            List<BlockPos> cachedPath = pathCache.get(key);
-            if (cachedPath != null) {
-                return new ArrayList<>(cachedPath);
+        // Identify sources and sinks
+        for (Map.Entry<WorldPosition, IEnergyHandler> entry : nodes.entrySet()) {
+            IEnergyHandler handler = entry.getValue();
+            WorldPosition pos = entry.getKey();
+            
+            if (handler.canExtract() && handler.getEnergyStored() > 0) {
+                sources.add(pos);
+            }
+            
+            if (handler.canReceive() && handler.getEnergyStored() < handler.getMaxEnergyStored()) {
+                sinks.add(pos);
             }
         }
         
-        // If not in cache or expired, calculate the path
-        List<BlockPos> path = calculatePath(source, destination);
-        
-        // Cache the result if we found a path
-        if (!path.isEmpty()) {
-            pathCache.put(key, new ArrayList<>(path));
-            pathExpirations.put(key, System.currentTimeMillis() + pathCacheExpiry);
+        // For each source, distribute energy to sinks
+        for (WorldPosition sourcePos : sources) {
+            IEnergyHandler source = nodes.get(sourcePos);
+            
+            if (source == null || source.getEnergyStored() <= 0) {
+                continue;
+            }
+            
+            // Sort sinks by distance (closer first)
+            Collections.sort(sinks, Comparator.comparingInt(pos -> {
+                // Simple Manhattan distance
+                return Math.abs(pos.getBlockPos().getX() - sourcePos.getBlockPos().getX()) +
+                       Math.abs(pos.getBlockPos().getY() - sourcePos.getBlockPos().getY()) +
+                       Math.abs(pos.getBlockPos().getZ() - sourcePos.getBlockPos().getZ());
+            }));
+            
+            for (WorldPosition sinkPos : sinks) {
+                IEnergyHandler sink = nodes.get(sinkPos);
+                
+                if (sink == null || sink.getEnergyStored() >= sink.getMaxEnergyStored()) {
+                    continue;
+                }
+                
+                // Find path between source and sink
+                List<WorldPosition> path = findPath(sourcePos, sinkPos);
+                
+                if (path.isEmpty()) {
+                    continue; // No path found
+                }
+                
+                // Calculate transfer details
+                float lossRate = getEnergyLoss(path);
+                int transferRate = getTransferRate(path);
+                int maxExtract = Math.min(source.getEnergyStored(), transferRate);
+                int maxReceive = Math.min(sink.getMaxEnergyStored() - sink.getEnergyStored(), transferRate);
+                int amount = Math.min(maxExtract, maxReceive);
+                
+                if (amount <= 0) {
+                    continue;
+                }
+                
+                // Apply energy loss
+                int lossAmount = Math.round(amount * lossRate);
+                int transferAmount = amount - lossAmount;
+                
+                // Extract from source
+                int extracted = source.extractEnergy(amount, false);
+                
+                if (extracted <= 0) {
+                    continue;
+                }
+                
+                // Apply loss to extracted amount
+                transferAmount = extracted - Math.round(extracted * lossRate);
+                
+                // Transfer to sink
+                int received = sink.receiveEnergy(transferAmount, false);
+                
+                totalTransferred += received;
+                
+                // If source is depleted or sink is full, move to next
+                if (source.getEnergyStored() <= 0 || sink.getEnergyStored() >= sink.getMaxEnergyStored()) {
+                    break;
+                }
+            }
         }
+        
+        return totalTransferred;
+    }
+    
+    @Override
+    public List<WorldPosition> findPath(WorldPosition from, WorldPosition to) {
+        // Check the cache first
+        CachedPathKey key = new CachedPathKey(from, to);
+        if (pathCache.containsKey(key)) {
+            // Update the expiration time
+            pathExpirations.put(key, System.currentTimeMillis() + PATH_CACHE_EXPIRATION);
+            return pathCache.get(key);
+        }
+        
+        // Verify both positions have nodes
+        if (!nodes.containsKey(from) || !nodes.containsKey(to)) {
+            return Collections.emptyList();
+        }
+        
+        // Calculate the path
+        List<WorldPosition> path = calculatePath(from, to);
+        
+        // Cache the result
+        pathCache.put(key, path);
+        pathExpirations.put(key, System.currentTimeMillis() + PATH_CACHE_EXPIRATION);
         
         return path;
     }
     
     /**
-     * Calculate the shortest path between two nodes
-     * This uses a simple breadth-first search for now
+     * Calculates the path between two positions using A* algorithm.
      * 
-     * @param source The source node
-     * @param destination The destination node
-     * @return A list of BlockPos representing the path, or empty list if no path
+     * @param source The source position
+     * @param destination The destination position
+     * @return The path, or an empty list if no path exists
      */
-    private List<BlockPos> calculatePath(BlockPos source, BlockPos destination) {
-        if (source.equals(destination)) {
-            return List.of(source);
-        }
+    private List<WorldPosition> calculatePath(WorldPosition source, WorldPosition destination) {
+        // A* algorithm implementation
+        Set<WorldPosition> closedSet = new HashSet<>();
+        Set<WorldPosition> openSet = new HashSet<>();
+        openSet.add(source);
         
-        Queue<BlockPos> queue = new LinkedList<>();
-        Map<BlockPos, BlockPos> cameFrom = new HashMap<>();
-        Set<BlockPos> visited = new HashSet<>();
+        Map<WorldPosition, WorldPosition> cameFrom = new HashMap<>();
         
-        queue.add(source);
-        visited.add(source);
+        Map<WorldPosition, Integer> gScore = new HashMap<>();
+        gScore.put(source, 0);
         
-        while (!queue.isEmpty()) {
-            BlockPos current = queue.poll();
+        Map<WorldPosition, Integer> fScore = new HashMap<>();
+        fScore.put(source, heuristic(source, destination));
+        
+        while (!openSet.isEmpty()) {
+            // Find the node in openSet with the lowest fScore
+            WorldPosition current = null;
+            int lowestFScore = Integer.MAX_VALUE;
+            
+            for (WorldPosition pos : openSet) {
+                int score = fScore.getOrDefault(pos, Integer.MAX_VALUE);
+                if (score < lowestFScore) {
+                    lowestFScore = score;
+                    current = pos;
+                }
+            }
             
             if (current.equals(destination)) {
-                // Found the destination, reconstruct the path
+                // Path found, reconstruct and return
                 return reconstructPath(cameFrom, source, destination);
             }
             
-            // For simplicity, just check 6 adjacent blocks
-            // In a real implementation, you'd want to check for valid connections
-            for (BlockPos neighbor : getAdjacentPositions(current)) {
-                if (nodes.containsKey(neighbor) && !visited.contains(neighbor)) {
-                    visited.add(neighbor);
-                    cameFrom.put(neighbor, current);
-                    queue.add(neighbor);
+            openSet.remove(current);
+            closedSet.add(current);
+            
+            for (WorldPosition neighbor : getAdjacentPositions(current)) {
+                if (closedSet.contains(neighbor)) {
+                    continue;
                 }
+                
+                // Check if this is a valid node
+                if (!nodes.containsKey(neighbor)) {
+                    // If not a node, check if it's a valid connection point
+                    // For simplicity, we'll just skip it for now
+                    continue;
+                }
+                
+                // Check if the chunk is loaded
+                WorldChunk chunk = new WorldChunk(neighbor);
+                if (!chunk.isLoaded()) {
+                    continue;
+                }
+                
+                int tentativeGScore = gScore.getOrDefault(current, Integer.MAX_VALUE) + 1;
+                
+                if (!openSet.contains(neighbor)) {
+                    openSet.add(neighbor);
+                } else if (tentativeGScore >= gScore.getOrDefault(neighbor, Integer.MAX_VALUE)) {
+                    continue;
+                }
+                
+                cameFrom.put(neighbor, current);
+                gScore.put(neighbor, tentativeGScore);
+                fScore.put(neighbor, gScore.get(neighbor) + heuristic(neighbor, destination));
             }
         }
         
@@ -306,9 +233,9 @@ public class CachedEnergyNetwork implements EnergyNetwork {
     /**
      * Reconstructs the path from the cameFrom map
      */
-    private List<net.minecraft.core.BlockPos> reconstructPath(Map<net.minecraft.core.BlockPos, net.minecraft.core.BlockPos> cameFrom, net.minecraft.core.BlockPos source, net.minecraft.core.BlockPos destination) {
-        List<net.minecraft.core.BlockPos> path = new ArrayList<>();
-        net.minecraft.core.BlockPos current = destination;
+    private List<WorldPosition> reconstructPath(Map<WorldPosition, WorldPosition> cameFrom, WorldPosition source, WorldPosition destination) {
+        List<WorldPosition> path = new ArrayList<>();
+        WorldPosition current = destination;
         
         while (!current.equals(source)) {
             path.add(current);
@@ -323,7 +250,7 @@ public class CachedEnergyNetwork implements EnergyNetwork {
     /**
      * Gets all adjacent positions (six directions)
      */
-    private List<net.minecraft.core.BlockPos> getAdjacentPositions(net.minecraft.core.BlockPos pos) {
+    private List<WorldPosition> getAdjacentPositions(WorldPosition pos) {
         return List.of(
             pos.above(),
             pos.below(),
@@ -335,10 +262,37 @@ public class CachedEnergyNetwork implements EnergyNetwork {
     }
     
     /**
-     * Checks if a chunk is loaded
+     * Heuristic function for A* algorithm (Manhattan distance)
      */
-    private boolean isChunkLoaded(ChunkPos pos) {
-        return level.hasChunk(pos.x, pos.z);
+    private int heuristic(WorldPosition a, WorldPosition b) {
+        return Math.abs(a.getBlockPos().getX() - b.getBlockPos().getX()) +
+               Math.abs(a.getBlockPos().getY() - b.getBlockPos().getY()) +
+               Math.abs(a.getBlockPos().getZ() - b.getBlockPos().getZ());
+    }
+    
+    @Override
+    public float getEnergyLoss(List<WorldPosition> path) {
+        // Simple implementation: 1% loss per block in the path
+        float lossRate = 0.01f * (path.size() - 1); // -1 because we don't count the source
+        return Math.min(lossRate, 0.5f); // Cap at 50% loss
+    }
+    
+    @Override
+    public int getTransferRate(List<WorldPosition> path) {
+        // Simple implementation: constant rate
+        return 1000; // 1000 energy units per tick
+    }
+    
+    @Override
+    public void onChunkStatusChange(WorldChunk chunk, boolean loaded) {
+        // When a chunk is unloaded, we can temporarily ignore nodes in that chunk
+        // When it's loaded again, we need to recalculate paths that might involve it
+        if (!loaded || !chunkToNodesMap.containsKey(chunk)) {
+            return;
+        }
+        
+        // When a chunk is loaded, invalidate paths that might now be possible
+        invalidateCachedPaths();
     }
     
     /**
@@ -366,30 +320,13 @@ public class CachedEnergyNetwork implements EnergyNetwork {
     }
     
     /**
-     * Updates the network when chunks are loaded or unloaded
-     * 
-     * @param chunkPos The chunk position
-     * @param loaded Whether the chunk is being loaded (true) or unloaded (false)
-     */
-    public void onChunkStatusChange(ChunkPos chunkPos, boolean loaded) {
-        // When a chunk is unloaded, we can temporarily ignore nodes in that chunk
-        // When it's loaded again, we need to recalculate paths that might involve it
-        if (!loaded || !chunkToNodesMap.containsKey(chunkPos)) {
-            return;
-        }
-        
-        // When a chunk is loaded, invalidate paths that might now be possible
-        invalidateCachedPaths();
-    }
-    
-    /**
      * Key class for the path cache
      */
     private static class CachedPathKey {
-        private final BlockPos source;
-        private final BlockPos destination;
+        private final WorldPosition source;
+        private final WorldPosition destination;
         
-        public CachedPathKey(BlockPos source, BlockPos destination) {
+        public CachedPathKey(WorldPosition source, WorldPosition destination) {
             this.source = source;
             this.destination = destination;
         }
