@@ -1,4 +1,4 @@
-rootProject.name = 'modapi'
+rootProject.name = 'GalacticExpansion'
 
 // Include all subprojects
 include 'core'
