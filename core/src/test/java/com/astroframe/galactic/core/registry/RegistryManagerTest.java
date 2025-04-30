@@ -39,7 +39,7 @@ public class RegistryManagerTest {
     void testRegisterAndGetObject() {
         // Create test object
         TestRegistryObject obj = new TestRegistryObject("test_object");
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath("galacticexpansion", "test_object");
+        ResourceLocation id = new ResourceLocation("galacticexpansion", "test_object");
         
         // Register object
         registryManager.register(id, obj);
@@ -57,8 +57,8 @@ public class RegistryManagerTest {
         TestRegistryObject obj1 = new TestRegistryObject("test_object_1");
         TestRegistryObject obj2 = new TestRegistryObject("test_object_2");
         
-        ResourceLocation id1 = ResourceLocation.fromNamespaceAndPath("galacticexpansion", "test_object_1");
-        ResourceLocation id2 = ResourceLocation.fromNamespaceAndPath("galacticexpansion", "test_object_2");
+        ResourceLocation id1 = new ResourceLocation("galacticexpansion", "test_object_1");
+        ResourceLocation id2 = new ResourceLocation("galacticexpansion", "test_object_2");
         
         registryManager.register(id1, obj1);
         registryManager.register(id2, obj2);
@@ -83,8 +83,8 @@ public class RegistryManagerTest {
         }
         
         TaggedTestObject obj = new TaggedTestObject("tagged_object");
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath("galacticexpansion", "tagged_object");
-        ResourceLocation tagId = ResourceLocation.fromNamespaceAndPath("galacticexpansion", "test_tag");
+        ResourceLocation id = new ResourceLocation("galacticexpansion", "tagged_object");
+        ResourceLocation tagId = new ResourceLocation("galacticexpansion", "test_tag");
         
         // Register object and process its tags
         registryManager.register(id, obj);
