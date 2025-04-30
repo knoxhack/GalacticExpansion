@@ -79,6 +79,15 @@ class BuildStatusPlugin implements Plugin<Project> {
             return
         }
         
+        // Check if we're running in CI - disable if so
+        String ciEnv = System.getenv("CI")
+        boolean isCI = ciEnv != null && (ciEnv.equalsIgnoreCase("true") || ciEnv.equals("1"))
+        
+        if (isCI) {
+            project.logger.lifecycle("BuildStatusPlugin disabled in CI environment")
+            return
+        }
+        
         // Create extension
         project.extensions.create('buildStatusWidget', BuildStatusWidgetExtension)
         

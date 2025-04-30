@@ -45,7 +45,9 @@ jobs:
       - name: Build with Gradle
         run: |
           chmod +x gradlew
-          ./gradlew clean build --info --stacktrace
+          # Disable the BuildStatusPlugin on CI where there's no WebSocket server
+          export CI=true
+          ./gradlew clean build --info --stacktrace --no-daemon
       
       - name: Generate changelog
         id: changelog
