@@ -1,78 +1,92 @@
 package com.astroframe.galactic.machinery.api;
 
-import com.astroframe.galactic.energy.api.EnergyStorage;
 import com.astroframe.galactic.energy.api.EnergyType;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import com.astroframe.galactic.energy.api.IEnergyHandler;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 /**
- * Base interface for machinery in the Galactic Expansion mod.
- * Machines are advanced blocks that can process items and energy.
+ * Interface for machines in the Galactic Expansion mod.
+ * Defines common functionality for all machines.
  */
-public interface Machine {
+public interface Machine extends IEnergyHandler {
+    
     /**
-     * Get the name of the machine.
-     * This is used for registration and display purposes.
+     * Gets the machine's unique identifier.
+     * 
+     * @return The machine ID
+     */
+    String getMachineId();
+    
+    /**
+     * Gets the display name of the machine.
      * 
      * @return The machine name
      */
-    String getName();
+    String getMachineName();
     
     /**
-     * Get the energy storage for this machine.
+     * Gets the tier of the machine.
      * 
-     * @return An Optional containing the energy storage, or empty if this machine doesn't use energy
+     * @return The machine tier
      */
-    Optional<EnergyStorage> getEnergyStorage();
+    int getMachineTier();
     
     /**
-     * Get the acceptable energy types for this machine.
+     * Called every tick to update the machine.
      * 
-     * @return A list of energy types this machine can work with
+     * @param level The world
+     * @param pos The machine position
      */
-    List<EnergyType> getAcceptableEnergyTypes();
+    void tick(Level level, BlockPos pos);
     
     /**
-     * Called once per tick to update the machine's state.
-     * This is where processing logic should be implemented.
-     */
-    void tick();
-    
-    /**
-     * Check if the machine is currently active (processing).
+     * Gets whether the machine is currently active.
      * 
-     * @return true if the machine is active, false otherwise
+     * @return True if the machine is active
      */
     boolean isActive();
     
     /**
-     * Start the machine if it's not already running.
+     * Gets the maximum energy input rate.
      * 
-     * @return true if the machine was started, false if it was already running or couldn't be started
+     * @return The max input
      */
-    boolean start();
+    int getMaxEnergyInput();
     
     /**
-     * Stop the machine if it's running.
+     * Gets the maximum energy output rate.
      * 
-     * @return true if the machine was stopped, false if it wasn't running
+     * @return The max output
      */
-    boolean stop();
+    int getMaxEnergyOutput();
     
     /**
-     * Get the current progress of the processing operation.
+     * Gets the energy consumption per tick.
      * 
-     * @return A value between 0.0 and 1.0 representing the progress, or 0.0 if inactive
+     * @return The energy consumption
      */
-    float getProgress();
+    int getEnergyConsumption();
     
     /**
-     * Get the efficiency of this machine.
-     * Efficiency affects energy consumption and processing speed.
+     * Whether the machine has enough energy to operate.
      * 
-     * @return A value between 0.0 and 1.0 representing the efficiency
+     * @return True if the machine has sufficient energy
      */
-    float getEfficiency();
+    default boolean hasSufficientEnergy() {
+        return getEnergyStored() >= getEnergyConsumption();
+    }
+    
+    /**
+     * Consume energy for machine operation.
+     * 
+     * @return True if energy was successfully consumed
+     */
+    default boolean consumeEnergy() {
+        if (hasSufficientEnergy()) {
+            extractEnergy(getEnergyConsumption(), false);
+            return true;
+        }
+        return false;
+    }
 }
