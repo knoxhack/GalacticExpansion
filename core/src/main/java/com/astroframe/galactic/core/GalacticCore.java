@@ -8,22 +8,12 @@ import com.astroframe.galactic.core.registry.tag.annotation.TagProcessor;
 
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-// Temporary mock classes for development without NeoForge dependencies
-// These will be removed once we have the actual NeoForge dependencies
-class FMLJavaModLoadingContext {
-    public static FMLJavaModLoadingContext get() { return new FMLJavaModLoadingContext(); }
-    public ModEventBus getModEventBus() { return new ModEventBus(); }
-}
-class ModEventBus {
-    public <T> void addListener(Consumer<T> listener) {}
-}
-interface Consumer<T> {
-    void accept(T t);
-}
+import java.util.function.Consumer;
 
 /**
  * The main class for the Galactic Expansion Core module.
@@ -31,6 +21,8 @@ interface Consumer<T> {
  */
 @Mod(GalacticCore.MOD_ID)
 public class GalacticCore {
+    // Static instance for easy access
+    private static GalacticCore instance;
     
     /**
      * The mod ID for the core module.
@@ -51,19 +43,31 @@ public class GalacticCore {
      * Constructor for the core module.
      * Initializes the mod and sets up event listeners.
      */
-    public GalacticCore() {
+    public GalacticCore(final IEventBus modEventBus) {
         LOGGER.info("Initializing Galactic Expansion Core");
+        
+        // Store the instance for external access
+        instance = this;
         
         // Create the registry scanner with the mod ID as the default domain
         registryScanner = new RegistryScanner(MOD_ID);
         
         // Register event listeners
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
+        modEventBus.addListener(this::commonSetup);
         
         // Initialize standard registries
         initializeRegistries();
         
         LOGGER.info("Galactic Expansion Core initialized");
+    }
+    
+    /**
+     * Get the singleton instance of the core mod.
+     * 
+     * @return The singleton instance
+     */
+    public static GalacticCore getInstance() {
+        return instance;
     }
     
     /**

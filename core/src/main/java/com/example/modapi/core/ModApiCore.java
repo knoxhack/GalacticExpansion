@@ -5,7 +5,6 @@ import com.example.modapi.core.util.ModLogger;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /**
  * The main mod class for the ModApi Core module.
@@ -23,11 +22,10 @@ public class ModApiCore {
      * Constructor for the core mod.
      * Registers event handlers and initializes the registry.
      */
-    public ModApiCore() {
+    public ModApiCore(IEventBus modEventBus) {
         instance = this;
         registry = new ModRegistry();
         
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::setup);
         
         LOGGER.info("ModApi Core initialized");
