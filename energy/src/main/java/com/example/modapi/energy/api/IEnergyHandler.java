@@ -1,9 +1,14 @@
 package com.example.modapi.energy.api;
 
+import com.astroframe.galactic.energy.api.EnergyUnit;
+
 /**
  * Interface for handling energy storage and transfer.
  * Defines methods for adding, removing, and querying energy.
+ * 
+ * @deprecated Use {@link com.astroframe.galactic.energy.api.IEnergyHandler} instead
  */
+@Deprecated
 public interface IEnergyHandler {
     
     /**
@@ -57,5 +62,7 @@ public interface IEnergyHandler {
      * 
      * @return The energy unit
      */
-    EnergyUnit getEnergyUnit();
+    default EnergyUnit getEnergyUnit() {
+        return EnergyUnit.FORGE_ENERGY;
+    }
 }

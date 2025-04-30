@@ -3,7 +3,10 @@ package com.example.modapi.energy.api;
 /**
  * Enum representing different energy units that can be used in the mod.
  * Allows for conversion between different energy systems.
+ * 
+ * @deprecated Use {@link com.astroframe.galactic.energy.api.EnergyUnit} instead
  */
+@Deprecated
 public enum EnergyUnit {
     /**
      * The standard Forge Energy unit (FE).

@@ -1,0 +1,45 @@
+package com.example.modapi.energy.api;
+
+/**
+ * Adapter class to convert between old and new energy types.
+ * This provides compatibility between the old and new APIs.
+ */
+public class EnergyTypeAdapter {
+    
+    /**
+     * Convert an old energy type to a new energy type.
+     * 
+     * @param oldType The old energy type
+     * @return The new energy type
+     */
+    public static com.astroframe.galactic.energy.api.EnergyType toNewType(EnergyType oldType) {
+        switch (oldType) {
+            case FORGE_ENERGY:
+            case REDSTONE_FLUX:
+                return com.astroframe.galactic.energy.api.EnergyType.ELECTRICAL;
+            case MODAPI_ENERGY:
+                return com.astroframe.galactic.energy.api.EnergyType.QUANTUM;
+            default:
+                return com.astroframe.galactic.energy.api.EnergyType.ELECTRICAL;
+        }
+    }
+    
+    /**
+     * Convert a new energy type to an old energy type.
+     * 
+     * @param newType The new energy type
+     * @return The old energy type
+     */
+    public static EnergyType toOldType(com.astroframe.galactic.energy.api.EnergyType newType) {
+        switch (newType) {
+            case ELECTRICAL:
+                return EnergyType.FORGE_ENERGY;
+            case THERMAL:
+                return EnergyType.REDSTONE_FLUX;
+            case QUANTUM:
+                return EnergyType.MODAPI_ENERGY;
+            default:
+                return EnergyType.FORGE_ENERGY;
+        }
+    }
+}
