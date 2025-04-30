@@ -122,4 +122,13 @@ public class BaseEnergyStorage implements EnergyStorage {
     public void setEnergy(int energy) {
         this.energy = Math.max(0, Math.min(capacity, energy));
     }
+    
+    /**
+     * Get the fill level as a percentage (0.0 to 1.0).
+     * 
+     * @return The fill level
+     */
+    public float getFillLevel() {
+        return capacity > 0 ? (float) energy / capacity : 0;
+    }
 }

@@ -1,85 +1,67 @@
 package com.astroframe.galactic.energy.api;
 
 /**
- * Enum representing different types of energy in the Galactic Expansion mod.
+ * Enum for different types of energy in the Galactic Expansion mod.
+ * Each energy type has its own characteristics and is handled separately.
  */
 public enum EnergyType {
     /**
-     * Standard electrical energy.
+     * Electrical energy.
+     * Commonly used for most machinery and technology-based systems.
      */
-    ELECTRICAL("electrical", "EU", 0x4286f4),
+    ELECTRICAL("electrical"),
     
     /**
-     * Steam energy, typically produced by boilers.
+     * Steam energy.
+     * Used in early-game machinery and industrial systems.
      */
-    STEAM("steam", "SU", 0xd9d9d9),
+    STEAM("steam"),
     
     /**
-     * Nuclear energy, produced by nuclear reactors.
+     * Nuclear energy.
+     * High-density energy storage used for advanced machinery.
      */
-    NUCLEAR("nuclear", "NU", 0x7fff00),
+    NUCLEAR("nuclear"),
     
     /**
-     * Solar energy, produced by solar panels.
+     * Solar energy.
+     * Renewable energy source from stars and solar panels.
      */
-    SOLAR("solar", "SU", 0xffd700);
+    SOLAR("solar");
     
     private final String id;
-    private final String unit;
-    private final int color;
     
     /**
-     * Create a new energy type.
+     * Constructor for energy types.
      * 
-     * @param id The identifier for this energy type
-     * @param unit The unit of measurement for this energy type
-     * @param color The color associated with this energy type (hex RGB)
+     * @param id The string identifier for this energy type
      */
-    EnergyType(String id, String unit, int color) {
+    EnergyType(String id) {
         this.id = id;
-        this.unit = unit;
-        this.color = color;
     }
     
     /**
-     * Get the identifier for this energy type.
+     * Get the string identifier for this energy type.
      * 
-     * @return The energy type ID
+     * @return The identifier
      */
     public String getId() {
         return id;
     }
     
     /**
-     * Get the unit of measurement for this energy type.
+     * Convert a string identifier to an energy type.
      * 
-     * @return The energy unit
+     * @param id The string identifier
+     * @return The corresponding energy type, or ELECTRICAL if not found
      */
-    public String getUnit() {
-        return unit;
-    }
-    
-    /**
-     * Get the color associated with this energy type.
-     * 
-     * @return The color (hex RGB)
-     */
-    public int getColor() {
-        return color;
-    }
-    
-    /**
-     * Find an energy type by its ID.
-     * 
-     * @param id The ID to look for
-     * @return The energy type, or ELECTRICAL if not found
-     */
-    public static EnergyType byId(String id) {
+    public static EnergyType fromId(String id) {
         for (EnergyType type : values()) {
             if (type.getId().equals(id)) {
                 return type;
             }
         }
+        
         return ELECTRICAL; // Default to electrical if not found
     }
 }

@@ -87,7 +87,10 @@ public class TagManager {
      */
     @SuppressWarnings("unchecked")
     public <T> Tag<T> getOrCreateTag(String typeKey, String id) {
-        return getTag(typeKey, id).orElseGet(() -> (Tag<T>) createTag(typeKey, id));
+        return getTag(typeKey, id).orElseGet(() -> {
+            Tag<T> newTag = createTag(typeKey, id);
+            return newTag;
+        });
     }
     
     /**
@@ -179,10 +182,15 @@ public class TagManager {
      * @param predicate The predicate to match tags against
      * @return A collection of matching tags
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public <T> Collection<Tag<T>> findTags(String typeKey, Predicate<Tag<T>> predicate) {
-        return getTags(typeKey).stream()
-                .filter(predicate)
+        Collection<Tag<T>> allTags = getTags(typeKey);
+        
+        // Create a raw predicate to avoid type safety issues
+        Predicate rawPredicate = predicate;
+        
+        return allTags.stream()
+                .filter(rawPredicate)
                 .collect(Collectors.toList());
     }
     
