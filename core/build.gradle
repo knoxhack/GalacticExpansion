@@ -1,17 +1,23 @@
-dependencies {
-    // Core dependencies specific to this module
-}
+archivesBaseName = 'galacticcore'
+
+// Adjust group if necessary 
+group = 'com.astroframe.galactic'
+version = project.version
+
+// Use properties from parent gradle.properties
+project.ext.mod_id = 'galacticcore'
 
 jar {
     manifest {
         attributes([
-            "Specification-Title": "ModApi Core",
-            "Specification-Vendor": "Example Modder",
-            "Specification-Version": "1",
-            "Implementation-Title": project.name,
-            "Implementation-Version": project.version,
-            "Implementation-Vendor" :"Example Modder",
+            "Specification-Title"     : "Galactic Core",
+            "Specification-Vendor"    : "AstroFrame Team",
+            "Specification-Version"   : "1",
+            "Implementation-Title"    : project.name,
+            "Implementation-Version"  : project.version,
+            "Implementation-Vendor"   : "AstroFrame Team",
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
+    archiveFileName = "galacticcore-${version}.jar"
 }
