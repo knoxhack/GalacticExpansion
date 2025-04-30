@@ -10,8 +10,8 @@ import com.astroframe.galactic.machinery.registry.MachineRegistry;
 
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.NeoForge;
 
 /**
  * The main class for the Galactic Expansion Machinery module.
@@ -35,7 +35,7 @@ public class GalacticMachinery extends AbstractModuleIntegration {
         info("Initializing Galactic Expansion Machinery");
         
         // Register event listeners
-        net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
+        NeoForge.EVENT_BUS.addListener(this::commonSetup);
         
         // Initialize machinery-specific registries
         initializeRegistries();
