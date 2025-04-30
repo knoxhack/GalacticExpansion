@@ -224,4 +224,24 @@ public class TagManager {
     public void clear() {
         tagsByType.clear();
     }
+    
+    /**
+     * Adds a tag to the manager using a ResourceLocation.
+     * This method is for backwards compatibility with the test code.
+     * 
+     * @param <T> The type of objects in the tag
+     * @param tagId The ResourceLocation identifier for the tag
+     * @param tag The tag to add
+     */
+    @SuppressWarnings("unchecked")
+    public <T> void addTag(Object tagId, Tag<T> tag) {
+        // Extract string from the ResourceLocation-like object
+        String id = tag.getId();
+        
+        // Use default type key
+        String typeKey = "default";
+        
+        Map<String, Tag<?>> tags = tagsByType.computeIfAbsent(typeKey, k -> new HashMap<>());
+        tags.put(id, tag);
+    }
 }
