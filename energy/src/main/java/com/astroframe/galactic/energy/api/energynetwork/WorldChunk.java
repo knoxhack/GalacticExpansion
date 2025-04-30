@@ -29,7 +29,10 @@ public class WorldChunk {
      */
     public WorldChunk(WorldPosition position) {
         this.level = position.getLevel();
-        this.chunkPos = new ChunkPos(position.getBlockPos());
+        // Create chunk position from block coordinates (x >> 4, z >> 4)
+        int blockX = position.getX();
+        int blockZ = position.getZ();
+        this.chunkPos = new ChunkPos(blockX >> 4, blockZ >> 4);
     }
     
     /**

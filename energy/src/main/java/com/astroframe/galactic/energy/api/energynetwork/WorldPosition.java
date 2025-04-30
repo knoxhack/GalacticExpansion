@@ -41,6 +41,33 @@ public class WorldPosition {
     }
     
     /**
+     * Gets the X coordinate.
+     * 
+     * @return The X coordinate
+     */
+    public int getX() {
+        return blockPos.getX();
+    }
+    
+    /**
+     * Gets the Y coordinate.
+     * 
+     * @return The Y coordinate
+     */
+    public int getY() {
+        return blockPos.getY();
+    }
+    
+    /**
+     * Gets the Z coordinate.
+     * 
+     * @return The Z coordinate
+     */
+    public int getZ() {
+        return blockPos.getZ();
+    }
+    
+    /**
      * Gets a position that is offset by the given amounts.
      * 
      * @param x The x offset
