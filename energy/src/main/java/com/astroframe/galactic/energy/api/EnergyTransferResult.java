@@ -2,50 +2,39 @@ package com.astroframe.galactic.energy.api;
 
 /**
  * Represents the result of an energy transfer operation.
- * Provides detailed information about the success, amount transferred, and any error messages.
+ * This provides detailed information about the success or failure of the operation.
  */
 public class EnergyTransferResult {
-
-    private final boolean success;
-    private final int amount;
+    
+    private final int energyTransferred;
     private final String message;
-
+    private final Status status;
+    
     /**
-     * Creates a new energy transfer result.
-     *
-     * @param success Whether the transfer was successful
-     * @param amount The amount of energy that was transferred
-     * @param message A descriptive message about the transfer (especially useful for errors)
+     * Create a new energy transfer result.
+     * 
+     * @param energyTransferred The amount of energy that was transferred
+     * @param message A message describing the result
+     * @param status The status of the operation
      */
-    public EnergyTransferResult(boolean success, int amount, String message) {
-        this.success = success;
-        this.amount = amount;
+    public EnergyTransferResult(int energyTransferred, String message, Status status) {
+        this.energyTransferred = energyTransferred;
         this.message = message;
+        this.status = status;
     }
-
+    
     /**
-     * Gets whether the transfer was successful.
-     *
-     * @return true if the transfer was successful, false otherwise
+     * Get the amount of energy that was transferred.
+     * 
+     * @return The energy transferred
      */
-    public boolean isSuccess() {
-        return success;
+    public int getEnergyTransferred() {
+        return energyTransferred;
     }
-
+    
     /**
-     * Gets the amount of energy that was transferred.
-     * This will be 0 if the transfer was not successful.
-     *
-     * @return The amount of energy transferred
-     */
-    public int getAmount() {
-        return amount;
-    }
-
-    /**
-     * Gets a descriptive message about the transfer.
-     * This is especially useful for error messages.
-     *
+     * Get a message describing the result.
+     * 
      * @return The message
      */
     public String getMessage() {
@@ -53,33 +42,61 @@ public class EnergyTransferResult {
     }
     
     /**
-     * Creates a successful transfer result with the specified amount.
-     *
-     * @param amount The amount of energy transferred
-     * @return A new EnergyTransferResult instance
+     * Get the status of the operation.
+     * 
+     * @return The status
      */
-    public static EnergyTransferResult success(int amount) {
-        return new EnergyTransferResult(true, amount, "Transfer successful");
+    public Status getStatus() {
+        return status;
     }
     
     /**
-     * Creates a failed transfer result with the specified error message.
-     *
-     * @param errorMessage The error message
-     * @return A new EnergyTransferResult instance
+     * Check if the operation was successful.
+     * 
+     * @return true if the operation succeeded, false otherwise
      */
-    public static EnergyTransferResult failure(String errorMessage) {
-        return new EnergyTransferResult(false, 0, errorMessage);
+    public boolean isSuccess() {
+        return status == Status.SUCCESS;
     }
     
     /**
-     * Creates a partial transfer result.
-     *
-     * @param amount The partial amount transferred
-     * @param reason The reason for partial transfer
-     * @return A new EnergyTransferResult instance
+     * Status codes for energy transfer operations.
      */
-    public static EnergyTransferResult partial(int amount, String reason) {
-        return new EnergyTransferResult(true, amount, "Partial transfer: " + reason);
+    public enum Status {
+        /** The operation succeeded */
+        SUCCESS,
+        
+        /** A warning occurred, but the operation completed */
+        WARNING,
+        
+        /** The source node does not exist */
+        INVALID_SOURCE,
+        
+        /** The destination node does not exist */
+        INVALID_DESTINATION,
+        
+        /** The source node cannot extract energy */
+        SOURCE_CANNOT_EXTRACT,
+        
+        /** The destination node cannot receive energy */
+        DESTINATION_CANNOT_RECEIVE,
+        
+        /** The source has no energy to extract */
+        SOURCE_EMPTY,
+        
+        /** The destination is full and cannot accept more energy */
+        DESTINATION_FULL,
+        
+        /** The energy types are incompatible */
+        INCOMPATIBLE_ENERGY_TYPES,
+        
+        /** The path between nodes is blocked or invalid */
+        PATH_BLOCKED,
+        
+        /** The transfer exceeds the network's capacity */
+        CAPACITY_EXCEEDED,
+        
+        /** An unknown error occurred */
+        UNKNOWN_ERROR
     }
 }

@@ -41,8 +41,18 @@ public class BaseEnergyNetwork implements EnergyNetwork {
     }
     
     @Override
+    public ResourceLocation getId() {
+        return networkId;
+    }
+    
+    @Override
     public EnergyType getEnergyType() {
         return energyType;
+    }
+    
+    @Override
+    public Level getLevel() {
+        return level;
     }
     
     @Override
@@ -157,6 +167,93 @@ public class BaseEnergyNetwork implements EnergyNetwork {
     }
     
     @Override
+    public boolean addNode(BlockPos pos, EnergyStorage storage) {
+        if (storage.getEnergyType() != energyType) {
+            return false;
+        }
+        
+        if (nodeStorages.containsKey(pos)) {
+            return false;
+        }
+        
+        nodeStorages.put(pos, storage);
+        return true;
+    }
+    
+    @Override
+    public boolean removeNode(BlockPos pos) {
+        return nodeStorages.remove(pos) != null;
+    }
+    
+    @Override
+    public Collection<BlockPos> getNodes() {
+        return nodeStorages.keySet();
+    }
+    
+    @Override
+    public EnergyStorage getNodeStorage(BlockPos pos) {
+        return nodeStorages.get(pos);
+    }
+    
+    @Override
+    public EnergyTransferResult transferEnergy(BlockPos source, BlockPos destination, int amount, boolean simulate) {
+        // Check if both nodes exist
+        EnergyStorage sourceStorage = getNodeStorage(source);
+        EnergyStorage destStorage = getNodeStorage(destination);
+        
+        if (sourceStorage == null) {
+            return new EnergyTransferResult(0, "Source node does not exist", EnergyTransferResult.Status.INVALID_SOURCE);
+        }
+        
+        if (destStorage == null) {
+            return new EnergyTransferResult(0, "Destination node does not exist", EnergyTransferResult.Status.INVALID_DESTINATION);
+        }
+        
+        // Check if source can extract
+        if (!sourceStorage.canExtract()) {
+            return new EnergyTransferResult(0, "Source cannot extract energy", EnergyTransferResult.Status.SOURCE_CANNOT_EXTRACT);
+        }
+        
+        // Check if destination can receive
+        if (!destStorage.canReceive()) {
+            return new EnergyTransferResult(0, "Destination cannot receive energy", EnergyTransferResult.Status.DESTINATION_CANNOT_RECEIVE);
+        }
+        
+        // Simulate extraction from source
+        int extractable = sourceStorage.extractEnergy(amount, true);
+        if (extractable <= 0) {
+            return new EnergyTransferResult(0, "Source has no energy to extract", EnergyTransferResult.Status.SOURCE_EMPTY);
+        }
+        
+        // Simulate reception by destination
+        int receivable = destStorage.receiveEnergy(extractable, true);
+        if (receivable <= 0) {
+            return new EnergyTransferResult(0, "Destination cannot accept any energy", EnergyTransferResult.Status.DESTINATION_FULL);
+        }
+        
+        if (simulate) {
+            return new EnergyTransferResult(receivable, "Simulated transfer", EnergyTransferResult.Status.SUCCESS);
+        }
+        
+        // Actually transfer the energy
+        int extracted = sourceStorage.extractEnergy(receivable, false);
+        int received = destStorage.receiveEnergy(extracted, false);
+        
+        if (extracted != received) {
+            // This should never happen under normal circumstances
+            return new EnergyTransferResult(received, "Transfer mismatch detected", EnergyTransferResult.Status.WARNING);
+        }
+        
+        return new EnergyTransferResult(received, "Energy transferred successfully", EnergyTransferResult.Status.SUCCESS);
+    }
+    
+    @Override
+    public void onChunkStatusChange(ChunkPos chunkPos, boolean loaded) {
+        // In a more advanced implementation, we might disable nodes in unloaded chunks
+        // or invalidate paths that go through unloaded chunks
+    }
+    
+    @Override
     public void tick() {
         // In a real implementation, this would handle energy transfer between
         // sources, consumers, and storage based on demands and priorities
@@ -165,11 +262,12 @@ public class BaseEnergyNetwork implements EnergyNetwork {
     }
     
     /**
-     * Balance energy between storage devices.
-     * This attempts to distribute energy evenly across all storage devices.
+     * Balance energy between network nodes.
+     * This attempts to distribute energy evenly across all node storage devices.
      */
     private void balanceEnergy() {
-        if (storageDevices.size() <= 1) {
+        Collection<BlockPos> nodes = getNodes();
+        if (nodes.size() <= 1) {
             return;
         }
         
@@ -178,8 +276,13 @@ public class BaseEnergyNetwork implements EnergyNetwork {
         float totalCapacity = getMaxEnergy();
         float targetFillLevel = totalCapacity > 0 ? totalEnergy / totalCapacity : 0;
         
-        // Balance energy between storage devices
-        for (EnergyStorage storage : storageDevices) {
+        // Balance energy between node storage devices
+        for (BlockPos pos : nodes) {
+            EnergyStorage storage = getNodeStorage(pos);
+            if (storage == null) {
+                continue;
+            }
+            
             float currentFillLevel = storage.getFillLevel();
             
             if (Math.abs(currentFillLevel - targetFillLevel) < 0.01f) {
@@ -191,12 +294,36 @@ public class BaseEnergyNetwork implements EnergyNetwork {
             int currentEnergy = storage.getEnergy();
             int delta = targetEnergy - currentEnergy;
             
-            if (delta > 0) {
+            if (delta > 0 && storage.canReceive()) {
                 // Need to add energy
                 storage.receiveEnergy(delta, false);
-            } else if (delta < 0) {
+            } else if (delta < 0 && storage.canExtract()) {
                 // Need to remove energy
                 storage.extractEnergy(-delta, false);
+            }
+        }
+        
+        // For backward compatibility, also balance legacy storage devices
+        if (storageDevices.size() > 1) {
+            for (EnergyStorage storage : storageDevices) {
+                float currentFillLevel = storage.getFillLevel();
+                
+                if (Math.abs(currentFillLevel - targetFillLevel) < 0.01f) {
+                    // Already close enough to the target
+                    continue;
+                }
+                
+                int targetEnergy = Math.round(storage.getMaxEnergy() * targetFillLevel);
+                int currentEnergy = storage.getEnergy();
+                int delta = targetEnergy - currentEnergy;
+                
+                if (delta > 0 && storage.canReceive()) {
+                    // Need to add energy
+                    storage.receiveEnergy(delta, false);
+                } else if (delta < 0 && storage.canExtract()) {
+                    // Need to remove energy
+                    storage.extractEnergy(-delta, false);
+                }
             }
         }
     }
