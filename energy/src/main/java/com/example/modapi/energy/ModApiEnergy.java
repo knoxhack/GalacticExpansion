@@ -31,7 +31,7 @@ public class ModApiEnergy implements Module {
         // Register this module with the core
         ModApiCore.getInstance().getRegistry().registerModule(this);
         
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus modEventBus = net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::setup);
         
         LOGGER.info("ModApi Energy initialized");

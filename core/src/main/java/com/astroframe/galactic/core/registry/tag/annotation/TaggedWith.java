@@ -1,6 +1,7 @@
 package com.astroframe.galactic.core.registry.tag.annotation;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -12,6 +13,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
+@Repeatable(TaggedWithContainer.class)
 public @interface TaggedWith {
     
     /**
@@ -20,7 +22,7 @@ public @interface TaggedWith {
      * 
      * @return The tag type key
      */
-    String typeKey();
+    String typeKey() default "default";
     
     /**
      * The ID of the specific tag to add the object to.
