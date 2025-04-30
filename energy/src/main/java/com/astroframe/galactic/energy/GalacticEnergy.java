@@ -7,8 +7,10 @@ import com.astroframe.galactic.core.registry.tag.TagManager;
 
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.BusBuilder;
 
 /**
  * The main class for the Galactic Expansion Energy module.
@@ -32,7 +34,8 @@ public class GalacticEnergy extends AbstractModuleIntegration {
         info("Initializing Galactic Expansion Energy");
         
         // Register event listeners
-        IEventBus modEventBus = net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext.get().getModEventBus();
+        ModContainer container = ModLoadingContext.get().getActiveContainer();
+        IEventBus modEventBus = container.getEventBus();
         modEventBus.addListener(this::commonSetup);
         
         // Initialize energy-specific registries

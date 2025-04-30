@@ -22,7 +22,7 @@ public class EnergyCapability {
     /**
      * A capability that provides energy handling.
      */
-    public static final BlockCapability<IEnergyHandler, Direction> ENERGY = Capabilities.get(ENERGY_CAPABILITY, IEnergyHandler.class, Direction.class);
+    public static final BlockCapability<IEnergyHandler, Direction> ENERGY = BlockCapability.create(ENERGY_CAPABILITY, IEnergyHandler.class, Direction.class);
     
     /**
      * Register the energy capability.
@@ -40,7 +40,7 @@ public class EnergyCapability {
         ModApiEnergy.LOGGER.info("Registering energy capability adapter");
         
         // Register the basic energy capability adapter
-        event.registerBlockCapability(ENERGY, (level, pos, state, be, context) -> {
+        event.registerBlockCapability(ENERGY, IEnergyHandler.class, (level, pos, state, be, side) -> {
             if (be instanceof IEnergyHandler energyHandler) {
                 // Only provide the capability for the appropriate side
                 return energyHandler;

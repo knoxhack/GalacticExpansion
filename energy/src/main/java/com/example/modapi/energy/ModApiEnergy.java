@@ -8,7 +8,8 @@ import com.example.modapi.energy.api.EnergyCapability;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModLoadingContext;
 
 /**
  * The main mod class for the ModApi Energy module.
@@ -31,7 +32,8 @@ public class ModApiEnergy implements Module {
         // Register this module with the core
         ModApiCore.getInstance().getRegistry().registerModule(this);
         
-        IEventBus modEventBus = net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext.get().getModEventBus();
+        ModContainer container = ModLoadingContext.get().getActiveContainer();
+        IEventBus modEventBus = container.getEventBus();
         modEventBus.addListener(this::setup);
         
         LOGGER.info("ModApi Energy initialized");
