@@ -40,13 +40,13 @@ public class EnergyCapability {
         ModApiEnergy.LOGGER.info("Registering energy capability adapter");
         
         // Register the basic energy capability adapter
-        event.registerBlockCapability(ENERGY, IEnergyHandler.class, (level, pos, state, be, side) -> {
+        event.registerBlock(ENERGY, (level, pos, state, be, side) -> {
             if (be instanceof IEnergyHandler energyHandler) {
                 // Only provide the capability for the appropriate side
                 return energyHandler;
             }
             return null;
-        });
+        }, Direction.class);
     }
     
     /**

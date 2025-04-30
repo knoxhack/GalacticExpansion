@@ -11,7 +11,8 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModLoadingContext;
 
 import java.util.function.Supplier;
 
@@ -40,7 +41,8 @@ public class ModApiExample implements Module {
         // Register this module with the core
         ModApiCore.getInstance().getRegistry().registerModule(this);
         
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        ModContainer container = ModLoadingContext.get().getActiveContainer();
+        IEventBus modEventBus = container.getEventBus();
         modEventBus.addListener(this::setup);
         
         LOGGER.info("ModApi Example initialized");
@@ -95,7 +97,7 @@ public class ModApiExample implements Module {
         ENERGY_CRYSTAL = RegistryHelper.registerItem(
             this,
             "energy_crystal",
-            () -> new Item(new Item.Properties())
+            () -> new Item(new net.minecraft.world.item.Item.Properties())
         );
     }
     

@@ -22,8 +22,8 @@ public class ModRegistry {
     private final List<DeferredRegister<?>> registers = new ArrayList<>();
     
     // Deferred registers for common Minecraft objects
-    private final DeferredRegister<Block> BLOCKS = DeferredRegister.create(net.minecraft.core.registries.Registries.BLOCK, ModApiCore.MOD_ID);
-    private final DeferredRegister<Item> ITEMS = DeferredRegister.create(net.minecraft.core.registries.Registries.ITEM, ModApiCore.MOD_ID);
+    private final DeferredRegister<Block> BLOCKS = DeferredRegister.create(net.neoforged.registries.Registries.BLOCK, ModApiCore.MOD_ID);
+    private final DeferredRegister<Item> ITEMS = DeferredRegister.create(net.neoforged.registries.Registries.ITEM, ModApiCore.MOD_ID);
     
     /**
      * Constructor for ModRegistry.
