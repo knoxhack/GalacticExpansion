@@ -138,8 +138,9 @@ public class EnergyRegistry {
         EnergyNetwork network = defaultNetworks.get(type);
         if (network == null) {
             String id = "default_" + type.getId();
-            ResourceLocation networkId = ResourceLocation.fromNamespaceAndPath(GalacticEnergy.MOD_ID, id);
-            BaseEnergyNetwork newNetwork = new BaseEnergyNetwork(networkId, level, type);
+            ResourceLocation networkId = new ResourceLocation(GalacticEnergy.MOD_ID, id);
+            // Create a cached energy network
+            EnergyNetwork newNetwork = new CachedEnergyNetwork(type, level);
             registerNetwork(id, newNetwork);
             defaultNetworks.put(type, newNetwork);
             return newNetwork;

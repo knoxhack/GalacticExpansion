@@ -13,46 +13,6 @@ import java.util.Optional;
 public interface EnergyNetwork {
     
     /**
-     * Gets all nodes in the network.
-     * 
-     * @return All nodes in the network
-     */
-    List<IEnergyHandler> getNodes();
-    
-    /**
-     * Gets the node at the given position.
-     * 
-     * @param position The position
-     * @return The node, if one exists
-     */
-    Optional<IEnergyHandler> getNode(WorldPosition position);
-    
-    /**
-     * Adds a node to the network.
-     * 
-     * @param handler The energy handler to add
-     * @param position The position of the handler
-     * @return True if the node was added
-     */
-    boolean addNode(IEnergyHandler handler, WorldPosition position);
-    
-    /**
-     * Removes a node from the network.
-     * 
-     * @param position The position of the handler to remove
-     * @return True if the node was removed
-     */
-    boolean removeNode(WorldPosition position);
-    
-    /**
-     * Updates the network when a chunk is loaded or unloaded.
-     * 
-     * @param chunk The chunk
-     * @param loaded Whether the chunk is loaded (true) or unloaded (false)
-     */
-    void onChunkStatusChange(WorldChunk chunk, boolean loaded);
-    
-    /**
      * Gets the type of energy used by this network.
      * 
      * @return The energy type
@@ -60,44 +20,39 @@ public interface EnergyNetwork {
     EnergyType getEnergyType();
     
     /**
-     * Distributes energy from sources to sinks within the network.
-     * Called each tick to transfer energy between nodes.
+     * Add an energy storage to the network at the given position.
      * 
-     * @return The amount of energy transferred
+     * @param position The position
+     * @param storage The energy storage
      */
-    int distributeEnergy();
+    void addStorage(WorldPosition position, EnergyStorage storage);
     
     /**
-     * Finds the path from one node to another.
+     * Remove an energy storage from the network at the given position.
      * 
-     * @param from The source position
-     * @param to The destination position
-     * @return The path between nodes, or an empty list if no path exists
+     * @param position The position
      */
-    List<WorldPosition> findPath(WorldPosition from, WorldPosition to);
+    void removeStorage(WorldPosition position);
     
     /**
-     * Checks if two nodes are connected.
+     * Get the energy storage at the given position.
      * 
-     * @param from The source position
-     * @param to The destination position
-     * @return True if the nodes are connected
+     * @param position The position
+     * @return The energy storage, or null if none exists
      */
-    boolean areNodesConnected(WorldPosition from, WorldPosition to);
+    EnergyStorage getStorage(WorldPosition position);
     
     /**
-     * Gets the energy loss for transferring energy along the given path.
+     * Check if an energy storage exists at the given position.
      * 
-     * @param path The path
-     * @return The energy loss as a percentage (0.0 to 1.0)
+     * @param position The position
+     * @return True if an energy storage exists
      */
-    float getEnergyLoss(List<WorldPosition> path);
+    boolean hasStorage(WorldPosition position);
     
     /**
-     * Gets the energy transfer rate for the given path.
-     * 
-     * @param path The path
-     * @return The maximum energy transfer rate
+     * Process energy transfers for one tick.
+     * This should be called once per game tick.
      */
-    int getTransferRate(List<WorldPosition> path);
+    void tick();
 }
