@@ -24,6 +24,13 @@ let timerInterval;
 function connectWebSocket() {
     console.log('Connecting to WebSocket...');
     
+    // Update connection status indicator
+    const statusIndicator = document.getElementById('connectionStatus');
+    if (statusIndicator) {
+        statusIndicator.className = 'connection-status connecting';
+        statusIndicator.title = 'Connecting to build server...';
+    }
+    
     // Show connection status in UI
     const connectionNotice = document.createElement('div');
     connectionNotice.className = 'connection-notice';
@@ -58,6 +65,26 @@ function connectWebSocket() {
             connectionNotice.style.opacity = 0;
             setTimeout(() => connectionNotice.remove(), 1000);
         }, 2000);
+        
+        // Add or update connection status indicator
+        const statusIndicator = document.getElementById('connectionStatus') || document.createElement('div');
+        statusIndicator.id = 'connectionStatus';
+        statusIndicator.className = 'connection-status connected';
+        statusIndicator.title = 'Connected to build server';
+        
+        if (!document.getElementById('connectionStatus')) {
+            // Make sure we have a navbar element
+            let navbar = document.querySelector('.navbar');
+            if (!navbar) {
+                navbar = document.createElement('div');
+                navbar.className = 'navbar';
+                document.querySelector('.container').prepend(navbar);
+            }
+            navbar.appendChild(statusIndicator);
+        }
+        
+        // Enable build controls
+        startBuildBtn.disabled = false;
         
         // Request initial status
         socket.send(JSON.stringify({ type: 'requestStatus' }));
@@ -108,6 +135,16 @@ function connectWebSocket() {
         connectionNotice.textContent = 'Disconnected from build server. Reconnecting...';
         connectionNotice.className = 'connection-notice error';
         
+        // Add status indicator to the navbar
+        const statusIndicator = document.getElementById('connectionStatus') || document.createElement('div');
+        statusIndicator.id = 'connectionStatus';
+        statusIndicator.className = 'connection-status disconnected';
+        statusIndicator.title = 'Disconnected from build server';
+        
+        if (!document.getElementById('connectionStatus')) {
+            document.querySelector('.navbar').appendChild(statusIndicator);
+        }
+        
         // Disable build controls
         startBuildBtn.disabled = true;
         stopBuildBtn.disabled = true;
@@ -127,6 +164,10 @@ function connectWebSocket() {
                     }
                     const backoffTime = Math.min(30, Math.pow(1.5, retryCount));
                     console.log(`Reconnecting (attempt ${retryCount}) in ${backoffTime.toFixed(1)}s`);
+                    
+                    // Update the status indicator with retry info
+                    statusIndicator.title = `Reconnecting (attempt ${retryCount})...`;
+                    
                     connectWebSocket();
                 }
             }, 3000);
@@ -137,6 +178,13 @@ function connectWebSocket() {
         console.error('WebSocket error:', error);
         connectionNotice.textContent = 'Connection error. Retrying...';
         connectionNotice.className = 'connection-notice error';
+        
+        // Update status indicator
+        const statusIndicator = document.getElementById('connectionStatus');
+        if (statusIndicator) {
+            statusIndicator.className = 'connection-status disconnected';
+            statusIndicator.title = 'Connection error. Retrying...';
+        }
     };
 }
 

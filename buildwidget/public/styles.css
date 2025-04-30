@@ -356,3 +356,36 @@ pre {
     background-color: var(--warning-color);
     color: var(--text-color);
 }
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+
+.connection-status {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.connection-status.connected {
+    background-color: var(--success-color);
+    box-shadow: 0 0 5px var(--success-color);
+}
+
+.connection-status.disconnected {
+    background-color: var(--danger-color);
+    box-shadow: 0 0 5px var(--danger-color);
+}
+
+.connection-status.connecting {
+    background-color: var(--warning-color);
+    box-shadow: 0 0 5px var(--warning-color);
+    animation: pulse 1.5s infinite;
+}
