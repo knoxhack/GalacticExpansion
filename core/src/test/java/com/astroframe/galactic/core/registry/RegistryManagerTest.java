@@ -4,7 +4,6 @@ import com.astroframe.galactic.core.GalacticCore;
 import com.astroframe.galactic.core.registry.tag.Tag;
 import com.astroframe.galactic.core.registry.tag.TagManager;
 import com.astroframe.galactic.core.registry.tag.annotation.TaggedWith;
-import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -68,7 +67,7 @@ public class RegistryManagerTest {
     void testRegisterAndGetObject() {
         // Create test object
         TestRegistryObject obj = new TestRegistryObject("test_object");
-        ResourceLocation id = new ResourceLocation("galacticexpansion", "test_object");
+        MockResourceLocation id = new MockResourceLocation("galacticexpansion", "test_object");
         
         // Setup mocks
         when(registryManager.register(id, obj)).thenReturn(obj);
@@ -90,8 +89,8 @@ public class RegistryManagerTest {
         TestRegistryObject obj1 = new TestRegistryObject("test_object_1");
         TestRegistryObject obj2 = new TestRegistryObject("test_object_2");
         
-        ResourceLocation id1 = new ResourceLocation("galacticexpansion", "test_object_1");
-        ResourceLocation id2 = new ResourceLocation("galacticexpansion", "test_object_2");
+        MockResourceLocation id1 = new MockResourceLocation("galacticexpansion", "test_object_1");
+        MockResourceLocation id2 = new MockResourceLocation("galacticexpansion", "test_object_2");
         
         // Setup mocks
         when(registryManager.register(id1, obj1)).thenReturn(obj1);
@@ -126,7 +125,7 @@ public class RegistryManagerTest {
         }
         
         TaggedTestObject obj = new TaggedTestObject("tagged_object");
-        ResourceLocation id = new ResourceLocation("galacticexpansion", "tagged_object");
+        MockResourceLocation id = new MockResourceLocation("galacticexpansion", "tagged_object");
         String tagId = "test_tag";
         
         // Setup mocks
