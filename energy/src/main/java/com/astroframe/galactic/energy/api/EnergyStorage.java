@@ -32,11 +32,31 @@ public interface EnergyStorage {
     int getEnergy();
     
     /**
+     * Get the amount of energy currently stored.
+     * This is an alias for getEnergy() to maintain compatibility with stream operations.
+     * 
+     * @return The stored energy
+     */
+    default int getEnergyStored() {
+        return getEnergy();
+    }
+    
+    /**
      * Get the maximum amount of energy that can be stored.
      * 
      * @return The maximum energy capacity
      */
     int getMaxEnergy();
+    
+    /**
+     * Get the maximum amount of energy that can be stored.
+     * This is an alias for getMaxEnergy() to maintain compatibility with stream operations.
+     * 
+     * @return The maximum energy capacity
+     */
+    default int getMaxEnergyStored() {
+        return getMaxEnergy();
+    }
     
     /**
      * Check if this storage can have energy extracted.

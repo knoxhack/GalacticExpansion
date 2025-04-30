@@ -2,10 +2,17 @@ package com.astroframe.galactic.energy.implementation;
 
 import com.astroframe.galactic.energy.api.EnergyNetwork;
 import com.astroframe.galactic.energy.api.EnergyStorage;
+import com.astroframe.galactic.energy.api.EnergyTransferResult;
 import com.astroframe.galactic.energy.api.EnergyType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -14,15 +21,22 @@ import java.util.Set;
  */
 public class BaseEnergyNetwork implements EnergyNetwork {
     
+    private final ResourceLocation networkId;
     private final EnergyType energyType;
+    private final Level level;
+    private final Map<BlockPos, EnergyStorage> nodeStorages = new HashMap<>();
     private final Set<EnergyStorage> storageDevices = new HashSet<>();
     
     /**
-     * Create a new energy network for the specified energy type.
+     * Create a new energy network.
      * 
+     * @param networkId The unique identifier for this network
+     * @param level The level (dimension) this network exists in
      * @param energyType The type of energy this network handles
      */
-    public BaseEnergyNetwork(EnergyType energyType) {
+    public BaseEnergyNetwork(ResourceLocation networkId, Level level, EnergyType energyType) {
+        this.networkId = networkId;
+        this.level = level;
         this.energyType = energyType;
     }
     
