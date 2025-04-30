@@ -1,92 +1,85 @@
-name: Create Release
+name: Release
 
 on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version to release (format: x.y.z)'
-        required: true
-        default: ''
-      
+
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
-    
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v3
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: gradle
       
-      - name: Set up version (tag push)
-        if: github.event_name == 'push'
-        run: |
-          echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
-      
-      - name: Set up version (manual)
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
-      
-      - name: Update version in gradle.properties
-        run: |
-          VERSION=${{ env.VERSION }}
-          sed -i "s/mod_version=.*/mod_version=$VERSION/" gradle.properties
-      
       - name: Build with Gradle
-        run: |
-          chmod +x gradlew
-          # Disable the BuildStatusPlugin on CI where there's no WebSocket server
-          export CI=true
-          ./gradlew clean build --info --stacktrace --no-daemon
+        run: ./gradlew clean build --no-daemon
       
-      - name: Generate changelog
+      - name: Generate Changelog
         id: changelog
-        run: |
-          CHANGELOG=""
-          
-          # Get previous tag
-          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
-          
-          if [ -z "$PREV_TAG" ]; then
-            # If no previous tag, use all commits
-            CHANGELOG=$(git log --pretty=format:"- %s (%h)" --reverse)
-          else
-            # Get commits since last tag
-            CHANGELOG=$(git log --pretty=format:"- %s (%h)" ${PREV_TAG}..HEAD --reverse)
-          fi
-          
-          # Create changelog file
-          echo "$CHANGELOG" > changes.md
-          echo "CHANGELOG<<EOF" >> $GITHUB_ENV
-          echo "$CHANGELOG" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+        uses: metcalfc/changelog-generator@v4.0.1
+        with:
+          myToken: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Create Release
         id: create_release
-        uses: softprops/action-gh-release@v2
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ env.VERSION }}
-          name: Galactic Expansion v${{ env.VERSION }}
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
           body: |
-            ## Galactic Expansion v${{ env.VERSION }}
-            
-            ${{ env.CHANGELOG }}
+            ## Changelog
+            ${{ steps.changelog.outputs.changelog }}
           draft: false
-          prerelease: false
-          files: |
-            core/build/libs/galacticexpansion-${{ env.VERSION }}.jar
-            energy/build/libs/galacticexpansion_energy-${{ env.VERSION }}.jar
-            machinery/build/libs/galacticexpansion_machinery-${{ env.VERSION }}.jar
-            example/build/libs/galacticexpansion_example-${{ env.VERSION }}.jar
+          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') }}
+      
+      - name: Upload Core Mod
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./core/build/libs/galacticexpansion-core-${{ github.ref_name }}.jar
+          asset_name: galacticexpansion-core-${{ github.ref_name }}.jar
+          asset_content_type: application/java-archive
+      
+      - name: Upload Energy Module
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./energy/build/libs/galacticexpansion-energy-${{ github.ref_name }}.jar
+          asset_name: galacticexpansion-energy-${{ github.ref_name }}.jar
+          asset_content_type: application/java-archive
+      
+      - name: Upload Machinery Module
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./machinery/build/libs/galacticexpansion-machinery-${{ github.ref_name }}.jar
+          asset_name: galacticexpansion-machinery-${{ github.ref_name }}.jar
+          asset_content_type: application/java-archive
+      
+      - name: Upload Example Module
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./example/build/libs/galacticexpansion-example-${{ github.ref_name }}.jar
+          asset_name: galacticexpansion-example-${{ github.ref_name }}.jar
+          asset_content_type: application/java-archive

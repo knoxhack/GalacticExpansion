@@ -90,7 +90,7 @@ public class ModApiExample implements Module {
         EXAMPLE_MACHINE_BLOCK = RegistryHelper.registerBlockWithItem(
             this, 
             "example_machine", 
-            () -> new ExampleMachine.Block(Block.Properties.of())
+            () -> new ExampleMachine.Block(net.minecraft.world.level.block.Block.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.STONE))
         );
         
         // Register energy crystal item
