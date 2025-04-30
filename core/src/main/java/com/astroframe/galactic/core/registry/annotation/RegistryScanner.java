@@ -174,9 +174,10 @@ public class RegistryScanner {
             }
         }
         
+        final String finalRegistryName = registryName;
         Registry<?> baseRegistry = RegistryManager.getInstance()
-                .getRegistry(registryName)
-                .orElseGet(() -> RegistryManager.getInstance().createRegistry(registryName));
+                .getRegistry(finalRegistryName)
+                .orElseGet(() -> RegistryManager.getInstance().createRegistry(finalRegistryName));
         
         // We know the registry is compatible with the value type, but Java generics require a cast
         @SuppressWarnings("rawtypes")

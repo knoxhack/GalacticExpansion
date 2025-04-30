@@ -89,7 +89,12 @@ public class TagManager {
      */
     @SuppressWarnings("unchecked")
     public <T> Tag<T> getOrCreateTag(String typeKey, String id) {
-        return getTag(typeKey, id).orElseGet(() -> createTag(typeKey, id));
+        return getTag(typeKey, id).orElseGet(() -> {
+            Tag<T> tag = new Tag<>(id);
+            Map<String, Tag<?>> tags = tagsByType.computeIfAbsent(typeKey, k -> new HashMap<>());
+            tags.put(id, tag);
+            return tag;
+        });
     }
     
     /**
