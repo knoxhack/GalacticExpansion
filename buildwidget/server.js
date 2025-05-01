@@ -35,6 +35,58 @@ app.use(express.json());
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
+// API Endpoints for new features
+app.get('/api/status', (req, res) => {
+  res.json({
+    buildStatus,
+    serverTime: new Date().toISOString()
+  });
+});
+
+// Endpoint for version history
+app.get('/api/versions', (req, res) => {
+  const versionHistory = getVersionHistory();
+  res.json({
+    current: buildStatus.version,
+    history: versionHistory
+  });
+});
+
+// Endpoint for changelog history
+app.get('/api/changelogs', (req, res) => {
+  const changelogHistory = getChangelogHistory();
+  res.json({
+    current: changelogHistory[0] || null,
+    history: changelogHistory
+  });
+});
+
+// Endpoint for build metrics
+app.get('/api/metrics', (req, res) => {
+  res.json(getBuildMetrics());
+});
+
+// Endpoint for module dependencies
+app.get('/api/dependencies', (req, res) => {
+  res.json({
+    dependencies: getModuleDependencies(),
+    moduleStatus: buildStatus.modules
+  });
+});
+
+// Endpoint for GitHub status
+app.get('/api/github', async (req, res) => {
+  try {
+    const githubStatus = await getGitHubStatus();
+    res.json(githubStatus);
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to fetch GitHub status',
+      message: error.message
+    });
+  }
+});
+
 // Store build status information
 let buildStatus = {
   status: 'idle',
@@ -117,6 +169,13 @@ wss.on('connection', (ws) => {
     }
   };
   
+  // Send notifications to client
+  const sendNotifications = (notifications) => {
+    if (ws.readyState === ws.OPEN) {
+      ws.send(JSON.stringify({ type: 'notifications', data: notifications }));
+    }
+  };
+  
   // Send initial status
   sendStatus();
   
@@ -126,16 +185,82 @@ wss.on('connection', (ws) => {
       const data = JSON.parse(message);
       
       if (data.type === 'startBuild') {
+        // Add notification for build start
+        addNotification({
+          type: 'info',
+          title: 'Build Started',
+          message: `Starting build with command: ${data.gradleCommand || 'clean build'}`
+        });
+        
         startBuild(data.gradleCommand || 'clean build')
-          .catch(error => sendError(`Build failed: ${error.message}`));
+          .catch(error => {
+            sendError(`Build failed: ${error.message}`);
+            
+            // Add error notification
+            addNotification({
+              type: 'error',
+              title: 'Build Error',
+              message: `Build failed: ${error.message}`,
+              autoHide: false
+            });
+          });
       } else if (data.type === 'stopBuild') {
         stopBuild();
+        
+        // Add notification for stopped build
+        addNotification({
+          type: 'warning',
+          title: 'Build Stopped',
+          message: 'Build process was manually stopped'
+        });
       } else if (data.type === 'requestStatus') {
         sendStatus();
       } else if (data.type === 'requestOutput') {
         sendBuildOutput(buildStatus.buildOutput);
       } else if (data.type === 'requestTasks') {
         sendTaskUpdates(buildStatus.tasks);
+      } else if (data.type === 'requestNotifications') {
+        sendNotifications(notificationStack);
+      } else if (data.type === 'dismissNotification') {
+        if (data.id) {
+          removeNotification(data.id);
+        } else if (data.all) {
+          // Clear all notifications
+          notificationStack.length = 0;
+          broadcastNotifications();
+        }
+      } else if (data.type === 'requestVersionHistory') {
+        // Send version history data
+        if (ws.readyState === ws.OPEN) {
+          ws.send(JSON.stringify({ 
+            type: 'versionHistory', 
+            data: getVersionHistory() 
+          }));
+        }
+      } else if (data.type === 'requestChangelogHistory') {
+        // Send changelog history data
+        if (ws.readyState === ws.OPEN) {
+          ws.send(JSON.stringify({ 
+            type: 'changelogHistory', 
+            data: getChangelogHistory() 
+          }));
+        }
+      } else if (data.type === 'requestDependencies') {
+        // Send module dependencies
+        if (ws.readyState === ws.OPEN) {
+          ws.send(JSON.stringify({ 
+            type: 'dependencies', 
+            data: getModuleDependencies() 
+          }));
+        }
+      } else if (data.type === 'requestMetrics') {
+        // Send build metrics
+        if (ws.readyState === ws.OPEN) {
+          ws.send(JSON.stringify({ 
+            type: 'metrics', 
+            data: getBuildMetrics() 
+          }));
+        }
       } else if (data.type === 'createRelease') {
         console.log('Client requested to create GitHub release with versioned module JARs');
         
@@ -231,8 +356,14 @@ wss.on('connection', (ws) => {
     sendStatus,
     sendBuildOutput,
     sendTaskUpdates,
-    sendError
+    sendError,
+    sendNotifications
   });
+  
+  // Send any active notifications
+  if (notificationStack.length > 0) {
+    sendNotifications(notificationStack);
+  }
 });
 
 // Start Gradle build
@@ -325,9 +456,55 @@ async function startBuild(gradleCommand) {
       buildStatus.lastUpdate = new Date().toISOString();
       broadcastStatus();
       
+      // Calculate build duration
+      const startTime = new Date(buildStatus.startTime);
+      const endTime = new Date(buildStatus.endTime);
+      const durationMs = endTime - startTime;
+      const durationSec = Math.round(durationMs / 1000);
+      
+      // Format duration for display
+      const minutes = Math.floor(durationSec / 60);
+      const seconds = durationSec % 60;
+      const durationStr = minutes > 0 ? 
+        `${minutes} min ${seconds} sec` : 
+        `${seconds} seconds`;
+      
       // If build was successful, push to GitHub
       if (code === 0) {
         console.log('Build successful! Ready to push to GitHub...');
+        
+        // Add success notification
+        addNotification({
+          type: 'success',
+          title: 'Build Successful',
+          message: `All modules built successfully in ${durationStr}`,
+          timeout: 10000
+        });
+        
+        // Save build metrics
+        const buildInfo = {
+          version: buildStatus.version.current,
+          status: 'success',
+          startTime: buildStatus.startTime,
+          endTime: buildStatus.endTime,
+          duration: durationMs,
+          modules: Object.entries(buildStatus.modules)
+            .filter(([_, moduleStatus]) => moduleStatus.status === 'success')
+            .length
+        };
+        
+        // Update version history
+        try {
+          saveVersionHistory(buildStatus.version.current, {
+            buildMetrics: {
+              result: 'success',
+              duration: durationMs,
+              moduleStatuses: buildStatus.modules
+            }
+          });
+        } catch (error) {
+          console.error('Error saving version history:', error);
+        }
         
         // Notify clients that build is ready for release
         const readyMessage = 'Build successful! Ready to create GitHub release.';
@@ -340,6 +517,14 @@ async function startBuild(gradleCommand) {
         // Let the user trigger release via UI
         buildStatus.releaseReady = true;
         broadcastStatus();
+      } else {
+        // Add failure notification
+        addNotification({
+          type: 'error',
+          title: 'Build Failed',
+          message: `Build failed after ${durationStr} with exit code ${code}`,
+          autoHide: false
+        });
       }
     });
   } catch (error) {
@@ -482,6 +667,82 @@ function broadcastError(errorMessage) {
   });
 }
 
+// Add a notification to the stack
+function addNotification(notification) {
+  // Generate a unique ID for the notification
+  const id = Date.now().toString();
+  
+  // Create notification object with default values
+  const notificationObj = {
+    id,
+    type: notification.type || 'info', // info, success, warning, error
+    message: notification.message,
+    title: notification.title || getDefaultTitle(notification.type),
+    autoHide: notification.autoHide !== undefined ? notification.autoHide : true,
+    timeout: notification.timeout || 5000, // Default 5 seconds
+    timestamp: new Date().toISOString(),
+    icon: getNotificationIcon(notification.type)
+  };
+  
+  // Add to notifications stack
+  notificationStack.push(notificationObj);
+  
+  // Limit the stack size to prevent memory issues
+  if (notificationStack.length > 10) {
+    notificationStack.shift(); // Remove oldest notification
+  }
+  
+  // Broadcast notifications to all clients
+  broadcastNotifications();
+  
+  // Auto-remove notification after timeout if autoHide is true
+  if (notificationObj.autoHide) {
+    setTimeout(() => {
+      removeNotification(id);
+    }, notificationObj.timeout);
+  }
+  
+  return id;
+}
+
+// Remove a notification from the stack by ID
+function removeNotification(id) {
+  const index = notificationStack.findIndex(n => n.id === id);
+  if (index !== -1) {
+    notificationStack.splice(index, 1);
+    broadcastNotifications();
+  }
+}
+
+// Broadcast notifications to all clients
+function broadcastNotifications() {
+  clients.forEach((handlers, client) => {
+    if (client.readyState === client.OPEN) {
+      handlers.sendNotifications(notificationStack);
+    }
+  });
+}
+
+// Get default title based on notification type
+function getDefaultTitle(type) {
+  switch(type) {
+    case 'success': return 'Success';
+    case 'error': return 'Error';
+    case 'warning': return 'Warning';
+    default: return 'Information';
+  }
+}
+
+// Get icon based on notification type
+function getNotificationIcon(type) {
+  switch(type) {
+    case 'success': return '✅';
+    case 'error': return '❌';
+    case 'warning': return '⚠️';
+    default: return 'ℹ️';
+  }
+}
+
 // Broadcast build metrics to all clients
 function broadcastMetrics() {
   // Calculate success rate
@@ -549,9 +810,48 @@ app.post('/api/build/stop', (req, res) => {
   res.json({ success: true, message: 'Build stopped' });
 });
 
+// API endpoint for notifications
+app.get('/api/notifications', (req, res) => {
+  res.json(notificationStack);
+});
+
+// API endpoint to add a notification
+app.post('/api/notifications', express.json(), (req, res) => {
+  const { message, type, title, autoHide, timeout } = req.body;
+  
+  if (!message) {
+    return res.status(400).json({ success: false, message: 'Notification message is required' });
+  }
+  
+  const id = addNotification({
+    message,
+    type,
+    title,
+    autoHide,
+    timeout
+  });
+  
+  res.json({ success: true, id, message: 'Notification added' });
+});
+
+// API endpoint to remove a notification
+app.delete('/api/notifications/:id', (req, res) => {
+  const { id } = req.params;
+  removeNotification(id);
+  res.json({ success: true, message: 'Notification removed' });
+});
+
 // API endpoint to create GitHub release
 app.post('/api/release', (req, res) => {
   if (buildStatus.status !== 'success' && !buildStatus.releaseReady) {
+    // Add error notification
+    addNotification({
+      type: 'error',
+      title: 'Release Failed',
+      message: 'Cannot create release: Build must be successful first',
+      autoHide: false
+    });
+    
     return res.status(400).json({ 
       success: false, 
       message: 'Cannot create release: Build must be successful first'
