@@ -254,6 +254,11 @@ wss.on('connection', (ws) => {
             data: getModuleDependencies() 
           }));
         }
+      } else if (data.type === 'customNotification') {
+        // Handle custom notification from client
+        if (data.notification) {
+          addNotification(data.notification);
+        }
       } else if (data.type === 'requestMetrics') {
         // Send build metrics
         if (ws.readyState === ws.OPEN) {
