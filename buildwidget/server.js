@@ -22,9 +22,15 @@ let buildStatus = {
   tasks: {},
   modules: {
     core: { status: 'pending' },
-    energy: { status: 'pending' },
+    power: { status: 'pending' },
     machinery: { status: 'pending' },
-    example: { status: 'pending' }
+    biotech: { status: 'pending' },
+    construction: { status: 'pending' },
+    robotics: { status: 'pending' },
+    space: { status: 'pending' },
+    utilities: { status: 'pending' },
+    vehicles: { status: 'pending' },
+    weaponry: { status: 'pending' }
   },
   lastUpdate: new Date().toISOString(),
   buildOutput: []
@@ -127,9 +133,15 @@ async function startBuild(gradleCommand) {
     tasks: {},
     modules: {
       core: { status: 'pending', lastUpdate: now.toISOString() },
-      energy: { status: 'pending', lastUpdate: now.toISOString() },
+      power: { status: 'pending', lastUpdate: now.toISOString() },
       machinery: { status: 'pending', lastUpdate: now.toISOString() },
-      example: { status: 'pending', lastUpdate: now.toISOString() }
+      biotech: { status: 'pending', lastUpdate: now.toISOString() },
+      construction: { status: 'pending', lastUpdate: now.toISOString() },
+      robotics: { status: 'pending', lastUpdate: now.toISOString() },
+      space: { status: 'pending', lastUpdate: now.toISOString() },
+      utilities: { status: 'pending', lastUpdate: now.toISOString() },
+      vehicles: { status: 'pending', lastUpdate: now.toISOString() },
+      weaponry: { status: 'pending', lastUpdate: now.toISOString() }
     },
     lastUpdate: now.toISOString(),
     buildOutput: []
