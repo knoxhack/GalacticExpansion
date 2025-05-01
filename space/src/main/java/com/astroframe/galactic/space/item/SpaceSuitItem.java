@@ -43,9 +43,6 @@ public abstract class SpaceSuitItem extends ArmorItem {
     public SpaceSuitItem(EquipmentSlot slot, int tier) {
         super(MATERIAL, slot, new Properties().stacksTo(1).fireResistant().durability(800));
         this.tier = Math.max(1, Math.min(3, tier)); // Clamp between 1-3
-        
-        // Register event handler for environmental damage protection
-        NeoForge.EVENT_BUS.addListener(this::onLivingHurt);
     }
     
     /**

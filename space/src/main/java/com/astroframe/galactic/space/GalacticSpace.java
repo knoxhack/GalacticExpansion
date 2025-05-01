@@ -2,16 +2,19 @@ package com.astroframe.galactic.space;
 
 import com.astroframe.galactic.core.api.space.SpaceAPI;
 import com.astroframe.galactic.space.command.SpaceTravelCommands;
+import com.astroframe.galactic.space.dimension.SpaceStationDimension;
 import com.astroframe.galactic.space.implementation.SpaceBodies;
 import com.astroframe.galactic.space.implementation.SpaceTravelManager;
 import com.astroframe.galactic.space.implementation.component.RocketComponentFactory;
 import com.astroframe.galactic.space.item.SpaceItems;
+import com.astroframe.galactic.space.item.SpaceSuitItem;
 import com.astroframe.galactic.space.registry.SpaceRegistry;
 import com.astroframe.galactic.space.resource.SpaceResourceGenerator;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.LogicalSide;
@@ -20,6 +23,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
@@ -64,6 +68,7 @@ public class GalacticSpace {
         NeoForge.EVENT_BUS.addListener(this::onServerStarted);
         NeoForge.EVENT_BUS.addListener(this::onServerStopping);
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
+        NeoForge.EVENT_BUS.addListener(this::onLivingHurt);
     }
     
     /**
@@ -158,5 +163,46 @@ public class GalacticSpace {
      */
     public static SpaceTravelManager getSpaceTravelManager() {
         return spaceTravelManager;
+    }
+    
+    /**
+     * Handles damage events for space suit protection.
+     * 
+     * @param event The living hurt event
+     */
+    private void onLivingHurt(LivingHurtEvent event) {
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+        
+        // Only protect in space environments
+        if (!SpaceStationDimension.isSpaceStation(player.level())) {
+            return;
+        }
+        
+        // Protect against various damage types based on suit tier
+        int minTier = SpaceSuitItem.getMinimumSuitTier(player);
+        
+        if (SpaceSuitItem.hasFullSpaceSuit(player)) {
+            if (event.getSource().is(net.minecraft.world.damagesource.DamageTypes.DROWN)) {
+                // Protect from suffocation with any tier
+                event.setCanceled(true);
+                return;
+            }
+            
+            if (minTier >= 2 && event.getSource().is(net.minecraft.world.damagesource.DamageTypes.MAGIC)) {
+                // Tier 2+ protects from radiation (magic damage)
+                event.setAmount(event.getAmount() * 0.5f);
+            }
+            
+            if (minTier >= 3) {
+                if (event.getSource().is(net.minecraft.world.damagesource.DamageTypes.FREEZE) ||
+                    event.getSource().is(net.minecraft.world.damagesource.DamageTypes.IN_FIRE) ||
+                    event.getSource().is(net.minecraft.world.damagesource.DamageTypes.ON_FIRE)) {
+                    // Tier 3 protects from temperature extremes
+                    event.setCanceled(true);
+                }
+            }
+        }
     }
 }
