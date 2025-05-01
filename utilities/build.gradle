@@ -1,21 +1,19 @@
-archivesBaseName = 'galacticmachinery'
+archivesBaseName = 'galacticutilities'
 
 // Use properties from parent gradle.properties
 group = 'com.astroframe.galactic'
 version = project.version
 
-project.ext.mod_id = 'galacticmachinery'
+project.ext.mod_id = 'galacticutilities'
 
 dependencies {
-    // The machinery module depends on both core and power modules
     implementation project(':core')
-    implementation project(':power')
 }
 
 jar {
     manifest {
         attributes([
-            "Specification-Title"     : "Galactic Machinery Systems",
+            "Specification-Title"     : "Galactic Utilities Systems",
             "Specification-Vendor"    : "AstroFrame Team",
             "Specification-Version"   : "1",
             "Implementation-Title"    : project.name,
@@ -24,5 +22,5 @@ jar {
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
-    archiveFileName = "galacticmachinery-${version}.jar"
+    archiveFileName = "galacticutilities-${version}.jar"
 }

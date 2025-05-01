@@ -1,143 +1,71 @@
 package com.astroframe.galactic.core;
 
-import com.astroframe.galactic.core.registry.Registry;
-import com.astroframe.galactic.core.registry.RegistryManager;
-import com.astroframe.galactic.core.registry.annotation.RegistryScanner;
-import com.astroframe.galactic.core.registry.tag.TagManager;
-import com.astroframe.galactic.core.registry.tag.annotation.TagProcessor;
-
+import com.astroframe.galactic.core.registry.CoreRegistry;
+import com.astroframe.galactic.core.api.GalacticRegistry;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModLoadingContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.function.Consumer;
+import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.neoforge.common.NeoForge;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The main class for the Galactic Expansion Core module.
- * This provides core functionality that other modules can build upon.
+ * This module provides the core API and utilities for all other Galactic Expansion modules.
  */
 @Mod(GalacticCore.MOD_ID)
 public class GalacticCore {
-    // Static instance for easy access
-    private static GalacticCore instance;
-    
+    public static final String MOD_ID = "galacticcore";
+    public static final Logger LOGGER = LoggerFactory.getLogger("Galactic Core");
+
+    // Registry manager instance
+    private static final GalacticRegistry REGISTRY = new CoreRegistry();
+
     /**
-     * The mod ID for the core module.
+     * Constructor for the Galactic Core mod.
+     * Initializes core components and registers event handlers.
      */
-    public static final String MOD_ID = "galacticexpansion";
-    
-    /**
-     * Logger for the core module.
-     */
-    public static final Logger LOGGER = LogManager.getLogger();
-    
-    /**
-     * Registry scanner instance for automatic registration.
-     */
-    private final RegistryScanner registryScanner;
-    
-    /**
-     * Constructor for the core module.
-     * Initializes the mod and sets up event listeners.
-     */
-    public GalacticCore(final IEventBus modEventBus) {
-        LOGGER.info("Initializing Galactic Expansion Core");
+    public GalacticCore() {
+        LOGGER.info("Initializing Galactic Core module");
         
-        // Store the instance for external access
-        instance = this;
+        // Get the mod event bus
+        var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         
-        // Create the registry scanner with the mod ID as the default domain
-        registryScanner = new RegistryScanner(MOD_ID);
+        // Register ourselves for server and other game events we are interested in
+        NeoForge.EVENT_BUS.register(this);
         
-        // Register event listeners
-        modEventBus.addListener(this::commonSetup);
+        // Register all deferred registers to the mod event bus
+        REGISTRY.registerAllTo(modEventBus);
         
-        // Initialize standard registries
-        initializeRegistries();
+        // Register mod lifecycle events
+        modEventBus.addListener(this::setup);
         
-        LOGGER.info("Galactic Expansion Core initialized");
+        LOGGER.info("Galactic Core initialization complete");
     }
     
     /**
-     * Get the singleton instance of the core mod.
+     * Setup method called during mod initialization.
      * 
-     * @return The singleton instance
+     * @param event The setup event
      */
-    public static GalacticCore getInstance() {
-        return instance;
+    private void setup(final net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) {
+        LOGGER.info("Galactic Core setup phase starting");
+        
+        // Perform initialization steps that need to happen after registry objects exist
+        event.enqueueWork(() -> {
+            // Initialize components that depend on registered objects
+            LOGGER.info("Registering core capabilities");
+            // TODO: Register capabilities and other systems
+        });
+        
+        LOGGER.info("Galactic Core setup phase complete");
     }
     
     /**
-     * Initialize standard registries that will be used across modules.
-     */
-    private void initializeRegistries() {
-        RegistryManager manager = RegistryManager.getInstance();
-        
-        // Create common registries
-        manager.createRegistry("block");
-        manager.createRegistry("item");
-        manager.createRegistry("tile_entity");
-        manager.createRegistry("container");
-        manager.createRegistry("recipe");
-        
-        // Map common types to registries
-        // These will be used when the registry name is not specified in annotations
-        // This would normally map Minecraft/Forge classes to registry names
-        // For example: registryScanner.mapTypeToRegistry(Block.class, "block");
-    }
-    
-    /**
-     * Common setup event handler.
-     * This is called during mod initialization.
+     * Get the global registry manager instance
      * 
-     * @param event The common setup event
+     * @return The registry manager
      */
-    private void commonSetup(final FMLCommonSetupEvent event) {
-        LOGGER.info("Running Galactic Expansion Core common setup");
-        
-        // Process registry entries and tags
-        // This would normally scan registry classes for annotated fields and methods
-        // For example: registryScanner.scan(CoreBlocks.class);
-        
-        // Log registry statistics
-        logRegistryStatistics();
-        
-        LOGGER.info("Galactic Expansion Core common setup complete");
-    }
-    
-    /**
-     * Log statistics about the registries and tags.
-     */
-    private void logRegistryStatistics() {
-        RegistryManager registryManager = RegistryManager.getInstance();
-        TagManager tagManager = TagManager.getInstance();
-        
-        LOGGER.info("Registry statistics:");
-        LOGGER.info("  Registry count: " + registryManager.size());
-        
-        for (String registryName : registryManager.getRegistryNames()) {
-            Registry<?> registry = registryManager.getRegistry(registryName).orElseThrow();
-            LOGGER.info("  Registry '" + registryName + "': " + registry.size() + " entries");
-        }
-        
-        LOGGER.info("Tag statistics:");
-        LOGGER.info("  Tag type count: " + tagManager.getTypes().size());
-        
-        for (String typeKey : tagManager.getTypes()) {
-            LOGGER.info("  Tags for type '" + typeKey + "': " + tagManager.getTagIds(typeKey).size());
-        }
-    }
-    
-    /**
-     * Get the registry scanner instance.
-     * This can be used by other modules to register their objects.
-     * 
-     * @return The registry scanner
-     */
-    public RegistryScanner getRegistryScanner() {
-        return registryScanner;
+    public static GalacticRegistry getRegistry() {
+        return REGISTRY;
     }
 }
