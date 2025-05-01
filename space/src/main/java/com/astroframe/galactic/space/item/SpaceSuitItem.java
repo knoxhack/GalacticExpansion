@@ -17,7 +17,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingAttackEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
@@ -39,11 +39,24 @@ public abstract class SpaceSuitItem extends ArmorItem {
      * @param tier The tier/level of the space suit (1-3)
      */
     public SpaceSuitItem(EquipmentSlot slot, int tier) {
-        super(MATERIAL, slot, new Properties().stacksTo(1).fireResistant().durability(800));
+        super(MATERIAL, typeForSlot(slot), new Properties().stacksTo(1).fireResistant().durability(800));
         this.tier = Math.max(1, Math.min(3, tier)); // Clamp between 1-3
         
         // Register event handler for environmental damage protection
-        MinecraftForge.EVENT_BUS.addListener(this::onLivingDamage);
+        NeoForge.EVENT_BUS.addListener(this::onLivingDamage);
+    }
+    
+    /**
+     * Converts an EquipmentSlot to the corresponding ArmorItem.Type
+     */
+    private static ArmorItem.Type typeForSlot(EquipmentSlot slot) {
+        return switch(slot) {
+            case HEAD -> ArmorItem.Type.HELMET;
+            case CHEST -> ArmorItem.Type.CHESTPLATE;
+            case LEGS -> ArmorItem.Type.LEGGINGS;
+            case FEET -> ArmorItem.Type.BOOTS;
+            default -> throw new IllegalArgumentException("Invalid armor slot: " + slot);
+        };
     }
     
     /**
