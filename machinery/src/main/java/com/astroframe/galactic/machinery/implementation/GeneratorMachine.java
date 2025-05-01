@@ -185,4 +185,9 @@ public class GeneratorMachine extends BaseMachine {
     public boolean canExtract() {
         return true;
     }
+    
+    @Override
+    public EnergyUnit getEnergyUnit() {
+        return EnergyUnit.GALACTIC_ENERGY_UNIT;
+    }
 }

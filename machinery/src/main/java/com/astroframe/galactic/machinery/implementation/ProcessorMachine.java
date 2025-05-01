@@ -185,4 +185,9 @@ public class ProcessorMachine extends BaseMachine {
     public boolean canExtract() {
         return false;
     }
+    
+    @Override
+    public EnergyUnit getEnergyUnit() {
+        return EnergyUnit.GALACTIC_ENERGY_UNIT;
+    }
 }
