@@ -71,474 +71,286 @@ function connectWebSocket() {
     const connectionTimeout = setTimeout(() => {
         if (socket.readyState !== WebSocket.OPEN) {
             socket.close();
-            connectionNotice.textContent = 'Connection timed out. Retrying...';
-            connectionNotice.className = 'connection-notice error';
+            console.error('WebSocket connection timed out');
+            
+            // Update status indicator
+            if (statusIndicator) {
+                statusIndicator.className = 'connection-status disconnected';
+                statusIndicator.title = 'Connection timed out. Reconnecting...';
+            }
+            
+            // Schedule reconnection
+            if (!reconnectInterval) {
+                reconnectAttempt = 1;
+                attemptReconnection();
+            }
         }
-    }, 5000);
+    }, 10000);
     
-    socket.onopen = () => {
+    // Handle open event
+    socket.addEventListener('open', () => {
         console.log('WebSocket connection established');
-        // Clear timeout and reconnect interval
         clearTimeout(connectionTimeout);
+        
+        // Reset reconnection attempts
         if (reconnectInterval) {
             clearInterval(reconnectInterval);
             reconnectInterval = null;
         }
         
-        // Update UI
-        connectionNotice.className = 'connection-notice success';
-        
-        // Update notification content
-        const noticeContent = connectionNotice.querySelector('span');
-        if (noticeContent) {
-            noticeContent.textContent = 'Connected to build server';
-        } else {
-            connectionNotice.textContent = ''; // Clear existing content
-            const newContent = document.createElement('span');
-            newContent.textContent = 'Connected to build server';
-            connectionNotice.appendChild(newContent);
-            
-            // Re-add close button if it was lost
-            const closeButton = document.createElement('button');
-            closeButton.className = 'notice-close';
-            closeButton.innerHTML = '&times;';
-            closeButton.addEventListener('click', () => {
-                connectionNotice.remove();
-            });
-            connectionNotice.appendChild(closeButton);
+        // Update status indicator
+        if (statusIndicator) {
+            statusIndicator.className = 'connection-status connected';
+            statusIndicator.title = 'Connected to build server';
         }
         
-        // Auto-hide after 3 seconds
-        setTimeout(() => {
-            connectionNotice.style.opacity = 0;
-            setTimeout(() => connectionNotice.remove(), 1000);
-        }, 3000);
-        
-        // Add or update connection status indicator
-        const statusIndicator = document.getElementById('connectionStatus') || document.createElement('div');
-        statusIndicator.id = 'connectionStatus';
-        statusIndicator.className = 'connection-status connected';
-        statusIndicator.title = 'Connected to build server';
-        
-        if (!document.getElementById('connectionStatus')) {
-            // Make sure we have a navbar element
-            let navbar = document.querySelector('.navbar');
-            if (!navbar) {
-                navbar = document.createElement('div');
-                navbar.className = 'navbar';
-                document.querySelector('.container').prepend(navbar);
-            }
-            navbar.appendChild(statusIndicator);
-        }
-        
-        // Enable build controls
-        startBuildBtn.disabled = false;
-        
-        // Request initial status
-        socket.send(JSON.stringify({ type: 'requestStatus' }));
-    };
+        // Request initial status update
+        socket.send(JSON.stringify({ type: 'getStatus' }));
+    });
     
-    socket.onmessage = (event) => {
+    // Handle message event
+    socket.addEventListener('message', (event) => {
         try {
             const message = JSON.parse(event.data);
             
-            switch(message.type) {
-                case 'status':
-                    updateBuildStatus(message.data);
-                    break;
-                case 'buildOutput':
-                    updateBuildOutput(message.data);
-                    break;
-                case 'tasks':
-                    updateTaskList(message.data);
-                    break;
-                case 'error':
-                    console.error('Build error:', message.data);
-                    // Display error in the UI with timestamp
-                    const errorSpan = document.createElement('span');
-                    errorSpan.className = 'output-error';
-                    const timestamp = new Date().toLocaleTimeString();
-                    errorSpan.textContent = `[${timestamp}] ERROR: ${message.data}`;
-                    outputText.appendChild(errorSpan);
-                    outputText.appendChild(document.createElement('br'));
-                    
-                    // Auto-scroll if enabled
-                    if (autoScrollCheckbox.checked) {
-                        outputText.scrollTop = outputText.scrollHeight;
-                    }
-                    break;
-                case 'metrics':
-                    updateBuildMetrics(message.data);
-                    break;
-                case 'notifications':
-                    updateNotifications(message.data);
-                    break;
-                case 'versionHistory':
-                    updateVersionHistory(message.data);
-                    break;
-                case 'changelogHistory':
-                    updateChangelogHistory(message.data);
-                    break;
-                case 'dependencies':
-                    updateDependencies(message.data);
-                    break;
-                default:
-                    console.warn('Unknown message type:', message.type);
+            if (message.type === 'buildStatus') {
+                updateBuildStatus(message.data);
+            } else if (message.type === 'buildOutput') {
+                updateBuildOutput(message.data);
+            } else if (message.type === 'taskList') {
+                updateTaskList(message.data);
+            } else if (message.type === 'buildMetrics') {
+                updateBuildMetrics(message.data);
+            } else if (message.type === 'notification') {
+                showNotification(message.data.title, message.data.message, message.data.type);
+            } else if (message.type === 'checkpointStatus') {
+                updateCheckpointStatus(message.data);
+            } else if (message.type === 'moduleStatus') {
+                updateModuleStatus(message.data);
+            } else if (message.type === 'versionInfo') {
+                updateVersionInfo(message.data);
             }
         } catch (error) {
             console.error('Error parsing WebSocket message:', error);
         }
-    };
+    });
     
-    socket.onclose = (event) => {
-        console.log(`WebSocket connection closed: ${event.code} ${event.reason}`);
-        clearTimeout(connectionTimeout);
-        
-        // Update UI
-        connectionNotice.className = 'connection-notice error';
-        
-        // Update notification content
-        const noticeContent = connectionNotice.querySelector('span');
-        if (noticeContent) {
-            noticeContent.textContent = 'Disconnected from build server. Reconnecting...';
-        } else {
-            connectionNotice.textContent = ''; // Clear existing content
-            const newContent = document.createElement('span');
-            newContent.textContent = 'Disconnected from build server. Reconnecting...';
-            connectionNotice.appendChild(newContent);
-            
-            // Re-add close button if it was lost
-            const closeButton = document.createElement('button');
-            closeButton.className = 'notice-close';
-            closeButton.innerHTML = '&times;';
-            closeButton.addEventListener('click', () => {
-                connectionNotice.remove();
-            });
-            connectionNotice.appendChild(closeButton);
-        }
-        
-        // Add status indicator to the navbar
-        const statusIndicator = document.getElementById('connectionStatus') || document.createElement('div');
-        statusIndicator.id = 'connectionStatus';
-        statusIndicator.className = 'connection-status disconnected';
-        statusIndicator.title = 'Disconnected from build server';
-        
-        if (!document.getElementById('connectionStatus')) {
-            document.querySelector('.navbar').appendChild(statusIndicator);
-        }
-        
-        // Disable build controls
-        startBuildBtn.disabled = true;
-        stopBuildBtn.disabled = true;
-        
-        // Try to reconnect with exponential backoff
-        if (!reconnectInterval) {
-            let retryCount = 0;
-            const maxRetries = 10;
-            
-            reconnectInterval = setInterval(() => {
-                if (!socket || socket.readyState === WebSocket.CLOSED) {
-                    retryCount++;
-                    if (retryCount > maxRetries) {
-                        // Reset to base interval after max retries
-                        retryCount = 0;
-                        connectionNotice.textContent = 'Connection failed. Still trying...';
-                    }
-                    const backoffTime = Math.min(30, Math.pow(1.5, retryCount));
-                    console.log(`Reconnecting (attempt ${retryCount}) in ${backoffTime.toFixed(1)}s`);
-                    
-                    // Update the status indicator with retry info
-                    statusIndicator.title = `Reconnecting (attempt ${retryCount})...`;
-                    
-                    connectWebSocket();
-                }
-            }, 3000);
-        }
-    };
-    
-    socket.onerror = (error) => {
+    // Handle error event
+    socket.addEventListener('error', (error) => {
         console.error('WebSocket error:', error);
-        connectionNotice.className = 'connection-notice error';
-        
-        // Update notification content
-        const noticeContent = connectionNotice.querySelector('span');
-        if (noticeContent) {
-            noticeContent.textContent = 'Connection error. Retrying...';
-        } else {
-            connectionNotice.textContent = ''; // Clear existing content
-            const newContent = document.createElement('span');
-            newContent.textContent = 'Connection error. Retrying...';
-            connectionNotice.appendChild(newContent);
-            
-            // Re-add close button if it was lost
-            const closeButton = document.createElement('button');
-            closeButton.className = 'notice-close';
-            closeButton.innerHTML = '&times;';
-            closeButton.addEventListener('click', () => {
-                connectionNotice.remove();
-            });
-            connectionNotice.appendChild(closeButton);
-        }
         
         // Update status indicator
-        const statusIndicator = document.getElementById('connectionStatus');
+        if (statusIndicator) {
+            statusIndicator.className = 'connection-status error';
+            statusIndicator.title = 'Connection error. Reconnecting...';
+        }
+    });
+    
+    // Handle close event
+    socket.addEventListener('close', (event) => {
+        console.log('WebSocket connection closed:', event.code, event.reason);
+        
+        // Update status indicator
         if (statusIndicator) {
             statusIndicator.className = 'connection-status disconnected';
-            statusIndicator.title = 'Connection error. Retrying...';
+            statusIndicator.title = 'Disconnected. Reconnecting...';
         }
-    };
+        
+        // Clear the build time interval
+        if (timerInterval) {
+            clearInterval(timerInterval);
+        }
+        
+        // Attempt reconnection
+        if (!reconnectInterval) {
+            reconnectAttempt = 1;
+            attemptReconnection();
+        }
+    });
 }
 
-// Update UI with build status
+// Attempt reconnection with exponential backoff
+let reconnectAttempt = 1;
+function attemptReconnection() {
+    // Calculate delay with exponential backoff (1.5s, 3s, 6s, 12s, 15s max)
+    const delay = Math.min(Math.pow(1.5, reconnectAttempt) * 1000, 15000);
+    
+    console.log(`Reconnecting (attempt ${reconnectAttempt}) in ${delay/1000}s`);
+    
+    // Schedule reconnection
+    setTimeout(() => {
+        if (socket.readyState === WebSocket.CLOSED) {
+            connectWebSocket();
+            reconnectAttempt++;
+        }
+    }, delay);
+}
+
+// Initialize connection
+connectWebSocket();
+
+// Update build status
 function updateBuildStatus(status) {
-    // Update main status
+    // Update status text
     buildStatusText.textContent = capitalizeFirstLetter(status.status);
     
-    // Apply status-specific styles
-    buildStatusText.className = ''; // Reset classes
-    buildStatusText.classList.add(`status-${status.status}`);
+    // Update status class
+    buildStatusText.className = '';
+    buildStatusText.classList.add(`status-${status.status.toLowerCase()}`);
     
-    // Update progress
-    progressBar.style.width = `${status.progress}%`;
-    progressText.textContent = `${status.progress}%`;
-    
-    // Update version information if available
-    if (status.version) {
-        // Update the current version display
-        if (currentVersionElement && status.version.current) {
-            currentVersionElement.textContent = status.version.current;
-        }
+    // Update progress bar
+    if (status.progress !== undefined) {
+        const progressPercent = Math.round(status.progress * 100);
+        progressBar.style.width = `${progressPercent}%`;
+        progressText.textContent = `${progressPercent}%`;
         
-        // Update last release date if available
-        if (lastReleaseDateElement) {
-            if (status.version.lastReleaseDate) {
-                const releaseDate = new Date(status.version.lastReleaseDate);
-                const formattedDate = releaseDate.toLocaleDateString();
-                const releaseTag = status.version.lastReleaseTag || '';
-                lastReleaseDateElement.textContent = `Last Release: ${formattedDate} (${releaseTag})`;
-            } else {
-                lastReleaseDateElement.textContent = 'Last Release: None';
-            }
+        // Update progress bar color based on status
+        progressBar.className = 'progress-bar';
+        if (status.status === 'running') {
+            progressBar.classList.add('progress-running');
+        } else if (status.status === 'success') {
+            progressBar.classList.add('progress-success');
+        } else if (status.status === 'failed') {
+            progressBar.classList.add('progress-failed');
         }
     }
     
-    // Update build timing information
+    // Update build time
     if (status.startTime) {
         buildStartTime = new Date(status.startTime);
-    }
-    
-    if (status.endTime) {
-        buildEndTime = new Date(status.endTime);
-        clearInterval(timerInterval);
-        updateBuildTimeDisplay();
-    } else if (status.status === 'building' && buildStartTime) {
-        // Start timer
-        if (!timerInterval) {
-            timerInterval = setInterval(updateBuildTimeDisplay, 1000);
-        }
-    }
-    
-    // Update module status
-    for (const [moduleName, moduleData] of Object.entries(status.modules)) {
-        const moduleCard = document.getElementById(`module-${moduleName}`);
-        if (moduleCard) {
-            const indicator = moduleCard.querySelector('.module-indicator');
-            const taskElement = moduleCard.querySelector('.module-task');
+        
+        if (status.status === 'running') {
+            // Start timer for running build
+            if (!timerInterval) {
+                updateBuildTimeDisplay();
+                timerInterval = setInterval(updateBuildTimeDisplay, 1000);
+            }
+        } else {
+            // Clear timer for completed build
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
             
-            // Reset classes
-            indicator.className = 'module-indicator';
-            indicator.classList.add(moduleData.status);
-            
-            // Update current task
-            if (moduleData.currentTask) {
-                taskElement.textContent = moduleData.currentTask;
-            } else {
-                taskElement.textContent = '';
+            // Set end time for completed build
+            if (status.endTime) {
+                buildEndTime = new Date(status.endTime);
+                const duration = Math.round((buildEndTime - buildStartTime) / 1000);
+                const minutes = Math.floor(duration / 60);
+                const seconds = duration % 60;
+                buildTime.textContent = `Duration: ${padZero(minutes)}:${padZero(seconds)}`;
             }
         }
     }
     
-    // Update task list
-    updateTaskList(status.tasks);
-    
-    // Update output
-    if (status.buildOutput && status.buildOutput.length > 0) {
-        updateBuildOutput(status.buildOutput);
-    }
-    
-    // Update buttons
-    if (status.status === 'building' || status.releaseInProgress) {
+    // Enable/disable buttons based on build status
+    if (status.status === 'running') {
         startBuildBtn.disabled = true;
-        stopBuildBtn.disabled = status.status !== 'building'; // Fixed logic here
+        stopBuildBtn.disabled = false;
         createReleaseBtn.disabled = true;
-        
-        // Update button text if release is in progress
-        if (status.releaseInProgress) {
-            createReleaseBtn.textContent = 'Creating Release...';
-        }
     } else {
         startBuildBtn.disabled = false;
         stopBuildBtn.disabled = true;
         
-        // Enable the GitHub Release button if build was successful and release is ready
-        if ((status.status === 'success' || status.releaseReady) && !status.releaseCreated) {
-            createReleaseBtn.disabled = false;
-            createReleaseBtn.textContent = 'Create GitHub Release';
-        } else {
-            createReleaseBtn.disabled = true;
-            
-            // Change button text if release was created
-            if (status.releaseCreated) {
-                const versionText = status.releaseVersion ? ` (v${status.releaseVersion})` : '';
-                createReleaseBtn.textContent = `Release Created${versionText}`;
-            }
-        }
-    }
-    
-    // Update version info section if it exists and we have version data
-    if (status.releaseVersion && status.releaseCreated) {
-        let versionInfoSection = document.getElementById('versionInfoSection');
-        if (!versionInfoSection) {
-            versionInfoSection = document.createElement('div');
-            versionInfoSection.id = 'versionInfoSection';
-            versionInfoSection.className = 'version-info-section';
-            
-            const versionHeader = document.createElement('h4');
-            versionHeader.textContent = 'Latest Release';
-            versionInfoSection.appendChild(versionHeader);
-            
-            const versionContent = document.createElement('div');
-            versionContent.id = 'versionContent';
-            versionContent.className = 'version-content';
-            versionInfoSection.appendChild(versionContent);
-            
-            // Find a good place to insert it
-            const buildStatusSection = document.querySelector('.build-status');
-            buildStatusSection.parentNode.insertBefore(versionInfoSection, buildStatusSection.nextSibling);
-        }
-        
-        // Update version info content
-        const versionContent = document.getElementById('versionContent');
-        if (versionContent) {
-            const releaseTime = status.releaseTime ? new Date(status.releaseTime) : new Date();
-            const timeAgo = getRelativeTime(releaseTime);
-            
-            versionContent.innerHTML = `
-                <div class="version-details">
-                    <p class="version-number">Version: <strong>${status.releaseVersion}</strong></p>
-                    <p class="version-date">Released: ${timeAgo}</p>
-                    <p class="version-modules">All module JARs are included in this release</p>
-                </div>
-            `;
-        }
+        // Only enable release button if build was successful
+        createReleaseBtn.disabled = !(status.status === 'success');
     }
 }
 
 // Update build output
 function updateBuildOutput(output) {
-    // Clear if too many lines to prevent performance issues
-    if (outputText.childNodes.length > 1000) {
-        outputText.innerHTML = '';
+    if (!output) return;
+    
+    // Create span with appropriate class based on output type
+    const outputLine = document.createElement('span');
+    
+    // Determine output type based on content
+    if (output.includes('ERROR') || output.includes('FAILED')) {
+        outputLine.className = 'output-error';
+    } else if (output.includes('SUCCESS') || output.toLowerCase().includes('build successful')) {
+        outputLine.className = 'output-success';
+    } else if (output.includes('Task :')) {
+        outputLine.className = 'output-task';
+    } else {
+        outputLine.className = 'output-info';
     }
     
-    // Add new output
-    output.forEach(line => {
-        const span = document.createElement('span');
-        span.className = `output-${line.type}`;
-        span.textContent = line.message;
-        outputText.appendChild(span);
-        
-        // Add line break after each message
-        outputText.appendChild(document.createElement('br'));
-    });
+    // Set output text
+    outputLine.textContent = output;
     
-    // Auto-scroll to bottom
-    if (autoScrollCheckbox.checked) {
+    // Append to output container
+    outputText.appendChild(outputLine);
+    outputText.appendChild(document.createElement('br'));
+    
+    // Auto-scroll if enabled
+    if (autoScrollCheckbox && autoScrollCheckbox.checked) {
         outputText.parentElement.scrollTop = outputText.parentElement.scrollHeight;
     }
 }
 
 // Update task list
 function updateTaskList(tasks) {
-    // Clear task container
+    if (!tasks || !taskContainer) return;
+    
+    // Clear existing tasks
     taskContainer.innerHTML = '';
     
-    // Sort tasks by start time (most recent first)
-    const sortedTasks = Object.entries(tasks)
-        .map(([key, task]) => ({ key, ...task }))
-        .sort((a, b) => new Date(b.startTime) - new Date(a.startTime))
-        .slice(0, 10); // Show only the 10 most recent tasks
-    
-    // Add task items
-    sortedTasks.forEach(task => {
-        const taskItem = document.createElement('div');
-        taskItem.className = 'task-item';
+    // Add new tasks
+    tasks.slice(0, 10).forEach(task => {
+        const taskElement = document.createElement('div');
+        taskElement.className = `task-item status-${task.status.toLowerCase()}`;
         
-        const taskInfo = document.createElement('div');
-        taskInfo.className = 'task-info';
-        taskInfo.innerHTML = `
-            <span class="task-module">${task.module}</span>:
-            <span class="task-name">${task.task}</span>
+        // Create task content
+        const taskTime = new Date(task.timestamp);
+        const timeAgo = getRelativeTime(taskTime);
+        
+        taskElement.innerHTML = `
+            <div class="task-name">${task.name}</div>
+            <div class="task-info">
+                <span class="task-status">${capitalizeFirstLetter(task.status)}</span>
+                <span class="task-time">${timeAgo}</span>
+            </div>
         `;
         
-        const taskStatus = document.createElement('div');
-        taskStatus.className = `task-status status-${task.status}`;
-        taskStatus.textContent = capitalizeFirstLetter(task.status);
-        
-        taskItem.appendChild(taskInfo);
-        taskItem.appendChild(taskStatus);
-        taskContainer.appendChild(taskItem);
+        // Add to container
+        taskContainer.appendChild(taskElement);
     });
+    
+    // If no tasks, show message
+    if (tasks.length === 0) {
+        const emptyMessage = document.createElement('div');
+        emptyMessage.className = 'empty-message';
+        emptyMessage.textContent = 'No recent tasks';
+        taskContainer.appendChild(emptyMessage);
+    }
 }
 
 // Update build time display
 function updateBuildTimeDisplay() {
     if (!buildStartTime) return;
     
-    const now = buildEndTime || new Date();
-    const elapsed = now - buildStartTime;
+    const now = new Date();
+    const duration = now - buildStartTime;
+    const seconds = Math.floor((duration / 1000) % 60);
+    const minutes = Math.floor((duration / (1000 * 60)) % 60);
+    const hours = Math.floor(duration / (1000 * 60 * 60));
     
-    const seconds = Math.floor((elapsed / 1000) % 60);
-    const minutes = Math.floor((elapsed / (1000 * 60)) % 60);
-    const hours = Math.floor(elapsed / (1000 * 60 * 60));
-    
-    const timeString = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
-    buildTime.textContent = `Build time: ${timeString}`;
+    if (hours > 0) {
+        buildTime.textContent = `Duration: ${hours}:${padZero(minutes)}:${padZero(seconds)}`;
+    } else {
+        buildTime.textContent = `Duration: ${padZero(minutes)}:${padZero(seconds)}`;
+    }
 }
 
-// Utility function to pad zero for time display
+// Pad numbers with leading zero
 function padZero(num) {
     return num.toString().padStart(2, '0');
 }
 
-// Utility function to capitalize first letter
+// Capitalize first letter of a string
 function capitalizeFirstLetter(string) {
+    if (!string) return '';
     return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-// Format relative time function (e.g. "5 minutes ago", "2 days ago")
-function getRelativeTime(date) {
-    if (!date) return 'Never';
-    
-    const now = new Date();
-    const diffMs = now - date;
-    const diffSec = Math.floor(diffMs / 1000);
-    const diffMin = Math.floor(diffSec / 60);
-    const diffHours = Math.floor(diffMin / 60);
-    const diffDays = Math.floor(diffHours / 24);
-    
-    if (diffSec < 60) {
-        return `Just now`;
-    } else if (diffMin < 60) {
-        return `${diffMin} minute${diffMin > 1 ? 's' : ''} ago`;
-    } else if (diffHours < 24) {
-        return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-    } else if (diffDays < 30) {
-        return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-    } else {
-        // Format as date string
-        return date.toLocaleDateString();
-    }
 }
 
 // Update build metrics display
@@ -579,91 +391,79 @@ function updateBuildMetrics(metrics) {
     } else {
         console.warn('Metrics data is incomplete or missing', metrics);
     }
-            <div id="avgBuildTimeValue" class="metric-value">-</div>
-            <div id="avgBuildTimeChange" class="metric-change"></div>
-        `;
-        metricsGrid.appendChild(avgBuildTime);
-        
-        // Build timeline
-        const timelineCard = document.createElement('div');
-        timelineCard.className = 'metric-card timeline-card';
-        timelineCard.innerHTML = `
-            <h4>Build Timeline</h4>
-            <div id="buildTimeline" class="build-timeline"></div>
-        `;
-        metricsContainer.appendChild(timelineCard);
+}
+
+// Show notification
+function showNotification(title, message, type = 'info', duration = 5000) {
+    // Get or create notification container
+    let container = document.getElementById('notificationsContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'notificationsContainer';
+        container.className = 'notifications-container';
+        document.body.appendChild(container);
     }
     
-    // Update success rate
-    if (metrics.successRate !== undefined) {
-        const successRateElement = document.getElementById('successRateValue');
-        const successRateBar = document.getElementById('successRateBar');
-        
-        successRateElement.textContent = `${Math.round(metrics.successRate * 100)}%`;
-        successRateBar.style.width = `${metrics.successRate * 100}%`;
-        
-        // Add color based on success rate
-        successRateBar.className = 'progress-bar';
-        if (metrics.successRate >= 0.8) {
-            successRateBar.classList.add('success');
-        } else if (metrics.successRate >= 0.5) {
-            successRateBar.classList.add('warning');
-        } else {
-            successRateBar.classList.add('error');
-        }
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    
+    // Add unique ID
+    const notificationId = 'notification-' + Date.now();
+    notification.id = notificationId;
+    
+    // Create notification content
+    notification.innerHTML = `
+        <div class="notification-title">${title}</div>
+        <div class="notification-message">${message}</div>
+        <button class="notification-close">&times;</button>
+    `;
+    
+    // Add to container
+    container.appendChild(notification);
+    
+    // Add close handler
+    const closeButton = notification.querySelector('.notification-close');
+    closeButton.addEventListener('click', () => {
+        notification.classList.add('notification-closing');
+        setTimeout(() => notification.remove(), 300);
+    });
+    
+    // Auto-remove after duration
+    if (duration > 0) {
+        setTimeout(() => {
+            if (document.getElementById(notificationId)) {
+                notification.classList.add('notification-closing');
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, duration);
     }
     
-    // Update average build time
-    if (metrics.avgBuildTime !== undefined) {
-        const avgBuildTimeElement = document.getElementById('avgBuildTimeValue');
-        const avgBuildTimeChange = document.getElementById('avgBuildTimeChange');
-        
-        // Format time as mm:ss
-        const minutes = Math.floor(metrics.avgBuildTime / 60000);
-        const seconds = Math.floor((metrics.avgBuildTime % 60000) / 1000);
-        avgBuildTimeElement.textContent = `${padZero(minutes)}:${padZero(seconds)}`;
-        
-        // Show trend if available
-        if (metrics.buildTimeTrend !== undefined) {
-            const trendPct = Math.abs(Math.round(metrics.buildTimeTrend * 100));
-            const trendSymbol = metrics.buildTimeTrend < 0 ? '↓' : '↑';
-            const trendClass = metrics.buildTimeTrend < 0 ? 'trend-down' : 'trend-up';
+    // Return for later reference
+    return notification;
+}
+
+// Update module status display
+function updateModuleStatus(modules) {
+    if (!modules) return;
+    
+    Object.entries(modules).forEach(([moduleName, status]) => {
+        const moduleCard = document.getElementById(`module-${moduleName}`);
+        if (moduleCard) {
+            // Update indicator
+            const indicator = moduleCard.querySelector('.module-indicator');
+            if (indicator) {
+                indicator.className = 'module-indicator';
+                indicator.classList.add(status.status || 'pending');
+            }
             
-            avgBuildTimeChange.className = `metric-change ${trendClass}`;
-            avgBuildTimeChange.textContent = `${trendSymbol} ${trendPct}%`;
+            // Update task name
+            const taskElement = moduleCard.querySelector('.module-task');
+            if (taskElement) {
+                taskElement.textContent = status.currentTask || '';
+            }
         }
-    }
-    
-    // Update build timeline
-    if (metrics.recentBuilds && metrics.recentBuilds.length > 0) {
-        const timelineElement = document.getElementById('buildTimeline');
-        if (timelineElement) {
-            timelineElement.innerHTML = ''; // Clear existing timeline
-            
-            // Create timeline items
-            metrics.recentBuilds.forEach(build => {
-                const buildItem = document.createElement('div');
-                buildItem.className = `timeline-item status-${build.status}`;
-                
-                // Format date as relative time
-                const buildDate = new Date(build.timestamp);
-                const timeAgo = getRelativeTime(buildDate);
-                
-                buildItem.setAttribute('title', 
-                    `${build.command}\n${buildDate.toLocaleString()}\nDuration: ${formatDuration(build.duration)}`);
-                
-                buildItem.innerHTML = `
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-title">${build.command}</div>
-                        <div class="timeline-time">${timeAgo}</div>
-                    </div>
-                `;
-                
-                timelineElement.appendChild(buildItem);
-            });
-        }
-    }
+    });
 }
 
 // Helper function to get relative time
@@ -772,7 +572,7 @@ if (filterSelect) {
     });
 };
 
-// Handle checkpoint creation - creates git commit + build + release together
+// Handle checkpoint creation
 createCheckpointBtn.addEventListener('click', () => {
     // Show a modal dialog for checkpoint information
     const checkpointName = prompt('Enter checkpoint name (required):', `Checkpoint ${new Date().toLocaleDateString()}`);
@@ -868,11 +668,12 @@ createCheckpointBtn.addEventListener('click', () => {
     });
 });
 
+// Create GitHub release
 createReleaseBtn.addEventListener('click', () => {
     if (confirm('Create a new GitHub release with all versioned module JARs?')) {
         // Show release in progress
         createReleaseBtn.disabled = true;
-        createReleaseBtn.textContent = 'Creating Versioned Release...';
+        createReleaseBtn.textContent = 'Creating Release...';
         
         // Add release message to output
         const releaseMessage = document.createElement('span');
@@ -886,220 +687,53 @@ createReleaseBtn.addEventListener('click', () => {
             outputText.parentElement.scrollTop = outputText.parentElement.scrollHeight;
         }
         
-        // Create version info section in UI if it doesn't exist
-        let versionInfoSection = document.getElementById('versionInfoSection');
-        if (!versionInfoSection) {
-            versionInfoSection = document.createElement('div');
-            versionInfoSection.id = 'versionInfoSection';
-            versionInfoSection.className = 'version-info-section';
-            
-            const versionHeader = document.createElement('h4');
-            versionHeader.textContent = 'Latest Release';
-            versionInfoSection.appendChild(versionHeader);
-            
-            const versionContent = document.createElement('div');
-            versionContent.id = 'versionContent';
-            versionContent.className = 'version-content';
-            versionContent.innerHTML = '<p>Creating new release...</p>';
-            versionInfoSection.appendChild(versionContent);
-            
-            // Find a good place to insert it
-            const buildStatusSection = document.querySelector('.build-status');
-            buildStatusSection.parentNode.insertBefore(versionInfoSection, buildStatusSection.nextSibling);
-        } else {
-            // Update existing version info section
-            const versionContent = document.getElementById('versionContent');
-            if (versionContent) {
-                versionContent.innerHTML = '<p>Creating new release...</p>';
-            }
-        }
-        
-        // Send release request via WebSocket
-        socket.send(JSON.stringify({
-            type: 'createRelease'
-        }));
-        
-        // The server will respond through the normal WebSocket channel
-        // and we'll update the UI based on that response
-        
-        // Note: The rest of the UI updates will be handled by the existing
-        // WebSocket message handlers for status updates and output messages
-        
-        // We'll defer enabling the button until we get confirmation from the server
+        // Send release request
+        socket.send(JSON.stringify({ type: 'createRelease' }));
     }
 });
 
-// Update notifications display
-function updateNotifications(notifications) {
-    // Get notifications container (it's already in the HTML)
-    const notificationsContainer = document.getElementById('notificationsContainer');
+// Update version info in UI
+function updateVersionInfo(versionInfo) {
+    if (!versionInfo) return;
     
-    // Keep track of notifications we've seen
-    const currentNotificationIds = new Set();
+    // Update version number
+    if (currentVersionElement && versionInfo.version) {
+        currentVersionElement.textContent = versionInfo.version;
+    }
     
-    // Process each notification from the server
-    notifications.forEach(notification => {
-        // Keep track of this notification ID
-        currentNotificationIds.add(notification.id);
-        
-        // Check if this notification is already shown
-        let notificationElement = document.getElementById(`notification-${notification.id}`);
-        
-        // If it doesn't exist, create it
-        if (!notificationElement) {
-            notificationElement = document.createElement('div');
-            notificationElement.className = `notification notification-${notification.type}`;
-            notificationElement.id = `notification-${notification.id}`;
-            
-            // Create notification header
-            const header = document.createElement('div');
-            header.className = 'notification-header';
-            
-            // Add icon
-            const icon = document.createElement('span');
-            icon.className = 'notification-icon';
-            icon.textContent = notification.icon || ''; // Use the icon from server or default
-            header.appendChild(icon);
-            
-            // Add title
-            const title = document.createElement('span');
-            title.className = 'notification-title';
-            title.textContent = notification.title || 'Notification';
-            header.appendChild(title);
-            
-            // Add close button
-            const closeBtn = document.createElement('button');
-            closeBtn.className = 'notification-close';
-            closeBtn.innerHTML = '&times;';
-            closeBtn.addEventListener('click', () => {
-                // Send dismissal message to server
-                socket.send(JSON.stringify({
-                    type: 'dismissNotification',
-                    id: notification.id
-                }));
-                
-                // Remove from UI immediately for better UX
-                notificationElement.classList.remove('notification-visible');
-                notificationElement.classList.add('notification-hidden');
-                setTimeout(() => {
-                    notificationElement.remove();
-                }, 300);
-            });
-            header.appendChild(closeBtn);
-            
-            notificationElement.appendChild(header);
-            
-            // Add notification message
-            const message = document.createElement('div');
-            message.className = 'notification-message';
-            message.textContent = notification.message;
-            notificationElement.appendChild(message);
-            
-            // Add timestamp if available
-            if (notification.timestamp) {
-                const time = document.createElement('div');
-                time.className = 'notification-time';
-                const notificationTime = new Date(notification.timestamp);
-                time.textContent = getRelativeTime(notificationTime);
-                notificationElement.appendChild(time);
-            }
-            
-            // Add to container
-            notificationsContainer.appendChild(notificationElement);
-            
-            // Animate entry
-            setTimeout(() => {
-                notificationElement.classList.add('notification-visible');
-            }, 10);
-        }
-    });
-    
-    // Remove notifications that no longer exist on the server
-    const existingNotifications = notificationsContainer.querySelectorAll('.notification');
-    existingNotifications.forEach(element => {
-        const id = element.id.replace('notification-', '');
-        if (!currentNotificationIds.has(id)) {
-            // Animate removal
-            element.classList.remove('notification-visible');
-            element.classList.add('notification-hidden');
-            setTimeout(() => {
-                element.remove();
-            }, 300);
-        }
-    });
-}
-
-// Update version history display
-function updateVersionHistory(history) {
-    console.log('Version history:', history);
-    
-    // TODO: Implement version history UI
-    // This will be added in a future update
-}
-
-// Update changelog history display
-function updateChangelogHistory(changelog) {
-    console.log('Changelog history:', changelog);
-    
-    // TODO: Implement changelog history UI
-    // This will be added in a future update
-}
-
-// Update module dependencies display
-function updateDependencies(dependencies) {
-    console.log('Module dependencies:', dependencies);
-    
-    // TODO: Implement dependencies visualization
-    // This will be added in a future update
-}
-
-// Request notifications and other data
-function requestInitialData() {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-        // Request notifications
-        socket.send(JSON.stringify({ type: 'requestNotifications' }));
-        
-        // Request metrics
-        socket.send(JSON.stringify({ type: 'requestMetrics' }));
+    // Update last release date
+    if (lastReleaseDateElement && versionInfo.lastReleaseDate) {
+        const releaseDate = new Date(versionInfo.lastReleaseDate);
+        lastReleaseDateElement.textContent = `Last Release: ${releaseDate.toLocaleDateString()}`;
     }
 }
 
-// Add button to clear all notifications
-function addClearNotificationsButton() {
-    // Check if the button already exists
-    if (document.getElementById('clearAllNotifications')) {
-        return;
+// Update checkpoint status
+function updateCheckpointStatus(status) {
+    if (!status) return;
+    
+    // Add checkpoint status message to output
+    const statusMessage = document.createElement('span');
+    statusMessage.className = `output-${status.success ? 'success' : 'error'}`;
+    statusMessage.textContent = `[Checkpoint] ${status.message}`;
+    outputText.appendChild(statusMessage);
+    outputText.appendChild(document.createElement('br'));
+    
+    // Auto-scroll to bottom
+    if (autoScrollCheckbox.checked) {
+        outputText.parentElement.scrollTop = outputText.parentElement.scrollHeight;
     }
     
-    // Add clear all notifications button to the navbar
-    const navbar = document.querySelector('.navbar');
-    if (navbar) {
-        const clearAllNotificationsBtn = document.createElement('button');
-        clearAllNotificationsBtn.id = 'clearAllNotifications';
-        clearAllNotificationsBtn.className = 'clear-notifications-btn';
-        clearAllNotificationsBtn.textContent = 'Clear All Notifications';
-        clearAllNotificationsBtn.addEventListener('click', () => {
-            socket.send(JSON.stringify({
-                type: 'dismissNotification',
-                all: true
-            }));
-        });
-        navbar.appendChild(clearAllNotificationsBtn);
+    // Show notification
+    if (status.success) {
+        showNotification('Checkpoint Status', status.message, 'success');
+    } else {
+        showNotification('Checkpoint Status', status.message, 'error');
+    }
+    
+    // Re-enable checkpoint button if needed
+    if (createCheckpointBtn.disabled) {
+        createCheckpointBtn.disabled = false;
+        createCheckpointBtn.textContent = 'Create Checkpoint';
     }
 }
-
-// Initialize WebSocket connection
-connectWebSocket();
-
-// Request initial data after connection is established
-setTimeout(requestInitialData, 1000);
-
-// Add UI components after page is loaded
-setTimeout(addClearNotificationsButton, 1000);
-
-// Handle page unload
-window.addEventListener('beforeunload', () => {
-    if (socket) {
-        socket.close();
-    }
-});
