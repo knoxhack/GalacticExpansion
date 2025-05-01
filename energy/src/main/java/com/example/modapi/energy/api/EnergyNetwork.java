@@ -1,6 +1,5 @@
 package com.example.modapi.energy.api;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 import java.util.*;
@@ -265,15 +264,15 @@ public class EnergyNetwork {
      * @param startPos The starting position
      * @return A set of connected block positions
      */
-    private Set<BlockPos> findConnectedBlocks(Level level, BlockPos startPos) {
-        Set<BlockPos> visited = new HashSet<>();
-        Queue<BlockPos> queue = new LinkedList<>();
+    private Set<net.minecraft.core.BlockPos> findConnectedBlocks(Level level, net.minecraft.core.BlockPos startPos) {
+        Set<net.minecraft.core.BlockPos> visited = new HashSet<>();
+        Queue<net.minecraft.core.BlockPos> queue = new LinkedList<>();
         
         queue.add(startPos);
         visited.add(startPos);
         
         while (!queue.isEmpty()) {
-            BlockPos current = queue.poll();
+            net.minecraft.core.BlockPos current = queue.poll();
             
             // Check all adjacent positions
             for (int dx = -1; dx <= 1; dx++) {
@@ -282,7 +281,7 @@ public class EnergyNetwork {
                         // Skip diagonals
                         if (Math.abs(dx) + Math.abs(dy) + Math.abs(dz) != 1) continue;
                         
-                        BlockPos neighbor = current.offset(dx, dy, dz);
+                        net.minecraft.core.BlockPos neighbor = current.offset(dx, dy, dz);
                         
                         // If this neighbor is in our network and not visited yet
                         if (connectedBlocks.contains(neighbor) && !visited.contains(neighbor)) {
