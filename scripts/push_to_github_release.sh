@@ -129,7 +129,12 @@ extract_module_changes() {
     if [ -n "$module_commits" ]; then
         echo -e "\n### 🔧 $module Module" >> "$CHANGELOG_FILE"
         echo -e "$module_commits" | while read -r commit; do
-            echo "- $commit" >> "$CHANGELOG_FILE"
+            # Filter out Replit-specific metadata
+            filtered_commit=$(echo "$commit" | grep -v "Replit-Commit-" | sed '/^$/d')
+            # Only add if content remains after filtering
+            if [ -n "$filtered_commit" ]; then
+                echo "- $filtered_commit" >> "$CHANGELOG_FILE"
+            fi
         done
     fi
 }
@@ -153,7 +158,12 @@ extract_general_changes() {
     if [ -n "$general_commits" ]; then
         echo -e "\n### 🌟 General Changes" >> "$CHANGELOG_FILE"
         echo -e "$general_commits" | while read -r commit; do
-            echo "- $commit" >> "$CHANGELOG_FILE"
+            # Filter out Replit-specific metadata
+            filtered_commit=$(echo "$commit" | grep -v "Replit-Commit-" | sed '/^$/d')
+            # Only add if content remains after filtering
+            if [ -n "$filtered_commit" ]; then
+                echo "- $filtered_commit" >> "$CHANGELOG_FILE"
+            fi
         done
     fi
 }
@@ -177,7 +187,12 @@ extract_build_changes() {
     if [ -n "$build_commits" ]; then
         echo -e "\n### 🔨 Build System" >> "$CHANGELOG_FILE"
         echo -e "$build_commits" | while read -r commit; do
-            echo "- $commit" >> "$CHANGELOG_FILE"
+            # Filter out Replit-specific metadata
+            filtered_commit=$(echo "$commit" | grep -v "Replit-Commit-" | sed '/^$/d')
+            # Only add if content remains after filtering
+            if [ -n "$filtered_commit" ]; then
+                echo "- $filtered_commit" >> "$CHANGELOG_FILE"
+            fi
         done
     fi
 }

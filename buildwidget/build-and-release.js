@@ -125,6 +125,9 @@ async function generateModuleChangelogs(version) {
             // Skip merge commits
             if (message.startsWith('Merge ')) continue;
             
+            // Skip Replit-specific metadata
+            if (message.includes('Replit-Commit-')) continue;
+            
             const commitEntry = { hash, message, author, date };
             
             // Check for breaking changes
