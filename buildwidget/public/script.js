@@ -19,7 +19,7 @@ const lastReleaseDateElement = document.getElementById('lastReleaseDate');
 
 // Establish WebSocket connection
 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-const host = window.location.host.replace('5000', '5001');  // Use port 5001 instead
+const host = window.location.host;  // Use the same host, proxy will handle redirecting
 const wsUrl = `${protocol}//${host}/ws`;
 let socket;
 let reconnectInterval;
@@ -546,20 +546,39 @@ function formatDuration(ms) {
 
 // Event listeners
 startBuildBtn.addEventListener('click', () => {
+    console.log('Start build button clicked');
+    
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+        console.error('WebSocket not connected! Attempting to reconnect...');
+        connectWebSocket();
+        // Show error to user
+        showNotification('Connection Error', 'WebSocket not connected. Attempting to reconnect...', 'error');
+        return;
+    }
+    
     const gradleCommand = buildCommandSelect.value;
-    socket.send(JSON.stringify({
-        type: 'startBuild',
-        gradleCommand: gradleCommand
-    }));
+    console.log('Sending startBuild command with:', gradleCommand);
     
-    // Reset build time tracking
-    buildStartTime = new Date();
-    buildEndTime = null;
-    clearInterval(timerInterval);
-    timerInterval = setInterval(updateBuildTimeDisplay, 1000);
-    
-    // Clear output
-    outputText.innerHTML = '';
+    try {
+        socket.send(JSON.stringify({
+            type: 'startBuild',
+            gradleCommand: gradleCommand
+        }));
+        
+        // Reset build time tracking
+        buildStartTime = new Date();
+        buildEndTime = null;
+        clearInterval(timerInterval);
+        timerInterval = setInterval(updateBuildTimeDisplay, 1000);
+        
+        // Clear output
+        outputText.innerHTML = '';
+        
+        console.log('Build command sent successfully');
+    } catch (error) {
+        console.error('Error sending build command:', error);
+        showNotification('Error', 'Failed to send build command: ' + error.message, 'error');
+    }
 });
 
 stopBuildBtn.addEventListener('click', () => {
