@@ -31,54 +31,75 @@ import java.util.concurrent.Executor;
  * - data/galactic-space/dimension/space_station.json
  * - data/galactic-space/dimension_type/space_station_type.json
  */
-public class SpaceStationHelper {
+public class SpaceStationChunkGenerator extends ChunkGenerator {
 
-    // Constants for the space station platform
-    public static final int PLATFORM_Y = 100;
-    public static final int PLATFORM_CENTER_X = 0;
-    public static final int PLATFORM_CENTER_Z = 0;
-    public static final int PLATFORM_RADIUS = 32;
-    
-    // Block states for platform construction
-    public static final BlockState PLATFORM_BORDER = Blocks.REINFORCED_DEEPSLATE.defaultBlockState();
-    public static final BlockState PLATFORM_FLOOR = Blocks.LIGHT_GRAY_CONCRETE.defaultBlockState();
-    public static final BlockState PLATFORM_LIGHT = Blocks.LIGHT.defaultBlockState();
+    public SpaceStationChunkGenerator(BiomeSource biomeSource) {
+        super(biomeSource);
+    }
 
-    /**
-     * Utility method to build the space station platform at the origin.
-     * This can be called during initial world generation or used by a command.
-     */
-    public static void buildSpaceStationPlatform(WorldGenLevel level) {
-        GalacticSpace.LOGGER.info("Building space station platform at origin");
+    @Override
+    public CompletableFuture<ChunkAccess> fillFromNoise(Executor executor, Blender blender, RandomState randomState, StructureManager structureManager, ChunkAccess chunkAccess) {
+        return CompletableFuture.completedFuture(chunkAccess);
+    }
+
+    @Override
+    public int getGenDepth() {
+        return 384; // Default world height
+    }
+
+    @Override
+    public CompletableFuture<ChunkAccess> createBiomes(Executor executor, RandomState randomState, Blender blender, StructureManager structureFeatureManager, ChunkAccess chunkAccess) {
+        return CompletableFuture.completedFuture(chunkAccess);
+    }
+
+    @Override
+    public void applyCarvers(WorldGenLevel level, RandomState randomState, BiomeManager biomeManager, StructureManager structureManager, ChunkAccess chunkAccess, GenerationStep.Carving carvingStage) {
+        // No carvers needed in space station
+    }
+
+    @Override
+    public void buildSurface(WorldGenLevel level, StructureManager structureManager, RandomState randomState, ChunkAccess chunkAccess) {
+        ChunkPos chunkPos = chunkAccess.getPos();
         
-        // Build the platform blocks
-        for (int x = -PLATFORM_RADIUS; x <= PLATFORM_RADIUS; x++) {
-            for (int z = -PLATFORM_RADIUS; z <= PLATFORM_RADIUS; z++) {
-                int distanceSquared = x * x + z * z;
-                
-                // Within platform radius
-                if (distanceSquared <= PLATFORM_RADIUS * PLATFORM_RADIUS) {
-                    // Place floor
-                    BlockPos pos = new BlockPos(x, PLATFORM_Y, z);
-                    
-                    // Border blocks
-                    if (distanceSquared >= (PLATFORM_RADIUS - 1) * (PLATFORM_RADIUS - 1)) {
-                        level.setBlock(pos, PLATFORM_BORDER, 3);
-                    } else {
-                        // Floor blocks with occasional lights
-                        if ((x + z) % 8 == 0) {
-                            level.setBlock(pos, PLATFORM_LIGHT, 3);
-                        } else {
-                            level.setBlock(pos, PLATFORM_FLOOR, 3);
-                        }
-                    }
-                }
-            }
+        // Only generate the platform in the origin chunk
+        if (chunkPos.x == 0 && chunkPos.z == 0) {
+            // This will be handled by SpaceStationHelper when world is first created
+            GalacticSpace.LOGGER.debug("Origin chunk detected in space station dimension");
         }
-        
-        // Add station marker block
-        level.setBlock(new BlockPos(0, PLATFORM_Y + 1, 0), Blocks.BEACON.defaultBlockState(), 3);
-        
-        GalacticSpace.LOGGER.info("Space station platform built successfully");
+    }
+
+    @Override
+    public void spawnOriginalMobs(WorldGenLevel level) {
+        // No natural mob spawning
+    }
+
+    @Override
+    public int getSeaLevel() {
+        return -63; // No sea in space
+    }
+
+    @Override
+    public int getMinY() {
+        return -64;
+    }
+
+    @Override
+    public int getBaseHeight(int x, int z, Heightmap.Types types, RandomState randomState, LevelHeightAccessor levelHeightAccessor) {
+        // Check if this is part of the platform
+        int distanceSquared = x * x + z * z;
+        if (distanceSquared <= SpaceStationHelper.PLATFORM_RADIUS * SpaceStationHelper.PLATFORM_RADIUS) {
+            return SpaceStationHelper.PLATFORM_Y;
+        }
+        return SpaceStationHelper.PLATFORM_Y - 1; // Below platform level for void
+    }
+
+    @Override
+    public NoiseColumn getBaseColumn(int x, int z, RandomState randomState, LevelHeightAccessor levelHeightAccessor) {
+        // Check if this is part of the platform
+        int distanceSquared = x * x + z * z;
+        if (distanceSquared <= SpaceStationHelper.PLATFORM_RADIUS * SpaceStationHelper.PLATFORM_RADIUS) {
+            return new NoiseColumn(SpaceStationHelper.PLATFORM_Y - 1, new BlockState[]{ SpaceStationHelper.PLATFORM_FLOOR });
+        }
+        return new NoiseColumn(SpaceStationHelper.PLATFORM_Y - 1, new BlockState[]{ Blocks.AIR.defaultBlockState() });
     }
 }

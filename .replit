@@ -18,15 +18,15 @@ args = "Build Mod API"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "build-mod"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "Build Status Widget"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
 args = "Build Widget Proxy"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Build Mod (No Clean)"
 
 [[workflows.workflow]]
 name = "Build Mod API"
@@ -35,14 +35,6 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35 && ./gradlew :core:build :power:build :machinery:build :biotech:build"
-
-[[workflows.workflow]]
-name = "build-mod"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35 && ./gradlew clean build --no-daemon"
 
 [[workflows.workflow]]
 name = "Build Status Widget"
@@ -61,6 +53,14 @@ author = "agent"
 task = "shell.exec"
 args = "cd buildwidget && node proxy.js"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Build Mod (No Clean)"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35 && ./gradlew build -x clean --no-daemon"
 
 [deployment]
 run = ["sh", "-c", "export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35 && ./gradlew :core:build :power:build :machinery:build :biotech:build"]
