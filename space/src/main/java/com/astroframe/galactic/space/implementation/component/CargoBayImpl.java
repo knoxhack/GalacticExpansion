@@ -2,9 +2,9 @@ package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.ICargoBay;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
+import com.astroframe.galactic.core.api.common.ItemStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -128,7 +128,7 @@ public class CargoBayImpl implements ICargoBay {
         for (int i = 0; i < storageCapacity; i++) {
             if (contents.containsKey(i)) {
                 ItemStack existing = contents.get(i);
-                if (ItemStack.isSameItemSameTags(existing, remainingStack)) {
+                if (existing.isSameItemSameTags(remainingStack)) {
                     int spaceAvailable = existing.getMaxStackSize() - existing.getCount();
                     if (spaceAvailable > 0) {
                         int amountToAdd = Math.min(spaceAvailable, remainingStack.getCount());

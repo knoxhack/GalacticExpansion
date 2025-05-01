@@ -1,6 +1,6 @@
 package com.astroframe.galactic.core.api.common;
 
-import net.minecraft.core.BlockPos as MinecraftBlockPos;
+import net.minecraft.core.BlockPos;
 
 /**
  * Abstraction for block position to avoid direct dependency on Minecraft classes.
@@ -28,7 +28,7 @@ public class BlockPos {
      * @param pos The Minecraft BlockPos
      * @return A new abstracted BlockPos
      */
-    public static BlockPos fromMinecraft(MinecraftBlockPos pos) {
+    public static BlockPos fromMinecraft(net.minecraft.core.BlockPos pos) {
         return new BlockPos(pos.getX(), pos.getY(), pos.getZ());
     }
     
@@ -36,8 +36,8 @@ public class BlockPos {
      * Converts to a Minecraft BlockPos.
      * @return The equivalent Minecraft BlockPos
      */
-    public MinecraftBlockPos toMinecraft() {
-        return new MinecraftBlockPos(x, y, z);
+    public net.minecraft.core.BlockPos toMinecraft() {
+        return new net.minecraft.core.BlockPos(x, y, z);
     }
     
     /**
