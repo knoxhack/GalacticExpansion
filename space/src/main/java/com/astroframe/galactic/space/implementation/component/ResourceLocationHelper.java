@@ -134,4 +134,15 @@ public class ResourceLocationHelper {
             return create("minecraft", parts[0]);
         }
     }
+    
+    /**
+     * Creates a ResourceLocation with the given path, using the mod ID as namespace.
+     * This is a convenience method for creating resources in the mod's namespace.
+     * 
+     * @param path The resource path
+     * @return A ResourceLocation
+     */
+    public static ResourceLocation of(String path) {
+        return create("galactic", validatePath(path));
+    }
 }

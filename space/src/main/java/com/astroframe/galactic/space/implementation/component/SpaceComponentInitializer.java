@@ -1,12 +1,8 @@
 package com.astroframe.galactic.space.implementation.component;
 
-import com.astroframe.galactic.core.api.space.component.ICommandModule;
-import com.astroframe.galactic.core.api.space.component.IRocketEngine;
-import com.astroframe.galactic.core.api.space.component.IFuelTank;
-import com.astroframe.galactic.core.api.space.component.ICargoBay;
-import com.astroframe.galactic.core.api.space.component.IPassengerCompartment;
-import com.astroframe.galactic.core.api.space.component.IShield;
-import com.astroframe.galactic.core.api.space.component.ILifeSupport;
+import com.astroframe.galactic.core.api.space.component.*;
+import com.astroframe.galactic.core.api.space.component.enums.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -43,7 +39,7 @@ public class SpaceComponentInitializer {
              .crewCapacity(1)
              .computingPower(2)
              .communicationRange(100)
-             .commandModuleType(ICommandModule.CommandModuleType.BASIC)
+             .commandModuleType(CommandModuleType.BASIC)
              .build()
         );
         
@@ -58,7 +54,7 @@ public class SpaceComponentInitializer {
              .crewCapacity(2)
              .computingPower(5)
              .communicationRange(500)
-             .commandModuleType(ICommandModule.CommandModuleType.ADVANCED)
+             .commandModuleType(CommandModuleType.ADVANCED)
              .build()
         );
         
@@ -73,7 +69,7 @@ public class SpaceComponentInitializer {
              .crewCapacity(3)
              .computingPower(8)
              .communicationRange(1000)
-             .commandModuleType(ICommandModule.CommandModuleType.SUPERIOR)
+             .commandModuleType(CommandModuleType.SUPERIOR)
              .build()
         );
     }
@@ -94,7 +90,7 @@ public class SpaceComponentInitializer {
              .heatCapacity(800)
              .canOperateInAtmosphere(true)
              .canOperateInSpace(false)
-             .engineType(IRocketEngine.EngineType.CHEMICAL)
+             .engineType(EngineType.CHEMICAL)
              .build()
         );
         
@@ -110,7 +106,7 @@ public class SpaceComponentInitializer {
              .heatCapacity(1200)
              .canOperateInAtmosphere(true)
              .canOperateInSpace(true)
-             .engineType(IRocketEngine.EngineType.CHEMICAL)
+             .engineType(EngineType.CHEMICAL)
              .build()
         );
         
@@ -126,7 +122,7 @@ public class SpaceComponentInitializer {
              .heatCapacity(600)
              .canOperateInAtmosphere(false)
              .canOperateInSpace(true)
-             .engineType(IRocketEngine.EngineType.ION)
+             .engineType(EngineType.ION)
              .build()
         );
         
@@ -142,7 +138,7 @@ public class SpaceComponentInitializer {
              .heatCapacity(2000)
              .canOperateInAtmosphere(true)
              .canOperateInSpace(true)
-             .engineType(IRocketEngine.EngineType.FUSION)
+             .engineType(EngineType.FUSION)
              .build()
         );
     }
@@ -160,7 +156,7 @@ public class SpaceComponentInitializer {
              .mass(500)
              .maxFuelCapacity(2000)
              .pressureRating(10.0f)
-             .fuelType(IFuelTank.FuelType.CHEMICAL)
+             .fuelType(FuelType.CHEMICAL)
              .build()
         );
         
@@ -173,7 +169,7 @@ public class SpaceComponentInitializer {
              .mass(1000)
              .maxFuelCapacity(5000)
              .pressureRating(15.0f)
-             .fuelType(IFuelTank.FuelType.CHEMICAL)
+             .fuelType(FuelType.CHEMICAL)
              .build()
         );
         
@@ -187,7 +183,7 @@ public class SpaceComponentInitializer {
              .maxFuelCapacity(3000)
              .pressureRating(20.0f)
              .insulated(true)
-             .fuelType(IFuelTank.FuelType.ION)
+             .fuelType(FuelType.ION)
              .build()
         );
         
@@ -201,7 +197,7 @@ public class SpaceComponentInitializer {
              .maxFuelCapacity(10000)
              .pressureRating(50.0f)
              .insulated(true)
-             .fuelType(IFuelTank.FuelType.FUSION)
+             .fuelType(FuelType.FUSION)
              .build()
         );
     }
@@ -260,7 +256,7 @@ public class SpaceComponentInitializer {
             ).tier(1)
              .mass(400)
              .passengerCapacity(2)
-             .compartmentType(IPassengerCompartment.CompartmentType.BASIC)
+             .compartmentType(CompartmentType.BASIC)
              .build()
         );
         
@@ -273,7 +269,7 @@ public class SpaceComponentInitializer {
              .mass(800)
              .passengerCapacity(4)
              .sleepingQuarters(true)
-             .compartmentType(IPassengerCompartment.CompartmentType.STANDARD)
+             .compartmentType(CompartmentType.STANDARD)
              .build()
         );
         
@@ -288,7 +284,7 @@ public class SpaceComponentInitializer {
              .artificialGravity(true)
              .sleepingQuarters(true)
              .emergencyMedical(true)
-             .compartmentType(IPassengerCompartment.CompartmentType.LUXURY)
+             .compartmentType(CompartmentType.LUXURY)
              .build()
         );
     }
@@ -307,7 +303,7 @@ public class SpaceComponentInitializer {
              .maxShieldStrength(100)
              .regenerationRate(0.5f)
              .impactResistance(3)
-             .shieldType(IShield.ShieldType.BASIC)
+             .shieldType(ShieldType.BASIC)
              .build()
         );
         
@@ -322,7 +318,7 @@ public class SpaceComponentInitializer {
              .regenerationRate(1.0f)
              .impactResistance(5)
              .thermalShielded(true)
-             .shieldType(IShield.ShieldType.THERMAL)
+             .shieldType(ShieldType.THERMAL)
              .build()
         );
         
@@ -339,7 +335,7 @@ public class SpaceComponentInitializer {
              .radiationShielded(true)
              .empShielded(true)
              .thermalShielded(true)
-             .shieldType(IShield.ShieldType.ADVANCED)
+             .shieldType(ShieldType.ADVANCED)
              .build()
         );
     }
@@ -358,7 +354,7 @@ public class SpaceComponentInitializer {
              .maxCrewCapacity(3)
              .oxygenEfficiency(0.7f)
              .waterRecyclingRate(0.6f)
-             .lifeSupportType(ILifeSupport.LifeSupportType.BASIC)
+             .lifeSupportType(LifeSupportType.BASIC)
              .build()
         );
         
@@ -373,7 +369,7 @@ public class SpaceComponentInitializer {
              .oxygenEfficiency(0.85f)
              .waterRecyclingRate(0.8f)
              .advancedMedical(true)
-             .lifeSupportType(ILifeSupport.LifeSupportType.STANDARD)
+             .lifeSupportType(LifeSupportType.STANDARD)
              .build()
         );
         
@@ -389,7 +385,7 @@ public class SpaceComponentInitializer {
              .waterRecyclingRate(0.95f)
              .advancedMedical(true)
              .radiationScrubbers(true)
-             .lifeSupportType(ILifeSupport.LifeSupportType.ADVANCED)
+             .lifeSupportType(LifeSupportType.ADVANCED)
              .build()
         );
     }

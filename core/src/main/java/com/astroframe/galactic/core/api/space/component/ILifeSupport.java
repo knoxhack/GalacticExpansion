@@ -1,73 +1,45 @@
 package com.astroframe.galactic.core.api.space.component;
 
+import com.astroframe.galactic.core.api.space.component.enums.LifeSupportType;
+
 /**
- * Interface for rocket life support components.
- * Life support systems provide oxygen, temperature control, and other necessities
- * for crew survival in the harsh environment of space.
+ * Interface for rocket life support systems.
  */
 public interface ILifeSupport extends IRocketComponent {
     
     /**
-     * Gets the life support system's oxygen generation rate.
-     * @return The oxygen generation rate in units per minute
-     */
-    float getOxygenGenerationRate();
-    
-    /**
-     * Gets the maximum crew capacity this life support system can sustain.
+     * Gets the maximum crew capacity this life support system can handle.
      * @return The maximum crew capacity
      */
     int getMaxCrewCapacity();
     
     /**
-     * Gets the life support system type.
+     * Gets the oxygen efficiency of this life support system (0.0-1.0).
+     * @return The oxygen efficiency
+     */
+    float getOxygenEfficiency();
+    
+    /**
+     * Gets the water recycling rate of this life support system (0.0-1.0).
+     * @return The water recycling rate
+     */
+    float getWaterRecyclingRate();
+    
+    /**
+     * Checks if this system has advanced medical facilities.
+     * @return True if has advanced medical
+     */
+    boolean hasAdvancedMedical();
+    
+    /**
+     * Checks if this system has radiation scrubbers.
+     * @return True if has radiation scrubbers
+     */
+    boolean hasRadiationScrubbers();
+    
+    /**
+     * Gets the type of this life support system.
      * @return The life support type
      */
     LifeSupportType getLifeSupportType();
-    
-    /**
-     * Gets the energy consumption of this life support system.
-     * @return The energy consumption rate
-     */
-    int getEnergyConsumption();
-    
-    /**
-     * Gets the redundancy level of this life support system.
-     * Higher values mean the system continues working even when partially damaged.
-     * @return The redundancy level (1-5)
-     */
-    int getRedundancyLevel();
-    
-    /**
-     * Gets the toxin filtering capability.
-     * Higher values provide better protection against environmental toxins.
-     * @return The toxin filtering capability (1-10)
-     */
-    int getToxinFiltering();
-    
-    /**
-     * Enum representing the different types of life support systems.
-     */
-    enum LifeSupportType {
-        BASIC("Basic"),                 // Minimal life support for short trips
-        CHEMICAL("Chemical"),           // Standard chemical-based system
-        BIOLOGICAL("Biological"),       // Advanced system using plants and algae
-        RECYCLING("Recycling"),         // High-efficiency system with recycling
-        QUANTUM("Quantum");             // End-game system with matter conversion
-        
-        private final String displayName;
-        
-        LifeSupportType(String displayName) {
-            this.displayName = displayName;
-        }
-        
-        public String getDisplayName() {
-            return this.displayName;
-        }
-    }
-    
-    @Override
-    default ComponentType getType() {
-        return ComponentType.LIFE_SUPPORT;
-    }
 }

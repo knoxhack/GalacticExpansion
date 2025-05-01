@@ -1,6 +1,8 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.ICommandModule;
+import com.astroframe.galactic.core.api.space.component.enums.CommandModuleType;
+import com.astroframe.galactic.core.api.space.component.enums.ComponentType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 
