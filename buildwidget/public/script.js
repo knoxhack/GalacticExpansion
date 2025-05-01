@@ -111,37 +111,93 @@ function connectWebSocket() {
     // Handle message event
     socket.addEventListener('message', (event) => {
         try {
-            const message = JSON.parse(event.data);
-            console.log('Received message type:', message.type);
+            // Handle different data formats that might come through
+            let message;
             
-            if (message.type === 'status') {
-                updateBuildStatus(message.data);
-            } else if (message.type === 'buildOutput') {
-                updateBuildOutput(message.data);
-            } else if (message.type === 'tasks') {
-                updateTaskList(message.data);
-            } else if (message.type === 'metrics') {
-                updateBuildMetrics(message.data);
-            } else if (message.type === 'notifications') {
-                // Handle array of notifications
-                if (Array.isArray(message.data)) {
-                    message.data.forEach(notification => {
-                        showNotification(notification.title, notification.message, notification.type);
-                    });
-                } else {
-                    showNotification(message.data.title, message.data.message, message.data.type);
-                }
-            } else if (message.type === 'checkpointStatus') {
-                updateCheckpointStatus(message.data);
-            } else if (message.type === 'moduleStatus') {
-                updateModuleStatus(message.data);
-            } else if (message.type === 'versionHistory' || message.type === 'versionInfo') {
-                updateVersionInfo(message.data);
+            if (typeof event.data === 'string') {
+                message = JSON.parse(event.data);
+            } else if (event.data instanceof Blob) {
+                // For blob data, we'd need to read it as text first
+                const reader = new FileReader();
+                reader.onload = function() {
+                    try {
+                        const jsonData = JSON.parse(reader.result);
+                        handleMessageData(jsonData);
+                    } catch (e) {
+                        console.error('Error parsing Blob message:', e);
+                    }
+                };
+                reader.readAsText(event.data);
+                return; // Early return, as we're handling async
+            } else {
+                console.error('Unknown message format received:', typeof event.data);
+                return;
             }
+            
+            // Process the parsed message
+            handleMessageData(message);
         } catch (error) {
             console.error('Error parsing WebSocket message:', error);
         }
     });
+    
+    // Helper function to process message data
+    function handleMessageData(message) {
+        if (!message || !message.type) {
+            console.error('Invalid message format:', message);
+            return;
+        }
+        
+        console.log('Received message type:', message.type);
+        
+        // Ensure we have data
+        const data = message.data || {}; 
+        
+        switch (message.type) {
+            case 'status':
+                updateBuildStatus(data);
+                break;
+            case 'buildOutput':
+                updateBuildOutput(data);
+                break;
+            case 'tasks':
+                updateTaskList(data);
+                break;
+            case 'metrics':
+                updateBuildMetrics(data);
+                break;
+            case 'notifications':
+                // Handle array of notifications
+                if (Array.isArray(data)) {
+                    data.forEach(notification => {
+                        showNotification(
+                            notification.title || 'Notification', 
+                            notification.message || '', 
+                            notification.type || 'info'
+                        );
+                    });
+                } else if (data && typeof data === 'object') {
+                    showNotification(
+                        data.title || 'Notification', 
+                        data.message || '', 
+                        data.type || 'info'
+                    );
+                }
+                break;
+            case 'checkpointStatus':
+                updateCheckpointStatus(data);
+                break;
+            case 'moduleStatus':
+                updateModuleStatus(data);
+                break;
+            case 'versionHistory':
+            case 'versionInfo':
+                updateVersionInfo(data);
+                break;
+            default:
+                console.warn('Unknown message type:', message.type);
+        }
+    }
     
     // Handle error event
     socket.addEventListener('error', (error) => {

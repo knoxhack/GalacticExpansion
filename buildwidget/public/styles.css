@@ -245,6 +245,7 @@ button:disabled {
     height: 100%;
     width: 0%;
     transition: width 0.5s ease, background-color 0.3s;
+    border-radius: 2px;
 }
 
 .module-progress-bar.pending {
@@ -253,15 +254,47 @@ button:disabled {
 
 .module-progress-bar.building {
     background-color: var(--building-color);
-    animation: pulse-subtle 1.5s infinite;
+    background-image: linear-gradient(45deg, 
+        rgba(255, 255, 255, 0.15) 25%, 
+        transparent 25%, 
+        transparent 50%, 
+        rgba(255, 255, 255, 0.15) 50%, 
+        rgba(255, 255, 255, 0.15) 75%, 
+        transparent 75%, 
+        transparent);
+    background-size: 1rem 1rem;
+    animation: progress-bar-stripes 1s linear infinite, pulse-subtle 1.5s infinite;
+}
+
+@keyframes progress-bar-stripes {
+    from { background-position: 1rem 0; }
+    to { background-position: 0 0; }
 }
 
 .module-progress-bar.success {
     background-color: var(--success-color);
+    background-image: linear-gradient(45deg, 
+        rgba(255, 255, 255, 0.15) 25%, 
+        transparent 25%, 
+        transparent 50%, 
+        rgba(255, 255, 255, 0.15) 50%, 
+        rgba(255, 255, 255, 0.15) 75%, 
+        transparent 75%, 
+        transparent);
+    background-size: 1rem 1rem;
 }
 
 .module-progress-bar.failed {
     background-color: var(--danger-color);
+    background-image: linear-gradient(45deg, 
+        rgba(255, 255, 255, 0.15) 25%, 
+        transparent 25%, 
+        transparent 50%, 
+        rgba(255, 255, 255, 0.15) 50%, 
+        rgba(255, 255, 255, 0.15) 75%, 
+        transparent 75%, 
+        transparent);
+    background-size: 1rem 1rem;
 }
 
 .module-indicator {
@@ -273,6 +306,8 @@ button:disabled {
     justify-content: center;
     font-size: 14px;
     z-index: 2;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
 }
 
 .module-indicator.pending {
@@ -281,11 +316,26 @@ button:disabled {
 
 .module-indicator.building {
     background-color: var(--building-color);
-    animation: pulse 1.5s infinite;
+    box-shadow: 0 0 0 rgba(66, 133, 244, 0.4);
+    animation: pulse-ring 1.25s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+@keyframes pulse-ring {
+    0% {
+        box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(66, 133, 244, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(66, 133, 244, 0);
+    }
 }
 
 .module-indicator.success {
     background-color: var(--success-color);
+    transform: scale(1.05);
+    box-shadow: 0 1px 4px rgba(0,128,0,0.3);
 }
 
 .module-indicator.success:after {
@@ -300,6 +350,8 @@ button:disabled {
 
 .module-indicator.failed {
     background-color: var(--danger-color);
+    transform: scale(1.05);
+    box-shadow: 0 1px 4px rgba(220,53,69,0.3);
 }
 
 .module-indicator.failed:after {
