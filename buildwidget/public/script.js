@@ -725,6 +725,51 @@ clearOutputBtn.addEventListener('click', () => {
     outputText.innerHTML = '';
 });
 
+// Handle output filtering
+const filterSelect = document.getElementById('filterOutput');
+if (filterSelect) {
+    filterSelect.addEventListener('change', () => {
+        // Apply filter
+        const filterType = filterSelect.value;
+        const buildOutputLines = outputText.querySelectorAll('span');
+        
+        if (filterType === 'all') {
+            // Show all lines
+            buildOutputLines.forEach(line => {
+                line.style.display = '';
+                // Also show BR elements
+                const br = line.nextSibling;
+                if (br && br.nodeName === 'BR') {
+                    br.style.display = '';
+                }
+            });
+        } else {
+            // Filter by type
+            buildOutputLines.forEach(line => {
+                const lineType = line.className.replace('output-', '');
+                line.style.display = (lineType === filterType) ? '' : 'none';
+                
+                // Also hide BR elements after filtered lines
+                const br = line.nextSibling;
+                if (br && br.nodeName === 'BR') {
+                    br.style.display = (lineType === filterType) ? '' : 'none';
+                }
+            });
+        }
+        
+        // Add notification about applied filter
+        socket.send(JSON.stringify({
+            type: 'customNotification',
+            notification: {
+                type: 'info',
+                title: 'Output Filter Applied',
+                message: `Showing ${filterType === 'all' ? 'all output' : `only ${filterType} messages`}`,
+                timeout: 3000
+            }
+        }));
+    });
+};
+
 createReleaseBtn.addEventListener('click', () => {
     if (confirm('Create a new GitHub release with all versioned module JARs?')) {
         // Show release in progress
