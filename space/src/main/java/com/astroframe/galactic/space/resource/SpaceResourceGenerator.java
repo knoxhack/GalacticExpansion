@@ -64,7 +64,7 @@ public class SpaceResourceGenerator {
      * @param event The block break event
      */
     private static void onBlockBreak(BlockEvent.BreakEvent event) {
-        Level level = event.getLevel().getLevel();
+        Level level = (Level)event.getLevel();
         Player player = event.getPlayer();
         
         // Only handle events on the server and in space dimensions

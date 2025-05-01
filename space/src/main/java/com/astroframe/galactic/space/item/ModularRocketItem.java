@@ -38,8 +38,6 @@ public class ModularRocketItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, 
                               TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
-        
         IRocket rocket = getRocketFromStack(stack);
         if (rocket != null) {
             tooltip.add(Component.translatable("item.galactic-space.modular_rocket.tier", rocket.getTier())
@@ -67,12 +65,11 @@ public class ModularRocketItem extends Item {
         }
     }
     
-    @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         
         if (level.isClientSide()) {
-            return InteractionResultHolder.success(stack);
+            return net.minecraft.world.InteractionResultHolder.success(stack);
         }
         
         IRocket rocket = getRocketFromStack(stack);
@@ -83,16 +80,16 @@ public class ModularRocketItem extends Item {
             if (launchController.canLaunch()) {
                 GalacticSpace.LOGGER.info("Player {} starting rocket launch sequence", player.getName().getString());
                 launchController.startLaunchSequence();
-                return InteractionResultHolder.consume(stack);
+                return net.minecraft.world.InteractionResultHolder.consume(stack);
             } else {
                 // Report why launch failed
                 Component reason = launchController.getCannotLaunchReason();
                 serverPlayer.displayClientMessage(reason, false);
-                return InteractionResultHolder.fail(stack);
+                return net.minecraft.world.InteractionResultHolder.fail(stack);
             }
         }
         
-        return InteractionResultHolder.pass(stack);
+        return net.minecraft.world.InteractionResultHolder.pass(stack);
     }
     
     /**
@@ -133,7 +130,10 @@ public class ModularRocketItem extends Item {
     @Nullable
     public static IRocket getRocketFromStack(ItemStack stack) {
         if (stack.getItem() instanceof ModularRocketItem) {
-            CompoundTag tag = stack.getOrCreateTag();
+            CompoundTag tag = stack.getTag();
+            if (tag == null) {
+                return null;
+            }
             
             if (tag.contains("rocket")) {
                 CompoundTag rocketTag = tag.getCompound("rocket");

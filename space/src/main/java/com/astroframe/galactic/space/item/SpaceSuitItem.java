@@ -279,7 +279,7 @@ public abstract class SpaceSuitItem extends ArmorItem {
         }
         
         public Ingredient getRepairIngredient() {
-            return Ingredient.of(Tags.Items.INGOTS_IRON);
+            return Ingredient.of(net.minecraft.world.item.Items.IRON_INGOT);
         }
         
         public String getName() {

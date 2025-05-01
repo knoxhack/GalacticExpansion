@@ -130,7 +130,7 @@ public class GalacticSpace {
             spaceTravelManager = new SpaceTravelManager();
             // Register with SpaceAPI - but only register if the API is ready
             try {
-                SpaceAPI.setSpaceTravelManagerImpl(spaceTravelManager);
+                SpaceAPI.setSpaceTravelManager(spaceTravelManager);
                 LOGGER.info("Space Travel Manager registered with SpaceAPI");
             } catch (Exception e) {
                 LOGGER.error("Failed to register Space Travel Manager with SpaceAPI: {}", e.getMessage());
