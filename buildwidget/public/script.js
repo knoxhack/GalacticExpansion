@@ -543,41 +543,42 @@ function getRelativeTime(date) {
 
 // Update build metrics display
 function updateBuildMetrics(metrics) {
-    // Create or get metrics container
-    let metricsContainer = document.getElementById('metricsContainer');
-    if (!metricsContainer) {
-        metricsContainer = document.createElement('div');
-        metricsContainer.id = 'metricsContainer';
-        metricsContainer.className = 'metrics-container';
-        document.querySelector('.container').appendChild(metricsContainer);
+    console.log('Updating build metrics:', metrics);
+    
+    // Update existing metrics cards if they exist
+    if (metrics && metrics.builds) {
+        // Update Build Count
+        const buildCountElement = document.getElementById('buildCount');
+        if (buildCountElement) {
+            buildCountElement.textContent = metrics.builds.total || 0;
+        }
         
-        // Add heading
-        const heading = document.createElement('h3');
-        heading.textContent = 'Build Metrics';
-        metricsContainer.appendChild(heading);
+        // Update Success Rate
+        const successRateElement = document.getElementById('successRate');
+        if (successRateElement) {
+            const rate = metrics.builds.successRate || 0;
+            successRateElement.textContent = `${Math.round(rate)}%`;
+        }
         
-        // Create metrics grid
-        const metricsGrid = document.createElement('div');
-        metricsGrid.className = 'metrics-grid';
-        metricsContainer.appendChild(metricsGrid);
+        // Update Average Build Time
+        const avgBuildTimeElement = document.getElementById('averageBuildTime');
+        if (avgBuildTimeElement && metrics.performance) {
+            const avgTime = metrics.performance.avgBuildTime || 0;
+            avgBuildTimeElement.textContent = formatDuration(avgTime);
+        }
         
-        // Success rate metric
-        const successRate = document.createElement('div');
-        successRate.className = 'metric-card';
-        successRate.innerHTML = `
-            <h4>Success Rate</h4>
-            <div id="successRateValue" class="metric-value">-</div>
-            <div class="metric-chart">
-                <div id="successRateBar" class="progress-bar"></div>
-            </div>
-        `;
-        metricsGrid.appendChild(successRate);
-        
-        // Average build time metric
-        const avgBuildTime = document.createElement('div');
-        avgBuildTime.className = 'metric-card';
-        avgBuildTime.innerHTML = `
-            <h4>Average Build Time</h4>
+        // Update Last Successful Build
+        const lastSuccessfulElement = document.getElementById('lastSuccessful');
+        if (lastSuccessfulElement) {
+            if (metrics.lastSuccessful) {
+                lastSuccessfulElement.textContent = getRelativeTime(new Date(metrics.lastSuccessful));
+            } else {
+                lastSuccessfulElement.textContent = "None";
+            }
+        }
+    } else {
+        console.warn('Metrics data is incomplete or missing', metrics);
+    }
             <div id="avgBuildTimeValue" class="metric-value">-</div>
             <div id="avgBuildTimeChange" class="metric-change"></div>
         `;
