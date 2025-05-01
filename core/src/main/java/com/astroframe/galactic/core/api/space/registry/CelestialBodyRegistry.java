@@ -91,10 +91,10 @@ public class CelestialBodyRegistry {
     }
     
     /**
-     * Gets all celestial bodies with resources.
-     * @return A set of celestial bodies with resources
+     * Gets all celestial bodies with unique resources.
+     * @return A set of celestial bodies with unique resources
      */
     public static Set<ICelestialBody> getResourceBodies() {
-        return getCelestialBodiesByPredicate(ICelestialBody::hasResources);
+        return getCelestialBodiesByPredicate(ICelestialBody::hasUniqueResources);
     }
 }

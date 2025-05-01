@@ -1,6 +1,5 @@
 package com.astroframe.galactic.core.api.space.component;
 
-import com.astroframe.galactic.core.api.space.component.enums.ComponentType;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Collections;
@@ -54,7 +53,7 @@ public class RocketComponentRegistry {
      * @param type The component type
      * @return A set of components matching the type
      */
-    public static Set<IRocketComponent> getComponentsByType(ComponentType type) {
+    public static Set<IRocketComponent> getComponentsByType(RocketComponentType type) {
         return COMPONENTS.values().stream()
                 .filter(component -> component.getType() == type)
                 .collect(Collectors.toSet());
@@ -100,7 +99,7 @@ public class RocketComponentRegistry {
      * @return A set of all engine components
      */
     public static Set<IRocketEngine> getAllEngines() {
-        return getComponentsByType(ComponentType.ENGINE).stream()
+        return getComponentsByType(RocketComponentType.ENGINE).stream()
                 .filter(component -> component instanceof IRocketEngine)
                 .map(component -> (IRocketEngine) component)
                 .collect(Collectors.toSet());
@@ -111,7 +110,7 @@ public class RocketComponentRegistry {
      * @return A set of all command module components
      */
     public static Set<ICommandModule> getAllCommandModules() {
-        return getComponentsByType(ComponentType.COMMAND_MODULE).stream()
+        return getComponentsByType(RocketComponentType.COCKPIT).stream()
                 .filter(component -> component instanceof ICommandModule)
                 .map(component -> (ICommandModule) component)
                 .collect(Collectors.toSet());
@@ -122,7 +121,7 @@ public class RocketComponentRegistry {
      * @return A set of all fuel tank components
      */
     public static Set<IFuelTank> getAllFuelTanks() {
-        return getComponentsByType(ComponentType.FUEL_TANK).stream()
+        return getComponentsByType(RocketComponentType.FUEL_TANK).stream()
                 .filter(component -> component instanceof IFuelTank)
                 .map(component -> (IFuelTank) component)
                 .collect(Collectors.toSet());
@@ -133,7 +132,7 @@ public class RocketComponentRegistry {
      * @return A set of all cargo bay components
      */
     public static Set<ICargoBay> getAllCargoBays() {
-        return getComponentsByType(ComponentType.CARGO_BAY).stream()
+        return getComponentsByType(RocketComponentType.STRUCTURE).stream()
                 .filter(component -> component instanceof ICargoBay)
                 .map(component -> (ICargoBay) component)
                 .collect(Collectors.toSet());
@@ -144,7 +143,7 @@ public class RocketComponentRegistry {
      * @return A set of all passenger compartment components
      */
     public static Set<IPassengerCompartment> getAllPassengerCompartments() {
-        return getComponentsByType(ComponentType.PASSENGER_COMPARTMENT).stream()
+        return getComponentsByType(RocketComponentType.STRUCTURE).stream()
                 .filter(component -> component instanceof IPassengerCompartment)
                 .map(component -> (IPassengerCompartment) component)
                 .collect(Collectors.toSet());
@@ -155,7 +154,7 @@ public class RocketComponentRegistry {
      * @return A set of all shield components
      */
     public static Set<IShield> getAllShields() {
-        return getComponentsByType(ComponentType.SHIELD).stream()
+        return getComponentsByType(RocketComponentType.SHIELDING).stream()
                 .filter(component -> component instanceof IShield)
                 .map(component -> (IShield) component)
                 .collect(Collectors.toSet());
@@ -166,7 +165,7 @@ public class RocketComponentRegistry {
      * @return A set of all life support components
      */
     public static Set<ILifeSupport> getAllLifeSupports() {
-        return getComponentsByType(ComponentType.LIFE_SUPPORT).stream()
+        return getComponentsByType(RocketComponentType.LIFE_SUPPORT).stream()
                 .filter(component -> component instanceof ILifeSupport)
                 .map(component -> (ILifeSupport) component)
                 .collect(Collectors.toSet());
