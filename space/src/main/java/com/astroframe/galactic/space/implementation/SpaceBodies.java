@@ -137,6 +137,7 @@ public class SpaceBodies {
         private final float radiationLevel;
         private final float gravity;
         private final Component name;
+        private boolean discovered = true; // Default to discovered for now
         
         /**
          * Creates a new celestial body.
@@ -167,13 +168,64 @@ public class SpaceBodies {
         }
         
         @Override
+        public String getName() {
+            return name.getString();
+        }
+        
+        @Override
+        public String getDescription() {
+            // Simple implementation - use the name as the description for now
+            return "A " + getName().toLowerCase() + " that can be visited with rockets.";
+        }
+        
+        @Override
+        public ICelestialBody.CelestialBodyType getType() {
+            // Simple implementation - space station is a space station, everything else is a planet
+            if (id.getPath().equals("space_station")) {
+                return ICelestialBody.CelestialBodyType.SPACE_STATION;
+            } else if (id.getPath().equals("moon")) {
+                return ICelestialBody.CelestialBodyType.MOON;
+            } else if (id.getPath().equals("mars")) {
+                return ICelestialBody.CelestialBodyType.PLANET;
+            } else {
+                return ICelestialBody.CelestialBodyType.PLANET;
+            }
+        }
+        
+        @Override
+        public ICelestialBody getParent() {
+            // Simple implementation - Earth is parent of all except itself
+            if (id.getPath().equals("earth")) {
+                return null;
+            } else {
+                return EARTH;
+            }
+        }
+        
+        @Override
         public int getDistanceFromHome() {
             return distanceFromHome;
         }
         
         @Override
-        public int getRocketTierRequired() {
-            return rocketTierRequired;
+        public float getRelativeSize() {
+            // Simple implementation - Earth is 1.0, others vary
+            if (id.getPath().equals("earth")) {
+                return 1.0f;
+            } else if (id.getPath().equals("moon")) {
+                return 0.27f;
+            } else if (id.getPath().equals("mars")) {
+                return 0.53f;
+            } else if (id.getPath().equals("space_station")) {
+                return 0.01f; // Very small compared to Earth
+            } else {
+                return 0.5f; // Default
+            }
+        }
+        
+        @Override
+        public float getRelativeGravity() {
+            return gravity; // We already store gravity relative to Earth
         }
         
         @Override
@@ -182,29 +234,73 @@ public class SpaceBodies {
         }
         
         @Override
-        public float getRadiationLevel() {
-            return radiationLevel;
+        public ICelestialBody.TemperatureRange getTemperatureRange() {
+            // Simple implementation based on body type
+            if (id.getPath().equals("earth")) {
+                return ICelestialBody.TemperatureRange.TEMPERATE;
+            } else if (id.getPath().equals("moon")) {
+                return ICelestialBody.TemperatureRange.COLD;
+            } else if (id.getPath().equals("mars")) {
+                return ICelestialBody.TemperatureRange.COLD;
+            } else if (id.getPath().equals("space_station")) {
+                return ICelestialBody.TemperatureRange.TEMPERATE; // Controlled environment
+            } else {
+                return ICelestialBody.TemperatureRange.TEMPERATE; // Default
+            }
         }
         
         @Override
-        public float getGravity() {
-            return gravity;
+        public ICelestialBody.RadiationLevel getRadiationLevel() {
+            // Convert from 0-1 scale to enum
+            if (radiationLevel < 0.1f) {
+                return ICelestialBody.RadiationLevel.NONE;
+            } else if (radiationLevel < 0.3f) {
+                return ICelestialBody.RadiationLevel.LOW;
+            } else if (radiationLevel < 0.6f) {
+                return ICelestialBody.RadiationLevel.MODERATE;
+            } else if (radiationLevel < 0.8f) {
+                return ICelestialBody.RadiationLevel.HIGH;
+            } else {
+                return ICelestialBody.RadiationLevel.EXTREME;
+            }
         }
         
         @Override
-        public String getName() {
-            return name.getString();
+        public int getRocketTierRequired() {
+            return rocketTierRequired;
         }
         
         @Override
+        public boolean hasBreathableAtmosphere() {
+            // Only Earth has breathable atmosphere
+            return id.getPath().equals("earth");
+        }
+        
+        @Override
+        public boolean hasLiquidWater() {
+            // Only Earth has liquid water
+            return id.getPath().equals("earth");
+        }
+        
+        @Override
+        public boolean hasUniqueResources() {
+            // All bodies except Earth have unique resources
+            return !id.getPath().equals("earth");
+        }
+        
+        @Override
+        public boolean isDiscovered() {
+            return discovered;
+        }
+        
+        @Override
+        public void setDiscovered(boolean discovered) {
+            this.discovered = discovered;
+        }
+        
+        // This is a custom method specific to this implementation and not part of the interface
         public Component getDisplayName() {
             return name;
-        }
-        
-        @Override
-        public boolean hasResources() {
-            // Simple implementation - all celestial bodies have resources except Earth
-            return !id.getPath().equals("earth");
         }
     }
 }
