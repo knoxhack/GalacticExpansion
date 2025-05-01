@@ -2,6 +2,7 @@ package com.astroframe.galactic.core.api.common;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
+import java.util.HashMap;
 
 /**
  * Abstraction for Minecraft's ItemStack class.
@@ -116,33 +117,22 @@ public class ItemStack {
         mcStack.shrink(amount);
     }
     
-    /**
-     * Internal method to get tag data safely.
-     * @return The tag data or null
-     */
-    private CompoundTag getTagSafe() {
-        try {
-            // Try different methods to get tag data in Minecraft 1.21.5
-            java.lang.reflect.Method method = net.minecraft.world.item.ItemStack.class.getMethod("getTag");
-            return (CompoundTag) method.invoke(mcStack);
-        } catch (Exception e) {
-            // Method might not exist in this version
-            try {
-                java.lang.reflect.Method method = net.minecraft.world.item.ItemStack.class.getMethod("getOrCreateTag");
-                return (CompoundTag) method.invoke(mcStack);
-            } catch (Exception e2) {
-                // If all methods fail, return null
-                return null;
-            }
-        }
-    }
+    // Static map to store tags for ItemStacks since we can't rely on Minecraft API
+    private static final HashMap<Integer, CompoundTag> tagMap = new HashMap<>();
     
     /**
      * Gets the NBT tag for this stack.
      * @return The NBT tag
      */
     public CompoundTag getTag() {
-        return getTagSafe();
+        // Use our own map to track tags by item hashcode
+        CompoundTag tag = tagMap.get(System.identityHashCode(mcStack));
+        if (tag == null) {
+            // Create a new empty tag if none exists
+            tag = new CompoundTag();
+            tagMap.put(System.identityHashCode(mcStack), tag);
+        }
+        return tag;
     }
     
     /**
@@ -150,13 +140,11 @@ public class ItemStack {
      * @param tag The NBT tag
      */
     public void setTag(CompoundTag tag) {
-        try {
-            // Try to use reflection to set tag in Minecraft 1.21.5
-            java.lang.reflect.Method method = net.minecraft.world.item.ItemStack.class.getMethod("setTag", CompoundTag.class);
-            method.invoke(mcStack, tag);
-        } catch (Exception e) {
-            // If method doesn't exist, we can't do much
-            // but at least the program won't crash
+        // Store the tag in our own map
+        if (tag == null) {
+            tagMap.remove(System.identityHashCode(mcStack));
+        } else {
+            tagMap.put(System.identityHashCode(mcStack), tag);
         }
     }
     
@@ -165,14 +153,9 @@ public class ItemStack {
      * @return true if the stack has a tag
      */
     public boolean hasTag() {
-        try {
-            // Try different methods to check tag existence in Minecraft 1.21.5
-            java.lang.reflect.Method method = net.minecraft.world.item.ItemStack.class.getMethod("hasTag");
-            return (boolean) method.invoke(mcStack);
-        } catch (Exception e) {
-            // Method might not exist, try alternative
-            return getTagSafe() != null;
-        }
+        // Check if we have a tag for this stack
+        CompoundTag tag = tagMap.get(System.identityHashCode(mcStack));
+        return tag != null && !tag.isEmpty();
     }
     
     /**

@@ -52,10 +52,26 @@ public interface IEnergyHandler {
     int getEnergyStored();
     
     /**
+     * Alias for getEnergyStored() for compatibility with other energy systems.
+     * @return The energy stored
+     */
+    default int getEnergy() {
+        return getEnergyStored();
+    }
+    
+    /**
      * Gets the maximum energy capacity.
      * @return The maximum energy capacity
      */
     int getMaxEnergyCapacity();
+    
+    /**
+     * Alias for getMaxEnergyCapacity() for compatibility with other energy systems.
+     * @return The maximum energy capacity
+     */
+    default int getMaxEnergy() {
+        return getMaxEnergyCapacity();
+    }
     
     /**
      * Gets the energy unit used by this handler.
