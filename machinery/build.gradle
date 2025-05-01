@@ -7,9 +7,10 @@ version = project.version
 project.ext.mod_id = 'galacticmachinery'
 
 dependencies {
-    // The machinery module depends on both core and power modules
+    // The machinery module depends on core, power and energy modules
     implementation project(':core')
     implementation project(':power')
+    implementation project(':energy')
 }
 
 jar {

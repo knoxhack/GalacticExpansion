@@ -1,18 +1,27 @@
+archivesBaseName = 'galacticenergy'
+
+// Use properties from parent gradle.properties
+group = 'com.astroframe.galactic'
+version = project.version
+
+project.ext.mod_id = 'galacticenergy'
+
+// Add dependency on core module
 dependencies {
-    // The energy module depends on the core module
     implementation project(':core')
 }
 
 jar {
     manifest {
         attributes([
-            "Specification-Title": "Galactic Expansion Energy",
-            "Specification-Vendor": "AstroFrame",
-            "Specification-Version": "1",
-            "Implementation-Title": project.name,
-            "Implementation-Version": project.version,
-            "Implementation-Vendor" :"AstroFrame",
+            "Specification-Title"     : "Galactic Energy Systems",
+            "Specification-Vendor"    : "AstroFrame Team",
+            "Specification-Version"   : "1",
+            "Implementation-Title"    : project.name,
+            "Implementation-Version"  : project.version,
+            "Implementation-Vendor"   : "AstroFrame Team",
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
+    archiveFileName = "galacticenergy-${version}.jar"
 }

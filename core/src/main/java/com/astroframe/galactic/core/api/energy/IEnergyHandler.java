@@ -1,65 +1,112 @@
 package com.astroframe.galactic.core.api.energy;
 
-import com.astroframe.galactic.energy.api.EnergyUnit;
-
 /**
- * Interface for blocks or entities that can handle energy.
- * This is the base interface for all energy-related operations.
+ * Interface for objects that can handle energy (transfer, storage, etc.)
+ * This is the central interface for energy-related functionality in the Galactic Expansion mod.
+ * All energy-related operations should use this interface for interoperability.
  */
 public interface IEnergyHandler {
     
     /**
-     * Gets the amount of energy stored.
+     * Get the amount of energy currently stored.
      * 
-     * @return The amount of energy stored
+     * @return The amount of energy
      */
     int getEnergyStored();
     
     /**
-     * Gets the maximum amount of energy that can be stored.
+     * Get the maximum amount of energy that can be stored.
      * 
-     * @return The maximum amount of energy that can be stored
+     * @return The maximum energy
      */
     int getMaxEnergyStored();
     
     /**
-     * Adds energy to storage.
+     * Add energy to the storage.
      * 
-     * @param amount The maximum amount of energy to receive
-     * @param simulate If true, the transfer will only be simulated
-     * @return The amount of energy that was (or would have been, if simulated) received
+     * @param energy The amount to add
+     * @param simulate If true, the addition will only be simulated
+     * @return The amount of energy that was (or would have been) added
      */
-    int receiveEnergy(int amount, boolean simulate);
+    int receiveEnergy(int energy, boolean simulate);
     
     /**
-     * Removes energy from storage.
+     * Remove energy from the storage.
      * 
-     * @param amount The maximum amount of energy to extract
+     * @param energy The amount to remove
      * @param simulate If true, the extraction will only be simulated
-     * @return The amount of energy that was (or would have been, if simulated) extracted
+     * @return The amount of energy that was (or would have been) extracted
      */
-    int extractEnergy(int amount, boolean simulate);
+    int extractEnergy(int energy, boolean simulate);
     
     /**
-     * Returns whether energy can be extracted from this handler.
+     * Whether this storage can have energy extracted.
      * 
-     * @return Whether energy can be extracted
+     * @return True if this can extract energy
      */
     boolean canExtract();
     
     /**
-     * Returns whether energy can be received by this handler.
+     * Whether this storage can receive energy.
      * 
-     * @return Whether energy can be received
+     * @return True if this can receive energy
      */
     boolean canReceive();
     
     /**
-     * Gets the energy unit used by this handler.
+     * Get the energy unit for this handler.
      * 
      * @return The energy unit
      */
-    EnergyUnit getEnergyUnit();
+    default EnergyUnit getEnergyUnit() {
+        return EnergyUnit.GALACTIC_ENERGY_UNIT;
+    }
     
-    // Using EnergyUnit from energy module
+    /**
+     * Energy unit enum for energy measurement.
+     * This is a temporary definition that will be replaced by the one from the energy module in the future.
+     */
+    enum EnergyUnit {
+        /** Standard energy unit */
+        GALACTIC_ENERGY_UNIT(1.0),
+        
+        /** Forge Energy unit (compatible with other mods) */
+        FORGE_ENERGY(1.0),
+        
+        /** Thermal unit used for heat-based operations */
+        THERMAL_UNIT(0.5),
+        
+        /** Kinetic unit for movement-based energy */
+        KINETIC_UNIT(2.0),
+        
+        /** Steam unit for steam-powered machines */
+        STEAM_UNIT(0.2);
+        
+        private final double conversionRate;
+        
+        EnergyUnit(double conversionRate) {
+            this.conversionRate = conversionRate;
+        }
+        
+        /**
+         * Converts energy between units
+         * 
+         * @param amount The amount to convert
+         * @param targetUnit The target unit
+         * @return The converted amount
+         */
+        public int convertTo(int amount, EnergyUnit targetUnit) {
+            return (int) (amount * (this.conversionRate / targetUnit.conversionRate));
+        }
+        
+        /**
+         * Gets the ID of this energy unit.
+         * Can be used for serialization and identification purposes.
+         * 
+         * @return The string ID of the energy unit
+         */
+        public String getId() {
+            return this.name().toLowerCase();
+        }
+    }
 }

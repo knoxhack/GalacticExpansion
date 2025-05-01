@@ -1,62 +1,61 @@
 package com.astroframe.galactic.energy.api;
 
 /**
- * Interface for energy storage.
- * Represents a container for energy that can receive and extract energy.
- * Extends IEnergyHandler to provide a consistent API for all energy handlers.
+ * Interface for energy storage capabilities.
+ * This defines how energy can be stored, extracted, and received.
  */
-public interface EnergyStorage extends IEnergyHandler {
+public interface EnergyStorage {
     
     /**
-     * Gets the amount of energy currently stored.
+     * Adds energy to storage.
      * 
-     * @return Stored energy
+     * @param amount The maximum amount of energy to receive
+     * @param simulate If true, the transfer will only be simulated
+     * @return The amount of energy that was (or would have been, if simulated) received
+     */
+    int receiveEnergy(int amount, boolean simulate);
+    
+    /**
+     * Removes energy from storage.
+     * 
+     * @param amount The maximum amount of energy to extract
+     * @param simulate If true, the extraction will only be simulated
+     * @return The amount of energy that was (or would have been, if simulated) extracted
+     */
+    int extractEnergy(int amount, boolean simulate);
+    
+    /**
+     * Gets the amount of energy stored.
+     * 
+     * @return The amount of energy stored
      */
     int getEnergy();
     
     /**
      * Gets the maximum amount of energy that can be stored.
      * 
-     * @return Maximum energy
+     * @return The maximum amount of energy that can be stored
      */
     int getMaxEnergy();
     
     /**
-     * Gets the amount of energy currently stored.
-     * Implementation for IEnergyHandler compatibility.
+     * Returns whether energy can be extracted from this storage.
      * 
-     * @return Stored energy
+     * @return Whether energy can be extracted
      */
-    @Override
-    default int getEnergyStored() {
-        return getEnergy();
-    }
+    boolean canExtract();
     
     /**
-     * Gets the maximum amount of energy that can be stored.
-     * Implementation for IEnergyHandler compatibility.
+     * Returns whether energy can be received by this storage.
      * 
-     * @return Maximum energy
+     * @return Whether energy can be received
      */
-    @Override
-    default int getMaxEnergyStored() {
-        return getMaxEnergy();
-    }
+    boolean canReceive();
     
     /**
-     * Gets the type of energy stored.
+     * Gets the energy type used by this storage.
      * 
      * @return The energy type
      */
     EnergyType getEnergyType();
-    
-    /**
-     * Get the energy unit for this storage.
-     * 
-     * @return The energy unit
-     */
-    @Override
-    default EnergyUnit getEnergyUnit() {
-        return EnergyUnit.GALACTIC_ENERGY_UNIT;
-    }
 }

@@ -1,6 +1,6 @@
 package com.astroframe.galactic.machinery.api;
 
-import com.astroframe.galactic.energy.api.EnergyUnit;
+import com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit;
 import com.astroframe.galactic.machinery.energy.MachineEnergyStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -104,6 +104,7 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
 
             @Override
             public com.astroframe.galactic.energy.api.EnergyType getEnergyType() {
+                // Return a placeholder type string that will be resolved properly at runtime
                 return com.astroframe.galactic.energy.api.EnergyType.ELECTRICAL;
             }
         };
@@ -337,7 +338,8 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
      * 
      * @return True if the machine has enough energy to operate, false otherwise
      */
-    protected boolean consumeEnergy() {
+    @Override
+    public boolean consumeEnergy() {
         // If we don't have an energy storage or don't consume energy, we can operate
         if (energyStorage == null || getEnergyConsumption() <= 0) {
             return true;

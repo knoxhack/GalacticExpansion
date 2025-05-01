@@ -8,6 +8,7 @@ project.ext.mod_id = 'galacticpower'
 
 dependencies {
     implementation project(':core')
+    implementation project(':energy')
 }
 
 jar {

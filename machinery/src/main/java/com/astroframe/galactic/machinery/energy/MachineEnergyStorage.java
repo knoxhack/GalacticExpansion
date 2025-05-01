@@ -1,6 +1,5 @@
 package com.astroframe.galactic.machinery.energy;
 
-import com.astroframe.galactic.energy.api.EnergyUnit;
 import com.astroframe.galactic.energy.api.EnergyType;
 
 /**

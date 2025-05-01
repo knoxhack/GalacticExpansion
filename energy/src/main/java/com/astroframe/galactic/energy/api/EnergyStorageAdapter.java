@@ -1,27 +1,29 @@
 package com.astroframe.galactic.energy.api;
 
+import com.astroframe.galactic.core.api.energy.IEnergyHandler;
+
 /**
- * Adapter class to convert between the old and new energy storage interfaces.
- * This allows code using the old API to interact with the new API.
+ * Adapter class to convert between the core API energy handler and the energy module's storage interfaces.
+ * This allows code using the core API to interact with the energy module's storage implementation.
  */
 public class EnergyStorageAdapter implements EnergyStorage {
-    private final com.example.modapi.energy.api.EnergyStorage original;
+    private final IEnergyHandler original;
     
     /**
-     * Creates a new adapter for the given energy storage.
+     * Creates a new adapter for the given energy handler.
      * 
-     * @param original The original energy storage
+     * @param original The original energy handler from the core API
      */
-    public EnergyStorageAdapter(com.example.modapi.energy.api.EnergyStorage original) {
+    public EnergyStorageAdapter(IEnergyHandler original) {
         this.original = original;
     }
     
     /**
-     * Gets the original energy storage.
+     * Gets the original energy handler.
      * 
-     * @return The original energy storage
+     * @return The original energy handler
      */
-    public com.example.modapi.energy.api.EnergyStorage getOriginal() {
+    public IEnergyHandler getOriginal() {
         return original;
     }
     
@@ -37,12 +39,12 @@ public class EnergyStorageAdapter implements EnergyStorage {
     
     @Override
     public int getEnergy() {
-        return original.getEnergy();
+        return original.getEnergyStored();
     }
     
     @Override
     public int getMaxEnergy() {
-        return original.getMaxEnergy();
+        return original.getMaxEnergyStored();
     }
     
     @Override
@@ -57,7 +59,11 @@ public class EnergyStorageAdapter implements EnergyStorage {
     
     @Override
     public EnergyType getEnergyType() {
-        // Convert from old to new energy type
-        return EnergyType.byId(original.getEnergyType().getId());
+        // Use a default type based on the energy unit
+        // In the future we can implement a proper mapping between units and types
+        switch (original.getEnergyUnit()) {
+            default:
+                return EnergyType.ELECTRICAL;
+        }
     }
 }

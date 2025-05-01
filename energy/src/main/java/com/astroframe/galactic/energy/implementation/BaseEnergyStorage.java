@@ -5,62 +5,52 @@ import com.astroframe.galactic.energy.api.EnergyType;
 
 /**
  * Base implementation of the EnergyStorage interface.
- * This provides a simple energy storage capability.
+ * Provides a simple energy storage capability.
  */
 public class BaseEnergyStorage implements EnergyStorage {
     
-    protected int energy;
-    protected final int capacity;
-    protected final int maxReceive;
-    protected final int maxExtract;
-    protected final boolean canReceive;
-    protected final boolean canExtract;
-    protected final EnergyType energyType;
+    private final int capacity;
+    private final int maxReceive;
+    private final int maxExtract;
+    private int energy;
+    private final EnergyType energyType;
     
     /**
-     * Create a new energy storage with the specified parameters.
+     * Constructs a new energy storage.
      * 
-     * @param capacity The maximum amount of energy that can be stored
-     * @param maxReceive The maximum amount of energy that can be received per operation
-     * @param maxExtract The maximum amount of energy that can be extracted per operation
-     * @param energy The initial amount of energy
-     * @param energyType The type of energy this storage can handle
+     * @param capacity The maximum energy that can be stored
+     * @param maxReceive The maximum energy that can be received per operation
+     * @param maxExtract The maximum energy that can be extracted per operation
+     * @param energyType The type of energy this storage handles
+     */
+    public BaseEnergyStorage(int capacity, int maxReceive, int maxExtract, EnergyType energyType) {
+        this.capacity = capacity;
+        this.maxReceive = maxReceive;
+        this.maxExtract = maxExtract;
+        this.energy = 0;
+        this.energyType = energyType;
+    }
+    
+    /**
+     * Constructs a new energy storage with an initial energy amount.
+     * 
+     * @param capacity The maximum energy that can be stored
+     * @param maxReceive The maximum energy that can be received per operation
+     * @param maxExtract The maximum energy that can be extracted per operation
+     * @param energy The initial energy stored
+     * @param energyType The type of energy this storage handles
      */
     public BaseEnergyStorage(int capacity, int maxReceive, int maxExtract, int energy, EnergyType energyType) {
         this.capacity = capacity;
         this.maxReceive = maxReceive;
         this.maxExtract = maxExtract;
         this.energy = Math.max(0, Math.min(capacity, energy));
-        this.canReceive = maxReceive > 0;
-        this.canExtract = maxExtract > 0;
         this.energyType = energyType;
-    }
-    
-    /**
-     * Create a new empty energy storage with the specified parameters.
-     * 
-     * @param capacity The maximum amount of energy that can be stored
-     * @param maxReceive The maximum amount of energy that can be received per operation
-     * @param maxExtract The maximum amount of energy that can be extracted per operation
-     * @param energyType The type of energy this storage can handle
-     */
-    public BaseEnergyStorage(int capacity, int maxReceive, int maxExtract, EnergyType energyType) {
-        this(capacity, maxReceive, maxExtract, 0, energyType);
-    }
-    
-    /**
-     * Create a new energy storage with default parameters.
-     * 
-     * @param capacity The maximum amount of energy that can be stored
-     * @param energyType The type of energy this storage can handle
-     */
-    public BaseEnergyStorage(int capacity, EnergyType energyType) {
-        this(capacity, capacity, capacity, 0, energyType);
     }
     
     @Override
     public int receiveEnergy(int amount, boolean simulate) {
-        if (!canReceive) {
+        if (!canReceive()) {
             return 0;
         }
         
@@ -75,7 +65,7 @@ public class BaseEnergyStorage implements EnergyStorage {
     
     @Override
     public int extractEnergy(int amount, boolean simulate) {
-        if (!canExtract) {
+        if (!canExtract()) {
             return 0;
         }
         
@@ -100,12 +90,12 @@ public class BaseEnergyStorage implements EnergyStorage {
     
     @Override
     public boolean canExtract() {
-        return canExtract && energy > 0;
+        return maxExtract > 0;
     }
     
     @Override
     public boolean canReceive() {
-        return canReceive && energy < capacity;
+        return maxReceive > 0;
     }
     
     @Override
@@ -114,21 +104,11 @@ public class BaseEnergyStorage implements EnergyStorage {
     }
     
     /**
-     * Set the amount of stored energy.
-     * This is intended for internal use only.
+     * Sets the energy stored in this storage.
      * 
-     * @param energy The new energy amount
+     * @param energy The new energy value
      */
     public void setEnergy(int energy) {
         this.energy = Math.max(0, Math.min(capacity, energy));
-    }
-    
-    /**
-     * Get the fill level as a percentage (0.0 to 1.0).
-     * 
-     * @return The fill level
-     */
-    public float getFillLevel() {
-        return capacity > 0 ? (float) energy / capacity : 0;
     }
 }
