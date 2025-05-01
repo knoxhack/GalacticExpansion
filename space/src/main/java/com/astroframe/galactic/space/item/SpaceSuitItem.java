@@ -54,7 +54,7 @@ public abstract class SpaceSuitItem extends ArmorItem {
         return tier;
     }
     
-    @Override
+    // Adds tooltip information
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, 
                               TooltipFlag flag) {
         tooltip.add(Component.translatable("item.galactic-space.space_suit.tier", getTier())

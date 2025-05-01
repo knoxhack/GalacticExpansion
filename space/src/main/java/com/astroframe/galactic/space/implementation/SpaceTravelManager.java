@@ -2,6 +2,7 @@ package com.astroframe.galactic.space.implementation;
 
 import com.astroframe.galactic.core.api.space.ICelestialBody;
 import com.astroframe.galactic.core.api.space.IRocket;
+import com.astroframe.galactic.core.api.space.ISpaceTravelManager;
 import com.astroframe.galactic.core.api.space.ModularRocket;
 import com.astroframe.galactic.space.GalacticSpace;
 import com.astroframe.galactic.space.dimension.SpaceStationDimension;
@@ -21,7 +22,7 @@ import java.util.*;
  * This class coordinates rockets, players, and dimension teleportation.
  */
 @Mod.EventBusSubscriber(modid = GalacticSpace.MOD_ID)
-public class SpaceTravelManager {
+public class SpaceTravelManager implements ISpaceTravelManager {
     private final Map<UUID, Set<ICelestialBody>> discoveredBodies = new HashMap<>();
     private boolean isInitialized = false;
     
