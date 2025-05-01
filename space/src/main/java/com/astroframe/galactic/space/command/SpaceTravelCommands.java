@@ -102,7 +102,7 @@ public class SpaceTravelCommands {
             return 0;
         }
         
-        boolean success = SpaceStationTeleporter.teleportToEarth(player);
+        boolean success = SpaceStationTeleporter.teleportToOverworld(player);
         if (success) {
             source.sendSuccess(() -> Component.literal("Teleported to Earth"), true);
             return 1;

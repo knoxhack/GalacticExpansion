@@ -51,11 +51,9 @@ public class SpaceTravelManager implements ISpaceTravelManager {
      * @param event The tick event
      */
     @SubscribeEvent
-    public static void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            // Update rocket launch sequences
-            RocketLaunchController.updateLaunches();
-        }
+    public static void onServerTick(net.neoforged.bus.api.Event event) {
+        // Update rocket launch sequences on each tick
+        RocketLaunchController.updateLaunches();
     }
     
     /**
@@ -153,13 +151,13 @@ public class SpaceTravelManager implements ISpaceTravelManager {
     }
     
     /**
-     * Checks if a player has discovered a celestial body.
+     * Internal implementation that checks if a player has discovered a celestial body.
      *
-     * @param player The player
+     * @param player The server player
      * @param body The celestial body
      * @return true if the player has discovered the body
      */
-    public boolean hasDiscovered(ServerPlayer player, ICelestialBody body) {
+    private boolean hasDiscoveredInternal(ServerPlayer player, ICelestialBody body) {
         UUID playerId = player.getUUID();
         
         // Earth is always discovered
@@ -287,7 +285,7 @@ public class SpaceTravelManager implements ISpaceTravelManager {
     @Override
     public boolean hasDiscovered(Player player, ICelestialBody body) {
         if (player instanceof ServerPlayer serverPlayer) {
-            return hasDiscovered(serverPlayer, body);
+            return hasDiscoveredInternal(serverPlayer, body);
         } else {
             // On client side, assume discovered
             return true;
