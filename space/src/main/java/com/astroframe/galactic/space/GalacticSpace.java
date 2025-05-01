@@ -3,6 +3,7 @@ package com.astroframe.galactic.space;
 import com.astroframe.galactic.core.api.space.SpaceAPI;
 import com.astroframe.galactic.space.implementation.SpaceBodies;
 import com.astroframe.galactic.space.implementation.SpaceTravelManager;
+import com.astroframe.galactic.space.implementation.component.RocketComponentFactory;
 import com.astroframe.galactic.space.registry.SpaceRegistry;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -50,6 +51,10 @@ public class GalacticSpace {
             
             // Register default celestial bodies
             SpaceBodies.registerAll();
+            
+            // Register rocket components
+            LOGGER.info("Registering rocket components");
+            RocketComponentFactory.registerAll();
             
             // Initialize and register the space travel manager
             initializeSpaceTravelManager();
