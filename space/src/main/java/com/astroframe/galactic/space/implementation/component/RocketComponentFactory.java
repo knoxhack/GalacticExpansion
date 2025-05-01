@@ -95,9 +95,10 @@ public class RocketComponentFactory {
                 .build()
         );
         
+        ResourceLocation liquidEngineId = ResourceLocation.of(GalacticSpace.MOD_ID + ":liquid_fuel_engine", ':');
         registerEngine(
-            new ResourceLocation(GalacticSpace.MOD_ID, "liquid_fuel_engine"),
-            new RocketEngineImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "liquid_fuel_engine"))
+            liquidEngineId,
+            new RocketEngineImpl.Builder(liquidEngineId)
                 .name("Liquid Fuel Engine")
                 .description("A more advanced engine with better fuel efficiency.")
                 .tier(2)
@@ -111,9 +112,10 @@ public class RocketComponentFactory {
                 .build()
         );
         
+        ResourceLocation ionEngineId = ResourceLocation.of(GalacticSpace.MOD_ID + ":ion_engine", ':');
         registerEngine(
-            new ResourceLocation(GalacticSpace.MOD_ID, "ion_engine"),
-            new RocketEngineImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "ion_engine"))
+            ionEngineId,
+            new RocketEngineImpl.Builder(ionEngineId)
                 .name("Ion Engine")
                 .description("A highly efficient engine for space travel only.")
                 .tier(3)
@@ -128,9 +130,10 @@ public class RocketComponentFactory {
         );
         
         // Fuel Tanks (Various sizes)
+        ResourceLocation smallTankId = ResourceLocation.of(GalacticSpace.MOD_ID + ":fuel_tank_small", ':');
         registerFuelTank(
-            new ResourceLocation(GalacticSpace.MOD_ID, "fuel_tank_small"),
-            new FuelTankImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "fuel_tank_small"))
+            smallTankId,
+            new FuelTankImpl.Builder(smallTankId)
                 .name("Small Fuel Tank")
                 .description("A basic fuel tank with limited capacity.")
                 .tier(1)
@@ -140,9 +143,10 @@ public class RocketComponentFactory {
                 .build()
         );
         
+        ResourceLocation mediumTankId = ResourceLocation.of(GalacticSpace.MOD_ID + ":fuel_tank_medium", ':');
         registerFuelTank(
-            new ResourceLocation(GalacticSpace.MOD_ID, "fuel_tank_medium"),
-            new FuelTankImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "fuel_tank_medium"))
+            mediumTankId,
+            new FuelTankImpl.Builder(mediumTankId)
                 .name("Medium Fuel Tank")
                 .description("A standard fuel tank with decent capacity.")
                 .tier(2)
@@ -153,9 +157,10 @@ public class RocketComponentFactory {
                 .build()
         );
         
+        ResourceLocation largeTankId = ResourceLocation.of(GalacticSpace.MOD_ID + ":fuel_tank_large", ':');
         registerFuelTank(
-            new ResourceLocation(GalacticSpace.MOD_ID, "fuel_tank_large"),
-            new FuelTankImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "fuel_tank_large"))
+            largeTankId,
+            new FuelTankImpl.Builder(largeTankId)
                 .name("Large Fuel Tank")
                 .description("A high-capacity fuel tank for extended missions.")
                 .tier(3)
@@ -168,9 +173,10 @@ public class RocketComponentFactory {
         );
         
         // Cargo Bays
+        ResourceLocation smallCargoBayId = ResourceLocation.of(GalacticSpace.MOD_ID + ":cargo_bay_small", ':');
         registerCargoBay(
-            new ResourceLocation(GalacticSpace.MOD_ID, "cargo_bay_small"),
-            new CargoBayImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "cargo_bay_small"))
+            smallCargoBayId,
+            new CargoBayImpl.Builder(smallCargoBayId)
                 .name("Small Cargo Bay")
                 .description("A compact cargo bay for basic storage needs.")
                 .tier(1)
@@ -179,9 +185,10 @@ public class RocketComponentFactory {
                 .build()
         );
         
+        ResourceLocation mediumCargoBayId = ResourceLocation.of(GalacticSpace.MOD_ID + ":cargo_bay_medium", ':');
         registerCargoBay(
-            new ResourceLocation(GalacticSpace.MOD_ID, "cargo_bay_medium"),
-            new CargoBayImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "cargo_bay_medium"))
+            mediumCargoBayId,
+            new CargoBayImpl.Builder(mediumCargoBayId)
                 .name("Medium Cargo Bay")
                 .description("A standard cargo bay with moderate storage capacity.")
                 .tier(2)
@@ -191,9 +198,10 @@ public class RocketComponentFactory {
                 .build()
         );
         
+        ResourceLocation largeCargoBayId = ResourceLocation.of(GalacticSpace.MOD_ID + ":cargo_bay_large", ':');
         registerCargoBay(
-            new ResourceLocation(GalacticSpace.MOD_ID, "cargo_bay_large"),
-            new CargoBayImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "cargo_bay_large"))
+            largeCargoBayId,
+            new CargoBayImpl.Builder(largeCargoBayId)
                 .name("Large Cargo Bay")
                 .description("A spacious cargo bay for substantial storage needs.")
                 .tier(3)
@@ -206,9 +214,10 @@ public class RocketComponentFactory {
         );
         
         // Passenger Compartments
+        ResourceLocation basicCompartmentId = ResourceLocation.of(GalacticSpace.MOD_ID + ":passenger_compartment_basic", ':');
         registerPassengerCompartment(
-            new ResourceLocation(GalacticSpace.MOD_ID, "passenger_compartment_basic"),
-            new PassengerCompartmentImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "passenger_compartment_basic"))
+            basicCompartmentId,
+            new PassengerCompartmentImpl.Builder(basicCompartmentId)
                 .name("Basic Passenger Compartment")
                 .description("A simple compartment for transporting passengers.")
                 .tier(1)
@@ -218,9 +227,10 @@ public class RocketComponentFactory {
                 .build()
         );
         
+        ResourceLocation advancedCompartmentId = ResourceLocation.of(GalacticSpace.MOD_ID + ":passenger_compartment_advanced", ':');
         registerPassengerCompartment(
-            new ResourceLocation(GalacticSpace.MOD_ID, "passenger_compartment_advanced"),
-            new PassengerCompartmentImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "passenger_compartment_advanced"))
+            advancedCompartmentId,
+            new PassengerCompartmentImpl.Builder(advancedCompartmentId)
                 .name("Advanced Passenger Compartment")
                 .description("A more comfortable compartment with additional features.")
                 .tier(2)
