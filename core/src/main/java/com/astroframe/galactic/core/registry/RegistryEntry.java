@@ -1,86 +1,57 @@
 package com.astroframe.galactic.core.registry;
 
-import java.util.Objects;
-
 /**
- * Represents a registry entry with identifier and associated object.
- * Used for tracking game objects across the Galactic Expansion mod.
- * 
- * @param <T> The type of object being registered
+ * A registry entry represents a registered object with its metadata.
+ * @param <T> The type of object
  */
 public class RegistryEntry<T> {
-    
-    private final String id;
-    private final String domain;
-    private final String path;
+    private final String namespace;
+    private final String key;
+    private final String fullKey;
     private final T value;
     
     /**
-     * Creates a new registry entry with domain, path, and value.
-     * 
-     * @param domain The namespace domain (typically mod id)
-     * @param path The registration path/name within the domain
-     * @param value The object being registered
+     * Creates a new registry entry.
+     * @param namespace The namespace (usually mod ID)
+     * @param key The object key
+     * @param value The registered object
      */
-    public RegistryEntry(String domain, String path, T value) {
-        this.domain = domain;
-        this.path = path;
-        this.id = domain + ":" + path;
+    public RegistryEntry(String namespace, String key, T value) {
+        this.namespace = namespace;
+        this.key = key;
+        this.fullKey = namespace + ":" + key;
         this.value = value;
     }
     
     /**
-     * Get the full identifier in domain:path format.
-     * 
-     * @return The full identifier string
+     * Gets the namespace.
+     * @return The namespace
      */
-    public String getId() {
-        return id;
+    public String getNamespace() {
+        return namespace;
     }
     
     /**
-     * Get the domain/namespace (typically mod id).
-     * 
-     * @return The domain string
+     * Gets the key.
+     * @return The key
      */
-    public String getDomain() {
-        return domain;
+    public String getKey() {
+        return key;
     }
     
     /**
-     * Get the path/name within the domain.
-     * 
-     * @return The path string
+     * Gets the full key (namespace:key).
+     * @return The full key
      */
-    public String getPath() {
-        return path;
+    public String getFullKey() {
+        return fullKey;
     }
     
     /**
-     * Get the registered object.
-     * 
+     * Gets the registered object.
      * @return The registered object
      */
     public T getValue() {
         return value;
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        
-        RegistryEntry<?> other = (RegistryEntry<?>) obj;
-        return Objects.equals(id, other.id);
-    }
-    
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-    
-    @Override
-    public String toString() {
-        return "RegistryEntry{id='" + id + "', value=" + value + "}";
     }
 }

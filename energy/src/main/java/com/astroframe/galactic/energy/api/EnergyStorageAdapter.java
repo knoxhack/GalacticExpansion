@@ -46,7 +46,7 @@ public class EnergyStorageAdapter implements EnergyStorage {
     
     @Override
     public int getMaxEnergy() {
-        return original.getMaxEnergyStored();
+        return original.getMaxEnergyCapacity();
     }
     
     @Override
