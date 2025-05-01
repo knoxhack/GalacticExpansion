@@ -435,30 +435,32 @@ function updateBuildMetrics(metrics) {
     // Update build timeline
     if (metrics.recentBuilds && metrics.recentBuilds.length > 0) {
         const timelineElement = document.getElementById('buildTimeline');
-        timelineElement.innerHTML = ''; // Clear existing timeline
-        
-        // Create timeline items
-        metrics.recentBuilds.forEach(build => {
-            const buildItem = document.createElement('div');
-            buildItem.className = `timeline-item status-${build.status}`;
+        if (timelineElement) {
+            timelineElement.innerHTML = ''; // Clear existing timeline
             
-            // Format date as relative time
-            const buildDate = new Date(build.timestamp);
-            const timeAgo = getRelativeTime(buildDate);
-            
-            buildItem.setAttribute('title', 
-                `${build.command}\n${buildDate.toLocaleString()}\nDuration: ${formatDuration(build.duration)}`);
-            
-            buildItem.innerHTML = `
-                <div class="timeline-marker"></div>
-                <div class="timeline-content">
-                    <div class="timeline-title">${build.command}</div>
-                    <div class="timeline-time">${timeAgo}</div>
-                </div>
-            `;
-            
-            timelineElement.appendChild(buildItem);
-        });
+            // Create timeline items
+            metrics.recentBuilds.forEach(build => {
+                const buildItem = document.createElement('div');
+                buildItem.className = `timeline-item status-${build.status}`;
+                
+                // Format date as relative time
+                const buildDate = new Date(build.timestamp);
+                const timeAgo = getRelativeTime(buildDate);
+                
+                buildItem.setAttribute('title', 
+                    `${build.command}\n${buildDate.toLocaleString()}\nDuration: ${formatDuration(build.duration)}`);
+                
+                buildItem.innerHTML = `
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">${build.command}</div>
+                        <div class="timeline-time">${timeAgo}</div>
+                    </div>
+                `;
+                
+                timelineElement.appendChild(buildItem);
+            });
+        }
     }
 }
 
