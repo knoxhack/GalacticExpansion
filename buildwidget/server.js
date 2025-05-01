@@ -87,6 +87,47 @@ app.get('/api/github', async (req, res) => {
   }
 });
 
+// Endpoint for creating checkpoints (commits + build + release)
+app.post('/api/checkpoint', async (req, res) => {
+  try {
+    const { name, description } = req.body;
+    
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: 'Checkpoint name is required'
+      });
+    }
+    
+    // Create a checkpoint with the given name and description
+    const checkpointResult = await handleCheckpoint(name, description);
+    
+    // Add a notification about the checkpoint
+    addNotification({
+      type: 'info',
+      title: 'Checkpoint Created',
+      message: `Checkpoint "${name}" created. Build process started.`,
+      icon: '🔖'
+    });
+    
+    // Broadcast the notification to all clients
+    broadcastNotifications();
+    
+    res.json({
+      success: true,
+      message: 'Checkpoint created and build started',
+      ...checkpointResult
+    });
+  } catch (error) {
+    console.error('Error creating checkpoint:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create checkpoint',
+      error: error.message
+    });
+  }
+});
+
 // Store build status information
 let buildStatus = {
   status: 'idle',

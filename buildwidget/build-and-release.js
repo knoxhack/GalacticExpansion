@@ -654,15 +654,57 @@ async function handleCheckpoint(checkpointName, description) {
     }
 }
 
+/**
+ * Handle a checkpoint event
+ * @param {string} checkpointName Name of the checkpoint
+ * @param {string} description Description of the checkpoint
+ * @returns {Promise<object>} Operation result
+ */
+async function handleCheckpoint(checkpointName, description) {
+    try {
+        console.log(`Creating checkpoint: ${checkpointName}`);
+        
+        // Set git config to use the correct user
+        await runCommand('git config --local user.name "knoxhack"');
+        await runCommand('git config --local user.email "knoxhack@gmail.com"');
+        
+        // Add all files
+        await runCommand('git add -A');
+        
+        // Create a commit with the checkpoint name and description
+        const commitMessage = `Checkpoint: ${checkpointName}\n\n${description || 'Automated checkpoint with build and release'}`;
+        const commitResult = await runCommand(`git commit -m "${commitMessage}"`);
+        
+        console.log('Commit result:', commitResult);
+        
+        // Trigger a build
+        const buildResult = await buildAndRelease();
+        
+        return {
+            success: true,
+            commitResult,
+            buildResult,
+            checkpointName,
+            timestamp: new Date().toISOString()
+        };
+    } catch (error) {
+        console.error('Error creating checkpoint:', error);
+        return {
+            success: false,
+            error: error.message || 'Unknown error occurred'
+        };
+    }
+}
+
 module.exports = { 
     buildAndRelease,
     getBuildNumber,
     getVersionString,
     getGitHubStatus,
     getBuildMetrics,
+    handleCheckpoint,
     getVersionHistory,
     getChangelogHistory,
     getModuleDependencies,
-    formatChangelogMarkdown,
-    handleCheckpoint
+    formatChangelogMarkdown
 };
