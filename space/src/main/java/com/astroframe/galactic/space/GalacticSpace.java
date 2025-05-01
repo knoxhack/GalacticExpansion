@@ -133,9 +133,13 @@ public class GalacticSpace {
         if (spaceTravelManager == null) {
             LOGGER.info("Initializing Space Travel Manager");
             spaceTravelManager = new SpaceTravelManager();
+            // Initialize the manager
+            spaceTravelManager.initialize();
+            
             // Register with SpaceAPI - but only register if the API is ready
             try {
-                SpaceAPI.setSpaceTravelManager(spaceTravelManager);
+                // Here we pass the manager as ISpaceTravelManager to satisfy the type requirement
+                SpaceAPI.setSpaceTravelManager((ISpaceTravelManager)spaceTravelManager);
                 LOGGER.info("Space Travel Manager registered with SpaceAPI");
             } catch (Exception e) {
                 LOGGER.error("Failed to register Space Travel Manager with SpaceAPI: {}", e.getMessage());

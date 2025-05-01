@@ -121,12 +121,19 @@ public class SpaceTravelManager implements ISpaceTravelManager {
     }
     
     /**
-     * Marks a celestial body as discovered by a player.
-     *
-     * @param player The player
-     * @param body The celestial body
+     * Implementation of the interface method - handles any Player type
      */
-    public void discoverCelestialBody(ServerPlayer player, ICelestialBody body) {
+    @Override
+    public void discoverCelestialBody(Player player, ICelestialBody body) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            discoverCelestialBodyInternal(serverPlayer, body);
+        }
+    }
+    
+    /**
+     * Internal implementation that works with ServerPlayer
+     */
+    private void discoverCelestialBodyInternal(ServerPlayer player, ICelestialBody body) {
         UUID playerId = player.getUUID();
         
         // Initialize set if this is the player's first discovery
@@ -296,7 +303,7 @@ public class SpaceTravelManager implements ISpaceTravelManager {
     @Override
     public void discoverCelestialBody(Player player, ICelestialBody body) {
         if (player instanceof ServerPlayer serverPlayer) {
-            discoverCelestialBody(serverPlayer, body);
+            discoverCelestialBodyInternal(serverPlayer, body);
         }
     }
     
