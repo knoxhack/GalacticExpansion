@@ -1423,12 +1423,20 @@ public class RocketComponentFactory {
         
         @Override
         public void setEmergencyMode(boolean active) {
-            this.emergencyModeActive = active && hasEmergencyMode;
+            this.emergencyModeActive = active && hasEmergencyMode && !isBroken();
         }
         
         @Override
         public boolean isEmergencyModeActive() {
-            return emergencyModeActive;
+            return emergencyModeActive && !isBroken();
+        }
+        
+        /**
+         * Check if this component is broken (has no durability left).
+         * @return true if broken, false otherwise
+         */
+        private boolean isBroken() {
+            return currentDurability <= 0;
         }
     }
 }

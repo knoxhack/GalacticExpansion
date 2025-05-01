@@ -156,6 +156,14 @@ public class BaseLifeSupport implements ILifeSupport {
     }
     
     /**
+     * Check if this component is broken (has no durability left).
+     * @return true if broken, false otherwise
+     */
+    private boolean isBroken() {
+        return currentDurability <= 0;
+    }
+    
+    /**
      * Gets a list of tooltip lines for this component.
      * @param detailed Whether to include detailed information
      * @return The tooltip lines

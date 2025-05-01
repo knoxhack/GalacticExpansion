@@ -1,11 +1,10 @@
 package com.astroframe.galactic.core.api.logistics;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-
 import java.util.List;
 import java.util.Set;
+import com.astroframe.galactic.core.api.common.BlockPos;
+import com.astroframe.galactic.core.api.common.ItemStack;
+import com.astroframe.galactic.core.api.common.Level;
 
 /**
  * Interface for an item network that can transport items between connected nodes.
