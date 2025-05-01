@@ -1,10 +1,16 @@
 package com.astroframe.galactic.space;
 
 import com.astroframe.galactic.core.api.space.SpaceAPI;
+import com.astroframe.galactic.space.command.SpaceTravelCommands;
 import com.astroframe.galactic.space.implementation.SpaceBodies;
 import com.astroframe.galactic.space.implementation.SpaceTravelManager;
 import com.astroframe.galactic.space.implementation.component.RocketComponentFactory;
+import com.astroframe.galactic.space.item.SpaceItems;
 import com.astroframe.galactic.space.registry.SpaceRegistry;
+import com.astroframe.galactic.space.resource.SpaceResourceGenerator;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -13,6 +19,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
@@ -40,6 +47,9 @@ public class GalacticSpace {
     public GalacticSpace(IEventBus modEventBus) {
         LOGGER.info("Initializing Galactic Space module");
         
+        // Register all items
+        SpaceItems.register();
+        
         // Register all content with the registry system
         SpaceRegistry.initialize(modEventBus);
         
@@ -49,6 +59,17 @@ public class GalacticSpace {
         // Register server lifecycle events
         NeoForge.EVENT_BUS.addListener(this::onServerStarted);
         NeoForge.EVENT_BUS.addListener(this::onServerStopping);
+        NeoForge.EVENT_BUS.addListener(this::registerCommands);
+    }
+    
+    /**
+     * Register commands for the mod.
+     * 
+     * @param event The register commands event
+     */
+    private void registerCommands(RegisterCommandsEvent event) {
+        LOGGER.info("Registering Galactic Space commands");
+        SpaceTravelCommands.register(event.getDispatcher(), event.getBuildContext());
     }
     
     /**
@@ -85,6 +106,14 @@ public class GalacticSpace {
             
             // Initialize the space travel manager
             initializeSpaceTravelManager();
+            
+            // Initialize space bodies
+            SpaceBodies.registerAll();
+            
+            // Initialize space resource generator
+            SpaceResourceGenerator.init();
+            
+            LOGGER.info("Galactic Space module setup complete");
         });
     }
     
