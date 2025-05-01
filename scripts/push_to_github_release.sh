@@ -25,6 +25,10 @@ if [ -z "$GITHUB_TOKEN" ]; then
   exit 1
 fi
 
+# Set git config to use the correct user
+git config --local user.name "knoxhack"
+git config --local user.email "knoxhack@gmail.com"
+
 # Get repository details from Git
 REPO_URL=$(git config --get remote.origin.url)
 if [ -z "$REPO_URL" ]; then
