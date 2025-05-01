@@ -189,7 +189,8 @@ wss.on('connection', (ws) => {
         addNotification({
           type: 'info',
           title: 'Build Started',
-          message: `Starting build with command: ${data.gradleCommand || 'clean build'}`
+          message: `Starting build with command: ${data.gradleCommand || 'clean build'}`,
+          timeout: 8000 // Keep this notification visible a bit longer
         });
         
         startBuild(data.gradleCommand || 'clean build')

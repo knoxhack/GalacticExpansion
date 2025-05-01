@@ -788,83 +788,101 @@ createReleaseBtn.addEventListener('click', () => {
 
 // Update notifications display
 function updateNotifications(notifications) {
-    // Get or create notifications container
-    let notificationsContainer = document.getElementById('notificationsContainer');
-    if (!notificationsContainer) {
-        notificationsContainer = document.createElement('div');
-        notificationsContainer.id = 'notificationsContainer';
-        notificationsContainer.className = 'notifications-container';
-        document.body.appendChild(notificationsContainer);
-    }
+    // Get notifications container (it's already in the HTML)
+    const notificationsContainer = document.getElementById('notificationsContainer');
     
-    // Clear existing notifications
-    notificationsContainer.innerHTML = '';
+    // Keep track of notifications we've seen
+    const currentNotificationIds = new Set();
     
-    // Add each notification
+    // Process each notification from the server
     notifications.forEach(notification => {
-        const notificationElement = document.createElement('div');
-        notificationElement.className = `notification notification-${notification.type}`;
-        notificationElement.id = `notification-${notification.id}`;
+        // Keep track of this notification ID
+        currentNotificationIds.add(notification.id);
         
-        // Create notification header
-        const header = document.createElement('div');
-        header.className = 'notification-header';
+        // Check if this notification is already shown
+        let notificationElement = document.getElementById(`notification-${notification.id}`);
         
-        // Add icon
-        const icon = document.createElement('span');
-        icon.className = 'notification-icon';
-        icon.textContent = notification.icon || ''; // Use the icon from server or default
-        header.appendChild(icon);
-        
-        // Add title
-        const title = document.createElement('span');
-        title.className = 'notification-title';
-        title.textContent = notification.title || 'Notification';
-        header.appendChild(title);
-        
-        // Add close button
-        const closeBtn = document.createElement('button');
-        closeBtn.className = 'notification-close';
-        closeBtn.innerHTML = '&times;';
-        closeBtn.addEventListener('click', () => {
-            // Send dismissal message to server
-            socket.send(JSON.stringify({
-                type: 'dismissNotification',
-                id: notification.id
-            }));
+        // If it doesn't exist, create it
+        if (!notificationElement) {
+            notificationElement = document.createElement('div');
+            notificationElement.className = `notification notification-${notification.type}`;
+            notificationElement.id = `notification-${notification.id}`;
             
-            // Remove from UI immediately for better UX
-            notificationElement.classList.add('notification-hidden');
+            // Create notification header
+            const header = document.createElement('div');
+            header.className = 'notification-header';
+            
+            // Add icon
+            const icon = document.createElement('span');
+            icon.className = 'notification-icon';
+            icon.textContent = notification.icon || ''; // Use the icon from server or default
+            header.appendChild(icon);
+            
+            // Add title
+            const title = document.createElement('span');
+            title.className = 'notification-title';
+            title.textContent = notification.title || 'Notification';
+            header.appendChild(title);
+            
+            // Add close button
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'notification-close';
+            closeBtn.innerHTML = '&times;';
+            closeBtn.addEventListener('click', () => {
+                // Send dismissal message to server
+                socket.send(JSON.stringify({
+                    type: 'dismissNotification',
+                    id: notification.id
+                }));
+                
+                // Remove from UI immediately for better UX
+                notificationElement.classList.remove('notification-visible');
+                notificationElement.classList.add('notification-hidden');
+                setTimeout(() => {
+                    notificationElement.remove();
+                }, 300);
+            });
+            header.appendChild(closeBtn);
+            
+            notificationElement.appendChild(header);
+            
+            // Add notification message
+            const message = document.createElement('div');
+            message.className = 'notification-message';
+            message.textContent = notification.message;
+            notificationElement.appendChild(message);
+            
+            // Add timestamp if available
+            if (notification.timestamp) {
+                const time = document.createElement('div');
+                time.className = 'notification-time';
+                const notificationTime = new Date(notification.timestamp);
+                time.textContent = getRelativeTime(notificationTime);
+                notificationElement.appendChild(time);
+            }
+            
+            // Add to container
+            notificationsContainer.appendChild(notificationElement);
+            
+            // Animate entry
             setTimeout(() => {
-                notificationElement.remove();
-            }, 300);
-        });
-        header.appendChild(closeBtn);
-        
-        notificationElement.appendChild(header);
-        
-        // Add notification message
-        const message = document.createElement('div');
-        message.className = 'notification-message';
-        message.textContent = notification.message;
-        notificationElement.appendChild(message);
-        
-        // Add timestamp if available
-        if (notification.timestamp) {
-            const time = document.createElement('div');
-            time.className = 'notification-time';
-            const notificationTime = new Date(notification.timestamp);
-            time.textContent = getRelativeTime(notificationTime);
-            notificationElement.appendChild(time);
+                notificationElement.classList.add('notification-visible');
+            }, 10);
         }
-        
-        // Add to container
-        notificationsContainer.appendChild(notificationElement);
-        
-        // Animate entry
-        setTimeout(() => {
-            notificationElement.classList.add('notification-visible');
-        }, 10);
+    });
+    
+    // Remove notifications that no longer exist on the server
+    const existingNotifications = notificationsContainer.querySelectorAll('.notification');
+    existingNotifications.forEach(element => {
+        const id = element.id.replace('notification-', '');
+        if (!currentNotificationIds.has(id)) {
+            // Animate removal
+            element.classList.remove('notification-visible');
+            element.classList.add('notification-hidden');
+            setTimeout(() => {
+                element.remove();
+            }, 300);
+        }
     });
 }
 
