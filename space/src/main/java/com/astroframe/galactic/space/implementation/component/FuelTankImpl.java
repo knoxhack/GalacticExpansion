@@ -1,8 +1,8 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.IFuelTank;
-import com.astroframe.galactic.core.api.space.component.enums.ComponentType;
-import com.astroframe.galactic.core.api.space.component.enums.FuelType;
+import com.astroframe.galactic.core.api.space.component.IRocketEngine;
+import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -14,66 +14,44 @@ import java.util.List;
  */
 public class FuelTankImpl implements IFuelTank {
     private final ResourceLocation id;
-    private final Component displayName;
+    private final String name;
+    private final String description;
     private final int tier;
     private final int mass;
-    private final float maxHealth;
-    private final float structuralIntegrity;
-    private final int flowRate;
-    private final boolean hasCryogenicStorage;
+    private final int maxDurability;
+    private int currentDurability;
+    private final int maxFuelCapacity;
+    private int currentFuelLevel;
     private final float leakResistance;
-    private final FuelType fuelType;
-    private final int capacity;
+    private final float explosionResistance;
+    private final IRocketEngine.FuelType fuelType;
     
     /**
      * Creates a new fuel tank.
      */
     public FuelTankImpl(
             ResourceLocation id,
-            Component displayName,
+            String name,
+            String description,
             int tier,
             int mass,
-            float maxHealth,
-            float structuralIntegrity,
-            int flowRate,
-            boolean hasCryogenicStorage,
+            int maxDurability,
+            int maxFuelCapacity,
             float leakResistance,
-            FuelType fuelType) {
+            float explosionResistance,
+            IRocketEngine.FuelType fuelType) {
         this.id = id;
-        this.displayName = displayName;
+        this.name = name;
+        this.description = description;
         this.tier = tier;
         this.mass = mass;
-        this.maxHealth = maxHealth;
-        this.structuralIntegrity = structuralIntegrity;
-        this.flowRate = flowRate;
-        this.hasCryogenicStorage = hasCryogenicStorage;
+        this.maxDurability = maxDurability;
+        this.currentDurability = maxDurability;
+        this.maxFuelCapacity = maxFuelCapacity;
+        this.currentFuelLevel = 0; // Start empty
         this.leakResistance = leakResistance;
+        this.explosionResistance = explosionResistance;
         this.fuelType = fuelType;
-        
-        // Calculate capacity based on tier and fuel type
-        int baseCapacity = 500;
-        float tierMultiplier = tier * 1.5f;
-        float typeMultiplier = 1.0f;
-        
-        switch (fuelType) {
-            case CHEMICAL:
-                typeMultiplier = 1.0f;
-                break;
-            case HYDROGEN:
-                typeMultiplier = 1.2f;
-                break;
-            case NUCLEAR:
-                typeMultiplier = 1.5f;
-                break;
-            case ANTIMATTER:
-                typeMultiplier = 2.0f;
-                break;
-            case EXOTIC:
-                typeMultiplier = 3.0f;
-                break;
-        }
-        
-        this.capacity = Math.round(baseCapacity * tierMultiplier * typeMultiplier);
     }
 
     @Override
@@ -82,110 +60,245 @@ public class FuelTankImpl implements IFuelTank {
     }
 
     @Override
-    public Component getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
+    }
+    
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     @Override
     public int getTier() {
         return tier;
     }
+    
+    @Override
+    public RocketComponentType getType() {
+        return RocketComponentType.FUEL;
+    }
 
     @Override
     public int getMass() {
         return mass;
     }
-
+    
     @Override
-    public float getMaxHealth() {
-        return maxHealth;
+    public int getMaxDurability() {
+        return maxDurability;
     }
     
     @Override
-    public ComponentType getType() {
-        return ComponentType.FUEL_TANK;
+    public int getCurrentDurability() {
+        return currentDurability;
     }
-
-    /**
-     * Gets the capacity of this fuel tank.
-     * @return The capacity
-     */
-    public int getCapacity() {
-        return capacity;
-    }
-
-    /**
-     * Gets the structural integrity of this fuel tank.
-     * @return The structural integrity
-     */
-    public float getStructuralIntegrity() {
-        return structuralIntegrity;
-    }
-
+    
     @Override
-    public FuelType getFuelType() {
-        return fuelType;
+    public void damage(int amount) {
+        currentDurability = Math.max(0, currentDurability - amount);
+    }
+    
+    @Override
+    public void repair(int amount) {
+        currentDurability = Math.min(maxDurability, currentDurability + amount);
     }
     
     @Override
     public int getMaxFuelCapacity() {
-        return capacity;
+        return maxFuelCapacity;
     }
     
     @Override
-    public float getPressureRating() {
-        // Calculate pressure rating based on structural integrity and tier
-        return structuralIntegrity * (1.0f + (tier * 0.5f));
+    public int getCurrentFuelLevel() {
+        return currentFuelLevel;
     }
     
     @Override
-    public boolean isInsulated() {
-        // Tanks with cryogenic storage are insulated, as are higher tier tanks
-        return hasCryogenicStorage || tier >= 3;
+    public int addFuel(int amount) {
+        if (amount <= 0 || isBroken()) {
+            return 0;
+        }
+        
+        int spaceAvailable = maxFuelCapacity - currentFuelLevel;
+        int amountToAdd = Math.min(amount, spaceAvailable);
+        
+        currentFuelLevel += amountToAdd;
+        return amountToAdd;
     }
-
-    /**
-     * Gets the flow rate of the fuel tank.
-     * @return The flow rate
-     */
-    public int getFlowRate() {
-        return flowRate;
+    
+    @Override
+    public int consumeFuel(int amount) {
+        if (amount <= 0 || isBroken()) {
+            return 0;
+        }
+        
+        int amountToConsume = Math.min(amount, currentFuelLevel);
+        currentFuelLevel -= amountToConsume;
+        return amountToConsume;
     }
-
-    /**
-     * Checks if this tank has cryogenic storage.
-     * @return True if has cryogenic storage
-     */
-    public boolean hasCryogenicStorage() {
-        return hasCryogenicStorage;
+    
+    @Override
+    public IRocketEngine.FuelType getFuelType() {
+        return fuelType;
     }
-
-    /**
-     * Gets the leak resistance of this tank.
-     * @return The leak resistance
-     */
+    
+    @Override
     public float getLeakResistance() {
         return leakResistance;
     }
-
+    
     @Override
+    public float getExplosionResistance() {
+        return explosionResistance;
+    }
+
+    /**
+     * Gets a list of tooltip lines for this component.
+     * @param detailed Whether to include detailed information
+     * @return The tooltip lines
+     */
     public List<Component> getTooltip(boolean detailed) {
         List<Component> tooltip = new ArrayList<>();
         
-        tooltip.add(Component.translatable("tooltip.galactic-space.tier", tier));
-        tooltip.add(Component.translatable("tooltip.galactic-space.fuel_tank.type", fuelType.name()));
-        tooltip.add(Component.translatable("tooltip.galactic-space.fuel_tank.capacity", capacity));
+        tooltip.add(Component.literal(name));
+        tooltip.add(Component.literal("Capacity: " + maxFuelCapacity + " units"));
+        tooltip.add(Component.literal("Fuel Type: " + fuelType.name()));
+        tooltip.add(Component.literal("Tier: " + tier));
         
         if (detailed) {
-            tooltip.add(Component.translatable("tooltip.galactic-space.fuel_tank.structural_integrity", structuralIntegrity));
-            tooltip.add(Component.translatable("tooltip.galactic-space.fuel_tank.flow_rate", flowRate));
-            tooltip.add(Component.translatable("tooltip.galactic-space.fuel_tank.leak_resistance", leakResistance));
-            
-            if (hasCryogenicStorage) {
-                tooltip.add(Component.translatable("tooltip.galactic-space.fuel_tank.cryogenic"));
-            }
+            tooltip.add(Component.literal("Current Fuel: " + currentFuelLevel + " / " + maxFuelCapacity));
+            tooltip.add(Component.literal("Leak Resistance: " + Math.round(leakResistance * 100) + "%"));
+            tooltip.add(Component.literal("Explosion Resistance: " + Math.round(explosionResistance * 100) + "%"));
+            tooltip.add(Component.literal("Mass: " + mass));
+            tooltip.add(Component.literal("Durability: " + currentDurability + " / " + maxDurability));
         }
         
         return tooltip;
+    }
+    
+    /**
+     * Builder for FuelTankImpl.
+     */
+    public static class Builder {
+        private final ResourceLocation id;
+        private String name = "Fuel Tank";
+        private String description = "A tank for storing rocket fuel.";
+        private int tier = 1;
+        private int mass = 300;
+        private int maxDurability = 100;
+        private int maxFuelCapacity = 1000;
+        private float leakResistance = 0.8f;
+        private float explosionResistance = 0.5f;
+        private IRocketEngine.FuelType fuelType = IRocketEngine.FuelType.CHEMICAL;
+        
+        /**
+         * Creates a new builder with required parameters.
+         * @param id The component ID
+         */
+        public Builder(ResourceLocation id) {
+            this.id = id;
+        }
+        
+        /**
+         * Sets the name.
+         * @param name The name
+         * @return This builder
+         */
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+        
+        /**
+         * Sets the description.
+         * @param description The description
+         * @return This builder
+         */
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+        
+        /**
+         * Sets the tier.
+         * @param tier The tier level (1-3)
+         * @return This builder
+         */
+        public Builder tier(int tier) {
+            this.tier = Math.max(1, Math.min(3, tier));
+            return this;
+        }
+        
+        /**
+         * Sets the mass.
+         * @param mass The mass
+         * @return This builder
+         */
+        public Builder mass(int mass) {
+            this.mass = mass;
+            return this;
+        }
+        
+        /**
+         * Sets the max durability.
+         * @param maxDurability The max durability
+         * @return This builder
+         */
+        public Builder maxDurability(int maxDurability) {
+            this.maxDurability = maxDurability;
+            return this;
+        }
+        
+        /**
+         * Sets the max fuel capacity.
+         * @param maxFuelCapacity The max fuel capacity
+         * @return This builder
+         */
+        public Builder maxFuelCapacity(int maxFuelCapacity) {
+            this.maxFuelCapacity = maxFuelCapacity;
+            return this;
+        }
+        
+        /**
+         * Sets the leak resistance.
+         * @param leakResistance The leak resistance (0.0-1.0)
+         * @return This builder
+         */
+        public Builder leakResistance(float leakResistance) {
+            this.leakResistance = Math.max(0.0f, Math.min(1.0f, leakResistance));
+            return this;
+        }
+        
+        /**
+         * Sets the explosion resistance.
+         * @param explosionResistance The explosion resistance (0.0-1.0)
+         * @return This builder
+         */
+        public Builder explosionResistance(float explosionResistance) {
+            this.explosionResistance = Math.max(0.0f, Math.min(1.0f, explosionResistance));
+            return this;
+        }
+        
+        /**
+         * Sets the fuel type.
+         * @param fuelType The fuel type
+         * @return This builder
+         */
+        public Builder fuelType(IRocketEngine.FuelType fuelType) {
+            this.fuelType = fuelType;
+            return this;
+        }
+        
+        /**
+         * Builds the fuel tank.
+         * @return A new FuelTankImpl
+         */
+        public FuelTankImpl build() {
+            return new FuelTankImpl(
+                    id, name, description, tier, mass, maxDurability,
+                    maxFuelCapacity, leakResistance, explosionResistance, fuelType
+            );
+        }
     }
 }
