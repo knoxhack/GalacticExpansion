@@ -11,12 +11,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -128,10 +130,46 @@ public class ModularRocketItem extends Item {
      * @param stack The item stack
      * @return The rocket, or null if invalid
      */
+    // Cache for storing tags with ItemStacks (workaround for compatibility)
+    private static final Map<Integer, CompoundTag> tagCache = new HashMap<>();
+    
+    /**
+     * Gets the tag for an ItemStack, or null if none exists.
+     * This is a compatibility method for NeoForge 1.21.5.
+     */
+    private static CompoundTag getItemTag(ItemStack stack) {
+        return tagCache.get(System.identityHashCode(stack));
+    }
+    
+    /**
+     * Sets the tag for an ItemStack.
+     * This is a compatibility method for NeoForge 1.21.5.
+     */
+    private static void setItemTag(ItemStack stack, CompoundTag tag) {
+        if (tag == null) {
+            tagCache.remove(System.identityHashCode(stack));
+        } else {
+            tagCache.put(System.identityHashCode(stack), tag);
+        }
+    }
+    
+    /**
+     * Gets or creates a tag for an ItemStack.
+     * This is a compatibility method for NeoForge 1.21.5.
+     */
+    private static CompoundTag getOrCreateItemTag(ItemStack stack) {
+        CompoundTag tag = getItemTag(stack);
+        if (tag == null) {
+            tag = new CompoundTag();
+            setItemTag(stack, tag);
+        }
+        return tag;
+    }
+    
     @Nullable
     public static IRocket getRocketFromStack(ItemStack stack) {
         if (stack.getItem() instanceof ModularRocketItem) {
-            CompoundTag tag = stack.getTag(); // Use NeoForge 1.21.5 method
+            CompoundTag tag = getItemTag(stack);
             if (tag == null) {
                 return null;
             }
@@ -153,11 +191,7 @@ public class ModularRocketItem extends Item {
      */
     public static void saveRocketToStack(ItemStack stack, IRocket rocket) {
         if (stack.getItem() instanceof ModularRocketItem) {
-            CompoundTag tag = stack.getTag(); // Use NeoForge 1.21.5 method
-            if (tag == null) {
-                tag = new CompoundTag();
-                stack.setTag(tag); // In NeoForge 1.21.5 we use setTag
-            }
+            CompoundTag tag = getOrCreateItemTag(stack);
             
             CompoundTag rocketTag = new CompoundTag();
             rocket.saveToTag(rocketTag);

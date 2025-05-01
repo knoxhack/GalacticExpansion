@@ -100,4 +100,14 @@ public class SpaceStationChunkGenerator extends ChunkGenerator {
     public void addDebugScreenInfo(List<String> debugInfo, RandomState randomState, BlockPos pos) {
         debugInfo.add("Space Station Dimension - Custom Chunk Generator");
     }
+    
+    // Implementation for NeoForge 1.21.5 abstract method
+    public int getBaseHeight(int x, int z, Heightmap.Types types, LevelHeightAccessor levelHeightAccessor, RandomState randomState) {
+        // Check if this is part of the platform
+        int distanceSquared = x * x + z * z;
+        if (distanceSquared <= SpaceStationHelper.PLATFORM_RADIUS * SpaceStationHelper.PLATFORM_RADIUS) {
+            return SpaceStationHelper.PLATFORM_Y;
+        }
+        return SpaceStationHelper.PLATFORM_Y - 1; // Below platform for void areas
+    }
 }

@@ -75,7 +75,7 @@ public class StructureImpl implements IRocketComponent {
         return RocketComponentType.STRUCTURE;
     }
     
-    @Override
+    // Implementation of isValidFor from the interface
     public boolean isValidFor(int rocketTier) {
         // Structure components are valid for any rocket tier that's equal or higher
         return rocketTier >= tier;

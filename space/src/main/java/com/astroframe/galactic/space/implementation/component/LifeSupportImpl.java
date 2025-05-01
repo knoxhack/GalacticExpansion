@@ -108,12 +108,12 @@ public class LifeSupportImpl implements ILifeSupport {
         return hasRadiationScrubbers;
     }
 
-    @Override
+    // Implementation from interface
     public LifeSupportType getLifeSupportType() {
         return lifeSupportType;
     }
 
-    @Override
+    // Implementation from interface
     public List<Component> getTooltip(boolean detailed) {
         List<Component> tooltip = new ArrayList<>();
         
