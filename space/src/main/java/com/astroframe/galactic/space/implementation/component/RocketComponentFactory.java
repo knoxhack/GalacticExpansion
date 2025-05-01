@@ -411,6 +411,209 @@ public class RocketComponentFactory {
     }
     
     /**
+     * Creates a component based on the specified type and tier.
+     * @param type The component type
+     * @param tier The component tier
+     * @return The component, or null if no matching component exists
+     */
+    public static IRocketComponent createComponent(RocketComponentType type, int tier) {
+        switch (type) {
+            case COCKPIT:
+                return createCockpit(type, tier);
+            case ENGINE:
+                return createEngine(type, tier);
+            case FUEL_TANK:
+                return createFuelTank(type, tier);
+            case STORAGE:
+                return createCargoBay(type, tier);
+            case PASSENGER_COMPARTMENT:
+                return createPassengerCompartment(type, tier);
+            case SHIELDING:
+                return createShield(type, tier);
+            case LIFE_SUPPORT:
+                return createLifeSupport(type, tier);
+            case STRUCTURE:
+                // Structure components don't have tiers currently
+                return createStructure(type, tier);
+            default:
+                // Not all component types have implementations
+                return null;
+        }
+    }
+
+    /**
+     * Creates a cockpit/command module of the specified tier.
+     * @param type The component type (should be COCKPIT)
+     * @param tier The component tier (1-3)
+     * @return The command module, or null if no matching component exists
+     */
+    public static ICommandModule createCockpit(RocketComponentType type, int tier) {
+        if (type != RocketComponentType.COCKPIT) {
+            return null;
+        }
+        
+        switch (tier) {
+            case 1:
+                return getCommandModule(ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_basic"));
+            case 2:
+                return getCommandModule(ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_advanced"));
+            case 3:
+                return getCommandModule(ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_elite"));
+            default:
+                return null;
+        }
+    }
+    
+    /**
+     * Creates an engine of the specified tier.
+     * @param type The component type (should be ENGINE)
+     * @param tier The component tier (1-3)
+     * @return The engine, or null if no matching component exists
+     */
+    public static IRocketEngine createEngine(RocketComponentType type, int tier) {
+        if (type != RocketComponentType.ENGINE) {
+            return null;
+        }
+        
+        switch (tier) {
+            case 1:
+                return getEngine(ResourceLocation.parse(GalacticSpace.MOD_ID + ":solid_fuel_engine"));
+            case 2:
+                return getEngine(ResourceLocation.parse(GalacticSpace.MOD_ID + ":liquid_fuel_engine"));
+            case 3:
+                return getEngine(ResourceLocation.parse(GalacticSpace.MOD_ID + ":ion_engine"));
+            default:
+                return null;
+        }
+    }
+    
+    /**
+     * Creates a fuel tank of the specified tier.
+     * @param type The component type (should be FUEL_TANK)
+     * @param tier The component tier (1-3)
+     * @return The fuel tank, or null if no matching component exists
+     */
+    public static IFuelTank createFuelTank(RocketComponentType type, int tier) {
+        if (type != RocketComponentType.FUEL_TANK) {
+            return null;
+        }
+        
+        switch (tier) {
+            case 1:
+                return getFuelTank(ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_small"));
+            case 2:
+                return getFuelTank(ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_medium"));
+            case 3:
+                return getFuelTank(ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_large"));
+            default:
+                return null;
+        }
+    }
+    
+    /**
+     * Creates a cargo bay of the specified tier.
+     * @param type The component type (should be STORAGE)
+     * @param tier The component tier (1-3)
+     * @return The cargo bay, or null if no matching component exists
+     */
+    public static ICargoBay createCargoBay(RocketComponentType type, int tier) {
+        if (type != RocketComponentType.STORAGE) {
+            return null;
+        }
+        
+        switch (tier) {
+            case 1:
+                return getCargoBay(ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_small"));
+            case 2:
+                return getCargoBay(ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_medium"));
+            case 3:
+                return getCargoBay(ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_large"));
+            default:
+                return null;
+        }
+    }
+    
+    /**
+     * Creates a passenger compartment of the specified tier.
+     * @param type The component type (should be PASSENGER_COMPARTMENT)
+     * @param tier The component tier (1-2)
+     * @return The passenger compartment, or null if no matching component exists
+     */
+    public static IPassengerCompartment createPassengerCompartment(RocketComponentType type, int tier) {
+        if (type != RocketComponentType.PASSENGER_COMPARTMENT) {
+            return null;
+        }
+        
+        switch (tier) {
+            case 1:
+                return getPassengerCompartment(ResourceLocation.parse(GalacticSpace.MOD_ID + ":passenger_compartment_basic"));
+            case 2:
+                return getPassengerCompartment(ResourceLocation.parse(GalacticSpace.MOD_ID + ":passenger_compartment_advanced"));
+            default:
+                return null;
+        }
+    }
+    
+    /**
+     * Creates a shield of the specified tier.
+     * @param type The component type (should be SHIELDING)
+     * @param tier The component tier (1-2)
+     * @return The shield, or null if no matching component exists
+     */
+    public static IShield createShield(RocketComponentType type, int tier) {
+        if (type != RocketComponentType.SHIELDING) {
+            return null;
+        }
+        
+        switch (tier) {
+            case 1:
+                return getShield(ResourceLocation.parse(GalacticSpace.MOD_ID + ":heat_shield_basic"));
+            case 2:
+                return getShield(ResourceLocation.parse(GalacticSpace.MOD_ID + ":heat_shield_advanced"));
+            default:
+                return null;
+        }
+    }
+    
+    /**
+     * Creates a life support system of the specified tier.
+     * @param type The component type (should be LIFE_SUPPORT)
+     * @param tier The component tier (1-2)
+     * @return The life support system, or null if no matching component exists
+     */
+    public static ILifeSupport createLifeSupport(RocketComponentType type, int tier) {
+        if (type != RocketComponentType.LIFE_SUPPORT) {
+            return null;
+        }
+        
+        switch (tier) {
+            case 1:
+                return getLifeSupport(ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_basic"));
+            case 2:
+                return getLifeSupport(ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_advanced"));
+            default:
+                return null;
+        }
+    }
+    
+    /**
+     * Creates a structural component.
+     * @param type The component type (should be STRUCTURE)
+     * @param tier The component tier (ignored for structure)
+     * @return A structure component
+     */
+    public static IRocketComponent createStructure(RocketComponentType type, int tier) {
+        // Basic implementation for structure - could be expanded later with different structure types
+        return new StructureImpl.Builder(ResourceLocation.parse(GalacticSpace.MOD_ID + ":structure_basic"))
+                .name("Basic Structural Frame")
+                .description("A standard structural framework for rocket assembly.")
+                .tier(Math.min(3, Math.max(1, tier)))  // Clamp tier to 1-3
+                .mass(100)
+                .structuralIntegrity(100)
+                .build();
+    }
+    
+    /**
      * Creates an advanced chemical engine.
      * @return An advanced chemical engine
      */

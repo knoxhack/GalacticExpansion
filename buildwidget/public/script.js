@@ -105,29 +105,37 @@ function connectWebSocket() {
         }
         
         // Request initial status update
-        socket.send(JSON.stringify({ type: 'getStatus' }));
+        socket.send(JSON.stringify({ type: 'requestStatus' }));
     });
     
     // Handle message event
     socket.addEventListener('message', (event) => {
         try {
             const message = JSON.parse(event.data);
+            console.log('Received message type:', message.type);
             
-            if (message.type === 'buildStatus') {
+            if (message.type === 'status') {
                 updateBuildStatus(message.data);
             } else if (message.type === 'buildOutput') {
                 updateBuildOutput(message.data);
-            } else if (message.type === 'taskList') {
+            } else if (message.type === 'tasks') {
                 updateTaskList(message.data);
-            } else if (message.type === 'buildMetrics') {
+            } else if (message.type === 'metrics') {
                 updateBuildMetrics(message.data);
-            } else if (message.type === 'notification') {
-                showNotification(message.data.title, message.data.message, message.data.type);
+            } else if (message.type === 'notifications') {
+                // Handle array of notifications
+                if (Array.isArray(message.data)) {
+                    message.data.forEach(notification => {
+                        showNotification(notification.title, notification.message, notification.type);
+                    });
+                } else {
+                    showNotification(message.data.title, message.data.message, message.data.type);
+                }
             } else if (message.type === 'checkpointStatus') {
                 updateCheckpointStatus(message.data);
             } else if (message.type === 'moduleStatus') {
                 updateModuleStatus(message.data);
-            } else if (message.type === 'versionInfo') {
+            } else if (message.type === 'versionHistory' || message.type === 'versionInfo') {
                 updateVersionInfo(message.data);
             }
         } catch (error) {
