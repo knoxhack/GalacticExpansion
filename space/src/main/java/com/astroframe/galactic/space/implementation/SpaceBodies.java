@@ -1,7 +1,10 @@
 package com.astroframe.galactic.space.implementation;
 
 import com.astroframe.galactic.core.api.space.ICelestialBody;
+import com.astroframe.galactic.core.api.space.registry.CelestialBodyRegistry;
 import com.astroframe.galactic.space.GalacticSpace;
+import com.astroframe.galactic.space.implementation.celestial.BaseCelestialBody;
+import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
 import net.minecraft.resources.ResourceLocation;
 
 /**
