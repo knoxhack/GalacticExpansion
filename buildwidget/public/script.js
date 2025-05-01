@@ -273,8 +273,47 @@ function updateBuildStatus(status) {
             
             // Change button text if release was created
             if (status.releaseCreated) {
-                createReleaseBtn.textContent = 'Release Created';
+                const versionText = status.releaseVersion ? ` (v${status.releaseVersion})` : '';
+                createReleaseBtn.textContent = `Release Created${versionText}`;
             }
+        }
+    }
+    
+    // Update version info section if it exists and we have version data
+    if (status.releaseVersion && status.releaseCreated) {
+        let versionInfoSection = document.getElementById('versionInfoSection');
+        if (!versionInfoSection) {
+            versionInfoSection = document.createElement('div');
+            versionInfoSection.id = 'versionInfoSection';
+            versionInfoSection.className = 'version-info-section';
+            
+            const versionHeader = document.createElement('h4');
+            versionHeader.textContent = 'Latest Release';
+            versionInfoSection.appendChild(versionHeader);
+            
+            const versionContent = document.createElement('div');
+            versionContent.id = 'versionContent';
+            versionContent.className = 'version-content';
+            versionInfoSection.appendChild(versionContent);
+            
+            // Find a good place to insert it
+            const buildStatusSection = document.querySelector('.build-status');
+            buildStatusSection.parentNode.insertBefore(versionInfoSection, buildStatusSection.nextSibling);
+        }
+        
+        // Update version info content
+        const versionContent = document.getElementById('versionContent');
+        if (versionContent) {
+            const releaseTime = status.releaseTime ? new Date(status.releaseTime) : new Date();
+            const timeAgo = getRelativeTime(releaseTime);
+            
+            versionContent.innerHTML = `
+                <div class="version-details">
+                    <p class="version-number">Version: <strong>${status.releaseVersion}</strong></p>
+                    <p class="version-date">Released: ${timeAgo}</p>
+                    <p class="version-modules">All module JARs are included in this release</p>
+                </div>
+            `;
         }
     }
 }
@@ -547,21 +586,49 @@ clearOutputBtn.addEventListener('click', () => {
 });
 
 createReleaseBtn.addEventListener('click', () => {
-    if (confirm('Create a new GitHub release with the current build artifacts?')) {
+    if (confirm('Create a new GitHub release with all versioned module JARs?')) {
         // Show release in progress
         createReleaseBtn.disabled = true;
-        createReleaseBtn.textContent = 'Creating Release...';
+        createReleaseBtn.textContent = 'Creating Versioned Release...';
         
         // Add release message to output
         const releaseMessage = document.createElement('span');
         releaseMessage.className = 'output-info';
-        releaseMessage.textContent = '[GitHub Release] Starting release process...';
+        releaseMessage.textContent = '[GitHub Release] Starting versioned release process...';
         outputText.appendChild(releaseMessage);
         outputText.appendChild(document.createElement('br'));
         
         // Auto-scroll to bottom
         if (autoScrollCheckbox.checked) {
             outputText.parentElement.scrollTop = outputText.parentElement.scrollHeight;
+        }
+        
+        // Create version info section in UI if it doesn't exist
+        let versionInfoSection = document.getElementById('versionInfoSection');
+        if (!versionInfoSection) {
+            versionInfoSection = document.createElement('div');
+            versionInfoSection.id = 'versionInfoSection';
+            versionInfoSection.className = 'version-info-section';
+            
+            const versionHeader = document.createElement('h4');
+            versionHeader.textContent = 'Latest Release';
+            versionInfoSection.appendChild(versionHeader);
+            
+            const versionContent = document.createElement('div');
+            versionContent.id = 'versionContent';
+            versionContent.className = 'version-content';
+            versionContent.innerHTML = '<p>Creating new release...</p>';
+            versionInfoSection.appendChild(versionContent);
+            
+            // Find a good place to insert it
+            const buildStatusSection = document.querySelector('.build-status');
+            buildStatusSection.parentNode.insertBefore(versionInfoSection, buildStatusSection.nextSibling);
+        } else {
+            // Update existing version info section
+            const versionContent = document.getElementById('versionContent');
+            if (versionContent) {
+                versionContent.innerHTML = '<p>Creating new release...</p>';
+            }
         }
         
         // Send release request via WebSocket
