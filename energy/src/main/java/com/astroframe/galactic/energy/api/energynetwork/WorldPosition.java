@@ -1,5 +1,7 @@
 package com.astroframe.galactic.energy.api.energynetwork;
 
+import com.astroframe.galactic.energy.api.energynetwork.Level;
+
 /**
  * A position in the world used by the energy network system.
  * This is a Minecraft-independent implementation that can be adapted to different block position systems.
