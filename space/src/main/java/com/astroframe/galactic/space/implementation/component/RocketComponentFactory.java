@@ -929,6 +929,75 @@ public class RocketComponentFactory {
         public boolean hasVacuumSeal() {
             return tier >= 2; // Mid and high tier have vacuum sealing
         }
+        
+        @Override
+        public Map<Integer, ItemStack> getContents() {
+            return new HashMap<>(contents);
+        }
+        
+        @Override
+        public ItemStack addItem(ItemStack stack) {
+            // Don't modify the original stack
+            ItemStack remaining = stack.copy();
+            
+            // Try to add to existing stacks first
+            for (int i = 0; i < storageCapacity; i++) {
+                if (contents.containsKey(i)) {
+                    ItemStack existing = contents.get(i);
+                    if (existing.getItem() == remaining.getItem() && existing.getCount() < existing.getMaxStackSize()) {
+                        int spaceAvailable = existing.getMaxStackSize() - existing.getCount();
+                        int amountToAdd = Math.min(spaceAvailable, remaining.getCount());
+                        
+                        existing.grow(amountToAdd);
+                        remaining.shrink(amountToAdd);
+                        
+                        if (remaining.isEmpty()) {
+                            return ItemStack.EMPTY;
+                        }
+                    }
+                }
+            }
+            
+            // If we still have items, find empty slots
+            for (int i = 0; i < storageCapacity; i++) {
+                if (!contents.containsKey(i) || contents.get(i).isEmpty()) {
+                    // Create a new stack in this slot
+                    ItemStack toStore = remaining.copy();
+                    int amountToStore = Math.min(remaining.getCount(), remaining.getMaxStackSize());
+                    toStore.setCount(amountToStore);
+                    remaining.shrink(amountToStore);
+                    
+                    contents.put(i, toStore);
+                    
+                    if (remaining.isEmpty()) {
+                        return ItemStack.EMPTY;
+                    }
+                }
+            }
+            
+            // Return any remaining items that couldn't be stored
+            return remaining;
+        }
+        
+        @Override
+        public ItemStack takeItem(int slotIndex, int amount) {
+            if (slotIndex < 0 || slotIndex >= storageCapacity || !contents.containsKey(slotIndex)) {
+                return ItemStack.EMPTY;
+            }
+            
+            ItemStack stack = contents.get(slotIndex);
+            int amountToTake = Math.min(amount, stack.getCount());
+            
+            ItemStack result = stack.copy();
+            result.setCount(amountToTake);
+            
+            stack.shrink(amountToTake);
+            if (stack.isEmpty()) {
+                contents.remove(slotIndex);
+            }
+            
+            return result;
+        }
     }
     
     /**
