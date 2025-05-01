@@ -76,7 +76,7 @@ public class FuelTankImpl implements IFuelTank {
     
     @Override
     public RocketComponentType getType() {
-        return RocketComponentType.FUEL;
+        return RocketComponentType.FUEL_TANK;
     }
 
     @Override

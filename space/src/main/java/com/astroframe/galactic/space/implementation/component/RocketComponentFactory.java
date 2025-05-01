@@ -1,5 +1,6 @@
 package com.astroframe.galactic.space.implementation.component;
 
+import com.astroframe.galactic.core.api.common.ItemStack;
 import com.astroframe.galactic.core.api.registry.RegistryManager;
 import com.astroframe.galactic.core.api.space.component.*;
 import com.astroframe.galactic.space.GalacticSpace;

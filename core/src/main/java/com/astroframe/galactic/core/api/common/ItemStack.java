@@ -139,6 +139,16 @@ public class ItemStack {
     }
     
     /**
+     * Checks if this item stack is identical to another (including NBT).
+     * 
+     * @param other The other stack to compare with
+     * @return true if the stacks contain the same item with the same NBT
+     */
+    public boolean isSameItemSameTags(ItemStack other) {
+        return isSameItemSameTags(this, other);
+    }
+    
+    /**
      * Gets the item.
      * This would normally return an Item instance, but for our API we'll just use the item ID.
      * 
