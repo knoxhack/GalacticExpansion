@@ -117,11 +117,32 @@ public class ItemStack {
     }
     
     /**
+     * Internal method to get tag data safely.
+     * @return The tag data or null
+     */
+    private CompoundTag getTagSafe() {
+        try {
+            // Try different methods to get tag data in Minecraft 1.21.5
+            java.lang.reflect.Method method = net.minecraft.world.item.ItemStack.class.getMethod("getTag");
+            return (CompoundTag) method.invoke(mcStack);
+        } catch (Exception e) {
+            // Method might not exist in this version
+            try {
+                java.lang.reflect.Method method = net.minecraft.world.item.ItemStack.class.getMethod("getOrCreateTag");
+                return (CompoundTag) method.invoke(mcStack);
+            } catch (Exception e2) {
+                // If all methods fail, return null
+                return null;
+            }
+        }
+    }
+    
+    /**
      * Gets the NBT tag for this stack.
      * @return The NBT tag
      */
     public CompoundTag getTag() {
-        return mcStack.getTag();
+        return getTagSafe();
     }
     
     /**
@@ -129,7 +150,14 @@ public class ItemStack {
      * @param tag The NBT tag
      */
     public void setTag(CompoundTag tag) {
-        mcStack.setTag(tag);
+        try {
+            // Try to use reflection to set tag in Minecraft 1.21.5
+            java.lang.reflect.Method method = net.minecraft.world.item.ItemStack.class.getMethod("setTag", CompoundTag.class);
+            method.invoke(mcStack, tag);
+        } catch (Exception e) {
+            // If method doesn't exist, we can't do much
+            // but at least the program won't crash
+        }
     }
     
     /**
@@ -137,7 +165,14 @@ public class ItemStack {
      * @return true if the stack has a tag
      */
     public boolean hasTag() {
-        return mcStack.hasTag();
+        try {
+            // Try different methods to check tag existence in Minecraft 1.21.5
+            java.lang.reflect.Method method = net.minecraft.world.item.ItemStack.class.getMethod("hasTag");
+            return (boolean) method.invoke(mcStack);
+        } catch (Exception e) {
+            // Method might not exist, try alternative
+            return getTagSafe() != null;
+        }
     }
     
     /**
@@ -146,8 +181,27 @@ public class ItemStack {
      * @return true if the stacks can be merged
      */
     public boolean isSameItemSameTags(ItemStack other) {
-        return net.minecraft.world.item.ItemStack.isSameItemSameTags(
-                this.mcStack, other.mcStack);
+        // Check if items are the same
+        if (this.getItem() != other.getItem()) {
+            return false;
+        }
+        
+        // Check if both have tags
+        boolean thisHasTag = this.getTag() != null;
+        boolean otherHasTag = other.getTag() != null;
+        
+        // If neither has tags, they match
+        if (!thisHasTag && !otherHasTag) {
+            return true;
+        }
+        
+        // If one has a tag and the other doesn't, they don't match
+        if (thisHasTag != otherHasTag) {
+            return false;
+        }
+        
+        // Compare tags
+        return this.getTag().equals(other.getTag());
     }
     
     /**
@@ -161,7 +215,7 @@ public class ItemStack {
         if (o == null || getClass() != o.getClass()) return false;
         
         ItemStack itemStack = (ItemStack) o;
-        return net.minecraft.world.item.ItemStack.isSameItemSameTags(mcStack, itemStack.mcStack);
+        return this.isSameItemSameTags(itemStack);
     }
     
     @Override

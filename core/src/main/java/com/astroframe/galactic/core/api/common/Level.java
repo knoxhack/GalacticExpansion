@@ -66,7 +66,10 @@ public class Level {
             Class<T> entityClass, BlockPos min, BlockPos max) {
         return mcLevel.getEntitiesOfClass(
                 entityClass,
-                new AABB(min.toMinecraft(), max.toMinecraft()));
+                new AABB(
+                    min.toMinecraft().getX(), min.toMinecraft().getY(), min.toMinecraft().getZ(),
+                    max.toMinecraft().getX(), max.toMinecraft().getY(), max.toMinecraft().getZ()
+                ));
     }
     
     /**
