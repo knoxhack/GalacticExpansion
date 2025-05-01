@@ -101,6 +101,12 @@ public interface IRocket {
     RocketStatus getStatus();
     
     /**
+     * Sets the status of this rocket.
+     * @param status The new status
+     */
+    void setStatus(RocketStatus status);
+    
+    /**
      * Enum representing the possible statuses of a rocket.
      */
     enum RocketStatus {

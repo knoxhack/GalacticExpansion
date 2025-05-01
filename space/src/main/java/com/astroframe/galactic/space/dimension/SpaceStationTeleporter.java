@@ -96,24 +96,35 @@ public class SpaceStationTeleporter {
      * @return true if teleportation was successful
      */
     private static boolean teleportPlayerToDimension(ServerPlayer player, ServerLevel targetLevel, Vec3 targetPos) {
-        // Perform the teleportation
-        boolean result = player.teleportTo(targetLevel, 
-                                           targetPos.x, targetPos.y, targetPos.z,
-                                           player.getYRot(), player.getXRot());
-        
-        if (result) {
+        // Use the correct teleportation method for NeoForge 1.21.5
+        try {
+            Entity.MovementType movementType = Entity.MovementType.SELF;
+            player.teleportTo(targetLevel, 
+                             targetPos.x, 
+                             targetPos.y, 
+                             targetPos.z, 
+                             java.util.EnumSet.of(net.minecraft.server.level.ServerPlayer.Relative.ROTATION), 
+                             player.getYRot(), 
+                             player.getXRot());
+            
             // Send confirmation message
             String dimensionName = targetLevel.dimension().equals(Level.OVERWORLD) 
-                                   ? "overworld" : "space_station";
+                                 ? "overworld" : "space_station";
             player.sendSystemMessage(Component.translatable("message.galactic-space.teleported_to." + dimensionName));
-        } else {
+            
+            return true;
+        } catch (Exception e) {
+            // Log the error
+            GalacticSpace.LOGGER.error("Failed to teleport player {} to dimension {}: {}",
+                                     player.getName().getString(), 
+                                     targetLevel.dimension().location(),
+                                     e.getMessage());
+            
             // Send error message
             player.sendSystemMessage(Component.translatable("message.galactic-space.teleport_failed"));
-            GalacticSpace.LOGGER.error("Failed to teleport player {} to dimension {}",
-                                     player.getName().getString(), targetLevel.dimension().location());
+            
+            return false;
         }
-        
-        return result;
     }
     
     /**

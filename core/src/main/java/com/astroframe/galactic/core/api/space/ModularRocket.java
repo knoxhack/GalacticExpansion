@@ -6,6 +6,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
+import java.util.Comparator;
 
 /**
  * Implementation of a modular rocket composed of individual components.
@@ -302,6 +303,22 @@ public class ModularRocket implements IRocket {
      */
     public List<IRocketEngine> getEngines() {
         return Collections.unmodifiableList(engines);
+    }
+    
+    /**
+     * Gets the primary engine of this rocket.
+     * Returns the most powerful engine if multiple are available.
+     * @return The primary engine, or null if no engines are installed
+     */
+    public IRocketEngine getEngine() {
+        if (engines.isEmpty()) {
+            return null;
+        }
+        
+        // Return the most powerful engine (highest tier)
+        return engines.stream()
+                .max(Comparator.comparingInt(IRocketEngine::getTier))
+                .orElse(engines.get(0));
     }
     
     /**

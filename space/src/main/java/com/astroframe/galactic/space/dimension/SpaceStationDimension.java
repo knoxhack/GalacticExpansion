@@ -1,7 +1,7 @@
 package com.astroframe.galactic.space.dimension;
 
 import com.astroframe.galactic.space.GalacticSpace;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -13,19 +13,31 @@ import net.minecraft.world.level.dimension.DimensionType;
 public class SpaceStationDimension {
     
     /**
+     * The dimension location for the space station.
+     */
+    public static final ResourceLocation SPACE_STATION_LOCATION = 
+        ResourceLocation.of(GalacticSpace.MOD_ID + ":space_station", ':');
+    
+    /**
+     * The dimension type location for the space station.
+     */
+    public static final ResourceLocation SPACE_STATION_TYPE_LOCATION = 
+        ResourceLocation.of(GalacticSpace.MOD_ID + ":space_station_type", ':');
+    
+    /**
      * The resource key for the space station dimension.
      */
     public static final ResourceKey<Level> SPACE_STATION_LEVEL_KEY = ResourceKey.create(
-            Registry.DIMENSION_REGISTRY,
-            new ResourceLocation(GalacticSpace.MOD_ID, "space_station")
+            Registries.DIMENSION,
+            SPACE_STATION_LOCATION
     );
     
     /**
      * The resource key for the space station dimension type.
      */
     public static final ResourceKey<DimensionType> SPACE_STATION_TYPE_KEY = ResourceKey.create(
-            Registry.DIMENSION_TYPE_REGISTRY,
-            new ResourceLocation(GalacticSpace.MOD_ID, "space_station_type")
+            Registries.DIMENSION_TYPE,
+            SPACE_STATION_TYPE_LOCATION
     );
     
     /**
