@@ -1,8 +1,7 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.IRocketEngine;
-import com.astroframe.galactic.core.api.space.component.enums.ComponentType;
-import com.astroframe.galactic.core.api.space.component.enums.EngineType;
+import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -14,46 +13,48 @@ import java.util.List;
  */
 public class RocketEngineImpl implements IRocketEngine {
     private final ResourceLocation id;
-    private final Component displayName;
+    private final String name;
+    private final String description;
     private final int tier;
     private final int mass;
-    private final float maxHealth;
+    private final int maxDurability;
+    private int currentDurability;
     private final int thrust;
+    private final int fuelConsumptionRate;
     private final float efficiency;
-    private final int heatCapacity;
-    private final boolean canOperateUnderwater;
+    private final FuelType fuelType;
     private final boolean canOperateInAtmosphere;
     private final boolean canOperateInSpace;
-    private final EngineType engineType;
     
     /**
      * Creates a new rocket engine.
      */
     public RocketEngineImpl(
             ResourceLocation id,
-            Component displayName,
+            String name,
+            String description,
             int tier,
             int mass,
-            float maxHealth,
+            int maxDurability,
             int thrust,
+            int fuelConsumptionRate,
             float efficiency,
-            int heatCapacity,
-            boolean canOperateUnderwater,
+            FuelType fuelType,
             boolean canOperateInAtmosphere,
-            boolean canOperateInSpace,
-            EngineType engineType) {
+            boolean canOperateInSpace) {
         this.id = id;
-        this.displayName = displayName;
+        this.name = name;
+        this.description = description;
         this.tier = tier;
         this.mass = mass;
-        this.maxHealth = maxHealth;
+        this.maxDurability = maxDurability;
+        this.currentDurability = maxDurability;
         this.thrust = thrust;
+        this.fuelConsumptionRate = fuelConsumptionRate;
         this.efficiency = efficiency;
-        this.heatCapacity = heatCapacity;
-        this.canOperateUnderwater = canOperateUnderwater;
+        this.fuelType = fuelType;
         this.canOperateInAtmosphere = canOperateInAtmosphere;
         this.canOperateInSpace = canOperateInSpace;
-        this.engineType = engineType;
     }
 
     @Override
@@ -62,53 +63,68 @@ public class RocketEngineImpl implements IRocketEngine {
     }
 
     @Override
-    public Component getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
+    }
+    
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     @Override
     public int getTier() {
         return tier;
     }
+    
+    @Override
+    public RocketComponentType getType() {
+        return RocketComponentType.ENGINE;
+    }
 
     @Override
     public int getMass() {
         return mass;
     }
-
+    
     @Override
-    public float getMaxHealth() {
-        return maxHealth;
+    public int getMaxDurability() {
+        return maxDurability;
     }
     
     @Override
-    public ComponentType getType() {
-        return ComponentType.ENGINE;
+    public int getCurrentDurability() {
+        return currentDurability;
+    }
+    
+    @Override
+    public void damage(int amount) {
+        currentDurability = Math.max(0, currentDurability - amount);
+    }
+    
+    @Override
+    public void repair(int amount) {
+        currentDurability = Math.min(maxDurability, currentDurability + amount);
     }
 
     @Override
     public int getThrust() {
         return thrust;
     }
+    
+    @Override
+    public int getFuelConsumptionRate() {
+        return fuelConsumptionRate;
+    }
 
     @Override
     public float getEfficiency() {
         return efficiency;
     }
-
+    
     @Override
-    public EngineType getEngineType() {
-        return engineType;
-    }
-
-    @Override
-    public int getHeatCapacity() {
-        return heatCapacity;
-    }
-
-    @Override
-    public boolean canOperateUnderwater() {
-        return canOperateUnderwater;
+    public FuelType getFuelType() {
+        return fuelType;
     }
 
     @Override
@@ -121,31 +137,176 @@ public class RocketEngineImpl implements IRocketEngine {
         return canOperateInSpace;
     }
 
-    @Override
+    /**
+     * Gets a list of tooltip lines for this component.
+     * @param detailed Whether to include detailed information
+     * @return The tooltip lines
+     */
     public List<Component> getTooltip(boolean detailed) {
         List<Component> tooltip = new ArrayList<>();
         
-        tooltip.add(Component.translatable("tooltip.galactic-space.tier", tier));
-        tooltip.add(Component.translatable("tooltip.galactic-space.engine.type", engineType.name()));
-        tooltip.add(Component.translatable("tooltip.galactic-space.engine.thrust", thrust));
+        tooltip.add(Component.literal(name));
+        tooltip.add(Component.literal("Thrust: " + thrust + " N"));
+        tooltip.add(Component.literal("Tier: " + tier));
         
         if (detailed) {
-            tooltip.add(Component.translatable("tooltip.galactic-space.engine.efficiency", efficiency));
-            tooltip.add(Component.translatable("tooltip.galactic-space.engine.heat_capacity", heatCapacity));
-            
-            if (canOperateInAtmosphere) {
-                tooltip.add(Component.translatable("tooltip.galactic-space.engine.atmosphere"));
-            }
-            
-            if (canOperateInSpace) {
-                tooltip.add(Component.translatable("tooltip.galactic-space.engine.space"));
-            }
-            
-            if (canOperateUnderwater) {
-                tooltip.add(Component.translatable("tooltip.galactic-space.engine.underwater"));
-            }
+            tooltip.add(Component.literal("Fuel Type: " + fuelType.name()));
+            tooltip.add(Component.literal("Fuel Consumption: " + fuelConsumptionRate + " units/sec"));
+            tooltip.add(Component.literal("Efficiency: " + efficiency));
+            tooltip.add(Component.literal("Atmosphere Capable: " + (canOperateInAtmosphere ? "Yes" : "No")));
+            tooltip.add(Component.literal("Space Capable: " + (canOperateInSpace ? "Yes" : "No")));
+            tooltip.add(Component.literal("Mass: " + mass));
+            tooltip.add(Component.literal("Durability: " + maxDurability));
         }
         
         return tooltip;
+    }
+    
+    /**
+     * Builder for RocketEngineImpl.
+     */
+    public static class Builder {
+        private final ResourceLocation id;
+        private String name = "Rocket Engine";
+        private String description = "A rocket engine for propulsion.";
+        private int tier = 1;
+        private int mass = 500;
+        private int maxDurability = 100;
+        private int thrust = 1000;
+        private int fuelConsumptionRate = 10;
+        private float efficiency = 1.0f;
+        private FuelType fuelType = FuelType.CHEMICAL;
+        private boolean canOperateInAtmosphere = true;
+        private boolean canOperateInSpace = true;
+        
+        /**
+         * Creates a new builder with required parameters.
+         * @param id The component ID
+         */
+        public Builder(ResourceLocation id) {
+            this.id = id;
+        }
+        
+        /**
+         * Sets the name.
+         * @param name The name
+         * @return This builder
+         */
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+        
+        /**
+         * Sets the description.
+         * @param description The description
+         * @return This builder
+         */
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+        
+        /**
+         * Sets the tier.
+         * @param tier The tier level (1-3)
+         * @return This builder
+         */
+        public Builder tier(int tier) {
+            this.tier = Math.max(1, Math.min(3, tier));
+            return this;
+        }
+        
+        /**
+         * Sets the mass.
+         * @param mass The mass
+         * @return This builder
+         */
+        public Builder mass(int mass) {
+            this.mass = mass;
+            return this;
+        }
+        
+        /**
+         * Sets the max durability.
+         * @param maxDurability The max durability
+         * @return This builder
+         */
+        public Builder maxDurability(int maxDurability) {
+            this.maxDurability = maxDurability;
+            return this;
+        }
+        
+        /**
+         * Sets the thrust.
+         * @param thrust The thrust in newtons
+         * @return This builder
+         */
+        public Builder thrust(int thrust) {
+            this.thrust = thrust;
+            return this;
+        }
+        
+        /**
+         * Sets the fuel consumption rate.
+         * @param fuelConsumptionRate The fuel consumption rate
+         * @return This builder
+         */
+        public Builder fuelConsumptionRate(int fuelConsumptionRate) {
+            this.fuelConsumptionRate = fuelConsumptionRate;
+            return this;
+        }
+        
+        /**
+         * Sets the efficiency.
+         * @param efficiency The efficiency (0.1-2.0)
+         * @return This builder
+         */
+        public Builder efficiency(float efficiency) {
+            this.efficiency = Math.max(0.1f, Math.min(2.0f, efficiency));
+            return this;
+        }
+        
+        /**
+         * Sets the fuel type.
+         * @param fuelType The fuel type
+         * @return This builder
+         */
+        public Builder fuelType(FuelType fuelType) {
+            this.fuelType = fuelType;
+            return this;
+        }
+        
+        /**
+         * Sets whether this engine can operate in atmosphere.
+         * @param canOperateInAtmosphere True if can operate in atmosphere
+         * @return This builder
+         */
+        public Builder atmosphereCapable(boolean canOperateInAtmosphere) {
+            this.canOperateInAtmosphere = canOperateInAtmosphere;
+            return this;
+        }
+        
+        /**
+         * Sets whether this engine can operate in space.
+         * @param canOperateInSpace True if can operate in space
+         * @return This builder
+         */
+        public Builder spaceCapable(boolean canOperateInSpace) {
+            this.canOperateInSpace = canOperateInSpace;
+            return this;
+        }
+        
+        /**
+         * Builds the rocket engine.
+         * @return A new RocketEngineImpl
+         */
+        public RocketEngineImpl build() {
+            return new RocketEngineImpl(
+                    id, name, description, tier, mass, maxDurability,
+                    thrust, fuelConsumptionRate, efficiency, fuelType,
+                    canOperateInAtmosphere, canOperateInSpace
+            );
+        }
     }
 }

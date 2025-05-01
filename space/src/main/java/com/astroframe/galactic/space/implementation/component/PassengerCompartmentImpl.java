@@ -1,56 +1,61 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.IPassengerCompartment;
-import com.astroframe.galactic.core.api.space.component.enums.CompartmentType;
-import com.astroframe.galactic.core.api.space.component.enums.ComponentType;
+import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Implementation of a rocket passenger compartment component.
  */
 public class PassengerCompartmentImpl implements IPassengerCompartment {
     private final ResourceLocation id;
-    private final Component displayName;
+    private final String name;
+    private final String description;
     private final int tier;
     private final int mass;
-    private final float maxHealth;
+    private final int maxDurability;
+    private int currentDurability;
     private final int passengerCapacity;
-    private final float comfortLevel;
-    private final boolean hasCryogenicSleep;
-    private final float radiationProtection;
-    private final int emergencySupportDuration;
-    private final CompartmentType compartmentType;
+    private final int comfortLevel;
+    private final boolean hasLifeSupport;
+    private final boolean hasGravitySimulation;
+    private final boolean hasRadiationShielding;
+    private final List<Player> passengers;
     
     /**
      * Creates a new passenger compartment.
      */
     public PassengerCompartmentImpl(
             ResourceLocation id,
-            Component displayName,
+            String name,
+            String description,
             int tier,
             int mass,
-            float maxHealth,
+            int maxDurability,
             int passengerCapacity,
-            float comfortLevel,
-            boolean hasCryogenicSleep,
-            float radiationProtection,
-            int emergencySupportDuration,
-            CompartmentType compartmentType) {
+            int comfortLevel,
+            boolean hasLifeSupport,
+            boolean hasGravitySimulation,
+            boolean hasRadiationShielding) {
         this.id = id;
-        this.displayName = displayName;
+        this.name = name;
+        this.description = description;
         this.tier = tier;
         this.mass = mass;
-        this.maxHealth = maxHealth;
+        this.maxDurability = maxDurability;
+        this.currentDurability = maxDurability;
         this.passengerCapacity = passengerCapacity;
         this.comfortLevel = comfortLevel;
-        this.hasCryogenicSleep = hasCryogenicSleep;
-        this.radiationProtection = radiationProtection;
-        this.emergencySupportDuration = emergencySupportDuration;
-        this.compartmentType = compartmentType;
+        this.hasLifeSupport = hasLifeSupport;
+        this.hasGravitySimulation = hasGravitySimulation;
+        this.hasRadiationShielding = hasRadiationShielding;
+        this.passengers = new CopyOnWriteArrayList<>();
     }
 
     @Override
@@ -59,99 +64,113 @@ public class PassengerCompartmentImpl implements IPassengerCompartment {
     }
 
     @Override
-    public Component getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
+    }
+    
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     @Override
     public int getTier() {
         return tier;
     }
+    
+    @Override
+    public RocketComponentType getType() {
+        return RocketComponentType.STRUCTURE;
+    }
 
     @Override
     public int getMass() {
         return mass;
     }
-
+    
     @Override
-    public float getMaxHealth() {
-        return maxHealth;
+    public int getMaxDurability() {
+        return maxDurability;
+    }
+    
+    @Override
+    public int getCurrentDurability() {
+        return currentDurability;
+    }
+    
+    @Override
+    public void damage(int amount) {
+        currentDurability = Math.max(0, currentDurability - amount);
+    }
+    
+    @Override
+    public void repair(int amount) {
+        currentDurability = Math.min(maxDurability, currentDurability + amount);
     }
 
     @Override
     public int getPassengerCapacity() {
         return passengerCapacity;
     }
-
+    
     @Override
-    public ComponentType getType() {
-        return ComponentType.PASSENGER_COMPARTMENT;
+    public List<Player> getPassengers() {
+        return new ArrayList<>(passengers);
     }
     
     @Override
-    public boolean hasArtificialGravity() {
-        // Tier 3 compartments have artificial gravity
-        return tier >= 3;
+    public boolean addPassenger(Player player) {
+        if (passengers.size() < passengerCapacity && !passengers.contains(player)) {
+            passengers.add(player);
+            return true;
+        }
+        return false;
     }
     
     @Override
-    public boolean hasSleepingQuarters() {
-        // All compartments except emergency ones have sleeping quarters
-        return compartmentType != CompartmentType.EMERGENCY;
+    public void removePassenger(Player player) {
+        passengers.remove(player);
     }
     
     @Override
-    public boolean hasEmergencyMedical() {
-        // Medical and luxury compartments have emergency medical
-        return compartmentType == CompartmentType.MEDICAL || 
-               compartmentType == CompartmentType.LUXURY;
+    public int getComfortLevel() {
+        return comfortLevel;
     }
     
     @Override
-    public CompartmentType getCompartmentType() {
-        return compartmentType;
+    public boolean hasLifeSupport() {
+        return hasLifeSupport;
+    }
+    
+    @Override
+    public boolean hasGravitySimulation() {
+        return hasGravitySimulation;
+    }
+    
+    @Override
+    public boolean hasRadiationShielding() {
+        return hasRadiationShielding;
     }
     
     /**
-     * Checks if this compartment has cryogenic sleep facilities.
-     * @return True if has cryogenic sleep
+     * Gets a list of tooltip lines for this component.
+     * @param detailed Whether to include detailed information
+     * @return The tooltip lines
      */
-    public boolean hasCryogenicSleep() {
-        return hasCryogenicSleep;
-    }
-
-    /**
-     * Gets the radiation protection level of this compartment.
-     * @return The radiation protection level
-     */
-    public float getRadiationProtection() {
-        return radiationProtection;
-    }
-
-    /**
-     * Gets the emergency life support duration in minutes.
-     * @return The emergency support duration
-     */
-    public int getEmergencySupportDuration() {
-        return emergencySupportDuration;
-    }
-
-    @Override
     public List<Component> getTooltip(boolean detailed) {
         List<Component> tooltip = new ArrayList<>();
         
-        tooltip.add(Component.translatable("tooltip.galactic-space.tier", tier));
-        tooltip.add(Component.translatable("tooltip.galactic-space.passenger_compartment.type", compartmentType.name()));
-        tooltip.add(Component.translatable("tooltip.galactic-space.passenger_compartment.capacity", passengerCapacity));
+        tooltip.add(Component.literal(name));
+        tooltip.add(Component.literal("Capacity: " + passengerCapacity + " passengers"));
+        tooltip.add(Component.literal("Tier: " + tier));
         
         if (detailed) {
-            tooltip.add(Component.translatable("tooltip.galactic-space.passenger_compartment.comfort", comfortLevel));
-            tooltip.add(Component.translatable("tooltip.galactic-space.passenger_compartment.radiation", radiationProtection));
-            tooltip.add(Component.translatable("tooltip.galactic-space.passenger_compartment.emergency", emergencySupportDuration));
-            
-            if (hasCryogenicSleep) {
-                tooltip.add(Component.translatable("tooltip.galactic-space.passenger_compartment.cryogenic"));
-            }
+            tooltip.add(Component.literal("Comfort Level: " + comfortLevel + "/10"));
+            tooltip.add(Component.literal("Life Support: " + (hasLifeSupport ? "Yes" : "No")));
+            tooltip.add(Component.literal("Gravity Simulation: " + (hasGravitySimulation ? "Yes" : "No")));
+            tooltip.add(Component.literal("Radiation Shielding: " + (hasRadiationShielding ? "Yes" : "No")));
+            tooltip.add(Component.literal("Mass: " + mass));
+            tooltip.add(Component.literal("Durability: " + maxDurability));
         }
         
         return tooltip;
