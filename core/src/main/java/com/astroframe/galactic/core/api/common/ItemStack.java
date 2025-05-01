@@ -1,192 +1,176 @@
 package com.astroframe.galactic.core.api.common;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.Item;
+
 /**
- * Abstraction for a stack of items.
- * This allows us to avoid direct Minecraft dependencies in our API.
+ * Abstraction for Minecraft's ItemStack class.
+ * This provides item handling for logistics and inventory systems
+ * without direct dependency on Minecraft classes.
  */
 public class ItemStack {
-    /**
-     * Represents an empty item stack.
-     */
-    public static final ItemStack EMPTY = new ItemStack("", 0, null);
-    
-    private final String itemId;
-    private int count;
-    private final Object nbt; // This would be a proper NBT class in a real implementation
+    private final net.minecraft.world.item.ItemStack mcStack;
     
     /**
-     * Creates a new item stack.
-     * 
-     * @param itemId The item identifier
-     * @param count The item count
-     * @param nbt Additional NBT data
+     * Creates a new empty ItemStack.
      */
-    public ItemStack(String itemId, int count, Object nbt) {
-        this.itemId = itemId;
-        this.count = Math.max(0, count);
-        this.nbt = nbt;
+    public ItemStack() {
+        this.mcStack = net.minecraft.world.item.ItemStack.EMPTY;
     }
     
     /**
-     * Creates a new item stack without NBT data.
-     * 
-     * @param itemId The item identifier
-     * @param count The item count
+     * Creates a new ItemStack from an Item with a specified count.
+     * @param item The Item
+     * @param count The stack size
      */
-    public ItemStack(String itemId, int count) {
-        this(itemId, count, null);
+    public ItemStack(Item item, int count) {
+        this.mcStack = new net.minecraft.world.item.ItemStack(item, count);
     }
     
     /**
-     * Gets the item identifier.
-     * 
-     * @return The item identifier
+     * Creates a new abstracted ItemStack wrapping a Minecraft ItemStack.
+     * @param mcStack The Minecraft ItemStack
      */
-    public String getItemId() {
-        return itemId;
+    private ItemStack(net.minecraft.world.item.ItemStack mcStack) {
+        this.mcStack = mcStack;
     }
     
     /**
-     * Gets the item count.
-     * 
-     * @return The item count
+     * Creates a new abstracted ItemStack from a Minecraft ItemStack.
+     * @param mcStack The Minecraft ItemStack
+     * @return A new abstracted ItemStack
+     */
+    public static ItemStack fromMinecraft(net.minecraft.world.item.ItemStack mcStack) {
+        return new ItemStack(mcStack);
+    }
+    
+    /**
+     * Gets the underlying Minecraft ItemStack.
+     * @return The Minecraft ItemStack
+     */
+    public net.minecraft.world.item.ItemStack toMinecraft() {
+        return mcStack;
+    }
+    
+    /**
+     * Gets the Item in this stack.
+     * @return The Item
+     */
+    public Item getItem() {
+        return mcStack.getItem();
+    }
+    
+    /**
+     * Gets the count of items in this stack.
+     * @return The stack size
      */
     public int getCount() {
-        return count;
+        return mcStack.getCount();
     }
     
     /**
-     * Sets the item count.
-     * 
-     * @param count The new count
+     * Sets the count of items in this stack.
+     * @param count The new stack size
      */
     public void setCount(int count) {
-        this.count = Math.max(0, count);
-    }
-    
-    /**
-     * Gets the NBT data.
-     * 
-     * @return The NBT data
-     */
-    public Object getNbt() {
-        return nbt;
-    }
-    
-    /**
-     * Creates a copy of this item stack.
-     * 
-     * @return A copy of this item stack
-     */
-    public ItemStack copy() {
-        return new ItemStack(itemId, count, nbt);
-    }
-    
-    /**
-     * Checks if this item stack is empty.
-     * 
-     * @return true if this stack is empty
-     */
-    public boolean isEmpty() {
-        return count <= 0 || itemId.isEmpty();
-    }
-    
-    /**
-     * Increases the size of this stack.
-     * 
-     * @param amount The amount to add
-     */
-    public void grow(int amount) {
-        count += amount;
-    }
-    
-    /**
-     * Decreases the size of this stack.
-     * 
-     * @param amount The amount to shrink
-     */
-    public void shrink(int amount) {
-        count = Math.max(0, count - amount);
+        mcStack.setCount(count);
     }
     
     /**
      * Gets the maximum stack size for this item.
-     * 
      * @return The maximum stack size
      */
     public int getMaxStackSize() {
-        // For simplicity, we'll assume a default max stack size
-        return 64;
+        return mcStack.getMaxStackSize();
     }
     
     /**
-     * Checks if two item stacks are identical (including NBT).
-     * 
-     * @param stack1 The first stack
-     * @param stack2 The second stack
-     * @return true if the stacks contain the same item with the same NBT
+     * Whether this stack is empty.
+     * @return true if the stack is empty
      */
-    public static boolean isSameItemSameTags(ItemStack stack1, ItemStack stack2) {
-        if (stack1.isEmpty() && stack2.isEmpty()) {
-            return true;
-        }
-        if (stack1.isEmpty() || stack2.isEmpty()) {
-            return false;
-        }
-        return stack1.itemId.equals(stack2.itemId) && 
-               ((stack1.nbt == null && stack2.nbt == null) || 
-                (stack1.nbt != null && stack1.nbt.equals(stack2.nbt)));
+    public boolean isEmpty() {
+        return mcStack.isEmpty();
     }
     
     /**
-     * Checks if this item stack is identical to another (including NBT).
-     * 
-     * @param other The other stack to compare with
-     * @return true if the stacks contain the same item with the same NBT
+     * Gets a copy of this stack.
+     * @return A copy of this stack
+     */
+    public ItemStack copy() {
+        return new ItemStack(mcStack.copy());
+    }
+    
+    /**
+     * Increases the stack size.
+     * @param amount The amount to grow by
+     */
+    public void grow(int amount) {
+        mcStack.grow(amount);
+    }
+    
+    /**
+     * Decreases the stack size.
+     * @param amount The amount to shrink by
+     */
+    public void shrink(int amount) {
+        mcStack.shrink(amount);
+    }
+    
+    /**
+     * Gets the NBT tag for this stack.
+     * @return The NBT tag
+     */
+    public CompoundTag getTag() {
+        return mcStack.getTag();
+    }
+    
+    /**
+     * Sets the NBT tag for this stack.
+     * @param tag The NBT tag
+     */
+    public void setTag(CompoundTag tag) {
+        mcStack.setTag(tag);
+    }
+    
+    /**
+     * Whether this stack has an NBT tag.
+     * @return true if the stack has a tag
+     */
+    public boolean hasTag() {
+        return mcStack.hasTag();
+    }
+    
+    /**
+     * Checks if two stacks can be merged (same item, same tags).
+     * @param other The other stack
+     * @return true if the stacks can be merged
      */
     public boolean isSameItemSameTags(ItemStack other) {
-        return isSameItemSameTags(this, other);
+        return net.minecraft.world.item.ItemStack.isSameItemSameTags(
+                this.mcStack, other.mcStack);
     }
     
     /**
-     * Gets the item.
-     * This would normally return an Item instance, but for our API we'll just use the item ID.
-     * 
-     * @return The item (represented by its ID for our API)
+     * A constant for an empty stack.
      */
-    public String getItem() {
-        return itemId;
-    }
+    public static final ItemStack EMPTY = new ItemStack();
     
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        ItemStack other = (ItemStack) obj;
-        return count == other.count && 
-               itemId.equals(other.itemId) && 
-               ((nbt == null && other.nbt == null) || 
-                (nbt != null && nbt.equals(other.nbt)));
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        
+        ItemStack itemStack = (ItemStack) o;
+        return net.minecraft.world.item.ItemStack.isSameItemSameTags(mcStack, itemStack.mcStack);
     }
     
     @Override
     public int hashCode() {
-        int result = itemId.hashCode();
-        result = 31 * result + count;
-        result = 31 * result + (nbt != null ? nbt.hashCode() : 0);
-        return result;
+        return mcStack.hashCode();
     }
     
     @Override
     public String toString() {
-        return "ItemStack{" +
-               "itemId='" + itemId + '\'' +
-               ", count=" + count +
-               ", nbt=" + nbt +
-               '}';
+        return mcStack.toString();
     }
 }

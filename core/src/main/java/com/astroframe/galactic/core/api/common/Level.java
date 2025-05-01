@@ -1,98 +1,87 @@
 package com.astroframe.galactic.core.api.common;
 
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+
 /**
- * Abstraction for a game world level.
- * This allows us to avoid direct Minecraft dependencies in our API.
+ * Abstraction for Minecraft's Level class.
+ * This provides world access without direct dependency on Minecraft classes.
  */
 public class Level {
-    private final String dimensionId;
-    private final boolean isRemote;
+    private final net.minecraft.world.level.Level mcLevel;
     
     /**
-     * Creates a new level.
-     * 
-     * @param dimensionId The dimension identifier
-     * @param isRemote Whether this level is remote (client-side)
+     * Creates a new abstracted Level wrapping a Minecraft Level.
+     * @param mcLevel The Minecraft Level
      */
-    public Level(String dimensionId, boolean isRemote) {
-        this.dimensionId = dimensionId;
-        this.isRemote = isRemote;
+    private Level(net.minecraft.world.level.Level mcLevel) {
+        this.mcLevel = mcLevel;
     }
     
     /**
-     * Gets the dimension identifier.
-     * 
-     * @return The dimension identifier
+     * Creates a new abstracted Level from a Minecraft Level.
+     * @param mcLevel The Minecraft Level
+     * @return A new abstracted Level
      */
-    public String getDimensionId() {
-        return dimensionId;
+    public static Level fromMinecraft(net.minecraft.world.level.Level mcLevel) {
+        return new Level(mcLevel);
     }
     
     /**
-     * Checks if this level is remote (client-side).
-     * 
-     * @return true if this level is remote
+     * Gets the underlying Minecraft Level.
+     * @return The Minecraft Level
      */
-    public boolean isRemote() {
-        return isRemote;
+    public net.minecraft.world.level.Level toMinecraft() {
+        return mcLevel;
     }
     
     /**
-     * Gets the block state at the given position.
-     * This would normally return a BlockState, but for our API it's just a placeholder.
-     * 
+     * Gets the block entity at the given position.
      * @param pos The position
-     * @return A placeholder for the block state
+     * @return The block entity, or null if none exists
      */
-    public Object getBlockState(BlockPos pos) {
-        // This is just a placeholder method
-        return null;
+    public BlockEntity getBlockEntity(BlockPos pos) {
+        return mcLevel.getBlockEntity(pos.toMinecraft());
     }
     
     /**
-     * Checks if the block at the given position is loaded.
-     * 
+     * Whether the block at the given position is loaded.
      * @param pos The position
      * @return true if the block is loaded
      */
-    public boolean isBlockLoaded(BlockPos pos) {
-        // This is just a placeholder method
-        return true;
+    public boolean isLoaded(BlockPos pos) {
+        return mcLevel.isLoaded(pos.toMinecraft());
     }
     
     /**
-     * Gets the current game time.
-     * 
-     * @return The game time
+     * Gets a list of entities of the given type within a box.
+     * @param <T> The entity type
+     * @param entityClass The entity class
+     * @param min The minimum corner of the box
+     * @param max The maximum corner of the box
+     * @return A list of entities
      */
-    public long getGameTime() {
-        return System.currentTimeMillis(); // Just a placeholder implementation
+    public <T extends Entity> java.util.List<T> getEntitiesOfClass(
+            Class<T> entityClass, BlockPos min, BlockPos max) {
+        return mcLevel.getEntitiesOfClass(
+                entityClass,
+                new net.minecraft.world.phys.AABB(
+                        min.toMinecraft(), max.toMinecraft()));
     }
     
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        Level other = (Level) obj;
-        return isRemote == other.isRemote && dimensionId.equals(other.dimensionId);
+    /**
+     * Whether this level is a client-side level.
+     * @return true if this is a client-side level
+     */
+    public boolean isClientSide() {
+        return mcLevel.isClientSide();
     }
     
-    @Override
-    public int hashCode() {
-        int result = dimensionId.hashCode();
-        result = 31 * result + (isRemote ? 1 : 0);
-        return result;
-    }
-    
-    @Override
-    public String toString() {
-        return "Level{" +
-               "dimensionId='" + dimensionId + '\'' +
-               ", isRemote=" + isRemote +
-               '}';
+    /**
+     * Gets the tick count for this level.
+     * @return The tick count
+     */
+    public int getGameTime() {
+        return (int) mcLevel.getGameTime();
     }
 }
