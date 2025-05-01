@@ -28,201 +28,266 @@ public class RocketComponentFactory {
      */
     public static void registerAll() {
         // Command Modules (Tiers 1-3)
+        ResourceLocation cmdBasicId = ResourceLocation.of(GalacticSpace.MOD_ID + ":command_module_basic", ':');
         registerCommandModule(
-            new ResourceLocation(GalacticSpace.MOD_ID, "command_module_basic"),
-            new CommandModule(
-                "command_module_basic",
-                1, // Tier 1
-                100, // 100 mass units
-                1 // Can hold 1 crew member
-            )
+            cmdBasicId,
+            new CommandModuleImpl.Builder(cmdBasicId)
+                .name("Basic Command Module")
+                .description("A simple command module for rocket control.")
+                .tier(1)
+                .mass(100)
+                .crewCapacity(1)
+                .computingPower(50)
+                .sensorStrength(40)
+                .navigationAccuracy(0.6f)
+                .build()
         );
         
+        ResourceLocation cmdAdvancedId = ResourceLocation.of(GalacticSpace.MOD_ID + ":command_module_advanced", ':');
         registerCommandModule(
-            new ResourceLocation(GalacticSpace.MOD_ID, "command_module_advanced"),
-            new CommandModule(
-                "command_module_advanced",
-                2, // Tier 2
-                150, // 150 mass units
-                2 // Can hold 2 crew members
-            )
+            cmdAdvancedId,
+            new CommandModuleImpl.Builder(cmdAdvancedId)
+                .name("Advanced Command Module")
+                .description("An improved command module with better sensors.")
+                .tier(2)
+                .mass(150)
+                .crewCapacity(2)
+                .computingPower(100)
+                .sensorStrength(80)
+                .navigationAccuracy(0.8f)
+                .automatedLanding(true)
+                .build()
         );
         
+        ResourceLocation cmdEliteId = ResourceLocation.of(GalacticSpace.MOD_ID + ":command_module_elite", ':');
         registerCommandModule(
-            new ResourceLocation(GalacticSpace.MOD_ID, "command_module_elite"),
-            new CommandModule(
-                "command_module_elite",
-                3, // Tier 3
-                200, // 200 mass units
-                3 // Can hold 3 crew members
-            )
+            cmdEliteId,
+            new CommandModuleImpl.Builder(cmdEliteId)
+                .name("Elite Command Module")
+                .description("A high-tech command module with advanced capabilities.")
+                .tier(3)
+                .mass(200)
+                .crewCapacity(3)
+                .computingPower(150)
+                .sensorStrength(120)
+                .navigationAccuracy(0.95f)
+                .advancedLifeSupport(true)
+                .automatedLanding(true)
+                .emergencyEvacuation(true)
+                .build()
         );
         
         // Engines (Various tiers and types)
+        ResourceLocation solidEngineId = ResourceLocation.of(GalacticSpace.MOD_ID + ":solid_fuel_engine", ':');
         registerEngine(
-            new ResourceLocation(GalacticSpace.MOD_ID, "solid_fuel_engine"),
-            new RocketEngine(
-                "solid_fuel_engine",
-                1, // Tier 1
-                150, // 150 mass units
-                0.8f, // 80% efficiency
-                RocketEngine.EngineType.SOLID, // Solid fuel type
-                true, // Can operate in atmosphere
-                true // Can operate in space
-            )
+            solidEngineId,
+            new RocketEngineImpl.Builder(solidEngineId)
+                .name("Solid Fuel Engine")
+                .description("A reliable solid fuel engine for initial space travel.")
+                .tier(1)
+                .mass(150)
+                .thrust(500)
+                .efficiency(0.8f)
+                .fuelConsumptionRate(15)
+                .fuelType(IRocketEngine.FuelType.CHEMICAL)
+                .atmosphereCapable(true)
+                .spaceCapable(true)
+                .build()
         );
         
         registerEngine(
             new ResourceLocation(GalacticSpace.MOD_ID, "liquid_fuel_engine"),
-            new RocketEngine(
-                "liquid_fuel_engine",
-                2, // Tier 2
-                180, // 180 mass units
-                0.9f, // 90% efficiency
-                RocketEngine.EngineType.LIQUID, // Liquid fuel type
-                true, // Can operate in atmosphere
-                true // Can operate in space
-            )
+            new RocketEngineImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "liquid_fuel_engine"))
+                .name("Liquid Fuel Engine")
+                .description("A more advanced engine with better fuel efficiency.")
+                .tier(2)
+                .mass(180)
+                .thrust(800)
+                .efficiency(0.9f)
+                .fuelConsumptionRate(12)
+                .fuelType(IRocketEngine.FuelType.CHEMICAL)
+                .atmosphereCapable(true)
+                .spaceCapable(true)
+                .build()
         );
         
         registerEngine(
             new ResourceLocation(GalacticSpace.MOD_ID, "ion_engine"),
-            new RocketEngine(
-                "ion_engine",
-                3, // Tier 3
-                100, // 100 mass units (lighter)
-                0.95f, // 95% efficiency
-                RocketEngine.EngineType.ION, // Ion engine type
-                false, // Cannot operate in atmosphere
-                true // Can operate in space
-            )
+            new RocketEngineImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "ion_engine"))
+                .name("Ion Engine")
+                .description("A highly efficient engine for space travel only.")
+                .tier(3)
+                .mass(100)
+                .thrust(400)
+                .efficiency(0.95f)
+                .fuelConsumptionRate(5)
+                .fuelType(IRocketEngine.FuelType.ELECTRICAL)
+                .atmosphereCapable(false)
+                .spaceCapable(true)
+                .build()
         );
         
         // Fuel Tanks (Various sizes)
         registerFuelTank(
             new ResourceLocation(GalacticSpace.MOD_ID, "fuel_tank_small"),
-            new FuelTank(
-                "fuel_tank_small",
-                1, // Tier 1
-                100, // 100 mass units (empty)
-                500 // 500 fuel capacity
-            )
+            new FuelTankImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "fuel_tank_small"))
+                .name("Small Fuel Tank")
+                .description("A basic fuel tank with limited capacity.")
+                .tier(1)
+                .mass(100)
+                .maxFuelCapacity(500)
+                .fuelType(IRocketEngine.FuelType.CHEMICAL)
+                .build()
         );
         
         registerFuelTank(
             new ResourceLocation(GalacticSpace.MOD_ID, "fuel_tank_medium"),
-            new FuelTank(
-                "fuel_tank_medium",
-                2, // Tier 2
-                200, // 200 mass units (empty)
-                1000 // 1000 fuel capacity
-            )
+            new FuelTankImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "fuel_tank_medium"))
+                .name("Medium Fuel Tank")
+                .description("A standard fuel tank with decent capacity.")
+                .tier(2)
+                .mass(200)
+                .maxFuelCapacity(1000)
+                .fuelType(IRocketEngine.FuelType.CHEMICAL)
+                .leakResistance(0.8f)
+                .build()
         );
         
         registerFuelTank(
             new ResourceLocation(GalacticSpace.MOD_ID, "fuel_tank_large"),
-            new FuelTank(
-                "fuel_tank_large",
-                3, // Tier 3
-                300, // 300 mass units (empty)
-                2000 // 2000 fuel capacity
-            )
+            new FuelTankImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "fuel_tank_large"))
+                .name("Large Fuel Tank")
+                .description("A high-capacity fuel tank for extended missions.")
+                .tier(3)
+                .mass(300)
+                .maxFuelCapacity(2000)
+                .fuelType(IRocketEngine.FuelType.CHEMICAL)
+                .leakResistance(0.9f)
+                .explosionResistance(0.85f)
+                .build()
         );
         
         // Cargo Bays
         registerCargoBay(
             new ResourceLocation(GalacticSpace.MOD_ID, "cargo_bay_small"),
-            new CargoBay(
-                "cargo_bay_small",
-                1, // Tier 1
-                100, // 100 mass units (empty)
-                9 // 9 storage slots (single chest)
-            )
+            new CargoBayImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "cargo_bay_small"))
+                .name("Small Cargo Bay")
+                .description("A compact cargo bay for basic storage needs.")
+                .tier(1)
+                .mass(100)
+                .storageCapacity(9)
+                .build()
         );
         
         registerCargoBay(
             new ResourceLocation(GalacticSpace.MOD_ID, "cargo_bay_medium"),
-            new CargoBay(
-                "cargo_bay_medium",
-                2, // Tier 2
-                200, // 200 mass units (empty)
-                27 // 27 storage slots (double chest)
-            )
+            new CargoBayImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "cargo_bay_medium"))
+                .name("Medium Cargo Bay")
+                .description("A standard cargo bay with moderate storage capacity.")
+                .tier(2)
+                .mass(200)
+                .storageCapacity(27)
+                .vacuumSeal(true)
+                .build()
         );
         
         registerCargoBay(
             new ResourceLocation(GalacticSpace.MOD_ID, "cargo_bay_large"),
-            new CargoBay(
-                "cargo_bay_large",
-                3, // Tier 3
-                300, // 300 mass units (empty)
-                54 // 54 storage slots (double chest x2)
-            )
+            new CargoBayImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "cargo_bay_large"))
+                .name("Large Cargo Bay")
+                .description("A spacious cargo bay for substantial storage needs.")
+                .tier(3)
+                .mass(300)
+                .storageCapacity(54)
+                .vacuumSeal(true)
+                .temperatureRegulation(true)
+                .radiationShielding(true)
+                .build()
         );
         
         // Passenger Compartments
         registerPassengerCompartment(
             new ResourceLocation(GalacticSpace.MOD_ID, "passenger_compartment_basic"),
-            new PassengerCompartment(
-                "passenger_compartment_basic",
-                1, // Tier 1
-                150, // 150 mass units
-                2 // Can hold 2 passengers
-            )
+            new PassengerCompartmentImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "passenger_compartment_basic"))
+                .name("Basic Passenger Compartment")
+                .description("A simple compartment for transporting passengers.")
+                .tier(1)
+                .mass(150)
+                .passengerCapacity(2)
+                .comfortLevel(3)
+                .build()
         );
         
         registerPassengerCompartment(
             new ResourceLocation(GalacticSpace.MOD_ID, "passenger_compartment_advanced"),
-            new PassengerCompartment(
-                "passenger_compartment_advanced",
-                2, // Tier 2
-                250, // 250 mass units
-                4 // Can hold 4 passengers
-            )
+            new PassengerCompartmentImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "passenger_compartment_advanced"))
+                .name("Advanced Passenger Compartment")
+                .description("A more comfortable compartment with additional features.")
+                .tier(2)
+                .mass(250)
+                .passengerCapacity(4)
+                .comfortLevel(7)
+                .hasLifeSupport(true)
+                .hasRadiationShielding(true)
+                .build()
         );
         
         // Shields
         registerShield(
             new ResourceLocation(GalacticSpace.MOD_ID, "heat_shield_basic"),
-            new Shield(
-                "heat_shield_basic",
-                1, // Tier 1
-                100, // 100 mass units
-                5, // Impact resistance rating (1-10)
-                50 // Shield strength
-            )
+            new ShieldImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "heat_shield_basic"))
+                .name("Basic Heat Shield")
+                .description("A simple shield for atmospheric reentry.")
+                .tier(1)
+                .mass(100)
+                .maxDurability(500)
+                .impactResistance(5)
+                .shieldStrength(50)
+                .build()
         );
         
         registerShield(
             new ResourceLocation(GalacticSpace.MOD_ID, "heat_shield_advanced"),
-            new Shield(
-                "heat_shield_advanced",
-                2, // Tier 2
-                150, // 150 mass units
-                8, // Impact resistance rating (1-10)
-                80 // Shield strength
-            )
+            new ShieldImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "heat_shield_advanced"))
+                .name("Advanced Heat Shield")
+                .description("An improved shield with better protection.")
+                .tier(2)
+                .mass(150)
+                .maxDurability(800)
+                .impactResistance(8)
+                .shieldStrength(80)
+                .meteorResistance(true)
+                .build()
         );
         
         // Life Support Systems
         registerLifeSupport(
             new ResourceLocation(GalacticSpace.MOD_ID, "life_support_basic"),
-            new LifeSupport(
-                "life_support_basic",
-                1, // Tier 1
-                100, // 100 mass units
-                3 // Supports 3 crew members
-            )
+            new BaseLifeSupport.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "life_support_basic"))
+                .name("Basic Life Support System")
+                .description("A simple system providing essential life support functions.")
+                .tier(1)
+                .mass(100)
+                .maxCrewCapacity(3)
+                .oxygenGenerationRate(60)
+                .waterRecyclingEfficiency(0.7f)
+                .build()
         );
         
         registerLifeSupport(
             new ResourceLocation(GalacticSpace.MOD_ID, "life_support_advanced"),
-            new LifeSupport(
-                "life_support_advanced",
-                2, // Tier 2
-                150, // 150 mass units
-                6 // Supports 6 crew members
-            )
+            new BaseLifeSupport.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "life_support_advanced"))
+                .name("Advanced Life Support System")
+                .description("An enhanced life support system for extended missions.")
+                .tier(2)
+                .mass(150)
+                .maxCrewCapacity(6)
+                .oxygenGenerationRate(100)
+                .waterRecyclingEfficiency(0.85f)
+                .foodProductionRate(15)
+                .wasteManagementEfficiency(0.8f)
+                .backupSystems(true)
+                .build()
         );
         
         GalacticSpace.LOGGER.info("Registered {} rocket components", 
