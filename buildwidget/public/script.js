@@ -582,7 +582,26 @@ startBuildBtn.addEventListener('click', () => {
 });
 
 stopBuildBtn.addEventListener('click', () => {
-    socket.send(JSON.stringify({ type: 'stopBuild' }));
+    console.log('Stop build button clicked');
+    
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+        console.error('WebSocket not connected! Attempting to reconnect...');
+        connectWebSocket();
+        // Show error to user
+        showNotification('Connection Error', 'WebSocket not connected. Attempting to reconnect...', 'error');
+        return;
+    }
+    
+    try {
+        socket.send(JSON.stringify({ type: 'stopBuild' }));
+        console.log('Stop build command sent successfully');
+        
+        // Provide immediate feedback
+        showNotification('Build Stopping', 'Requested to stop the current build process', 'info');
+    } catch (error) {
+        console.error('Error sending stop command:', error);
+        showNotification('Error', 'Failed to send stop command: ' + error.message, 'error');
+    }
 });
 
 clearOutputBtn.addEventListener('click', () => {
@@ -732,25 +751,47 @@ createCheckpointBtn.addEventListener('click', () => {
 
 // Create GitHub release
 createReleaseBtn.addEventListener('click', () => {
+    console.log('Create GitHub release button clicked');
+    
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+        console.error('WebSocket not connected! Attempting to reconnect...');
+        connectWebSocket();
+        // Show error to user
+        showNotification('Connection Error', 'WebSocket not connected. Attempting to reconnect...', 'error');
+        return;
+    }
+    
     if (confirm('Create a new GitHub release with all versioned module JARs?')) {
-        // Show release in progress
-        createReleaseBtn.disabled = true;
-        createReleaseBtn.textContent = 'Creating Release...';
-        
-        // Add release message to output
-        const releaseMessage = document.createElement('span');
-        releaseMessage.className = 'output-info';
-        releaseMessage.textContent = '[GitHub Release] Starting versioned release process...';
-        outputText.appendChild(releaseMessage);
-        outputText.appendChild(document.createElement('br'));
-        
-        // Auto-scroll to bottom
-        if (autoScrollCheckbox.checked) {
-            outputText.parentElement.scrollTop = outputText.parentElement.scrollHeight;
+        try {
+            // Show release in progress
+            createReleaseBtn.disabled = true;
+            createReleaseBtn.textContent = 'Creating Release...';
+            
+            // Add release message to output
+            const releaseMessage = document.createElement('span');
+            releaseMessage.className = 'output-info';
+            releaseMessage.textContent = '[GitHub Release] Starting versioned release process...';
+            outputText.appendChild(releaseMessage);
+            outputText.appendChild(document.createElement('br'));
+            
+            // Auto-scroll to bottom
+            if (autoScrollCheckbox && autoScrollCheckbox.checked) {
+                outputText.parentElement.scrollTop = outputText.parentElement.scrollHeight;
+            }
+            
+            // Send release request
+            socket.send(JSON.stringify({ type: 'createRelease' }));
+            console.log('GitHub release command sent successfully');
+        } catch (error) {
+            console.error('Error sending GitHub release command:', error);
+            
+            // Re-enable the button
+            createReleaseBtn.disabled = false;
+            createReleaseBtn.textContent = 'Create GitHub Release';
+            
+            // Show error
+            showNotification('Error', 'Failed to send GitHub release command: ' + error.message, 'error');
         }
-        
-        // Send release request
-        socket.send(JSON.stringify({ type: 'createRelease' }));
     }
 });
 
