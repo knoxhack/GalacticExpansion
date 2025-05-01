@@ -105,6 +105,67 @@ wss.on('connection', (ws) => {
         sendBuildOutput(buildStatus.buildOutput);
       } else if (data.type === 'requestTasks') {
         sendTaskUpdates(buildStatus.tasks);
+      } else if (data.type === 'createRelease') {
+        console.log('Client requested to create GitHub release');
+        
+        // Check if build is successful
+        if (buildStatus.status !== 'success' && !buildStatus.releaseReady) {
+          sendError('Cannot create release: Build must be successful first');
+          return;
+        }
+        
+        // Execute release script
+        const { exec } = require('child_process');
+        const releaseProcess = exec('cd .. && bash scripts/push_to_github_release.sh');
+        
+        buildStatus.buildOutput.push({ type: 'info', message: '[GitHub Release] Starting release process...' });
+        sendBuildOutput([{ type: 'info', message: '[GitHub Release] Starting release process...' }]);
+        
+        // Process release script output
+        releaseProcess.stdout.on('data', (data) => {
+          const output = data.toString();
+          buildStatus.buildOutput.push({ 
+            type: 'info', 
+            message: `[GitHub Release] ${output}`
+          });
+          sendBuildOutput([{ type: 'info', message: `[GitHub Release] ${output}` }]);
+        });
+        
+        releaseProcess.stderr.on('data', (data) => {
+          const output = data.toString();
+          buildStatus.buildOutput.push({ 
+            type: 'error', 
+            message: `[GitHub Release Error] ${output}`
+          });
+          sendBuildOutput([{ type: 'error', message: `[GitHub Release Error] ${output}` }]);
+        });
+        
+        releaseProcess.on('close', (code) => {
+          if (code === 0) {
+            const successMessage = 'Successfully created GitHub release!';
+            buildStatus.buildOutput.push({ 
+              type: 'info', 
+              message: `[GitHub Release] ${successMessage}`
+            });
+            sendBuildOutput([{ type: 'info', message: `[GitHub Release] ${successMessage}` }]);
+            
+            buildStatus.releaseCreated = true;
+            buildStatus.releaseTime = new Date().toISOString();
+          } else {
+            const errorMessage = `Failed to create GitHub release (exit code: ${code})`;
+            buildStatus.buildOutput.push({ 
+              type: 'error', 
+              message: `[GitHub Release Error] ${errorMessage}`
+            });
+            sendBuildOutput([{ type: 'error', message: `[GitHub Release Error] ${errorMessage}` }]);
+          }
+          
+          buildStatus.releaseInProgress = false;
+          sendStatus();
+        });
+        
+        buildStatus.releaseInProgress = true;
+        sendStatus();
       }
     } catch (err) {
       console.error('Error handling message:', err);
@@ -188,47 +249,19 @@ async function startBuild(gradleCommand) {
       
       // If build was successful, push to GitHub
       if (code === 0) {
-        console.log('Build successful! Pushing JAR files to GitHub...');
+        console.log('Build successful! Ready to push to GitHub...');
         
-        // Execute push script
-        const pushProcess = exec('cd .. && ./scripts/push_jars_to_github.sh');
-        
-        // Process push script output
-        pushProcess.stdout.on('data', (data) => {
-          const output = data.toString();
-          buildStatus.buildOutput.push({ 
-            type: 'info', 
-            message: `[GitHub Push] ${output}`
-          });
-          broadcastOutput([{ type: 'info', message: `[GitHub Push] ${output}` }]);
+        // Notify clients that build is ready for release
+        const readyMessage = 'Build successful! Ready to create GitHub release.';
+        buildStatus.buildOutput.push({ 
+          type: 'info', 
+          message: `[GitHub] ${readyMessage}`
         });
+        broadcastOutput([{ type: 'info', message: `[GitHub] ${readyMessage}` }]);
         
-        pushProcess.stderr.on('data', (data) => {
-          const output = data.toString();
-          buildStatus.buildOutput.push({ 
-            type: 'error', 
-            message: `[GitHub Push Error] ${output}`
-          });
-          broadcastOutput([{ type: 'error', message: `[GitHub Push Error] ${output}` }]);
-        });
-        
-        pushProcess.on('close', (pushCode) => {
-          if (pushCode === 0) {
-            const successMessage = 'Successfully pushed JAR files to GitHub!';
-            buildStatus.buildOutput.push({ 
-              type: 'info', 
-              message: `[GitHub Push] ${successMessage}`
-            });
-            broadcastOutput([{ type: 'info', message: `[GitHub Push] ${successMessage}` }]);
-          } else {
-            const errorMessage = `Failed to push JAR files to GitHub (exit code: ${pushCode})`;
-            buildStatus.buildOutput.push({ 
-              type: 'error', 
-              message: `[GitHub Push Error] ${errorMessage}`
-            });
-            broadcastOutput([{ type: 'error', message: `[GitHub Push Error] ${errorMessage}` }]);
-          }
-        });
+        // Let the user trigger release via UI
+        buildStatus.releaseReady = true;
+        broadcastStatus();
       }
     });
   } catch (error) {
@@ -438,9 +471,84 @@ app.post('/api/build/stop', (req, res) => {
   res.json({ success: true, message: 'Build stopped' });
 });
 
+// API endpoint to create GitHub release
+app.post('/api/release', (req, res) => {
+  if (buildStatus.status !== 'success' && !buildStatus.releaseReady) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Cannot create release: Build must be successful first'
+    });
+  }
+  
+  console.log('Creating GitHub release...');
+  
+  // Execute release script
+  const releaseProcess = exec('cd .. && bash scripts/push_to_github_release.sh');
+  
+  buildStatus.buildOutput.push({ type: 'info', message: '[GitHub Release] Starting release process...' });
+  broadcastOutput([{ type: 'info', message: '[GitHub Release] Starting release process...' }]);
+  
+  // Process release script output
+  releaseProcess.stdout.on('data', (data) => {
+    const output = data.toString();
+    buildStatus.buildOutput.push({ 
+      type: 'info', 
+      message: `[GitHub Release] ${output}`
+    });
+    broadcastOutput([{ type: 'info', message: `[GitHub Release] ${output}` }]);
+  });
+  
+  releaseProcess.stderr.on('data', (data) => {
+    const output = data.toString();
+    buildStatus.buildOutput.push({ 
+      type: 'error', 
+      message: `[GitHub Release Error] ${output}`
+    });
+    broadcastOutput([{ type: 'error', message: `[GitHub Release Error] ${output}` }]);
+  });
+  
+  releaseProcess.on('close', (code) => {
+    if (code === 0) {
+      const successMessage = 'Successfully created GitHub release!';
+      buildStatus.buildOutput.push({ 
+        type: 'info', 
+        message: `[GitHub Release] ${successMessage}`
+      });
+      broadcastOutput([{ type: 'info', message: `[GitHub Release] ${successMessage}` }]);
+      
+      buildStatus.releaseCreated = true;
+      buildStatus.releaseTime = new Date().toISOString();
+    } else {
+      const errorMessage = `Failed to create GitHub release (exit code: ${code})`;
+      buildStatus.buildOutput.push({ 
+        type: 'error', 
+        message: `[GitHub Release Error] ${errorMessage}`
+      });
+      broadcastOutput([{ type: 'error', message: `[GitHub Release Error] ${errorMessage}` }]);
+    }
+    
+    buildStatus.releaseInProgress = false;
+    broadcastStatus();
+  });
+  
+  buildStatus.releaseInProgress = true;
+  broadcastStatus();
+  
+  res.json({ success: true, message: 'GitHub release process started' });
+});
+
 // Serve the main HTML page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Add a health check endpoint
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    message: 'Build status server is running'
+  });
 });
 
 // Monitor build status in real-time

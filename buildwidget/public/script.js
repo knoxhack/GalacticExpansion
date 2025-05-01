@@ -7,6 +7,7 @@ const outputText = document.getElementById('outputText');
 const taskContainer = document.getElementById('taskContainer');
 const startBuildBtn = document.getElementById('startBuild');
 const stopBuildBtn = document.getElementById('stopBuild');
+const createReleaseBtn = document.getElementById('createRelease');
 const buildCommandSelect = document.getElementById('buildCommand');
 const clearOutputBtn = document.getElementById('clearOutput');
 const autoScrollCheckbox = document.getElementById('autoScroll');
@@ -250,12 +251,31 @@ function updateBuildStatus(status) {
     }
     
     // Update buttons
-    if (status.status === 'building') {
+    if (status.status === 'building' || status.releaseInProgress) {
         startBuildBtn.disabled = true;
-        stopBuildBtn.disabled = false;
+        stopBuildBtn.disabled = status.status !== 'building'; // Fixed logic here
+        createReleaseBtn.disabled = true;
+        
+        // Update button text if release is in progress
+        if (status.releaseInProgress) {
+            createReleaseBtn.textContent = 'Creating Release...';
+        }
     } else {
         startBuildBtn.disabled = false;
         stopBuildBtn.disabled = true;
+        
+        // Enable the GitHub Release button if build was successful and release is ready
+        if ((status.status === 'success' || status.releaseReady) && !status.releaseCreated) {
+            createReleaseBtn.disabled = false;
+            createReleaseBtn.textContent = 'Create GitHub Release';
+        } else {
+            createReleaseBtn.disabled = true;
+            
+            // Change button text if release was created
+            if (status.releaseCreated) {
+                createReleaseBtn.textContent = 'Release Created';
+            }
+        }
     }
 }
 
@@ -524,6 +544,39 @@ stopBuildBtn.addEventListener('click', () => {
 
 clearOutputBtn.addEventListener('click', () => {
     outputText.innerHTML = '';
+});
+
+createReleaseBtn.addEventListener('click', () => {
+    if (confirm('Create a new GitHub release with the current build artifacts?')) {
+        // Show release in progress
+        createReleaseBtn.disabled = true;
+        createReleaseBtn.textContent = 'Creating Release...';
+        
+        // Add release message to output
+        const releaseMessage = document.createElement('span');
+        releaseMessage.className = 'output-info';
+        releaseMessage.textContent = '[GitHub Release] Starting release process...';
+        outputText.appendChild(releaseMessage);
+        outputText.appendChild(document.createElement('br'));
+        
+        // Auto-scroll to bottom
+        if (autoScrollCheckbox.checked) {
+            outputText.parentElement.scrollTop = outputText.parentElement.scrollHeight;
+        }
+        
+        // Send release request via WebSocket
+        socket.send(JSON.stringify({
+            type: 'createRelease'
+        }));
+        
+        // The server will respond through the normal WebSocket channel
+        // and we'll update the UI based on that response
+        
+        // Note: The rest of the UI updates will be handled by the existing
+        // WebSocket message handlers for status updates and output messages
+        
+        // We'll defer enabling the button until we get confirmation from the server
+    }
 });
 
 // Initialize WebSocket connection

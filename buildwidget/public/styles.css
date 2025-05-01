@@ -109,6 +109,16 @@ select {
     background-color: #e8eaed;
 }
 
+.btn-success {
+    background-color: var(--success-color);
+    color: white;
+    border: none;
+}
+
+.btn-success:hover {
+    background-color: #2d8c47;
+}
+
 button:disabled {
     opacity: 0.6;
     cursor: not-allowed;

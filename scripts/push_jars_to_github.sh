@@ -9,6 +9,9 @@ GIT_EMAIL="knoxhack@users.noreply.github.com"
 GIT_REPO="knoxhack/GalacticExpansion"
 GIT_BRANCH="builds"
 
+# Use GitHub token from environment variable if available
+GITHUB_TOKEN=${GITHUB_TOKEN:-""}
+
 # Colors
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -41,17 +44,46 @@ if [ -z "$(git config user.email)" ]; then
     git config user.email "$GIT_EMAIL"
 fi
 
-# Check current branch and save it
+# Save current working directory and branch
+CURRENT_DIR=$(pwd)
 CURRENT_BRANCH=$(git branch --show-current)
 echo -e "${YELLOW}Current branch is: $CURRENT_BRANCH${NC}"
+echo -e "${YELLOW}Current directory: $CURRENT_DIR${NC}"
+
+# Create a temporary directory for the clone
+TEMP_DIR=$(mktemp -d)
+echo -e "${YELLOW}Created temporary directory: $TEMP_DIR${NC}"
+
+# Attempt to clone the repository with the token
+if [ -n "$GITHUB_TOKEN" ]; then
+    echo -e "${GREEN}Cloning repository using GitHub token...${NC}"
+    git clone https://$GIT_USERNAME:$GITHUB_TOKEN@github.com/$GIT_REPO.git $TEMP_DIR
+else
+    echo -e "${YELLOW}No GitHub token found, trying without authentication...${NC}"
+    git clone https://github.com/$GIT_REPO.git $TEMP_DIR
+fi
+
+# Check if clone was successful
+if [ $? -ne 0 ]; then
+    echo -e "${RED}Failed to clone the repository. Please check your credentials and try again.${NC}"
+    rm -rf $TEMP_DIR
+    exit 1
+fi
+
+# Change to the temporary directory
+cd $TEMP_DIR
 
 # Check if the builds branch exists
-if ! git show-ref --verify --quiet refs/heads/$GIT_BRANCH; then
-    echo -e "${YELLOW}Creating '$GIT_BRANCH' branch...${NC}"
-    git checkout -b $GIT_BRANCH
+if git ls-remote --heads origin $GIT_BRANCH | grep -q $GIT_BRANCH; then
+    echo -e "${YELLOW}Checking out existing '$GIT_BRANCH' branch...${NC}"
+    git checkout $GIT_BRANCH || git checkout -b $GIT_BRANCH origin/$GIT_BRANCH
 else
-    echo -e "${YELLOW}Switching to '$GIT_BRANCH' branch...${NC}"
-    git checkout $GIT_BRANCH
+    echo -e "${YELLOW}Creating new '$GIT_BRANCH' branch...${NC}"
+    git checkout --orphan $GIT_BRANCH
+    git rm -rf .
+    echo "# Galactic Expansion Build Artifacts" > README.md
+    git add README.md
+    git commit -m "Initialize builds branch"
 fi
 
 # Create directory structure
@@ -64,14 +96,14 @@ mkdir -p $ARTIFACTS_DIR/modules
 # Copy main JARs
 if [ "$MAIN_JAR_COUNT" -gt 0 ]; then
     echo -e "${GREEN}Copying main JAR files...${NC}"
-    cp -v ./build/libs/*.jar $ARTIFACTS_DIR/
+    cp -v $CURRENT_DIR/build/libs/*.jar $ARTIFACTS_DIR/
 fi
 
 # Copy module JARs
 if [ "$MODULE_JAR_COUNT" -gt 0 ]; then
     echo -e "${GREEN}Copying module JAR files...${NC}"
     
-    for MODULE_DIR in ./*/build/libs; do
+    for MODULE_DIR in $CURRENT_DIR/*/build/libs; do
         if [ -d "$MODULE_DIR" ]; then
             MODULE=$(echo $MODULE_DIR | awk -F/ '{print $(NF-2)}')
             mkdir -p "$ARTIFACTS_DIR/modules/$MODULE"
@@ -120,9 +152,10 @@ fi
 # Push to the builds branch
 git push origin $GIT_BRANCH
 
-# Return to original branch
-echo -e "${GREEN}Returning to original branch: $CURRENT_BRANCH${NC}"
-git checkout $CURRENT_BRANCH
+# Clean up temporary repository
+echo -e "${GREEN}Cleaning up...${NC}"
+cd $CURRENT_DIR
+rm -rf $TEMP_DIR
 
 echo -e "${GREEN}Done! Build artifacts pushed to $GIT_BRANCH branch.${NC}"
 echo -e "${GREEN}View your artifacts at: https://github.com/$GIT_REPO/tree/$GIT_BRANCH/$ARTIFACTS_DIR${NC}"
