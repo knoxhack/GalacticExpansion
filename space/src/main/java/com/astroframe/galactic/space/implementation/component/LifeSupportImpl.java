@@ -136,4 +136,53 @@ public class LifeSupportImpl implements ILifeSupport {
         
         return tooltip;
     }
+    
+    // Implementation for ILifeSupport.isBroken
+    public boolean isBroken() {
+        return false; // Default implementation always returns false until we implement durability
+    }
+    
+    // Placeholder implementations for missing ILifeSupport methods
+    public int getOxygenGenerationRate() {
+        return (int)(oxygenEfficiency * 100);
+    }
+    
+    public float getWaterRecyclingEfficiency() {
+        return waterRecyclingRate;
+    }
+    
+    public int getFoodProductionRate() {
+        return tier * 10; // Simple tier-based scaling
+    }
+    
+    public float getWasteManagementEfficiency() {
+        return 0.7f + (tier * 0.1f); // Increases with tier
+    }
+    
+    public float getAtmosphericQuality() {
+        return oxygenEfficiency;
+    }
+    
+    public boolean hasBackupSystems() {
+        return tier >= 2;
+    }
+    
+    public boolean hasRadiationFiltering() {
+        return hasRadiationScrubbers;
+    }
+    
+    public boolean hasEmergencyMode() {
+        return tier >= 2;
+    }
+    
+    // Emergency mode state
+    private boolean emergencyModeActive = false;
+    
+    public void setEmergencyMode(boolean active) {
+        this.emergencyModeActive = active;
+    }
+    
+    public boolean isEmergencyModeActive() {
+        return emergencyModeActive;
+    }
 }

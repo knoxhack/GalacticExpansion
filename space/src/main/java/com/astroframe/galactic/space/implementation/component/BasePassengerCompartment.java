@@ -1,7 +1,7 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.IPassengerCompartment;
-import com.astroframe.galactic.core.api.space.component.enums.ComponentType;
+import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.core.api.space.component.enums.CompartmentType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
@@ -38,37 +38,37 @@ public class BasePassengerCompartment implements IPassengerCompartment {
         this.compartmentType = builder.compartmentType;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public ResourceLocation getId() {
         return id;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public Component getDisplayName() {
         return displayName;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public int getTier() {
         return tier;
     }
     
-    @Override
-    public ComponentType getType() {
-        return ComponentType.PASSENGER_COMPARTMENT;
+    // Implementation of IRocketComponent method
+    public RocketComponentType getType() {
+        return RocketComponentType.PASSENGER_COMPARTMENT;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public int getMass() {
         return mass;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public float getMaxHealth() {
         return maxHealth;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public List<Component> getTooltip(boolean detailed) {
         List<Component> tooltip = new ArrayList<>();
         tooltip.add(displayName);
@@ -87,7 +87,7 @@ public class BasePassengerCompartment implements IPassengerCompartment {
         return tooltip;
     }
     
-    @Override
+    // Implementation of IPassengerCompartment method
     public int getPassengerCapacity() {
         return passengerCapacity;
     }

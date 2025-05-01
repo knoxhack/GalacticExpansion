@@ -7,6 +7,7 @@ import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.WorldGenRegion;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.block.Blocks;
@@ -66,8 +67,14 @@ public class SpaceStationChunkGenerator extends ChunkGenerator {
         }
     }
 
+    // Implementation for NeoForge 1.21.5
     public void spawnOriginalMobs(WorldGenLevel level) {
-        // No natural mob spawning
+        // No natural mob spawning in space station
+    }
+    
+    // Implementation for NeoForge 1.21.5 abstract method
+    public void spawnOriginalMobs(WorldGenRegion region) {
+        // No natural mob spawning in space station
     }
 
     public int getSeaLevel() {
