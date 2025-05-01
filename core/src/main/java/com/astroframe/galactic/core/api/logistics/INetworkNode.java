@@ -1,9 +1,9 @@
 package com.astroframe.galactic.core.api.logistics;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
+import com.astroframe.galactic.core.api.common.BlockPos;
+import com.astroframe.galactic.core.api.common.Direction;
+import com.astroframe.galactic.core.api.common.ItemStack;
+import com.astroframe.galactic.core.api.common.Level;
 
 import java.util.Set;
 
