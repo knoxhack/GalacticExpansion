@@ -1,8 +1,6 @@
 package com.astroframe.galactic.core.api.space;
 
 import com.astroframe.galactic.core.api.space.component.*;
-import static com.astroframe.galactic.core.api.space.component.IRocketComponent;
-import static com.astroframe.galactic.core.api.space.component.IRocketEngine;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;

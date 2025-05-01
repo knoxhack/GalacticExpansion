@@ -98,8 +98,10 @@ public class ShieldImpl implements IShield {
 
     @Override
     public boolean isEMPShielded() {
-        // EMP shielding is provided by deflector and quantum shields
-        return shieldType == ShieldType.DEFLECTOR || shieldType == ShieldType.QUANTUM;
+        // EMP shielding is provided by energy, deflector and quantum shields
+        return shieldType == ShieldType.ENERGY || 
+               shieldType == ShieldType.DEFLECTOR || 
+               shieldType == ShieldType.QUANTUM;
     }
 
     @Override
