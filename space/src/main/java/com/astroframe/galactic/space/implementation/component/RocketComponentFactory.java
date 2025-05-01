@@ -1,6 +1,7 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.*;
+import com.astroframe.galactic.core.api.space.component.enums.*;
 import com.astroframe.galactic.space.GalacticSpace;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
@@ -29,7 +30,7 @@ public class RocketComponentFactory {
                 1,
                 false,
                 1,
-                ICommandModule.CommandModuleType.BASIC
+                CommandModuleType.BASIC
         );
     }
     
@@ -50,7 +51,7 @@ public class RocketComponentFactory {
                 2,
                 false,
                 2,
-                ICommandModule.CommandModuleType.STANDARD
+                CommandModuleType.STANDARD
         );
     }
     
@@ -71,7 +72,7 @@ public class RocketComponentFactory {
                 3,
                 false,
                 3,
-                ICommandModule.CommandModuleType.ADVANCED
+                CommandModuleType.ADVANCED
         );
     }
     
@@ -92,7 +93,7 @@ public class RocketComponentFactory {
                 4,
                 true,
                 4,
-                ICommandModule.CommandModuleType.QUANTUM
+                CommandModuleType.QUANTUM
         );
     }
     
@@ -113,7 +114,7 @@ public class RocketComponentFactory {
                 true,
                 true,
                 false,
-                IRocketEngine.EngineType.CHEMICAL
+                EngineType.CHEMICAL
         );
     }
     
@@ -134,7 +135,7 @@ public class RocketComponentFactory {
                 false,
                 false,
                 true,
-                IRocketEngine.EngineType.ION
+                EngineType.ION
         );
     }
     
@@ -155,7 +156,7 @@ public class RocketComponentFactory {
                 false,
                 true,
                 true,
-                IRocketEngine.EngineType.PLASMA
+                EngineType.PLASMA
         );
     }
     
@@ -174,7 +175,7 @@ public class RocketComponentFactory {
                 10,
                 false,
                 0.5f,
-                IFuelTank.FuelType.CHEMICAL
+                FuelType.CHEMICAL
         );
     }
     
@@ -193,7 +194,7 @@ public class RocketComponentFactory {
                 20,
                 false,
                 0.7f,
-                IFuelTank.FuelType.HYDROGEN
+                FuelType.HYDROGEN
         );
     }
     
@@ -212,7 +213,7 @@ public class RocketComponentFactory {
                 30,
                 true,
                 0.9f,
-                IFuelTank.FuelType.NUCLEAR
+                FuelType.NUCLEAR
         );
     }
     
@@ -231,7 +232,7 @@ public class RocketComponentFactory {
                 50,
                 true,
                 0.95f,
-                IFuelTank.FuelType.EXOTIC
+                FuelType.EXOTIC
         );
     }
     
@@ -251,7 +252,7 @@ public class RocketComponentFactory {
                 false,
                 false,
                 1.0f,
-                ICargoBay.CargoBayType.STANDARD
+                CargoBayType.STANDARD
         );
     }
     
@@ -271,7 +272,7 @@ public class RocketComponentFactory {
                 true,
                 true,
                 1.5f,
-                ICargoBay.CargoBayType.STANDARD
+                CargoBayType.STANDARD
         );
     }
     
@@ -291,7 +292,7 @@ public class RocketComponentFactory {
                 true,
                 true,
                 2.0f,
-                ICargoBay.CargoBayType.REINFORCED
+                CargoBayType.REINFORCED
         );
     }
     
@@ -311,7 +312,7 @@ public class RocketComponentFactory {
                 false,
                 0.3f,
                 30,
-                IPassengerCompartment.CompartmentType.BASIC
+                CompartmentType.BASIC
         );
     }
     
@@ -331,7 +332,7 @@ public class RocketComponentFactory {
                 false,
                 0.6f,
                 60,
-                IPassengerCompartment.CompartmentType.STANDARD
+                CompartmentType.STANDARD
         );
     }
     
@@ -351,7 +352,7 @@ public class RocketComponentFactory {
                 true,
                 0.8f,
                 120,
-                IPassengerCompartment.CompartmentType.LUXURY
+                CompartmentType.LUXURY
         );
     }
     
@@ -371,7 +372,7 @@ public class RocketComponentFactory {
                 true,
                 0.7f,
                 90,
-                IPassengerCompartment.CompartmentType.SCIENTIFIC
+                CompartmentType.SCIENTIFIC
         );
     }
     
@@ -390,14 +391,12 @@ public class RocketComponentFactory {
                 0.5f,
                 0.2f,
                 0,
-                false,
-                50.0f,
-                IShield.ShieldType.PHYSICAL
+                ShieldType.PHYSICAL
         );
     }
     
     /**
-     * Creates a thermal tier 2 shield.
+     * Creates a standard tier 2 shield.
      * @return A new shield
      */
     public static IShield createThermalShield() {
@@ -406,19 +405,17 @@ public class RocketComponentFactory {
                 Component.translatable("component.galactic-space.shield_thermal"),
                 2,
                 220,
-                200.0f,
-                0.4f,
-                0.9f,
-                0.3f,
-                0,
-                false,
-                70.0f,
-                IShield.ShieldType.THERMAL
+                250.0f,
+                0.6f,
+                0.8f,
+                0.7f,
+                10,
+                ShieldType.THERMAL
         );
     }
     
     /**
-     * Creates a deflector tier 3 shield.
+     * Creates an advanced tier 3 shield.
      * @return A new shield
      */
     public static IShield createDeflectorShield() {
@@ -426,36 +423,13 @@ public class RocketComponentFactory {
                 ResourceLocation.parse(GalacticSpace.MOD_ID + ":shield_deflector"),
                 Component.translatable("component.galactic-space.shield_deflector"),
                 3,
-                250,
-                300.0f,
-                0.8f,
-                0.7f,
-                0.6f,
-                20,
-                true,
-                90.0f,
-                IShield.ShieldType.DEFLECTOR
-        );
-    }
-    
-    /**
-     * Creates a quantum tier 3 shield.
-     * @return A new shield
-     */
-    public static IShield createQuantumShield() {
-        return new ShieldImpl(
-                ResourceLocation.parse(GalacticSpace.MOD_ID + ":shield_quantum"),
-                Component.translatable("component.galactic-space.shield_quantum"),
-                3,
                 300,
                 400.0f,
-                0.95f,
-                0.8f,
                 0.9f,
-                50,
-                true,
-                100.0f,
-                IShield.ShieldType.QUANTUM
+                1.2f,
+                1.0f,
+                25,
+                ShieldType.DEFLECTOR
         );
     }
     
@@ -468,16 +442,15 @@ public class RocketComponentFactory {
                 ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_basic"),
                 Component.translatable("component.galactic-space.life_support_basic"),
                 1,
-                150,
+                200,
                 100.0f,
-                2,
-                1.0f,
+                3,
+                0.7f,
+                0.6f,
                 0.5f,
-                0.0f,
-                0.4f,
-                0.2f,
-                15,
-                ILifeSupport.LifeSupportType.BASIC
+                false,
+                false,
+                LifeSupportType.BASIC
         );
     }
     
@@ -490,16 +463,15 @@ public class RocketComponentFactory {
                 ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_standard"),
                 Component.translatable("component.galactic-space.life_support_standard"),
                 2,
-                200,
-                150.0f,
-                4,
-                1.5f,
+                300,
+                200.0f,
+                5,
+                0.85f,
+                0.8f,
                 0.7f,
-                0.3f,
-                0.6f,
-                0.5f,
-                30,
-                ILifeSupport.LifeSupportType.STANDARD
+                true,
+                false,
+                LifeSupportType.STANDARD
         );
     }
     
@@ -512,83 +484,58 @@ public class RocketComponentFactory {
                 ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_advanced"),
                 Component.translatable("component.galactic-space.life_support_advanced"),
                 3,
-                250,
-                200.0f,
-                6,
-                2.0f,
-                0.9f,
-                0.6f,
-                0.8f,
-                0.7f,
-                60,
-                ILifeSupport.LifeSupportType.ADVANCED
-        );
-    }
-    
-    /**
-     * Creates a bioregenerative tier 3 life support system.
-     * @return A new life support system
-     */
-    public static ILifeSupport createBioregenerativeLifeSupport() {
-        return new LifeSupportImpl(
-                ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_bioregenerative"),
-                Component.translatable("component.galactic-space.life_support_bioregenerative"),
-                3,
-                350,
-                250.0f,
+                400,
+                300.0f,
                 8,
-                2.5f,
+                0.95f,
                 0.95f,
                 0.9f,
-                0.95f,
-                0.9f,
-                120,
-                ILifeSupport.LifeSupportType.BIOREGENERATIVE
+                true,
+                true,
+                LifeSupportType.ADVANCED
         );
     }
     
     /**
-     * Registers all default rocket components.
+     * Registers all standard components.
      */
     public static void registerAll() {
-        // Register command modules
+        // Command modules
         RocketComponentRegistry.register(createBasicCommandModule());
         RocketComponentRegistry.register(createStandardCommandModule());
         RocketComponentRegistry.register(createAdvancedCommandModule());
         RocketComponentRegistry.register(createQuantumCommandModule());
         
-        // Register engines
+        // Engines
         RocketComponentRegistry.register(createChemicalEngine());
         RocketComponentRegistry.register(createIonEngine());
         RocketComponentRegistry.register(createPlasmaEngine());
         
-        // Register fuel tanks
+        // Fuel tanks
         RocketComponentRegistry.register(createBasicFuelTank());
         RocketComponentRegistry.register(createStandardFuelTank());
         RocketComponentRegistry.register(createAdvancedFuelTank());
         RocketComponentRegistry.register(createQuantumFuelTank());
         
-        // Register cargo bays
+        // Cargo bays
         RocketComponentRegistry.register(createBasicCargoBay());
         RocketComponentRegistry.register(createStandardCargoBay());
         RocketComponentRegistry.register(createAdvancedCargoBay());
         
-        // Register passenger compartments
+        // Passenger compartments
         RocketComponentRegistry.register(createBasicPassengerCompartment());
         RocketComponentRegistry.register(createStandardPassengerCompartment());
         RocketComponentRegistry.register(createAdvancedPassengerCompartment());
         RocketComponentRegistry.register(createScientificPassengerCompartment());
         
-        // Register shields
+        // Shields
         RocketComponentRegistry.register(createBasicShield());
         RocketComponentRegistry.register(createThermalShield());
         RocketComponentRegistry.register(createDeflectorShield());
-        RocketComponentRegistry.register(createQuantumShield());
         
-        // Register life support systems
+        // Life support systems
         RocketComponentRegistry.register(createBasicLifeSupport());
         RocketComponentRegistry.register(createStandardLifeSupport());
         RocketComponentRegistry.register(createAdvancedLifeSupport());
-        RocketComponentRegistry.register(createBioregenerativeLifeSupport());
     }
 }

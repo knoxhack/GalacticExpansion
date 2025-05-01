@@ -1,6 +1,7 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.ICargoBay;
+import com.astroframe.galactic.core.api.space.component.enums.ComponentType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 
