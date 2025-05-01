@@ -37,11 +37,31 @@ function connectWebSocket() {
         statusIndicator.title = 'Connecting to build server...';
     }
     
-    // Show connection status in UI
+    // Show connection status in UI with close button
     const connectionNotice = document.createElement('div');
     connectionNotice.className = 'connection-notice';
-    connectionNotice.textContent = 'Connecting to build server...';
+    
+    // Create notification content
+    const noticeContent = document.createElement('span');
+    noticeContent.textContent = 'Connecting to build server...';
+    connectionNotice.appendChild(noticeContent);
+    
+    // Create close button
+    const closeButton = document.createElement('button');
+    closeButton.className = 'notice-close';
+    closeButton.innerHTML = '&times;';
+    closeButton.addEventListener('click', () => {
+        connectionNotice.remove();
+    });
+    connectionNotice.appendChild(closeButton);
+    
     document.body.appendChild(connectionNotice);
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        connectionNotice.style.opacity = 0;
+        setTimeout(() => connectionNotice.remove(), 1000);
+    }, 5000);
     
     // Create new socket
     socket = new WebSocket(wsUrl);
@@ -65,12 +85,33 @@ function connectWebSocket() {
         }
         
         // Update UI
-        connectionNotice.textContent = 'Connected to build server';
         connectionNotice.className = 'connection-notice success';
+        
+        // Update notification content
+        const noticeContent = connectionNotice.querySelector('span');
+        if (noticeContent) {
+            noticeContent.textContent = 'Connected to build server';
+        } else {
+            connectionNotice.textContent = ''; // Clear existing content
+            const newContent = document.createElement('span');
+            newContent.textContent = 'Connected to build server';
+            connectionNotice.appendChild(newContent);
+            
+            // Re-add close button if it was lost
+            const closeButton = document.createElement('button');
+            closeButton.className = 'notice-close';
+            closeButton.innerHTML = '&times;';
+            closeButton.addEventListener('click', () => {
+                connectionNotice.remove();
+            });
+            connectionNotice.appendChild(closeButton);
+        }
+        
+        // Auto-hide after 3 seconds
         setTimeout(() => {
             connectionNotice.style.opacity = 0;
             setTimeout(() => connectionNotice.remove(), 1000);
-        }, 2000);
+        }, 3000);
         
         // Add or update connection status indicator
         const statusIndicator = document.getElementById('connectionStatus') || document.createElement('div');
@@ -141,8 +182,27 @@ function connectWebSocket() {
         clearTimeout(connectionTimeout);
         
         // Update UI
-        connectionNotice.textContent = 'Disconnected from build server. Reconnecting...';
         connectionNotice.className = 'connection-notice error';
+        
+        // Update notification content
+        const noticeContent = connectionNotice.querySelector('span');
+        if (noticeContent) {
+            noticeContent.textContent = 'Disconnected from build server. Reconnecting...';
+        } else {
+            connectionNotice.textContent = ''; // Clear existing content
+            const newContent = document.createElement('span');
+            newContent.textContent = 'Disconnected from build server. Reconnecting...';
+            connectionNotice.appendChild(newContent);
+            
+            // Re-add close button if it was lost
+            const closeButton = document.createElement('button');
+            closeButton.className = 'notice-close';
+            closeButton.innerHTML = '&times;';
+            closeButton.addEventListener('click', () => {
+                connectionNotice.remove();
+            });
+            connectionNotice.appendChild(closeButton);
+        }
         
         // Add status indicator to the navbar
         const statusIndicator = document.getElementById('connectionStatus') || document.createElement('div');
@@ -185,8 +245,27 @@ function connectWebSocket() {
     
     socket.onerror = (error) => {
         console.error('WebSocket error:', error);
-        connectionNotice.textContent = 'Connection error. Retrying...';
         connectionNotice.className = 'connection-notice error';
+        
+        // Update notification content
+        const noticeContent = connectionNotice.querySelector('span');
+        if (noticeContent) {
+            noticeContent.textContent = 'Connection error. Retrying...';
+        } else {
+            connectionNotice.textContent = ''; // Clear existing content
+            const newContent = document.createElement('span');
+            newContent.textContent = 'Connection error. Retrying...';
+            connectionNotice.appendChild(newContent);
+            
+            // Re-add close button if it was lost
+            const closeButton = document.createElement('button');
+            closeButton.className = 'notice-close';
+            closeButton.innerHTML = '&times;';
+            closeButton.addEventListener('click', () => {
+                connectionNotice.remove();
+            });
+            connectionNotice.appendChild(closeButton);
+        }
         
         // Update status indicator
         const statusIndicator = document.getElementById('connectionStatus');
