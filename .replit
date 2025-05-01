@@ -30,7 +30,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35 && ./gradlew clean build"
+args = "export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35 && ./gradlew :core:build :power:build :machinery:build :biotech:build"
 
 [[workflows.workflow]]
 name = "build-mod"
@@ -50,7 +50,7 @@ args = "cd buildwidget && node server.js"
 waitForPort = 5000
 
 [deployment]
-run = ["sh", "-c", "export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35 && ./gradlew clean build"]
+run = ["sh", "-c", "export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35 && ./gradlew :core:build :power:build :machinery:build :biotech:build"]
 
 [[ports]]
 localPort = 5000

@@ -26,7 +26,7 @@ public class CoreRegistry {
     // Creative tab key
     public static final ResourceKey<CreativeModeTab> GALACTIC_TAB_KEY = ResourceKey.create(
             Registries.CREATIVE_MODE_TAB, 
-            new ResourceLocation(GalacticCore.MOD_ID, GALACTIC_TAB_ID)
+            ResourceLocation.parse(GalacticCore.MOD_ID + ":" + GALACTIC_TAB_ID)
     );
 
     /**

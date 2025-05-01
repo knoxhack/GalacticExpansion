@@ -1,0 +1,37 @@
+modLoader="javafml"
+loaderVersion="[2,)"
+license="All Rights Reserved"
+issueTrackerURL="https://github.com/AstroFrame/GalacticExpansion/issues"
+
+[[mods]]
+modId="galacticbiotech"
+version="0.1.0"
+displayName="Galactic Biotech"
+displayURL="https://github.com/AstroFrame/GalacticExpansion"
+credits="The AstroFrame Team"
+authors="AstroFrame"
+description='''
+Biotech module for the Galactic Expansion mod.
+Adds genetic modification and biological engineering systems.
+'''
+
+[[dependencies.galacticbiotech]]
+    modId="neoforge"
+    type="required"
+    versionRange="[21,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.galacticbiotech]]
+    modId="minecraft"
+    type="required"
+    versionRange="[1.21.1,1.22)"
+    ordering="NONE"
+    side="BOTH"
+    
+[[dependencies.galacticbiotech]]
+    modId="galacticcore"
+    type="required"
+    versionRange="[0.1.0,)"
+    ordering="AFTER"
+    side="BOTH"
