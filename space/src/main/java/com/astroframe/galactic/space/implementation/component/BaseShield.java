@@ -1,8 +1,7 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.IShield;
-import com.astroframe.galactic.core.api.space.component.enums.ComponentType;
-import com.astroframe.galactic.core.api.space.component.enums.ShieldType;
+import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 
@@ -15,31 +14,32 @@ import java.util.List;
 public class BaseShield implements IShield {
     
     private final ResourceLocation id;
-    private final Component displayName;
+    private final String name;
+    private final String description;
     private final int tier;
     private final int mass;
-    private final float maxHealth;
-    private final float maxShieldStrength;
-    private final float regenerationRate;
+    private final int maxDurability;
+    private int currentDurability;
+    private final int maxShieldStrength;
+    private int currentShieldStrength;
     private final int impactResistance;
-    private final boolean isRadiationShielded;
-    private final boolean isEMPShielded;
-    private final boolean isThermalShielded;
-    private final ShieldType shieldType;
+    private final int heatResistance;
+    private final int radiationResistance;
+    private boolean active = false;
     
     private BaseShield(Builder builder) {
         this.id = builder.id;
-        this.displayName = builder.displayName;
+        this.name = builder.name;
+        this.description = builder.description;
         this.tier = builder.tier;
         this.mass = builder.mass;
-        this.maxHealth = builder.maxHealth;
+        this.maxDurability = builder.maxDurability;
+        this.currentDurability = maxDurability;
         this.maxShieldStrength = builder.maxShieldStrength;
-        this.regenerationRate = builder.regenerationRate;
+        this.currentShieldStrength = maxShieldStrength;
         this.impactResistance = builder.impactResistance;
-        this.isRadiationShielded = builder.isRadiationShielded;
-        this.isEMPShielded = builder.isEMPShielded;
-        this.isThermalShielded = builder.isThermalShielded;
-        this.shieldType = builder.shieldType;
+        this.heatResistance = builder.heatResistance;
+        this.radiationResistance = builder.radiationResistance;
     }
     
     @Override
@@ -48,8 +48,13 @@ public class BaseShield implements IShield {
     }
     
     @Override
-    public Component getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
+    }
+    
+    @Override
+    public String getDescription() {
+        return description;
     }
     
     @Override
@@ -58,8 +63,8 @@ public class BaseShield implements IShield {
     }
     
     @Override
-    public ComponentType getType() {
-        return ComponentType.SHIELD;
+    public RocketComponentType getType() {
+        return RocketComponentType.SHIELDING;
     }
     
     @Override
@@ -68,39 +73,36 @@ public class BaseShield implements IShield {
     }
     
     @Override
-    public float getMaxHealth() {
-        return maxHealth;
+    public int getMaxDurability() {
+        return maxDurability;
     }
     
     @Override
-    public List<Component> getTooltip(boolean detailed) {
-        List<Component> tooltip = new ArrayList<>();
-        tooltip.add(displayName);
-        tooltip.add(Component.literal("Type: " + shieldType.getDisplayName()));
-        tooltip.add(Component.literal("Strength: " + maxShieldStrength));
-        tooltip.add(Component.literal("Tier: " + tier));
-        
-        if (detailed) {
-            tooltip.add(Component.literal("Impact Resistance: " + impactResistance + "/10"));
-            tooltip.add(Component.literal("Regeneration Rate: " + regenerationRate + "/s"));
-            tooltip.add(Component.literal("Radiation Shielded: " + (isRadiationShielded ? "Yes" : "No")));
-            tooltip.add(Component.literal("EMP Shielded: " + (isEMPShielded ? "Yes" : "No")));
-            tooltip.add(Component.literal("Thermal Shielded: " + (isThermalShielded ? "Yes" : "No")));
-            tooltip.add(Component.literal("Mass: " + mass));
-            tooltip.add(Component.literal("Max Health: " + maxHealth));
+    public int getCurrentDurability() {
+        return currentDurability;
+    }
+    
+    @Override
+    public void damage(int amount) {
+        currentDurability = Math.max(0, currentDurability - amount);
+        if (currentDurability == 0) {
+            setActive(false);
         }
-        
-        return tooltip;
     }
     
     @Override
-    public float getMaxShieldStrength() {
+    public void repair(int amount) {
+        currentDurability = Math.min(maxDurability, currentDurability + amount);
+    }
+    
+    @Override
+    public int getMaxShieldStrength() {
         return maxShieldStrength;
     }
     
     @Override
-    public float getRegenerationRate() {
-        return regenerationRate;
+    public int getCurrentShieldStrength() {
+        return currentShieldStrength;
     }
     
     @Override
@@ -109,23 +111,69 @@ public class BaseShield implements IShield {
     }
     
     @Override
-    public boolean isRadiationShielded() {
-        return isRadiationShielded;
+    public int getHeatResistance() {
+        return heatResistance;
     }
     
     @Override
-    public boolean isEMPShielded() {
-        return isEMPShielded;
+    public int getRadiationResistance() {
+        return radiationResistance;
     }
     
     @Override
-    public boolean isThermalShielded() {
-        return isThermalShielded;
+    public int applyDamage(int amount) {
+        if (!active || isBroken()) {
+            return amount;
+        }
+        
+        int absorbedDamage = Math.min(currentShieldStrength, amount);
+        currentShieldStrength -= absorbedDamage;
+        
+        return amount - absorbedDamage;
     }
     
     @Override
-    public ShieldType getShieldType() {
-        return shieldType;
+    public int regenerate(int amount) {
+        if (!active || isBroken()) {
+            return 0;
+        }
+        
+        int regenerationAmount = Math.min(maxShieldStrength - currentShieldStrength, amount);
+        currentShieldStrength += regenerationAmount;
+        return regenerationAmount;
+    }
+    
+    @Override
+    public boolean isActive() {
+        return active && !isBroken();
+    }
+    
+    @Override
+    public void setActive(boolean active) {
+        this.active = active && !isBroken();
+    }
+    
+    /**
+     * Gets a list of tooltip lines for this component.
+     * @param detailed Whether to include detailed information
+     * @return The tooltip lines
+     */
+    public List<Component> getTooltip(boolean detailed) {
+        List<Component> tooltip = new ArrayList<>();
+        tooltip.add(Component.literal(name));
+        tooltip.add(Component.literal("Strength: " + maxShieldStrength));
+        tooltip.add(Component.literal("Tier: " + tier));
+        
+        if (detailed) {
+            tooltip.add(Component.literal("Impact Resistance: " + impactResistance + "/10"));
+            tooltip.add(Component.literal("Heat Resistance: " + heatResistance + "/10"));
+            tooltip.add(Component.literal("Radiation Resistance: " + radiationResistance + "/10"));
+            tooltip.add(Component.literal("Mass: " + mass));
+            tooltip.add(Component.literal("Durability: " + maxDurability));
+            tooltip.add(Component.literal("Active: " + (active ? "Yes" : "No")));
+        }
+        
+        return tooltip;
     }
     
     /**
@@ -133,26 +181,42 @@ public class BaseShield implements IShield {
      */
     public static class Builder {
         private final ResourceLocation id;
-        private final Component displayName;
+        private String name = "Shield";
+        private String description = "A shield component for a rocket.";
         private int tier = 1;
         private int mass = 250;
-        private float maxHealth = 100.0f;
-        private float maxShieldStrength = 100.0f;
-        private float regenerationRate = 1.0f;
+        private int maxDurability = 100;
+        private int maxShieldStrength = 100;
         private int impactResistance = 5;
-        private boolean isRadiationShielded = false;
-        private boolean isEMPShielded = false;
-        private boolean isThermalShielded = false;
-        private ShieldType shieldType = ShieldType.BASIC;
+        private int heatResistance = 5;
+        private int radiationResistance = 5;
         
         /**
          * Creates a new builder with required parameters.
          * @param id The component ID
-         * @param displayName The display name
          */
-        public Builder(ResourceLocation id, Component displayName) {
+        public Builder(ResourceLocation id) {
             this.id = id;
-            this.displayName = displayName;
+        }
+        
+        /**
+         * Sets the name.
+         * @param name The name
+         * @return This builder
+         */
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+        
+        /**
+         * Sets the description.
+         * @param description The description
+         * @return This builder
+         */
+        public Builder description(String description) {
+            this.description = description;
+            return this;
         }
         
         /**
@@ -176,12 +240,12 @@ public class BaseShield implements IShield {
         }
         
         /**
-         * Sets the max health.
-         * @param maxHealth The max health
+         * Sets the max durability.
+         * @param maxDurability The max durability
          * @return This builder
          */
-        public Builder maxHealth(float maxHealth) {
-            this.maxHealth = maxHealth;
+        public Builder maxDurability(int maxDurability) {
+            this.maxDurability = maxDurability;
             return this;
         }
         
@@ -190,18 +254,8 @@ public class BaseShield implements IShield {
          * @param maxShieldStrength The max shield strength
          * @return This builder
          */
-        public Builder maxShieldStrength(float maxShieldStrength) {
+        public Builder maxShieldStrength(int maxShieldStrength) {
             this.maxShieldStrength = maxShieldStrength;
-            return this;
-        }
-        
-        /**
-         * Sets the regeneration rate.
-         * @param regenerationRate The regeneration rate per second
-         * @return This builder
-         */
-        public Builder regenerationRate(float regenerationRate) {
-            this.regenerationRate = regenerationRate;
             return this;
         }
         
@@ -216,42 +270,22 @@ public class BaseShield implements IShield {
         }
         
         /**
-         * Sets whether the shield has radiation shielding.
-         * @param radiationShielded True if radiation shielded
+         * Sets the heat resistance.
+         * @param heatResistance The heat resistance (1-10)
          * @return This builder
          */
-        public Builder radiationShielded(boolean radiationShielded) {
-            this.isRadiationShielded = radiationShielded;
+        public Builder heatResistance(int heatResistance) {
+            this.heatResistance = Math.max(1, Math.min(10, heatResistance));
             return this;
         }
         
         /**
-         * Sets whether the shield has EMP shielding.
-         * @param empShielded True if EMP shielded
+         * Sets the radiation resistance.
+         * @param radiationResistance The radiation resistance (1-10)
          * @return This builder
          */
-        public Builder empShielded(boolean empShielded) {
-            this.isEMPShielded = empShielded;
-            return this;
-        }
-        
-        /**
-         * Sets whether the shield has thermal shielding.
-         * @param thermalShielded True if thermal shielded
-         * @return This builder
-         */
-        public Builder thermalShielded(boolean thermalShielded) {
-            this.isThermalShielded = thermalShielded;
-            return this;
-        }
-        
-        /**
-         * Sets the shield type.
-         * @param shieldType The shield type
-         * @return This builder
-         */
-        public Builder shieldType(ShieldType shieldType) {
-            this.shieldType = shieldType;
+        public Builder radiationResistance(int radiationResistance) {
+            this.radiationResistance = Math.max(1, Math.min(10, radiationResistance));
             return this;
         }
         

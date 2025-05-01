@@ -1,8 +1,7 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.IShield;
-import com.astroframe.galactic.core.api.space.component.enums.ComponentType;
-import com.astroframe.galactic.core.api.space.component.enums.ShieldType;
+import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -14,46 +13,45 @@ import java.util.List;
  */
 public class ShieldImpl implements IShield {
     private final ResourceLocation id;
-    private final Component displayName;
+    private final String name;
+    private final String description;
     private final int tier;
     private final int mass;
-    private final float maxHealth;
-    private final float impactProtection;
-    private final float heatResistance;
-    private final float radiationShielding;
-    private final int energyConsumption;
-    private final boolean regenerative;
-    private final float coveragePercentage;
-    private final ShieldType shieldType;
+    private final int maxDurability;
+    private int currentDurability;
+    private final int impactResistance;
+    private final int heatResistance;
+    private final int radiationResistance;
+    private final int maxShieldStrength;
+    private int currentShieldStrength;
+    private boolean active = false;
     
     /**
      * Creates a new shield component.
      */
     public ShieldImpl(
             ResourceLocation id,
-            Component displayName,
+            String name,
+            String description,
             int tier,
             int mass,
-            float maxHealth,
-            float impactProtection,
-            float heatResistance,
-            float radiationShielding,
-            int energyConsumption,
-            boolean regenerative,
-            float coveragePercentage,
-            ShieldType shieldType) {
+            int maxDurability,
+            int impactResistance,
+            int heatResistance,
+            int radiationResistance,
+            int maxShieldStrength) {
         this.id = id;
-        this.displayName = displayName;
+        this.name = name;
+        this.description = description;
         this.tier = tier;
         this.mass = mass;
-        this.maxHealth = maxHealth;
-        this.impactProtection = impactProtection;
+        this.maxDurability = maxDurability;
+        this.currentDurability = maxDurability;
+        this.impactResistance = impactResistance;
         this.heatResistance = heatResistance;
-        this.radiationShielding = radiationShielding;
-        this.energyConsumption = energyConsumption;
-        this.regenerative = regenerative;
-        this.coveragePercentage = coveragePercentage;
-        this.shieldType = shieldType;
+        this.radiationResistance = radiationResistance;
+        this.maxShieldStrength = maxShieldStrength;
+        this.currentShieldStrength = maxShieldStrength;
     }
 
     @Override
@@ -62,8 +60,13 @@ public class ShieldImpl implements IShield {
     }
 
     @Override
-    public Component getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
+    }
+    
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     @Override
@@ -72,102 +75,110 @@ public class ShieldImpl implements IShield {
     }
     
     @Override
-    public ComponentType getType() {
-        return ComponentType.SHIELD;
+    public RocketComponentType getType() {
+        return RocketComponentType.SHIELDING;
     }
 
     @Override
     public int getMass() {
         return mass;
     }
-
+    
     @Override
-    public float getMaxHealth() {
-        return maxHealth;
+    public int getMaxDurability() {
+        return maxDurability;
+    }
+    
+    @Override
+    public int getCurrentDurability() {
+        return currentDurability;
+    }
+    
+    @Override
+    public void damage(int amount) {
+        currentDurability = Math.max(0, currentDurability - amount);
+    }
+    
+    @Override
+    public void repair(int amount) {
+        currentDurability = Math.min(maxDurability, currentDurability + amount);
     }
 
     @Override
     public int getImpactResistance() {
-        return (int)(impactProtection / 10.0f); // Convert to 1-10 scale
+        return impactResistance;
+    }
+    
+    @Override
+    public int getHeatResistance() {
+        return heatResistance;
+    }
+    
+    @Override
+    public int getRadiationResistance() {
+        return radiationResistance;
     }
 
     @Override
-    public boolean isRadiationShielded() {
-        return radiationShielding > 50.0f; // Over 50% radiation protection means it's radiation shielded
+    public int getMaxShieldStrength() {
+        return maxShieldStrength;
     }
-
+    
     @Override
-    public boolean isEMPShielded() {
-        // EMP shielding is provided by energy, deflector and quantum shields
-        return shieldType == ShieldType.ENERGY || 
-               shieldType == ShieldType.DEFLECTOR || 
-               shieldType == ShieldType.QUANTUM;
+    public int getCurrentShieldStrength() {
+        return currentShieldStrength;
     }
-
+    
     @Override
-    public boolean isThermalShielded() {
-        return heatResistance > 50.0f; // Over 50% heat resistance means it's thermal shielded
+    public int applyDamage(int amount) {
+        if (!active) {
+            return amount;
+        }
+        
+        // Apply damage to shield
+        int absorbedDamage = Math.min(currentShieldStrength, amount);
+        currentShieldStrength -= absorbedDamage;
+        
+        // Return penetrating damage
+        return amount - absorbedDamage;
     }
-
+    
     @Override
-    public float getMaxShieldStrength() {
-        return 100.0f * (tier / 3.0f) * (coveragePercentage / 100.0f);
+    public int regenerate(int amount) {
+        if (!active || isBroken()) {
+            return 0;
+        }
+        
+        int regenerationAmount = Math.min(maxShieldStrength - currentShieldStrength, amount);
+        currentShieldStrength += regenerationAmount;
+        return regenerationAmount;
     }
-
+    
     @Override
-    public float getRegenerationRate() {
-        return regenerative ? 5.0f * tier : 0.0f;
+    public boolean isActive() {
+        return active && !isBroken();
     }
-
+    
     @Override
-    public ShieldType getShieldType() {
-        return shieldType;
+    public void setActive(boolean active) {
+        this.active = active && !isBroken();
     }
 
     /**
-     * Gets the energy consumption of this shield.
-     * @return The energy consumption
+     * Gets a list of tooltip lines for this component.
+     * @param detailed Whether to include detailed information
+     * @return The tooltip lines
      */
-    public int getEnergyConsumption() {
-        return energyConsumption;
-    }
-
-    /**
-     * Checks if this shield is regenerative.
-     * @return True if regenerative
-     */
-    public boolean isRegenerative() {
-        return regenerative;
-    }
-
-    /**
-     * Gets the coverage percentage of this shield.
-     * @return The coverage percentage
-     */
-    public float getCoveragePercentage() {
-        return coveragePercentage;
-    }
-
-    @Override
     public List<Component> getTooltip(boolean detailed) {
         List<Component> tooltip = new ArrayList<>();
         
         tooltip.add(Component.translatable("tooltip.galactic-space.tier", tier));
-        tooltip.add(Component.translatable("tooltip.galactic-space.shield.type", shieldType.name()));
-        tooltip.add(Component.translatable("tooltip.galactic-space.shield.coverage", coveragePercentage));
+        tooltip.add(Component.translatable("tooltip.galactic-space.shield.strength", maxShieldStrength));
         
         if (detailed) {
-            tooltip.add(Component.translatable("tooltip.galactic-space.shield.impact", impactProtection));
+            tooltip.add(Component.translatable("tooltip.galactic-space.shield.impact", impactResistance));
             tooltip.add(Component.translatable("tooltip.galactic-space.shield.heat", heatResistance));
-            tooltip.add(Component.translatable("tooltip.galactic-space.shield.radiation", radiationShielding));
-            
-            if (energyConsumption > 0) {
-                tooltip.add(Component.translatable("tooltip.galactic-space.shield.energy", energyConsumption));
-            }
-            
-            if (regenerative) {
-                tooltip.add(Component.translatable("tooltip.galactic-space.shield.regenerative"));
-            }
+            tooltip.add(Component.translatable("tooltip.galactic-space.shield.radiation", radiationResistance));
         }
         
         return tooltip;

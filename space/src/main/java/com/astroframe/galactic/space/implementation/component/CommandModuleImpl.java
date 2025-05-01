@@ -1,8 +1,7 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.ICommandModule;
-import com.astroframe.galactic.core.api.space.component.enums.ComponentType;
-import com.astroframe.galactic.core.api.space.component.enums.CommandModuleType;
+import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -14,46 +13,51 @@ import java.util.List;
  */
 public class CommandModuleImpl implements ICommandModule {
     private final ResourceLocation id;
-    private final Component displayName;
+    private final String name;
+    private final String description;
     private final int tier;
     private final int mass;
-    private final float maxHealth;
+    private final int maxDurability;
+    private int currentDurability;
+    private final int computingPower;
+    private final int sensorStrength;
     private final float navigationAccuracy;
-    private final int computerTier;
-    private final int scanningRange;
-    private final int autopilotLevel;
-    private final boolean hasEmergencyTeleport;
-    private final int basicLifeSupportCapacity;
-    private final CommandModuleType commandModuleType;
+    private final int crewCapacity;
+    private final boolean hasAdvancedLifeSupport;
+    private final boolean hasAutomatedLanding;
+    private final boolean hasEmergencyEvacuation;
     
     /**
      * Creates a new command module.
      */
     public CommandModuleImpl(
             ResourceLocation id,
-            Component displayName,
+            String name,
+            String description,
             int tier,
             int mass,
-            float maxHealth,
+            int maxDurability,
+            int computingPower,
+            int sensorStrength,
             float navigationAccuracy,
-            int computerTier,
-            int scanningRange,
-            int autopilotLevel,
-            boolean hasEmergencyTeleport,
-            int basicLifeSupportCapacity,
-            CommandModuleType commandModuleType) {
+            int crewCapacity,
+            boolean hasAdvancedLifeSupport,
+            boolean hasAutomatedLanding,
+            boolean hasEmergencyEvacuation) {
         this.id = id;
-        this.displayName = displayName;
+        this.name = name;
+        this.description = description;
         this.tier = tier;
         this.mass = mass;
-        this.maxHealth = maxHealth;
+        this.maxDurability = maxDurability;
+        this.currentDurability = maxDurability;
+        this.computingPower = computingPower;
+        this.sensorStrength = sensorStrength;
         this.navigationAccuracy = navigationAccuracy;
-        this.computerTier = computerTier;
-        this.scanningRange = scanningRange;
-        this.autopilotLevel = autopilotLevel;
-        this.hasEmergencyTeleport = hasEmergencyTeleport;
-        this.basicLifeSupportCapacity = basicLifeSupportCapacity;
-        this.commandModuleType = commandModuleType;
+        this.crewCapacity = crewCapacity;
+        this.hasAdvancedLifeSupport = hasAdvancedLifeSupport;
+        this.hasAutomatedLanding = hasAutomatedLanding;
+        this.hasEmergencyEvacuation = hasEmergencyEvacuation;
     }
 
     @Override
@@ -62,8 +66,13 @@ public class CommandModuleImpl implements ICommandModule {
     }
 
     @Override
-    public Component getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
+    }
+    
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     @Override
@@ -72,77 +81,96 @@ public class CommandModuleImpl implements ICommandModule {
     }
     
     @Override
-    public ComponentType getType() {
-        return ComponentType.COMMAND_MODULE;
+    public RocketComponentType getType() {
+        return RocketComponentType.COCKPIT;
     }
 
     @Override
     public int getMass() {
         return mass;
     }
-
+    
     @Override
-    public float getMaxHealth() {
-        return maxHealth;
+    public int getMaxDurability() {
+        return maxDurability;
+    }
+    
+    @Override
+    public int getCurrentDurability() {
+        return currentDurability;
+    }
+    
+    @Override
+    public void damage(int amount) {
+        currentDurability = Math.max(0, currentDurability - amount);
+    }
+    
+    @Override
+    public void repair(int amount) {
+        currentDurability = Math.min(maxDurability, currentDurability + amount);
     }
 
     @Override
-    public int getNavigationLevel() {
-        return (int)(navigationAccuracy * 10); // Convert to 1-10 scale
+    public int getComputingPower() {
+        return computingPower;
+    }
+    
+    @Override
+    public int getSensorStrength() {
+        return sensorStrength;
+    }
+    
+    @Override
+    public float getNavigationAccuracy() {
+        return navigationAccuracy;
     }
     
     @Override
     public int getCrewCapacity() {
-        return basicLifeSupportCapacity; // Use the basic life support capacity as crew capacity
+        return crewCapacity;
     }
     
     @Override
-    public int getComputingPower() {
-        return computerTier;
+    public boolean hasAdvancedLifeSupport() {
+        return hasAdvancedLifeSupport;
     }
     
     @Override
-    public int getCommunicationRange() {
-        return scanningRange; // Use scanning range as communication range
+    public boolean hasAutomatedLanding() {
+        return hasAutomatedLanding;
     }
     
-    /**
-     * Gets the autopilot level of this command module.
-     * @return The autopilot level
-     */
-    public int getAutopilotLevel() {
-        return autopilotLevel;
-    }
-    
-    /**
-     * Checks if this command module has emergency teleport.
-     * @return True if emergency teleport is available
-     */
-    public boolean hasEmergencyTeleport() {
-        return hasEmergencyTeleport;
+    @Override
+    public boolean hasEmergencyEvacuation() {
+        return hasEmergencyEvacuation;
     }
 
-    @Override
-    public CommandModuleType getCommandModuleType() {
-        return commandModuleType;
-    }
-
-    @Override
+    /**
+     * Gets a list of tooltip lines for this component.
+     * @param detailed Whether to include detailed information
+     * @return The tooltip lines
+     */
     public List<Component> getTooltip(boolean detailed) {
         List<Component> tooltip = new ArrayList<>();
         
         tooltip.add(Component.translatable("tooltip.galactic-space.tier", tier));
-        tooltip.add(Component.translatable("tooltip.galactic-space.command_module.type", commandModuleType.name()));
+        tooltip.add(Component.translatable("tooltip.galactic-space.command_module.crew", crewCapacity));
         
         if (detailed) {
             tooltip.add(Component.translatable("tooltip.galactic-space.command_module.navigation", navigationAccuracy));
-            tooltip.add(Component.translatable("tooltip.galactic-space.command_module.computer", computerTier));
-            tooltip.add(Component.translatable("tooltip.galactic-space.command_module.scanning", scanningRange));
-            tooltip.add(Component.translatable("tooltip.galactic-space.command_module.autopilot", autopilotLevel));
-            tooltip.add(Component.translatable("tooltip.galactic-space.command_module.life_support", basicLifeSupportCapacity));
+            tooltip.add(Component.translatable("tooltip.galactic-space.command_module.computer", computingPower));
+            tooltip.add(Component.translatable("tooltip.galactic-space.command_module.sensors", sensorStrength));
             
-            if (hasEmergencyTeleport) {
-                tooltip.add(Component.translatable("tooltip.galactic-space.command_module.emergency_teleport"));
+            if (hasAdvancedLifeSupport) {
+                tooltip.add(Component.translatable("tooltip.galactic-space.command_module.advanced_life_support"));
+            }
+            
+            if (hasAutomatedLanding) {
+                tooltip.add(Component.translatable("tooltip.galactic-space.command_module.automated_landing"));
+            }
+            
+            if (hasEmergencyEvacuation) {
+                tooltip.add(Component.translatable("tooltip.galactic-space.command_module.emergency_evacuation"));
             }
         }
         
