@@ -14,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -159,7 +158,7 @@ public class ModularRocketItem extends Item {
             return 0;
         }
         
-        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag tag = getOrCreateTag(stack);
         
         // Get command module tier
         String commandModuleId = tag.getString("commandModule");
@@ -187,7 +186,7 @@ public class ModularRocketItem extends Item {
             return null;
         }
         
-        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag tag = getOrCreateTag(stack);
         
         // Create a rocket builder
         ModularRocket.Builder builder = new ModularRocket.Builder(
@@ -277,7 +276,7 @@ public class ModularRocketItem extends Item {
      */
     public static ItemStack createTier1Rocket() {
         ItemStack stack = new ItemStack(SpaceItems.MODULAR_ROCKET.get());
-        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag tag = getOrCreateTag(stack);
         
         // Add command module
         ICommandModule commandModule = RocketComponentFactory.createBasicCommandModule();
@@ -315,7 +314,7 @@ public class ModularRocketItem extends Item {
      */
     public static ItemStack createTier2Rocket() {
         ItemStack stack = new ItemStack(SpaceItems.MODULAR_ROCKET.get());
-        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag tag = getOrCreateTag(stack);
         
         // Add command module
         ICommandModule commandModule = RocketComponentFactory.createStandardCommandModule();
@@ -367,7 +366,7 @@ public class ModularRocketItem extends Item {
      */
     public static ItemStack createTier3Rocket() {
         ItemStack stack = new ItemStack(SpaceItems.MODULAR_ROCKET.get());
-        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag tag = getOrCreateTag(stack);
         
         // Add command module
         ICommandModule commandModule = RocketComponentFactory.createAdvancedCommandModule();
@@ -423,7 +422,7 @@ public class ModularRocketItem extends Item {
     }
     
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         
         if (!level.isClientSide && hasValidRocket(itemstack)) {
@@ -439,6 +438,6 @@ public class ModularRocketItem extends Item {
             }
         }
         
-        return InteractionResultHolder.sidedSuccess(itemstack, level.isClientSide);
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 }

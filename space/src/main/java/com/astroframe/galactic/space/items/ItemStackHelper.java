@@ -16,7 +16,7 @@ public class ItemStackHelper {
      * @return The compound tag
      */
     public static CompoundTag getOrCreateTag(ItemStack stack) {
-        CompoundTag tag = stack.getOrCreateTagElement("tag");
+        CompoundTag tag = stack.getOrCreateTag();
         return tag;
     }
 }
