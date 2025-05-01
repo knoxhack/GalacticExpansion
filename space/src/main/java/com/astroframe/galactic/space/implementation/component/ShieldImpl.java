@@ -87,18 +87,34 @@ public class ShieldImpl implements IShield {
     }
 
     @Override
-    public float getImpactProtection() {
-        return impactProtection;
+    public int getImpactResistance() {
+        return (int)(impactProtection / 10.0f); // Convert to 1-10 scale
     }
 
     @Override
-    public float getHeatResistance() {
-        return heatResistance;
+    public boolean isRadiationShielded() {
+        return radiationShielding > 50.0f; // Over 50% radiation protection means it's radiation shielded
     }
 
     @Override
-    public float getRadiationShielding() {
-        return radiationShielding;
+    public boolean isEMPShielded() {
+        // EMP shielding is provided by deflector and quantum shields
+        return shieldType == ShieldType.DEFLECTOR || shieldType == ShieldType.QUANTUM;
+    }
+
+    @Override
+    public boolean isThermalShielded() {
+        return heatResistance > 50.0f; // Over 50% heat resistance means it's thermal shielded
+    }
+
+    @Override
+    public float getMaxShieldStrength() {
+        return 100.0f * (tier / 3.0f) * (coveragePercentage / 100.0f);
+    }
+
+    @Override
+    public float getRegenerationRate() {
+        return regenerative ? 5.0f * tier : 0.0f;
     }
 
     @Override
@@ -106,17 +122,26 @@ public class ShieldImpl implements IShield {
         return shieldType;
     }
 
-    @Override
+    /**
+     * Gets the energy consumption of this shield.
+     * @return The energy consumption
+     */
     public int getEnergyConsumption() {
         return energyConsumption;
     }
 
-    @Override
+    /**
+     * Checks if this shield is regenerative.
+     * @return True if regenerative
+     */
     public boolean isRegenerative() {
         return regenerative;
     }
 
-    @Override
+    /**
+     * Gets the coverage percentage of this shield.
+     * @return The coverage percentage
+     */
     public float getCoveragePercentage() {
         return coveragePercentage;
     }
