@@ -453,7 +453,6 @@ public class RocketComponentFactory {
                 3,
                 0.7f,
                 0.6f,
-                0.5f,
                 false,
                 false,
                 LifeSupportType.BASIC
@@ -474,7 +473,6 @@ public class RocketComponentFactory {
                 5,
                 0.85f,
                 0.8f,
-                0.7f,
                 true,
                 false,
                 LifeSupportType.STANDARD
@@ -495,10 +493,29 @@ public class RocketComponentFactory {
                 8,
                 0.95f,
                 0.95f,
-                0.9f,
                 true,
                 true,
                 LifeSupportType.ADVANCED
+        );
+    }
+    
+    /**
+     * Creates a bioregenerative tier 3 life support system.
+     * @return A new life support system
+     */
+    public static ILifeSupport createBioregenerativeLifeSupport() {
+        return new LifeSupportImpl(
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_bioregenerative"),
+                Component.translatable("component.galactic-space.life_support_bioregenerative"),
+                3,
+                450,
+                350.0f,
+                10,
+                0.99f,
+                0.99f,
+                true,
+                true,
+                LifeSupportType.BIOREGENERATIVE
         );
     }
     
@@ -543,5 +560,6 @@ public class RocketComponentFactory {
         RocketComponentRegistry.register(createBasicLifeSupport());
         RocketComponentRegistry.register(createStandardLifeSupport());
         RocketComponentRegistry.register(createAdvancedLifeSupport());
+        RocketComponentRegistry.register(createBioregenerativeLifeSupport());
     }
 }

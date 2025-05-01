@@ -417,7 +417,7 @@ public class ModularRocketItem extends Item {
         IShield shield = RocketComponentFactory.createDeflectorShield();
         ListTag shieldsList = new ListTag();
         shieldsList.add(StringTag.valueOf(shield.getId().toString()));
-        shieldsList.add(StringTag.valueOf(RocketComponentFactory.createQuantumShield().getId().toString()));
+        shieldsList.add(StringTag.valueOf(RocketComponentFactory.createThermalShield().getId().toString()));
         tag.put("shields", shieldsList);
         
         // Add life support

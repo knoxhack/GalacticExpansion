@@ -18,13 +18,11 @@ public class LifeSupportImpl implements ILifeSupport {
     private final int tier;
     private final int mass;
     private final float maxHealth;
-    private final int supportCapacity;
-    private final float oxygenGenerationRate;
-    private final float waterRecyclingEfficiency;
-    private final float foodProductionRate;
-    private final float wasteProcessingEfficiency;
-    private final float radiationFiltration;
-    private final int backupDuration;
+    private final int maxCrewCapacity;
+    private final float oxygenEfficiency;
+    private final float waterRecyclingRate;
+    private final boolean hasAdvancedMedical;
+    private final boolean hasRadiationScrubbers;
     private final LifeSupportType lifeSupportType;
     
     /**
@@ -36,26 +34,22 @@ public class LifeSupportImpl implements ILifeSupport {
             int tier,
             int mass,
             float maxHealth,
-            int supportCapacity,
-            float oxygenGenerationRate,
-            float waterRecyclingEfficiency,
-            float foodProductionRate,
-            float wasteProcessingEfficiency,
-            float radiationFiltration,
-            int backupDuration,
+            int maxCrewCapacity,
+            float oxygenEfficiency,
+            float waterRecyclingRate,
+            boolean hasAdvancedMedical,
+            boolean hasRadiationScrubbers,
             LifeSupportType lifeSupportType) {
         this.id = id;
         this.displayName = displayName;
         this.tier = tier;
         this.mass = mass;
         this.maxHealth = maxHealth;
-        this.supportCapacity = supportCapacity;
-        this.oxygenGenerationRate = oxygenGenerationRate;
-        this.waterRecyclingEfficiency = waterRecyclingEfficiency;
-        this.foodProductionRate = foodProductionRate;
-        this.wasteProcessingEfficiency = wasteProcessingEfficiency;
-        this.radiationFiltration = radiationFiltration;
-        this.backupDuration = backupDuration;
+        this.maxCrewCapacity = maxCrewCapacity;
+        this.oxygenEfficiency = oxygenEfficiency;
+        this.waterRecyclingRate = waterRecyclingRate;
+        this.hasAdvancedMedical = hasAdvancedMedical;
+        this.hasRadiationScrubbers = hasRadiationScrubbers;
         this.lifeSupportType = lifeSupportType;
     }
 
@@ -90,33 +84,28 @@ public class LifeSupportImpl implements ILifeSupport {
     }
 
     @Override
-    public int getSupportCapacity() {
-        return supportCapacity;
+    public int getMaxCrewCapacity() {
+        return maxCrewCapacity;
     }
 
     @Override
-    public float getOxygenGenerationRate() {
-        return oxygenGenerationRate;
+    public float getOxygenEfficiency() {
+        return oxygenEfficiency;
     }
 
     @Override
-    public float getWaterRecyclingEfficiency() {
-        return waterRecyclingEfficiency;
+    public float getWaterRecyclingRate() {
+        return waterRecyclingRate;
     }
 
     @Override
-    public float getFoodProductionRate() {
-        return foodProductionRate;
+    public boolean hasAdvancedMedical() {
+        return hasAdvancedMedical;
     }
 
     @Override
-    public float getWasteProcessingEfficiency() {
-        return wasteProcessingEfficiency;
-    }
-
-    @Override
-    public float getRadiationFiltration() {
-        return radiationFiltration;
+    public boolean hasRadiationScrubbers() {
+        return hasRadiationScrubbers;
     }
 
     @Override
@@ -125,29 +114,24 @@ public class LifeSupportImpl implements ILifeSupport {
     }
 
     @Override
-    public int getBackupDuration() {
-        return backupDuration;
-    }
-
-    @Override
     public List<Component> getTooltip(boolean detailed) {
         List<Component> tooltip = new ArrayList<>();
         
         tooltip.add(Component.translatable("tooltip.galactic-space.tier", tier));
         tooltip.add(Component.translatable("tooltip.galactic-space.life_support.type", lifeSupportType.name()));
-        tooltip.add(Component.translatable("tooltip.galactic-space.life_support.capacity", supportCapacity));
+        tooltip.add(Component.translatable("tooltip.galactic-space.life_support.capacity", maxCrewCapacity));
         
         if (detailed) {
-            tooltip.add(Component.translatable("tooltip.galactic-space.life_support.oxygen", oxygenGenerationRate));
-            tooltip.add(Component.translatable("tooltip.galactic-space.life_support.water", waterRecyclingEfficiency * 100));
+            tooltip.add(Component.translatable("tooltip.galactic-space.life_support.oxygen", oxygenEfficiency * 100));
+            tooltip.add(Component.translatable("tooltip.galactic-space.life_support.water", waterRecyclingRate * 100));
             
-            if (foodProductionRate > 0) {
-                tooltip.add(Component.translatable("tooltip.galactic-space.life_support.food", foodProductionRate));
+            if (hasAdvancedMedical) {
+                tooltip.add(Component.translatable("tooltip.galactic-space.life_support.medical"));
             }
             
-            tooltip.add(Component.translatable("tooltip.galactic-space.life_support.waste", wasteProcessingEfficiency * 100));
-            tooltip.add(Component.translatable("tooltip.galactic-space.life_support.radiation", radiationFiltration));
-            tooltip.add(Component.translatable("tooltip.galactic-space.life_support.backup", backupDuration));
+            if (hasRadiationScrubbers) {
+                tooltip.add(Component.translatable("tooltip.galactic-space.life_support.radiation"));
+            }
         }
         
         return tooltip;
