@@ -2,7 +2,6 @@ package com.astroframe.galactic.space.implementation.celestial;
 
 import com.astroframe.galactic.core.api.space.ICelestialBody;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
 
 /**
  * Base implementation of the ICelestialBody interface.
@@ -11,15 +10,20 @@ public class BaseCelestialBody implements ICelestialBody {
     
     private final ResourceLocation id;
     private final String name;
-    private final float gravityFactor;
+    private final String description;
+    private final CelestialBodyType type;
+    private final ICelestialBody parent;
     private final int distanceFromHome;
+    private final float relativeSize;
+    private final float relativeGravity;
     private final float atmosphereDensity;
+    private final TemperatureRange temperatureRange;
+    private final RadiationLevel radiationLevel;
     private final boolean breathableAtmosphere;
-    private final float[] temperatureRange;
-    private final float radiationLevel;
-    private final boolean hasResources;
+    private final boolean hasLiquidWater;
+    private final boolean hasUniqueResources;
     private final int rocketTierRequired;
-    private Level level;
+    private boolean discovered;
     
     /**
      * Private constructor used by the Builder.
@@ -27,14 +31,20 @@ public class BaseCelestialBody implements ICelestialBody {
     private BaseCelestialBody(Builder builder) {
         this.id = builder.id;
         this.name = builder.name;
-        this.gravityFactor = builder.gravityFactor;
+        this.description = builder.description;
+        this.type = builder.type;
+        this.parent = builder.parent;
         this.distanceFromHome = builder.distanceFromHome;
+        this.relativeSize = builder.relativeSize;
+        this.relativeGravity = builder.relativeGravity;
         this.atmosphereDensity = builder.atmosphereDensity;
-        this.breathableAtmosphere = builder.breathableAtmosphere;
         this.temperatureRange = builder.temperatureRange;
         this.radiationLevel = builder.radiationLevel;
-        this.hasResources = builder.hasResources;
+        this.breathableAtmosphere = builder.breathableAtmosphere;
+        this.hasLiquidWater = builder.hasLiquidWater;
+        this.hasUniqueResources = builder.hasUniqueResources;
         this.rocketTierRequired = builder.rocketTierRequired;
+        this.discovered = builder.discovered;
     }
     
     @Override
@@ -48,8 +58,18 @@ public class BaseCelestialBody implements ICelestialBody {
     }
     
     @Override
-    public float getGravityFactor() {
-        return gravityFactor;
+    public String getDescription() {
+        return description;
+    }
+    
+    @Override
+    public CelestialBodyType getType() {
+        return type;
+    }
+    
+    @Override
+    public ICelestialBody getParent() {
+        return parent;
     }
     
     @Override
@@ -58,21 +78,33 @@ public class BaseCelestialBody implements ICelestialBody {
     }
     
     @Override
+    public float getRelativeSize() {
+        return relativeSize;
+    }
+    
+    @Override
+    public float getRelativeGravity() {
+        return relativeGravity;
+    }
+    
+    @Override
     public float getAtmosphereDensity() {
         return atmosphereDensity;
     }
     
     @Override
-    public Level getLevel() {
-        return level;
+    public TemperatureRange getTemperatureRange() {
+        return temperatureRange;
     }
     
-    /**
-     * Sets the level for this celestial body.
-     * @param level The Minecraft level
-     */
-    public void setLevel(Level level) {
-        this.level = level;
+    @Override
+    public RadiationLevel getRadiationLevel() {
+        return radiationLevel;
+    }
+    
+    @Override
+    public int getRocketTierRequired() {
+        return rocketTierRequired;
     }
     
     @Override
@@ -81,23 +113,23 @@ public class BaseCelestialBody implements ICelestialBody {
     }
     
     @Override
-    public float[] getTemperatureRange() {
-        return temperatureRange;
+    public boolean hasLiquidWater() {
+        return hasLiquidWater;
     }
     
     @Override
-    public float getRadiationLevel() {
-        return radiationLevel;
+    public boolean hasUniqueResources() {
+        return hasUniqueResources;
     }
     
     @Override
-    public boolean hasResources() {
-        return hasResources;
+    public boolean isDiscovered() {
+        return discovered;
     }
     
     @Override
-    public int getRocketTierRequired() {
-        return rocketTierRequired;
+    public void setDiscovered(boolean discovered) {
+        this.discovered = discovered;
     }
     
     /**
@@ -106,14 +138,20 @@ public class BaseCelestialBody implements ICelestialBody {
     public static class Builder {
         private final ResourceLocation id;
         private final String name;
-        private float gravityFactor = 1.0f;
+        private String description = "";
+        private CelestialBodyType type = CelestialBodyType.PLANET;
+        private ICelestialBody parent = null;
         private int distanceFromHome = 0;
+        private float relativeSize = 1.0f;
+        private float relativeGravity = 1.0f;
         private float atmosphereDensity = 1.0f;
+        private TemperatureRange temperatureRange = TemperatureRange.TEMPERATE;
+        private RadiationLevel radiationLevel = RadiationLevel.NONE;
         private boolean breathableAtmosphere = true;
-        private float[] temperatureRange = new float[]{-60, 60};
-        private float radiationLevel = 1.0f;
-        private boolean hasResources = true;
-        private int rocketTierRequired = 0;
+        private boolean hasLiquidWater = true;
+        private boolean hasUniqueResources = false;
+        private int rocketTierRequired = 1;
+        private boolean discovered = false;
         
         /**
          * Creates a new builder with the minimal required properties.
@@ -126,12 +164,32 @@ public class BaseCelestialBody implements ICelestialBody {
         }
         
         /**
-         * Sets the gravity factor.
-         * @param gravityFactor The gravity factor
+         * Sets the description.
+         * @param description The description
          * @return The builder
          */
-        public Builder gravityFactor(float gravityFactor) {
-            this.gravityFactor = gravityFactor;
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+        
+        /**
+         * Sets the celestial body type.
+         * @param type The body type
+         * @return The builder
+         */
+        public Builder type(CelestialBodyType type) {
+            this.type = type;
+            return this;
+        }
+        
+        /**
+         * Sets the parent celestial body.
+         * @param parent The parent body
+         * @return The builder
+         */
+        public Builder parent(ICelestialBody parent) {
+            this.parent = parent;
             return this;
         }
         
@@ -146,12 +204,52 @@ public class BaseCelestialBody implements ICelestialBody {
         }
         
         /**
+         * Sets the relative size.
+         * @param relativeSize The relative size
+         * @return The builder
+         */
+        public Builder relativeSize(float relativeSize) {
+            this.relativeSize = relativeSize;
+            return this;
+        }
+        
+        /**
+         * Sets the relative gravity.
+         * @param relativeGravity The relative gravity
+         * @return The builder
+         */
+        public Builder relativeGravity(float relativeGravity) {
+            this.relativeGravity = relativeGravity;
+            return this;
+        }
+        
+        /**
          * Sets the atmosphere density.
          * @param atmosphereDensity The atmosphere density
          * @return The builder
          */
         public Builder atmosphereDensity(float atmosphereDensity) {
             this.atmosphereDensity = atmosphereDensity;
+            return this;
+        }
+        
+        /**
+         * Sets the temperature range.
+         * @param temperatureRange The temperature range
+         * @return The builder
+         */
+        public Builder temperatureRange(TemperatureRange temperatureRange) {
+            this.temperatureRange = temperatureRange;
+            return this;
+        }
+        
+        /**
+         * Sets the radiation level.
+         * @param radiationLevel The radiation level
+         * @return The builder
+         */
+        public Builder radiationLevel(RadiationLevel radiationLevel) {
+            this.radiationLevel = radiationLevel;
             return this;
         }
         
@@ -166,33 +264,22 @@ public class BaseCelestialBody implements ICelestialBody {
         }
         
         /**
-         * Sets the temperature range.
-         * @param min The minimum temperature in Celsius
-         * @param max The maximum temperature in Celsius
+         * Sets whether this celestial body has liquid water.
+         * @param hasLiquidWater true if has liquid water
          * @return The builder
          */
-        public Builder temperatureRange(float min, float max) {
-            this.temperatureRange = new float[]{min, max};
+        public Builder hasLiquidWater(boolean hasLiquidWater) {
+            this.hasLiquidWater = hasLiquidWater;
             return this;
         }
         
         /**
-         * Sets the radiation level.
-         * @param radiationLevel The radiation level
+         * Sets whether this celestial body has unique resources.
+         * @param hasUniqueResources true if has unique resources
          * @return The builder
          */
-        public Builder radiationLevel(float radiationLevel) {
-            this.radiationLevel = radiationLevel;
-            return this;
-        }
-        
-        /**
-         * Sets whether this celestial body has resources.
-         * @param hasResources true if has resources
-         * @return The builder
-         */
-        public Builder hasResources(boolean hasResources) {
-            this.hasResources = hasResources;
+        public Builder hasUniqueResources(boolean hasUniqueResources) {
+            this.hasUniqueResources = hasUniqueResources;
             return this;
         }
         
@@ -203,6 +290,16 @@ public class BaseCelestialBody implements ICelestialBody {
          */
         public Builder rocketTierRequired(int rocketTierRequired) {
             this.rocketTierRequired = rocketTierRequired;
+            return this;
+        }
+        
+        /**
+         * Sets whether this celestial body has been discovered.
+         * @param discovered true if discovered
+         * @return The builder
+         */
+        public Builder discovered(boolean discovered) {
+            this.discovered = discovered;
             return this;
         }
         
