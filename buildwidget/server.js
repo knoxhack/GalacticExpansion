@@ -214,11 +214,42 @@ wss.on('connection', (ws) => {
 async function startBuild(gradleCommand) {
   // Reset build status
   const now = new Date();
+  
+  // Get current version info from build counter file
+  let buildNumber = 1;
+  try {
+    if (fs.existsSync('.build_counter')) {
+      const counter = fs.readFileSync('.build_counter', 'utf8').trim();
+      buildNumber = parseInt(counter, 10) || 1;
+    }
+  } catch (err) {
+    console.error('Error reading build counter:', err);
+  }
+  
+  // Create formatted date for version
+  const date = new Date();
+  const dateStr = date.getFullYear().toString() +
+                 (date.getMonth() + 1).toString().padStart(2, '0') +
+                 date.getDate().toString().padStart(2, '0');
+  
+  // Save current version info
+  const versionInfo = buildStatus.version || {
+    current: '0.1.0',
+    buildNumber: buildNumber,
+    lastReleaseDate: null,
+    lastReleaseTag: null
+  };
+  
+  // Update current version with build number
+  versionInfo.buildNumber = buildNumber;
+  versionInfo.current = `0.1.0.b${buildNumber}-${dateStr}`;
+  
   buildStatus = {
     status: 'building',
     progress: 0,
     startTime: now.toISOString(),
     tasks: {},
+    version: versionInfo,
     modules: {
       core: { status: 'pending', lastUpdate: now.toISOString() },
       power: { status: 'pending', lastUpdate: now.toISOString() },
@@ -529,17 +560,75 @@ app.post('/api/release', (req, res) => {
     broadcastOutput([{ type: 'error', message: `[GitHub Release Error] ${output}` }]);
   });
   
+  releaseProcess.stdout.on('data', (data) => {
+    const output = data.toString();
+    
+    // Track release version information
+    const versionMatch = output.match(/Creating release version: ([0-9]+\.[0-9]+\.[0-9]+\.b[0-9]+-[0-9]+)/);
+    if (versionMatch && versionMatch[1]) {
+      const version = versionMatch[1];
+      buildStatus.releaseVersion = version;
+      
+      // Update version info in buildStatus
+      if (buildStatus.version) {
+        buildStatus.version.lastReleaseTag = `v${version}`;
+        buildStatus.version.lastReleaseDate = new Date().toISOString();
+      }
+      
+      // Highlight version info in the output
+      buildStatus.buildOutput.push({ 
+        type: 'success', 
+        message: `[GitHub Release] Creating release version: ${version}`
+      });
+      broadcastOutput([{ type: 'success', message: `[GitHub Release] Creating release version: ${version}` }]);
+    } else {
+      // Check for GitHub URL in output (when release is complete)
+      const urlMatch = output.match(/View your release at: (https:\/\/github\.com\/.*\/releases\/tag\/.*)/);
+      if (urlMatch && urlMatch[1]) {
+        const releaseUrl = urlMatch[1];
+        buildStatus.releaseUrl = releaseUrl;
+        
+        // Add release URL to output
+        buildStatus.buildOutput.push({ 
+          type: 'success', 
+          message: `[GitHub Release] Release URL: ${releaseUrl}`
+        });
+        broadcastOutput([{ type: 'success', message: `[GitHub Release] Release URL: ${releaseUrl}` }]);
+      } else {
+        // Regular output
+        buildStatus.buildOutput.push({ 
+          type: 'info', 
+          message: `[GitHub Release] ${output}`
+        });
+        broadcastOutput([{ type: 'info', message: `[GitHub Release] ${output}` }]);
+      }
+    }
+  });
+  
   releaseProcess.on('close', (code) => {
     if (code === 0) {
-      const successMessage = 'Successfully created GitHub release!';
+      const versionInfo = buildStatus.releaseVersion ? ` (v${buildStatus.releaseVersion})` : '';
+      const successMessage = `Successfully created GitHub release${versionInfo} with all module JARs!`;
       buildStatus.buildOutput.push({ 
-        type: 'info', 
+        type: 'success', 
         message: `[GitHub Release] ${successMessage}`
       });
-      broadcastOutput([{ type: 'info', message: `[GitHub Release] ${successMessage}` }]);
+      broadcastOutput([{ type: 'success', message: `[GitHub Release] ${successMessage}` }]);
       
       buildStatus.releaseCreated = true;
       buildStatus.releaseTime = new Date().toISOString();
+      
+      // Update build counter for next build
+      try {
+        if (fs.existsSync('.build_counter')) {
+          const currentBuild = parseInt(fs.readFileSync('.build_counter', 'utf8').trim(), 10);
+          const nextBuild = (isNaN(currentBuild) ? 1 : currentBuild) + 1;
+          fs.writeFileSync('.build_counter', nextBuild.toString(), 'utf8');
+          console.log(`Build counter incremented to ${nextBuild} for next build`);
+        }
+      } catch (err) {
+        console.error('Error updating build counter file:', err);
+      }
     } else {
       const errorMessage = `Failed to create GitHub release (exit code: ${code})`;
       buildStatus.buildOutput.push({ 

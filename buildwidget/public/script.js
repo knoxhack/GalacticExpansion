@@ -12,6 +12,10 @@ const buildCommandSelect = document.getElementById('buildCommand');
 const clearOutputBtn = document.getElementById('clearOutput');
 const autoScrollCheckbox = document.getElementById('autoScroll');
 
+// Version information elements
+const currentVersionElement = document.getElementById('currentVersion');
+const lastReleaseDateElement = document.getElementById('lastReleaseDate');
+
 // Establish WebSocket connection
 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
 const host = window.location.host.replace('5000', '5001');  // Use port 5001 instead
@@ -206,6 +210,26 @@ function updateBuildStatus(status) {
     progressBar.style.width = `${status.progress}%`;
     progressText.textContent = `${status.progress}%`;
     
+    // Update version information if available
+    if (status.version) {
+        // Update the current version display
+        if (currentVersionElement && status.version.current) {
+            currentVersionElement.textContent = status.version.current;
+        }
+        
+        // Update last release date if available
+        if (lastReleaseDateElement) {
+            if (status.version.lastReleaseDate) {
+                const releaseDate = new Date(status.version.lastReleaseDate);
+                const formattedDate = releaseDate.toLocaleDateString();
+                const releaseTag = status.version.lastReleaseTag || '';
+                lastReleaseDateElement.textContent = `Last Release: ${formattedDate} (${releaseTag})`;
+            } else {
+                lastReleaseDateElement.textContent = 'Last Release: None';
+            }
+        }
+    }
+    
     // Update build timing information
     if (status.startTime) {
         buildStartTime = new Date(status.startTime);
@@ -398,6 +422,31 @@ function padZero(num) {
 // Utility function to capitalize first letter
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+// Format relative time function (e.g. "5 minutes ago", "2 days ago")
+function getRelativeTime(date) {
+    if (!date) return 'Never';
+    
+    const now = new Date();
+    const diffMs = now - date;
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHours = Math.floor(diffMin / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    
+    if (diffSec < 60) {
+        return `Just now`;
+    } else if (diffMin < 60) {
+        return `${diffMin} minute${diffMin > 1 ? 's' : ''} ago`;
+    } else if (diffHours < 24) {
+        return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    } else if (diffDays < 30) {
+        return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    } else {
+        // Format as date string
+        return date.toLocaleDateString();
+    }
 }
 
 // Update build metrics display
