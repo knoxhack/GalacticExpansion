@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 public class SpaceBodies {
     // Earth - Home planet reference (required as starting point)
     public static final ICelestialBody EARTH = new BaseCelestialBody.Builder(
-            new ResourceLocation("minecraft:overworld"), // Use vanilla minecraft namespace
+            new ResourceLocation("minecraft:overworld"), // Use vanilla minecraft namespace as string
             "Earth")
             .gravityFactor(1.0f)
             .distanceFromHome(0)
@@ -27,7 +27,7 @@ public class SpaceBodies {
     
     // Space Station
     public static final ICelestialBody SPACE_STATION = new BaseCelestialBody.Builder(
-            new ResourceLocation(GalacticSpace.MOD_ID, "space_station"),
+            new ResourceLocation(GalacticSpace.MOD_ID + ":space_station"),
             "Orbital Space Station")
             .gravityFactor(0.05f)
             .distanceFromHome(5)

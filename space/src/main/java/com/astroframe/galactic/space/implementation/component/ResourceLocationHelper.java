@@ -16,10 +16,10 @@ public class ResourceLocationHelper {
     public static ResourceLocation of(String path) {
         // Split into namespace and path if it already has a namespace
         if (path.contains(":")) {
-            String[] parts = path.split(":", 2);
-            return new ResourceLocation(parts[0], parts[1]);
+            // Use full string constructor which accepts "namespace:path" format
+            return new ResourceLocation(path);
         }
-        // Otherwise use our mod's namespace
-        return new ResourceLocation(GalacticSpace.MOD_ID, path);
+        // Otherwise use our mod's namespace with colon
+        return new ResourceLocation(GalacticSpace.MOD_ID + ":" + path);
     }
 }
