@@ -37,9 +37,8 @@ public class ModularRocketItem extends Item {
         super(properties);
     }
     
-    @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag tag = getOrCreateTag(stack);
         
         if (hasValidRocket(stack)) {
             // Add basic rocket info
@@ -132,7 +131,7 @@ public class ModularRocketItem extends Item {
      * Checks if the rocket has all required components.
      */
     public boolean hasValidRocket(ItemStack stack) {
-        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag tag = getOrCreateTag(stack);
         
         // Must have command module
         if (!tag.contains("commandModule") || tag.getString("commandModule").isEmpty()) {

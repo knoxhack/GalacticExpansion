@@ -14,6 +14,6 @@ public class ResourceLocationHelper {
      * @return The resource location
      */
     public static ResourceLocation of(String path) {
-        return new ResourceLocation(GalacticSpace.MOD_ID, path);
+        return ResourceLocation.parse(GalacticSpace.MOD_ID + ":" + path);
     }
 }
