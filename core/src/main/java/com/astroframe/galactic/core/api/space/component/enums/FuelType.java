@@ -5,9 +5,11 @@ package com.astroframe.galactic.core.api.space.component.enums;
  */
 public enum FuelType {
     CHEMICAL("Chemical"),
+    HYDROGEN("Hydrogen"),
     ION("Ion"),
     NUCLEAR("Nuclear"),
     FUSION("Fusion"),
+    EXOTIC("Exotic"),
     ANTIMATTER("Antimatter");
     
     private final String displayName;

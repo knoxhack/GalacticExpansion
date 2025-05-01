@@ -5,7 +5,9 @@ package com.astroframe.galactic.core.api.space.component.enums;
  */
 public enum CommandModuleType {
     BASIC("Basic"),
+    STANDARD("Standard"),
     ADVANCED("Advanced"),
+    QUANTUM("Quantum"),
     SUPERIOR("Superior"),
     SCIENCE("Science"),
     MILITARY("Military");

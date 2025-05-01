@@ -6,6 +6,7 @@ package com.astroframe.galactic.core.api.space.component.enums;
 public enum EngineType {
     CHEMICAL("Chemical"),
     ION("Ion"),
+    PLASMA("Plasma"),
     NUCLEAR("Nuclear"),
     FUSION("Fusion"),
     ANTIMATTER("Antimatter");

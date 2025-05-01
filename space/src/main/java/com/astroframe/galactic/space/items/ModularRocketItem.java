@@ -4,6 +4,7 @@ import com.astroframe.galactic.core.api.space.ModularRocket;
 import com.astroframe.galactic.core.api.space.component.*;
 import com.astroframe.galactic.space.GalacticSpace;
 import com.astroframe.galactic.space.implementation.component.RocketComponentFactory;
+import com.astroframe.galactic.space.implementation.component.ShieldFactory;
 import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
 import static com.astroframe.galactic.space.items.ItemStackHelper.getOrCreateTag;
 import net.minecraft.ChatFormatting;
@@ -417,7 +418,7 @@ public class ModularRocketItem extends Item {
         IShield shield = RocketComponentFactory.createDeflectorShield();
         ListTag shieldsList = new ListTag();
         shieldsList.add(StringTag.valueOf(shield.getId().toString()));
-        shieldsList.add(StringTag.valueOf(RocketComponentFactory.createThermalShield().getId().toString()));
+        shieldsList.add(StringTag.valueOf(ShieldFactory.createQuantumShield().getId().toString()));
         tag.put("shields", shieldsList);
         
         // Add life support
