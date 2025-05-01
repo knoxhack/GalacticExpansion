@@ -204,7 +204,7 @@ public abstract class BaseMachine implements Machine {
     }
     
     @Override
-    public int getMaxEnergyStored() {
+    public int getMaxEnergyCapacity() {
         if (energyStorage == null) return 0;
         return energyStorage.getMaxEnergy();
     }

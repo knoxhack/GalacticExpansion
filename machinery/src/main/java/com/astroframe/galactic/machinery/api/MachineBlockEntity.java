@@ -327,7 +327,7 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
     }
     
     @Override
-    public int getMaxEnergyStored() {
+    public int getMaxEnergyCapacity() {
         return energyStorage.getMaxEnergy();
     }
     

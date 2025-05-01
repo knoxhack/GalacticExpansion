@@ -112,17 +112,26 @@ public class PassengerCompartmentImpl implements IPassengerCompartment {
         return compartmentType;
     }
     
-    @Override
+    /**
+     * Checks if this compartment has cryogenic sleep facilities.
+     * @return True if has cryogenic sleep
+     */
     public boolean hasCryogenicSleep() {
         return hasCryogenicSleep;
     }
 
-    @Override
+    /**
+     * Gets the radiation protection level of this compartment.
+     * @return The radiation protection level
+     */
     public float getRadiationProtection() {
         return radiationProtection;
     }
 
-    @Override
+    /**
+     * Gets the emergency life support duration in minutes.
+     * @return The emergency support duration
+     */
     public int getEmergencySupportDuration() {
         return emergencySupportDuration;
     }
