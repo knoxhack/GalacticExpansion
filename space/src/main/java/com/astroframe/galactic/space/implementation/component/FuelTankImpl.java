@@ -106,12 +106,18 @@ public class FuelTankImpl implements IFuelTank {
         return ComponentType.FUEL_TANK;
     }
 
-    @Override
+    /**
+     * Gets the capacity of this fuel tank.
+     * @return The capacity
+     */
     public int getCapacity() {
         return capacity;
     }
 
-    @Override
+    /**
+     * Gets the structural integrity of this fuel tank.
+     * @return The structural integrity
+     */
     public float getStructuralIntegrity() {
         return structuralIntegrity;
     }
@@ -138,17 +144,26 @@ public class FuelTankImpl implements IFuelTank {
         return hasCryogenicStorage || tier >= 3;
     }
 
-    @Override
+    /**
+     * Gets the flow rate of the fuel tank.
+     * @return The flow rate
+     */
     public int getFlowRate() {
         return flowRate;
     }
 
-    @Override
+    /**
+     * Checks if this tank has cryogenic storage.
+     * @return True if has cryogenic storage
+     */
     public boolean hasCryogenicStorage() {
         return hasCryogenicStorage;
     }
 
-    @Override
+    /**
+     * Gets the leak resistance of this tank.
+     * @return The leak resistance
+     */
     public float getLeakResistance() {
         return leakResistance;
     }
