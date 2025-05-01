@@ -4,6 +4,7 @@ import com.astroframe.galactic.core.api.space.component.*;
 import com.astroframe.galactic.space.GalacticSpace;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
+import static com.astroframe.galactic.space.implementation.component.ResourceLocationHelper.of;
 
 /**
  * Factory class for creating rocket components.
@@ -17,7 +18,7 @@ public class RocketComponentFactory {
      */
     public static ICommandModule createBasicCommandModule() {
         return new CommandModuleImpl(
-                ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_basic"),
+                of("command_module_basic"),
                 Component.translatable("component.galactic-space.command_module_basic"),
                 1,
                 150,

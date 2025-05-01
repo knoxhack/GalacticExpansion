@@ -4,6 +4,8 @@ import com.astroframe.galactic.core.api.space.ModularRocket;
 import com.astroframe.galactic.core.api.space.component.*;
 import com.astroframe.galactic.space.GalacticSpace;
 import com.astroframe.galactic.space.implementation.component.RocketComponentFactory;
+import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
+import static com.astroframe.galactic.space.items.ItemStackHelper.getOrCreateTag;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -11,6 +13,7 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -189,7 +192,7 @@ public class ModularRocketItem extends Item {
         
         // Create a rocket builder
         ModularRocket.Builder builder = new ModularRocket.Builder(
-                new ResourceLocation(GalacticSpace.MOD_ID, "player_rocket_" + UUID.randomUUID().toString())
+                ResourceLocationHelper.of("player_rocket_" + UUID.randomUUID().toString())
         );
         
         // Add command module
