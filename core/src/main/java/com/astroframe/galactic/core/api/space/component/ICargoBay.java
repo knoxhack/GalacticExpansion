@@ -2,55 +2,67 @@ package com.astroframe.galactic.core.api.space.component;
 
 /**
  * Interface for rocket cargo bay components.
+ * Cargo bays provide storage space for items and resources.
  */
 public interface ICargoBay extends IRocketComponent {
     
     /**
-     * Gets the number of inventory slots this cargo bay provides.
-     * @return The slot count
+     * Gets the storage capacity of this cargo bay in inventory slots.
+     * @return The number of inventory slots
      */
-    int getSlotCount();
+    int getStorageCapacity();
     
     /**
-     * Gets the maximum weight capacity of this cargo bay.
-     * @return The weight capacity
+     * Gets the maximum item stack size for this cargo bay.
+     * @return The maximum stack size
      */
-    int getWeightCapacity();
+    int getMaxStackSize();
     
     /**
-     * Checks if this cargo bay has automatic sorting capabilities.
-     * @return true if automatic sorting is available
+     * Gets the specialized storage type for this cargo bay.
+     * @return The cargo bay specialized type
      */
-    boolean hasAutomaticSorting();
+    CargoBayType getCargoBayType();
     
     /**
-     * Checks if this cargo bay has vacuum sealing for atmospheric protection.
-     * @return true if vacuum sealing is available
+     * Gets the automation level of this cargo bay.
+     * Higher values allow for more automated loading/unloading.
+     * @return The automation level (0-10)
      */
-    boolean hasVacuumSealing();
+    int getAutomationLevel();
     
     /**
-     * Gets the type of cargo bay.
-     * @return The cargo bay type
+     * Checks if this cargo bay has refrigeration capabilities.
+     * @return true if the cargo bay has refrigeration
      */
-    CargoBayType getCargoType();
+    boolean hasRefrigeration();
     
     /**
-     * Gets the access speed of this cargo bay.
-     * Higher values allow for faster item retrieval and storage.
-     * @return The access speed
+     * Checks if this cargo bay has radiation shielding.
+     * @return true if the cargo bay has radiation shielding
      */
-    float getAccessSpeed();
+    boolean hasRadiationShielding();
     
     /**
-     * Enum representing the different types of cargo bays.
+     * Enum representing the different specialized cargo bay types.
      */
     enum CargoBayType {
-        STANDARD,       // Basic storage
-        REFRIGERATED,   // For temperature-sensitive items
-        REINFORCED,     // For hazardous materials
-        QUANTUM,        // Enhanced storage capabilities
-        SPECIALIZED     // For specific item types
+        STANDARD("Standard"),       // General purpose storage
+        BULK("Bulk Storage"),       // Optimized for large quantities of the same item
+        FLUID("Fluid Storage"),     // For storing liquids
+        SPECIMEN("Specimen"),       // For biological samples
+        EQUIPMENT("Equipment"),     // For tools and specialized equipment
+        HAZARDOUS("Hazardous");     // For dangerous materials
+        
+        private final String displayName;
+        
+        CargoBayType(String displayName) {
+            this.displayName = displayName;
+        }
+        
+        public String getDisplayName() {
+            return this.displayName;
+        }
     }
     
     @Override

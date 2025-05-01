@@ -2,58 +2,64 @@ package com.astroframe.galactic.core.api.space.component;
 
 /**
  * Interface for rocket fuel tank components.
+ * Fuel tanks store the propellant needed for rocket engines to function.
  */
 public interface IFuelTank extends IRocketComponent {
     
     /**
      * Gets the maximum fuel capacity of this tank.
-     * @return The fuel capacity
+     * @return The maximum fuel capacity in fuel units
      */
-    int getCapacity();
+    int getMaxFuelCapacity();
     
     /**
-     * Gets the structural integrity of this fuel tank.
-     * Higher values provide better protection against damage.
-     * @return The structural integrity
-     */
-    float getStructuralIntegrity();
-    
-    /**
-     * Gets the type of fuel this tank can store.
+     * Gets the fuel type stored in this tank.
      * @return The fuel type
      */
     FuelType getFuelType();
     
     /**
-     * Gets the flow rate of this fuel tank.
-     * Determines how quickly fuel can be transferred to engines.
-     * @return The flow rate
+     * Gets the pressure rating of this tank.
+     * Higher values allow for more compressed/volatile fuel storage.
+     * @return The pressure rating
      */
-    int getFlowRate();
+    float getPressureRating();
     
     /**
-     * Checks if this fuel tank has cryogenic storage capabilities.
-     * Required for certain fuel types.
-     * @return true if cryogenic storage is available
+     * Gets the insulation level of this tank.
+     * Higher values reduce boil-off for cryogenic fuels.
+     * @return The insulation level (1-10)
      */
-    boolean hasCryogenicStorage();
+    int getInsulationLevel();
     
     /**
-     * Gets the leak resistance of this fuel tank.
-     * Higher values reduce the chance of fuel leakage during damage.
-     * @return The leak resistance
+     * Gets the structural integrity of this tank.
+     * Higher values make the tank more resistant to damage.
+     * @return The structural integrity (1-10)
      */
-    float getLeakResistance();
+    int getStructuralIntegrity();
     
     /**
-     * Enum representing the different types of fuels.
+     * Enum representing the different types of rocket fuel.
      */
     enum FuelType {
-        CHEMICAL,       // Standard rocket fuel
-        HYDROGEN,       // More efficient, requires special handling
-        NUCLEAR,        // High energy density, hazardous
-        ANTIMATTER,     // Extremely powerful, highly volatile
-        EXOTIC          // For experimental drives and interstellar travel
+        SOLID_FUEL("Solid Fuel"),           // Basic early-game fuel
+        LIQUID_KEROSENE("Kerosene"),        // Standard chemical rocket fuel
+        LIQUID_HYDROGEN("Liquid Hydrogen"), // More efficient but requires cryogenic storage
+        XENON("Xenon Gas"),                 // For ion engines
+        NUCLEAR("Nuclear"),                 // For nuclear thermal engines
+        PLASMA("Plasma"),                   // For plasma engines
+        ANTIMATTER("Antimatter");           // End-game fuel type
+        
+        private final String displayName;
+        
+        FuelType(String displayName) {
+            this.displayName = displayName;
+        }
+        
+        public String getDisplayName() {
+            return this.displayName;
+        }
     }
     
     @Override

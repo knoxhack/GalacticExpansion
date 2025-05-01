@@ -2,29 +2,23 @@ package com.astroframe.galactic.core.api.space.component;
 
 /**
  * Interface for rocket shield components.
+ * Shields protect the rocket from environmental hazards and damage.
  */
 public interface IShield extends IRocketComponent {
     
     /**
-     * Gets the maximum impact absorption capacity of this shield.
-     * Higher values protect against larger space debris impacts.
-     * @return The impact protection level
+     * Gets the maximum shield strength.
+     * Higher values provide more protection.
+     * @return The maximum shield strength
      */
-    float getImpactProtection();
+    float getMaxShieldStrength();
     
     /**
-     * Gets the heat resistance of this shield.
-     * Higher values provide better protection during atmospheric entry.
-     * @return The heat resistance
+     * Gets the shield regeneration rate.
+     * Higher values mean faster shield regeneration after taking damage.
+     * @return The shield regeneration rate in strength per second
      */
-    float getHeatResistance();
-    
-    /**
-     * Gets the radiation shielding effectiveness.
-     * Higher values protect against cosmic radiation.
-     * @return The radiation shielding level
-     */
-    float getRadiationShielding();
+    float getRegenerationRate();
     
     /**
      * Gets the shield type.
@@ -33,34 +27,44 @@ public interface IShield extends IRocketComponent {
     ShieldType getShieldType();
     
     /**
-     * Gets the energy consumption of this shield if it's powered.
-     * Only applicable to energy shields.
-     * @return The energy consumption per tick, or 0 if passive
+     * Gets the energy consumption of this shield when active.
+     * @return The energy consumption rate
      */
     int getEnergyConsumption();
     
     /**
-     * Checks if this shield is regenerative.
-     * @return true if the shield can repair itself over time
+     * Gets the heat resistance of this shield.
+     * Higher values provide better protection during atmospheric entry.
+     * @return The heat resistance level (1-10)
      */
-    boolean isRegenerative();
+    int getHeatResistance();
     
     /**
-     * Gets the coverage percentage of this shield.
-     * Not all shields provide 100% coverage.
-     * @return The coverage percentage (0-100)
+     * Gets the impact resistance of this shield.
+     * Higher values provide better protection against physical impacts.
+     * @return The impact resistance level (1-10)
      */
-    float getCoveragePercentage();
+    int getImpactResistance();
     
     /**
      * Enum representing the different types of shields.
      */
     enum ShieldType {
-        PHYSICAL,       // Metal plating, no energy required
-        THERMAL,        // Heat shields for atmospheric entry
-        MAGNETIC,       // Energy-based protection against charged particles
-        DEFLECTOR,      // Energy-based protection against physical impacts
-        QUANTUM         // Advanced energy shield with regenerative capabilities
+        HEAT_SHIELD("Heat Shield"),           // Protects from atmospheric entry heat
+        IMPACT_SHIELD("Impact Shield"),       // Protects from physical impacts
+        RADIATION_SHIELD("Radiation Shield"), // Protects from cosmic radiation
+        ENERGY_SHIELD("Energy Shield"),       // Advanced shield using energy field
+        COMPOSITE("Composite Shield");        // Balanced protection against multiple threats
+        
+        private final String displayName;
+        
+        ShieldType(String displayName) {
+            this.displayName = displayName;
+        }
+        
+        public String getDisplayName() {
+            return this.displayName;
+        }
     }
     
     @Override
