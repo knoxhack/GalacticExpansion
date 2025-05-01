@@ -6,6 +6,9 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 import java.util.Map;
 
+import com.astroframe.galactic.core.api.space.component.RocketComponentType;
+import net.minecraft.nbt.CompoundTag;
+
 /**
  * Interface for rocket entities that can travel between celestial bodies.
  */
@@ -135,4 +138,29 @@ public interface IRocket {
      * @param amount The amount to repair
      */
     void repair(float amount);
+    
+    /**
+     * Checks if this rocket has a component of the specified type.
+     * @param type The component type to check for
+     * @return true if the rocket has the component
+     */
+    boolean hasComponent(RocketComponentType type);
+    
+    /**
+     * Saves rocket data to an NBT tag.
+     * @param tag The tag to save to
+     */
+    default void saveToTag(CompoundTag tag) {
+        // Default implementation does nothing
+    }
+    
+    /**
+     * Creates a rocket from an NBT tag.
+     * @param tag The tag to load from
+     * @return The rocket, or null if invalid
+     */
+    static IRocket fromTag(CompoundTag tag) {
+        // Default implementation returns null
+        return null;
+    }
 }

@@ -1,12 +1,16 @@
 package com.astroframe.galactic.core.api.space;
 
 import com.astroframe.galactic.core.api.space.component.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
 import java.util.Comparator;
+import java.util.UUID;
 
 /**
  * Implementation of a modular rocket composed of individual components.
@@ -49,13 +53,35 @@ public class ModularRocket implements IRocket {
         this.currentFuel = 0;
     }
     
+    /**
+     * Creates a new empty modular rocket.
+     * This constructor is used when creating rockets programmatically.
+     * Components need to be added manually after construction.
+     */
+    public ModularRocket() {
+        this.id = new ResourceLocation("galactic-space", "rocket_" + UUID.randomUUID().toString().substring(0, 8));
+        this.commandModule = null;  // Will need to be set
+        this.engines = new ArrayList<>();
+        this.fuelTanks = new ArrayList<>();
+        this.cargoBays = new ArrayList<>();
+        this.passengerCompartments = new ArrayList<>();
+        this.shields = new ArrayList<>();
+        this.lifeSupports = new ArrayList<>();
+        
+        this.passengers = new ArrayList<>();
+        this.cargo = new HashMap<>();
+        this.status = RocketStatus.BUILDING;
+        this.health = 100.0f;
+        this.currentFuel = 0;
+    }
+    
     @Override
     public int getTier() {
         // Tier is determined by the highest tier component
-        return Math.min(3, Math.max(
-            commandModule.getTier(),
-            engines.stream().map(IRocketComponent::getTier).max(Integer::compare).orElse(1)
-        ));
+        int commandModuleTier = commandModule != null ? commandModule.getTier() : 1;
+        int engineTier = engines.stream().map(IRocketComponent::getTier).max(Integer::compare).orElse(1);
+        
+        return Math.min(3, Math.max(commandModuleTier, engineTier));
     }
     
     @Override
@@ -367,6 +393,123 @@ public class ModularRocket implements IRocket {
      */
     public ResourceLocation getId() {
         return id;
+    }
+    
+    /**
+     * Sets the fuel level of this rocket.
+     * @param fuel The new fuel level
+     */
+    public void setFuelLevel(int fuel) {
+        this.currentFuel = Math.min(fuel, getFuelCapacity());
+    }
+    
+    /**
+     * Saves rocket data to an NBT tag.
+     * @param tag The tag to save to
+     */
+    @Override
+    public void saveToTag(CompoundTag tag) {
+        // Save basic properties
+        tag.putString("id", id.toString());
+        tag.putInt("tier", getTier());
+        tag.putInt("fuel", currentFuel);
+        tag.putFloat("health", health);
+        tag.putInt("status", status.ordinal());
+        
+        // Save component counts
+        tag.putInt("engineCount", engines.size());
+        tag.putInt("fuelTankCount", fuelTanks.size());
+        tag.putInt("cargoBayCount", cargoBays.size());
+        tag.putInt("passengerCompartmentCount", passengerCompartments.size());
+        tag.putInt("shieldCount", shields.size());
+        tag.putInt("lifeSupportCount", lifeSupports.size());
+        
+        // More detailed component info could be saved here in a real implementation
+    }
+    
+    /**
+     * Creates a rocket from an NBT tag.
+     * This simplified implementation creates a default rocket for the given tier.
+     * 
+     * @param tag The tag to load from
+     * @return The rocket, or null if invalid
+     */
+    public static ModularRocket fromTag(CompoundTag tag) {
+        if (!tag.contains("tier") || !tag.contains("id")) {
+            return null;
+        }
+        
+        try {
+            String idStr = tag.getString("id");
+            ResourceLocation id = new ResourceLocation(idStr);
+            int tier = tag.getInt("tier");
+            int fuel = tag.getInt("fuel");
+            float health = tag.contains("health") ? tag.getFloat("health") : 100f;
+            RocketStatus status = tag.contains("status") 
+                ? RocketStatus.values()[tag.getInt("status")] 
+                : RocketStatus.BUILDING;
+            
+            // Create a new rocket with default components for the tier
+            ModularRocket rocket = createDefaultRocket(id, tier);
+            if (rocket != null) {
+                rocket.setFuelLevel(fuel);
+                rocket.health = health;
+                rocket.status = status;
+            }
+            
+            return rocket;
+        } catch (Exception e) {
+            // Log error in real implementation
+            return null;
+        }
+    }
+    
+    /**
+     * Creates a default rocket for the given tier.
+     * 
+     * @param id The rocket ID
+     * @param tier The tier level (1-3)
+     * @return A new rocket with default components
+     */
+    private static ModularRocket createDefaultRocket(ResourceLocation id, int tier) {
+        // This would be implemented with proper component creation
+        // For now, we return null to indicate not implemented
+        return null;
+    }
+    
+    /**
+     * Checks if this rocket has a component of the specified type.
+     * @param type The component type to check for
+     * @return true if the rocket has the component
+     */
+    public boolean hasComponent(RocketComponentType type) {
+        switch (type) {
+            case COCKPIT:
+                return commandModule != null;
+            case ENGINE:
+                return !engines.isEmpty();
+            case FUEL_TANK:
+                return !fuelTanks.isEmpty();
+            case STORAGE:
+                return !cargoBays.isEmpty();
+            case PASSENGER_COMPARTMENT:
+                return !passengerCompartments.isEmpty();
+            case SHIELDING:
+                return !shields.isEmpty();
+            case LIFE_SUPPORT:
+                return !lifeSupports.isEmpty();
+            case STRUCTURE:
+                // Structure is always present if the rocket is valid
+                return true;
+            case NAVIGATION:
+                // Navigation is typically part of the command module
+                return commandModule != null;
+            case FUEL:
+                // Fuel is present if fuel level is > 0
+                return currentFuel > 0;
+            default:
+                return false;
+        }
     }
     
     /**
