@@ -59,7 +59,7 @@ public class ModularRocket implements IRocket {
     
     @Override
     public int getFuelCapacity() {
-        return fuelTanks.stream().mapToInt(IFuelTank::getCapacity).sum();
+        return fuelTanks.stream().mapToInt(IFuelTank::getMaxFuelCapacity).sum();
     }
     
     @Override
@@ -77,7 +77,7 @@ public class ModularRocket implements IRocket {
     
     @Override
     public int getPayloadCapacity() {
-        return cargoBays.stream().mapToInt(ICargoBay::getSlotCount).sum();
+        return cargoBays.stream().mapToInt(ICargoBay::getStorageCapacity).sum();
     }
     
     @Override
