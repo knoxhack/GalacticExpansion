@@ -2,6 +2,7 @@ package com.astroframe.galactic.space.command;
 
 import com.astroframe.galactic.core.api.space.IRocket;
 import com.astroframe.galactic.core.api.space.ModularRocket;
+import com.astroframe.galactic.core.api.space.component.ICommandModule;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.space.GalacticSpace;
 import com.astroframe.galactic.space.dimension.SpaceStationDimension;
@@ -156,7 +157,10 @@ public class SpaceTravelCommands {
         
         // Add optional advanced components for higher tiers
         if (tier >= 2) {
-            rocket.addComponent(RocketComponentFactory.createNavigation(RocketComponentType.NAVIGATION, tier));
+            // Use command module for navigation features for now
+            // We don't have a dedicated navigation component yet
+            ICommandModule advancedModule = RocketComponentFactory.createCockpit(RocketComponentType.COCKPIT, tier);
+            rocket.addComponent(advancedModule);
         }
         
         if (tier >= 3) {
