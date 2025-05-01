@@ -24,6 +24,12 @@ let buildStatus = {
   status: 'idle',
   progress: 0,
   tasks: {},
+  version: {
+    current: '0.1.0',
+    buildNumber: 1,
+    lastReleaseDate: null,
+    lastReleaseTag: null
+  },
   modules: {
     core: { status: 'pending', lastBuild: null },
     power: { status: 'pending', lastBuild: null },

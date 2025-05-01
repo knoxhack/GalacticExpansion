@@ -36,15 +36,24 @@ fi
 BUILD_COUNTER_FILE=".build_counter"
 if [ -f "$BUILD_COUNTER_FILE" ]; then
     BUILD_NUMBER=$(cat "$BUILD_COUNTER_FILE")
-    BUILD_NUMBER=$((BUILD_NUMBER + 1))
 else
     BUILD_NUMBER=1
+    echo "$BUILD_NUMBER" > "$BUILD_COUNTER_FILE"
 fi
-echo "$BUILD_NUMBER" > "$BUILD_COUNTER_FILE"
 
-# Create version with date and build number
+# Get version from environment if available
 BUILD_DATE=$(date +%Y%m%d)
-VERSION="${VERSION_BASE}.b${BUILD_NUMBER}-${BUILD_DATE}"
+
+# Check if version is provided via environment variable from build-and-release.js
+if [ -n "$GALACTIC_VERSION" ]; then
+    # Use version from environment
+    VERSION="$GALACTIC_VERSION"
+    echo -e "${GREEN}Using version from environment: $VERSION${NC}"
+else
+    # Generate version if not provided
+    VERSION="${VERSION_BASE}.b${BUILD_NUMBER}-${BUILD_DATE}"
+    echo -e "${GREEN}Auto-generated version: $VERSION${NC}"
+fi
 
 # Create a descriptive release name
 RELEASE_NAME="Galactic Expansion ${VERSION}"
@@ -80,9 +89,133 @@ for MODULE_DIR in ./*/build/libs; do
     fi
 done
 
+# Generate changelog from git commits since last tag
+echo -e "${GREEN}Generating changelog since last release...${NC}"
+LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+# Create changelog file
+CHANGELOG_FILE="changelog-${VERSION}.md"
+
+cat > "$CHANGELOG_FILE" << EOF
+# Changelog for ${VERSION}
+
+## Release Information
+- **Build Number:** ${BUILD_NUMBER}
+- **Release Date:** $(date "+%Y-%m-%d")
+- **Branch:** ${CURRENT_BRANCH}
+- **Commit:** ${CURRENT_COMMIT}
+
+## Module Changes
+EOF
+
+# Function to extract commits for a specific module
+extract_module_changes() {
+    local module=$1
+    local module_path=$2
+    local since_tag=$3
+    
+    # If no previous tag exists, don't use --since flag
+    local git_log_cmd
+    if [ -z "$since_tag" ]; then
+        git_log_cmd="git log --pretty=format:'%s' -- $module_path"
+    else
+        git_log_cmd="git log ${since_tag}..HEAD --pretty=format:'%s' -- $module_path"
+    fi
+    
+    # Get module-specific commits
+    local module_commits
+    module_commits=$($git_log_cmd | grep -v "Merge" | head -n 10)
+    
+    if [ -n "$module_commits" ]; then
+        echo -e "\n### 🔧 $module Module" >> "$CHANGELOG_FILE"
+        echo -e "$module_commits" | while read -r commit; do
+            echo "- $commit" >> "$CHANGELOG_FILE"
+        done
+    fi
+}
+
+# Function to extract general changes not tied to a specific module
+extract_general_changes() {
+    local since_tag=$1
+    
+    # If no previous tag exists, don't use --since flag
+    local git_log_cmd
+    if [ -z "$since_tag" ]; then
+        git_log_cmd="git log --pretty=format:'%s' -- . ':!*/'"
+    else
+        git_log_cmd="git log ${since_tag}..HEAD --pretty=format:'%s' -- . ':!*/'"
+    fi
+    
+    # Get general commits (root directory)
+    local general_commits
+    general_commits=$($git_log_cmd | grep -v "Merge" | head -n 15)
+    
+    if [ -n "$general_commits" ]; then
+        echo -e "\n### 🌟 General Changes" >> "$CHANGELOG_FILE"
+        echo -e "$general_commits" | while read -r commit; do
+            echo "- $commit" >> "$CHANGELOG_FILE"
+        done
+    fi
+}
+
+# Extract build system changes
+extract_build_changes() {
+    local since_tag=$1
+    
+    # If no previous tag exists, don't use --since flag
+    local git_log_cmd
+    if [ -z "$since_tag" ]; then
+        git_log_cmd="git log --pretty=format:'%s' -- buildwidget/ scripts/ build.gradle settings.gradle"
+    else
+        git_log_cmd="git log ${since_tag}..HEAD --pretty=format:'%s' -- buildwidget/ scripts/ build.gradle settings.gradle"
+    fi
+    
+    # Get build-related commits
+    local build_commits
+    build_commits=$($git_log_cmd | grep -v "Merge" | head -n 10)
+    
+    if [ -n "$build_commits" ]; then
+        echo -e "\n### 🔨 Build System" >> "$CHANGELOG_FILE"
+        echo -e "$build_commits" | while read -r commit; do
+            echo "- $commit" >> "$CHANGELOG_FILE"
+        done
+    fi
+}
+
+# Extract changes for each module
+extract_module_changes "Core" "./core" "$LAST_TAG"
+extract_module_changes "Power" "./power" "$LAST_TAG"
+extract_module_changes "Machinery" "./machinery" "$LAST_TAG"
+extract_module_changes "Biotech" "./biotech" "$LAST_TAG"
+extract_module_changes "Energy" "./energy" "$LAST_TAG"
+extract_module_changes "Construction" "./construction" "$LAST_TAG"
+extract_module_changes "Space" "./space" "$LAST_TAG"
+extract_module_changes "Utilities" "./utilities" "$LAST_TAG"
+extract_module_changes "Vehicles" "./vehicles" "$LAST_TAG"
+extract_module_changes "Weaponry" "./weaponry" "$LAST_TAG"
+extract_module_changes "Robotics" "./robotics" "$LAST_TAG"
+
+# Extract general changes
+extract_general_changes "$LAST_TAG"
+
+# Extract build system changes
+extract_build_changes "$LAST_TAG"
+
+# Add a note if no previous tag was found
+if [ -z "$LAST_TAG" ]; then
+    echo -e "\n## Note" >> "$CHANGELOG_FILE"
+    echo -e "This is the first tagged release. The changelog includes all commits up to this release." >> "$CHANGELOG_FILE"
+else
+    echo -e "\n## Changes Since" >> "$CHANGELOG_FILE"
+    echo -e "Previous release: $LAST_TAG" >> "$CHANGELOG_FILE"
+fi
+
+# Read the changelog
+CHANGELOG_CONTENT=$(<"$CHANGELOG_FILE")
+
 # Create the release on GitHub
 echo -e "${GREEN}Creating GitHub release: $RELEASE_TAG${NC}"
-RELEASE_NOTES="Galactic Expansion ${VERSION}\n\nBuild #${BUILD_NUMBER} (${BUILD_DATE})\n\nBuild Info:\n- Branch: $CURRENT_BRANCH\n- Commit: $CURRENT_COMMIT\n- Total JAR files: $(($MAIN_JAR_COUNT + $MODULE_JAR_COUNT))"
+RELEASE_NOTES="# Galactic Expansion ${VERSION}\n\n## Overview\nBuild #${BUILD_NUMBER} (${BUILD_DATE})\n\n## Build Info\n- Branch: $CURRENT_BRANCH\n- Commit: $CURRENT_COMMIT\n- Total JAR files: $(($MAIN_JAR_COUNT + $MODULE_JAR_COUNT))\n\n## Changelog\n${CHANGELOG_CONTENT}"
 
 # Create the release using GitHub API
 RELEASE_RESPONSE=$(curl -s -X POST \
