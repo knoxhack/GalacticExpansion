@@ -522,6 +522,78 @@ public class RocketComponentFactory {
         return getLifeSupport(ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_advanced"));
     }
     
+    /**
+     * Alias for createAdvancedLifeSupport()
+     * @return A standard life support system
+     */
+    public static ILifeSupport createStandardLifeSupport() {
+        return createAdvancedLifeSupport();
+    }
+    
+    /**
+     * Creates a bioregeneration life support system.
+     * This is a tier 3 life support system.
+     * @return A tier 3 life support system
+     */
+    public static ILifeSupport createBioregenerativeLifeSupport() {
+        // We'll use the advanced one as a stand-in for now
+        return createAdvancedLifeSupport();
+    }
+    
+    /**
+     * Alias for createBasicShield()
+     * @return A basic thermal shield
+     */
+    public static IShield createThermalShield() {
+        return createBasicShield();
+    }
+    
+    /**
+     * Alias for createAdvancedShield()
+     * @return An advanced deflector shield
+     */
+    public static IShield createDeflectorShield() {
+        return createAdvancedShield();
+    }
+    
+    /**
+     * Alias for createAdvancedPassengerCompartment()
+     * @return A standard passenger compartment
+     */
+    public static IPassengerCompartment createStandardPassengerCompartment() {
+        return createAdvancedPassengerCompartment();
+    }
+    
+    /**
+     * Creates a scientific passenger compartment.
+     * This is a specialized tier 3 passenger compartment.
+     * @return A tier 3 passenger compartment
+     */
+    public static IPassengerCompartment createScientificPassengerCompartment() {
+        // We'll use the advanced one as a stand-in for now
+        return createAdvancedPassengerCompartment();
+    }
+    
+    /**
+     * Creates a quantum fuel tank.
+     * This is a specialized tier 3 fuel tank.
+     * @return A tier 3 fuel tank
+     */
+    public static IFuelTank createQuantumFuelTank() {
+        // We'll use the advanced one as a stand-in for now
+        return createAdvancedFuelTank();
+    }
+    
+    /**
+     * Creates a plasma engine.
+     * This is a specialized tier 3 engine.
+     * @return A tier 3 engine
+     */
+    public static IRocketEngine createPlasmaEngine() {
+        // We'll use the ion engine as a stand-in for now
+        return createIonEngine();
+    }
+    
     // Component implementation classes
     
     /**
