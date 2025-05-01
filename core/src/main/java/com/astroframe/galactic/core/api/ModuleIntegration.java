@@ -2,6 +2,7 @@ package com.astroframe.galactic.core.api;
 
 import com.astroframe.galactic.core.GalacticCore;
 import com.astroframe.galactic.core.registry.Registry;
+import com.astroframe.galactic.core.registry.RegistryEntry;
 import com.astroframe.galactic.core.registry.RegistryManager;
 import com.astroframe.galactic.core.registry.annotation.RegistryScanner;
 import com.astroframe.galactic.core.registry.tag.Tag;
