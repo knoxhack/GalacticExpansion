@@ -105,7 +105,7 @@ public class EnergyNetwork {
      * @param pos The block position
      * @return Whether the block is in the network
      */
-    public boolean containsBlock(BlockPos pos) {
+    public boolean containsBlock(net.minecraft.core.BlockPos pos) {
         return connectedBlocks.contains(pos);
     }
     
@@ -114,7 +114,7 @@ public class EnergyNetwork {
      * 
      * @return An unmodifiable set of block positions
      */
-    public Set<BlockPos> getConnectedBlocks() {
+    public Set<net.minecraft.core.BlockPos> getConnectedBlocks() {
         return Collections.unmodifiableSet(connectedBlocks);
     }
     
@@ -123,7 +123,7 @@ public class EnergyNetwork {
      * 
      * @return An unmodifiable map of positions to energy handlers
      */
-    public Map<BlockPos, IEnergyHandler> getEnergyHandlers() {
+    public Map<net.minecraft.core.BlockPos, IEnergyHandler> getEnergyHandlers() {
         return Collections.unmodifiableMap(energyHandlers);
     }
     
@@ -133,10 +133,10 @@ public class EnergyNetwork {
      */
     public void distributeEnergy() {
         // Find energy providers and consumers
-        List<Map.Entry<BlockPos, IEnergyHandler>> providers = new ArrayList<>();
-        List<Map.Entry<BlockPos, IEnergyHandler>> consumers = new ArrayList<>();
+        List<Map.Entry<net.minecraft.core.BlockPos, IEnergyHandler>> providers = new ArrayList<>();
+        List<Map.Entry<net.minecraft.core.BlockPos, IEnergyHandler>> consumers = new ArrayList<>();
         
-        for (Map.Entry<BlockPos, IEnergyHandler> entry : energyHandlers.entrySet()) {
+        for (Map.Entry<net.minecraft.core.BlockPos, IEnergyHandler> entry : energyHandlers.entrySet()) {
             IEnergyHandler handler = entry.getValue();
             
             if (handler.canExtract() && handler.getEnergyStored() > 0) {
@@ -154,7 +154,7 @@ public class EnergyNetwork {
         }
         
         // Distribute energy from each provider
-        for (Map.Entry<BlockPos, IEnergyHandler> providerEntry : providers) {
+        for (Map.Entry<net.minecraft.core.BlockPos, IEnergyHandler> providerEntry : providers) {
             IEnergyHandler provider = providerEntry.getValue();
             
             // Calculate available energy to distribute
@@ -168,7 +168,7 @@ public class EnergyNetwork {
             // Distribute to each consumer
             int totalExtracted = 0;
             
-            for (Map.Entry<BlockPos, IEnergyHandler> consumerEntry : consumers) {
+            for (Map.Entry<net.minecraft.core.BlockPos, IEnergyHandler> consumerEntry : consumers) {
                 IEnergyHandler consumer = consumerEntry.getValue();
                 
                 // Skip if the consumer is full
@@ -233,19 +233,19 @@ public class EnergyNetwork {
      */
     public List<EnergyNetwork> split(Level level) {
         List<EnergyNetwork> networks = new ArrayList<>();
-        Set<BlockPos> remainingBlocks = new HashSet<>(connectedBlocks);
+        Set<net.minecraft.core.BlockPos> remainingBlocks = new HashSet<>(connectedBlocks);
         
         while (!remainingBlocks.isEmpty()) {
             // Start a new network with the first remaining block
-            BlockPos startPos = remainingBlocks.iterator().next();
+            net.minecraft.core.BlockPos startPos = remainingBlocks.iterator().next();
             EnergyNetwork newNetwork = new EnergyNetwork();
             newNetwork.setTransferRate(this.transferRate);
             
             // Find all connected blocks using breadth-first search
-            Set<BlockPos> connectedToStart = findConnectedBlocks(level, startPos);
+            Set<net.minecraft.core.BlockPos> connectedToStart = findConnectedBlocks(level, startPos);
             
             // Add all connected blocks to the new network
-            for (BlockPos pos : connectedToStart) {
+            for (net.minecraft.core.BlockPos pos : connectedToStart) {
                 if (energyHandlers.containsKey(pos)) {
                     newNetwork.addBlock(level, pos);
                 }
