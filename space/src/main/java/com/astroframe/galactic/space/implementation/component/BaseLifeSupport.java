@@ -1,8 +1,7 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.ILifeSupport;
-import com.astroframe.galactic.core.api.space.component.enums.ComponentType;
-import com.astroframe.galactic.core.api.space.component.enums.LifeSupportType;
+import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 
@@ -15,29 +14,40 @@ import java.util.List;
 public class BaseLifeSupport implements ILifeSupport {
     
     private final ResourceLocation id;
-    private final Component displayName;
+    private final String name;
+    private final String description;
     private final int tier;
     private final int mass;
-    private final float maxHealth;
+    private final int maxDurability;
+    private int currentDurability;
     private final int maxCrewCapacity;
-    private final float oxygenEfficiency;
-    private final float waterRecyclingRate;
-    private final boolean hasAdvancedMedical;
-    private final boolean hasRadiationScrubbers;
-    private final LifeSupportType lifeSupportType;
+    private final int oxygenGenerationRate;
+    private final float waterRecyclingEfficiency;
+    private final int foodProductionRate;
+    private final float wasteManagementEfficiency;
+    private final float atmosphericQuality;
+    private final boolean hasBackupSystems;
+    private final boolean hasRadiationFiltering;
+    private final boolean hasEmergencyMode;
+    private boolean emergencyModeActive = false;
     
     private BaseLifeSupport(Builder builder) {
         this.id = builder.id;
-        this.displayName = builder.displayName;
+        this.name = builder.name;
+        this.description = builder.description;
         this.tier = builder.tier;
         this.mass = builder.mass;
-        this.maxHealth = builder.maxHealth;
+        this.maxDurability = builder.maxDurability;
+        this.currentDurability = maxDurability;
         this.maxCrewCapacity = builder.maxCrewCapacity;
-        this.oxygenEfficiency = builder.oxygenEfficiency;
-        this.waterRecyclingRate = builder.waterRecyclingRate;
-        this.hasAdvancedMedical = builder.hasAdvancedMedical;
-        this.hasRadiationScrubbers = builder.hasRadiationScrubbers;
-        this.lifeSupportType = builder.lifeSupportType;
+        this.oxygenGenerationRate = builder.oxygenGenerationRate;
+        this.waterRecyclingEfficiency = builder.waterRecyclingEfficiency;
+        this.foodProductionRate = builder.foodProductionRate;
+        this.wasteManagementEfficiency = builder.wasteManagementEfficiency;
+        this.atmosphericQuality = builder.atmosphericQuality;
+        this.hasBackupSystems = builder.hasBackupSystems;
+        this.hasRadiationFiltering = builder.hasRadiationFiltering;
+        this.hasEmergencyMode = builder.hasEmergencyMode;
     }
     
     @Override
@@ -46,8 +56,13 @@ public class BaseLifeSupport implements ILifeSupport {
     }
     
     @Override
-    public Component getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
+    }
+    
+    @Override
+    public String getDescription() {
+        return description;
     }
     
     @Override
@@ -56,8 +71,8 @@ public class BaseLifeSupport implements ILifeSupport {
     }
     
     @Override
-    public ComponentType getType() {
-        return ComponentType.LIFE_SUPPORT;
+    public RocketComponentType getType() {
+        return RocketComponentType.LIFE_SUPPORT;
     }
     
     @Override
@@ -66,28 +81,23 @@ public class BaseLifeSupport implements ILifeSupport {
     }
     
     @Override
-    public float getMaxHealth() {
-        return maxHealth;
+    public int getMaxDurability() {
+        return maxDurability;
     }
     
     @Override
-    public List<Component> getTooltip(boolean detailed) {
-        List<Component> tooltip = new ArrayList<>();
-        tooltip.add(displayName);
-        tooltip.add(Component.literal("Type: " + lifeSupportType.getDisplayName()));
-        tooltip.add(Component.literal("Supports: " + maxCrewCapacity + " crew"));
-        tooltip.add(Component.literal("Tier: " + tier));
-        
-        if (detailed) {
-            tooltip.add(Component.literal("Oxygen Efficiency: " + Math.round(oxygenEfficiency * 100) + "%"));
-            tooltip.add(Component.literal("Water Recycling: " + Math.round(waterRecyclingRate * 100) + "%"));
-            tooltip.add(Component.literal("Advanced Medical: " + (hasAdvancedMedical ? "Yes" : "No")));
-            tooltip.add(Component.literal("Radiation Scrubbers: " + (hasRadiationScrubbers ? "Yes" : "No")));
-            tooltip.add(Component.literal("Mass: " + mass));
-            tooltip.add(Component.literal("Max Health: " + maxHealth));
-        }
-        
-        return tooltip;
+    public int getCurrentDurability() {
+        return currentDurability;
+    }
+    
+    @Override
+    public void damage(int amount) {
+        currentDurability = Math.max(0, currentDurability - amount);
+    }
+    
+    @Override
+    public void repair(int amount) {
+        currentDurability = Math.min(maxDurability, currentDurability + amount);
     }
     
     @Override
@@ -96,28 +106,80 @@ public class BaseLifeSupport implements ILifeSupport {
     }
     
     @Override
-    public float getOxygenEfficiency() {
-        return oxygenEfficiency;
+    public int getOxygenGenerationRate() {
+        return oxygenGenerationRate;
     }
     
     @Override
-    public float getWaterRecyclingRate() {
-        return waterRecyclingRate;
+    public float getWaterRecyclingEfficiency() {
+        return waterRecyclingEfficiency;
     }
     
     @Override
-    public boolean hasAdvancedMedical() {
-        return hasAdvancedMedical;
+    public int getFoodProductionRate() {
+        return foodProductionRate;
     }
     
     @Override
-    public boolean hasRadiationScrubbers() {
-        return hasRadiationScrubbers;
+    public float getWasteManagementEfficiency() {
+        return wasteManagementEfficiency;
     }
     
     @Override
-    public LifeSupportType getLifeSupportType() {
-        return lifeSupportType;
+    public float getAtmosphericQuality() {
+        return atmosphericQuality;
+    }
+    
+    @Override
+    public boolean hasBackupSystems() {
+        return hasBackupSystems;
+    }
+    
+    @Override
+    public boolean hasRadiationFiltering() {
+        return hasRadiationFiltering;
+    }
+    
+    @Override
+    public boolean hasEmergencyMode() {
+        return hasEmergencyMode;
+    }
+    
+    @Override
+    public void setEmergencyMode(boolean active) {
+        this.emergencyModeActive = active && hasEmergencyMode && !isBroken();
+    }
+    
+    @Override
+    public boolean isEmergencyModeActive() {
+        return emergencyModeActive && !isBroken();
+    }
+    
+    /**
+     * Gets a list of tooltip lines for this component.
+     * @param detailed Whether to include detailed information
+     * @return The tooltip lines
+     */
+    public List<Component> getTooltip(boolean detailed) {
+        List<Component> tooltip = new ArrayList<>();
+        tooltip.add(Component.literal(name));
+        tooltip.add(Component.literal("Supports: " + maxCrewCapacity + " crew"));
+        tooltip.add(Component.literal("Tier: " + tier));
+        
+        if (detailed) {
+            tooltip.add(Component.literal("Oxygen Generation: " + oxygenGenerationRate + " units/min"));
+            tooltip.add(Component.literal("Water Recycling: " + Math.round(waterRecyclingEfficiency * 100) + "%"));
+            tooltip.add(Component.literal("Food Production: " + foodProductionRate + " units/day"));
+            tooltip.add(Component.literal("Waste Management: " + Math.round(wasteManagementEfficiency * 100) + "%"));
+            tooltip.add(Component.literal("Atmospheric Quality: " + Math.round(atmosphericQuality * 100) + "%"));
+            tooltip.add(Component.literal("Backup Systems: " + (hasBackupSystems ? "Yes" : "No")));
+            tooltip.add(Component.literal("Radiation Filtering: " + (hasRadiationFiltering ? "Yes" : "No")));
+            tooltip.add(Component.literal("Emergency Mode: " + (hasEmergencyMode ? "Yes" : "No")));
+            tooltip.add(Component.literal("Mass: " + mass));
+            tooltip.add(Component.literal("Durability: " + maxDurability));
+        }
+        
+        return tooltip;
     }
     
     /**
@@ -125,25 +187,47 @@ public class BaseLifeSupport implements ILifeSupport {
      */
     public static class Builder {
         private final ResourceLocation id;
-        private final Component displayName;
+        private String name = "Life Support";
+        private String description = "A life support system for a rocket.";
         private int tier = 1;
         private int mass = 350;
-        private float maxHealth = 100.0f;
+        private int maxDurability = 100;
         private int maxCrewCapacity = 4;
-        private float oxygenEfficiency = 0.8f;
-        private float waterRecyclingRate = 0.7f;
-        private boolean hasAdvancedMedical = false;
-        private boolean hasRadiationScrubbers = false;
-        private LifeSupportType lifeSupportType = LifeSupportType.BASIC;
+        private int oxygenGenerationRate = 60;
+        private float waterRecyclingEfficiency = 0.7f;
+        private int foodProductionRate = 10;
+        private float wasteManagementEfficiency = 0.8f;
+        private float atmosphericQuality = 0.9f;
+        private boolean hasBackupSystems = false;
+        private boolean hasRadiationFiltering = false;
+        private boolean hasEmergencyMode = false;
         
         /**
          * Creates a new builder with required parameters.
          * @param id The component ID
-         * @param displayName The display name
          */
-        public Builder(ResourceLocation id, Component displayName) {
+        public Builder(ResourceLocation id) {
             this.id = id;
-            this.displayName = displayName;
+        }
+        
+        /**
+         * Sets the name.
+         * @param name The name
+         * @return This builder
+         */
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+        
+        /**
+         * Sets the description.
+         * @param description The description
+         * @return This builder
+         */
+        public Builder description(String description) {
+            this.description = description;
+            return this;
         }
         
         /**
@@ -167,12 +251,12 @@ public class BaseLifeSupport implements ILifeSupport {
         }
         
         /**
-         * Sets the max health.
-         * @param maxHealth The max health
+         * Sets the max durability.
+         * @param maxDurability The max durability
          * @return This builder
          */
-        public Builder maxHealth(float maxHealth) {
-            this.maxHealth = maxHealth;
+        public Builder maxDurability(int maxDurability) {
+            this.maxDurability = maxDurability;
             return this;
         }
         
@@ -187,52 +271,82 @@ public class BaseLifeSupport implements ILifeSupport {
         }
         
         /**
-         * Sets the oxygen efficiency.
-         * @param oxygenEfficiency The oxygen efficiency (0.0-1.0)
+         * Sets the oxygen generation rate.
+         * @param oxygenGenerationRate The oxygen generation rate
          * @return This builder
          */
-        public Builder oxygenEfficiency(float oxygenEfficiency) {
-            this.oxygenEfficiency = Math.max(0.0f, Math.min(1.0f, oxygenEfficiency));
+        public Builder oxygenGenerationRate(int oxygenGenerationRate) {
+            this.oxygenGenerationRate = oxygenGenerationRate;
             return this;
         }
         
         /**
-         * Sets the water recycling rate.
-         * @param waterRecyclingRate The water recycling rate (0.0-1.0)
+         * Sets the water recycling efficiency.
+         * @param waterRecyclingEfficiency The water recycling efficiency (0.0-1.0)
          * @return This builder
          */
-        public Builder waterRecyclingRate(float waterRecyclingRate) {
-            this.waterRecyclingRate = Math.max(0.0f, Math.min(1.0f, waterRecyclingRate));
+        public Builder waterRecyclingEfficiency(float waterRecyclingEfficiency) {
+            this.waterRecyclingEfficiency = Math.max(0.0f, Math.min(1.0f, waterRecyclingEfficiency));
             return this;
         }
         
         /**
-         * Sets whether the system has advanced medical facilities.
-         * @param hasAdvancedMedical True if has advanced medical
+         * Sets the food production rate.
+         * @param foodProductionRate The food production rate
          * @return This builder
          */
-        public Builder advancedMedical(boolean hasAdvancedMedical) {
-            this.hasAdvancedMedical = hasAdvancedMedical;
+        public Builder foodProductionRate(int foodProductionRate) {
+            this.foodProductionRate = foodProductionRate;
             return this;
         }
         
         /**
-         * Sets whether the system has radiation scrubbers.
-         * @param hasRadiationScrubbers True if has radiation scrubbers
+         * Sets the waste management efficiency.
+         * @param wasteManagementEfficiency The waste management efficiency (0.0-1.0)
          * @return This builder
          */
-        public Builder radiationScrubbers(boolean hasRadiationScrubbers) {
-            this.hasRadiationScrubbers = hasRadiationScrubbers;
+        public Builder wasteManagementEfficiency(float wasteManagementEfficiency) {
+            this.wasteManagementEfficiency = Math.max(0.0f, Math.min(1.0f, wasteManagementEfficiency));
             return this;
         }
         
         /**
-         * Sets the life support type.
-         * @param lifeSupportType The life support type
+         * Sets the atmospheric quality.
+         * @param atmosphericQuality The atmospheric quality (0.0-1.0)
          * @return This builder
          */
-        public Builder lifeSupportType(LifeSupportType lifeSupportType) {
-            this.lifeSupportType = lifeSupportType;
+        public Builder atmosphericQuality(float atmosphericQuality) {
+            this.atmosphericQuality = Math.max(0.0f, Math.min(1.0f, atmosphericQuality));
+            return this;
+        }
+        
+        /**
+         * Sets whether the system has backup systems.
+         * @param hasBackupSystems True if has backup systems
+         * @return This builder
+         */
+        public Builder backupSystems(boolean hasBackupSystems) {
+            this.hasBackupSystems = hasBackupSystems;
+            return this;
+        }
+        
+        /**
+         * Sets whether the system has radiation filtering.
+         * @param hasRadiationFiltering True if has radiation filtering
+         * @return This builder
+         */
+        public Builder radiationFiltering(boolean hasRadiationFiltering) {
+            this.hasRadiationFiltering = hasRadiationFiltering;
+            return this;
+        }
+        
+        /**
+         * Sets whether the system has emergency mode.
+         * @param hasEmergencyMode True if has emergency mode
+         * @return This builder
+         */
+        public Builder emergencyMode(boolean hasEmergencyMode) {
+            this.hasEmergencyMode = hasEmergencyMode;
             return this;
         }
         
