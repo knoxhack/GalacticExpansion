@@ -1,6 +1,8 @@
 package com.astroframe.galactic.energy.api;
 
+// Import the IEnergyHandler interface directly from core
 import com.astroframe.galactic.core.api.energy.IEnergyHandler;
+import com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit;
 
 /**
  * Adapter class to convert between the core API energy handler and the energy module's storage interfaces.

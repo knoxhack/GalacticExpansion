@@ -163,4 +163,26 @@ public class ProcessorMachine extends BaseMachine {
     public void tick() {
         // This is now a stub - the real logic is in tick(Level, BlockPos)
     }
+    
+    /**
+     * Whether this machine can receive energy.
+     * Processors need to receive energy to operate.
+     * 
+     * @return True since processors need to receive energy
+     */
+    @Override
+    public boolean canReceive() {
+        return true;
+    }
+    
+    /**
+     * Whether this machine can extract energy.
+     * Processors consume energy, they don't produce it.
+     * 
+     * @return False since processors don't extract energy
+     */
+    @Override
+    public boolean canExtract() {
+        return false;
+    }
 }

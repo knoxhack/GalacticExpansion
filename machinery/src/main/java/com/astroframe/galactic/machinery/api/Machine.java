@@ -1,7 +1,7 @@
 package com.astroframe.galactic.machinery.api;
 
 import com.astroframe.galactic.core.api.energy.IEnergyHandler;
-import com.astroframe.galactic.energy.api.EnergyUnit;
+// Update imports to use correct Minecraft and NeoForge paths for 1.21.5
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 

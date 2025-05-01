@@ -1,5 +1,6 @@
 package com.astroframe.galactic.machinery.api;
 
+// Use the correct Minecraft imports for NeoForge 1.21.5
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;

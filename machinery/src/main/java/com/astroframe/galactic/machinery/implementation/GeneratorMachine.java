@@ -163,4 +163,26 @@ public class GeneratorMachine extends BaseMachine {
     public void tick() {
         // This is now a stub - the real logic is in tick(Level, BlockPos)
     }
+    
+    /**
+     * Whether this machine can receive energy.
+     * Generators don't receive energy, they produce it.
+     * 
+     * @return False since generators don't receive energy
+     */
+    @Override
+    public boolean canReceive() {
+        return false;
+    }
+    
+    /**
+     * Whether this machine can extract energy.
+     * Generators produce energy, so they can extract it.
+     * 
+     * @return True since generators can extract energy
+     */
+    @Override
+    public boolean canExtract() {
+        return true;
+    }
 }

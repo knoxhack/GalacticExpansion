@@ -1,8 +1,8 @@
 package com.astroframe.galactic.machinery.implementation;
 
+import com.astroframe.galactic.core.api.energy.IEnergyHandler;
 import com.astroframe.galactic.energy.api.EnergyStorage;
 import com.astroframe.galactic.energy.api.EnergyType;
-import com.astroframe.galactic.energy.api.EnergyUnit;
 import com.astroframe.galactic.machinery.api.Machine;
 import com.astroframe.galactic.machinery.api.MachineType;
 import net.minecraft.core.BlockPos;
@@ -91,12 +91,12 @@ public abstract class BaseMachine implements Machine {
         return 1; // Default tier
     }
     
-    @Override
+    // These methods are not from the Machine interface, removing @Override annotations
+    // to fix compilation errors
     public Optional<EnergyStorage> getEnergyStorage() {
         return Optional.ofNullable(energyStorage);
     }
     
-    @Override
     public List<EnergyType> getAcceptableEnergyTypes() {
         return Collections.unmodifiableList(acceptableEnergyTypes);
     }
@@ -181,8 +181,44 @@ public abstract class BaseMachine implements Machine {
     }
     
     @Override
-    public EnergyUnit getEnergyUnit() {
-        return EnergyUnit.GALACTIC_ENERGY_UNIT;
+    public com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit getEnergyUnit() {
+        return com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit.GALACTIC_ENERGY_UNIT;
+    }
+    
+    @Override
+    public int receiveEnergy(int maxReceive, boolean simulate) {
+        if (energyStorage == null) return 0;
+        return energyStorage.receiveEnergy(maxReceive, simulate);
+    }
+    
+    @Override
+    public int extractEnergy(int maxExtract, boolean simulate) {
+        if (energyStorage == null) return 0;
+        return energyStorage.extractEnergy(maxExtract, simulate);
+    }
+    
+    @Override
+    public int getEnergyStored() {
+        if (energyStorage == null) return 0;
+        return energyStorage.getEnergy();
+    }
+    
+    @Override
+    public int getMaxEnergyStored() {
+        if (energyStorage == null) return 0;
+        return energyStorage.getMaxEnergy();
+    }
+    
+    @Override
+    public boolean canExtract() {
+        if (energyStorage == null) return false;
+        return energyStorage.canExtract();
+    }
+    
+    @Override
+    public boolean canReceive() {
+        if (energyStorage == null) return false;
+        return energyStorage.canReceive();
     }
     
     /**
