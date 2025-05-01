@@ -3,17 +3,16 @@ package com.astroframe.galactic.core.api.machine;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
 
 /**
  * Interface for machine recipes.
- * This extends Minecraft's Recipe interface to provide additional functionality
- * specific to machine processing.
+ * This provides functionality specific to machine processing.
  */
-public interface IMachineRecipe extends Recipe<Container> {
+public interface IMachineRecipe {
     
     /**
      * Gets the unique identifier of this recipe.
@@ -84,4 +83,23 @@ public interface IMachineRecipe extends Recipe<Container> {
      * @return Experience points
      */
     float getExperience();
+    
+    /**
+     * Gets the vanilla recipe type for this machine recipe.
+     * 
+     * @return The recipe type
+     */
+    default RecipeType<?> getRecipeType() {
+        return getType();
+    }
+    
+    /**
+     * Gets the result of this recipe.
+     * 
+     * @return The primary result item
+     */
+    default ItemStack getResultItem() {
+        List<ItemStack> results = getResultItems();
+        return results.isEmpty() ? ItemStack.EMPTY : results.get(0);
+    }
 }

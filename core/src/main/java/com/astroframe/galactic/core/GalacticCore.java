@@ -2,7 +2,8 @@ package com.astroframe.galactic.core;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +30,9 @@ public class GalacticCore {
      * Constructs a new instance of the Galactic Core mod.
      * This initializes all core APIs and registers event handlers.
      */
-    public GalacticCore() {
+    public GalacticCore(IEventBus modEventBus) {
         INSTANCE = this;
-        modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        this.modEventBus = modEventBus;
         
         LOGGER.info("Initializing Galactic Core API module");
         
@@ -79,5 +80,14 @@ public class GalacticCore {
      */
     public IEventBus getModEventBus() {
         return modEventBus;
+    }
+    
+    /**
+     * Gets the mod container for this mod.
+     * 
+     * @return The mod container
+     */
+    public ModContainer getModContainer() {
+        return ModList.get().getModContainerById(MOD_ID).orElseThrow();
     }
 }
