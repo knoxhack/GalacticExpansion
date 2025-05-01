@@ -125,7 +125,7 @@ public class ModularRocketItem extends Item {
         // Try to get the component from the registry
         ResourceLocation resLoc = ResourceLocationHelper.of(componentId);
         Optional<IRocketComponent> component = RocketComponentRegistry.getComponent(resLoc);
-        return component.map(c -> c.getDisplayName().getString()).orElse("Unknown");
+        return component.map(c -> c.getName()).orElse("Unknown");
     }
     
     /**

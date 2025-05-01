@@ -376,6 +376,152 @@ public class RocketComponentFactory {
         return LIFE_SUPPORTS.get(id);
     }
     
+    // Convenience methods for creating components by tier
+    
+    /**
+     * Creates a basic command module (tier 1).
+     * @return A basic command module
+     */
+    public static ICommandModule createBasicCommandModule() {
+        return getCommandModule(ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_basic"));
+    }
+    
+    /**
+     * Creates a standard command module (tier 2).
+     * @return A standard command module
+     */
+    public static ICommandModule createStandardCommandModule() {
+        return getCommandModule(ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_advanced"));
+    }
+    
+    /**
+     * Creates an advanced command module (tier 3).
+     * @return An advanced command module
+     */
+    public static ICommandModule createAdvancedCommandModule() {
+        return getCommandModule(ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_elite"));
+    }
+    
+    /**
+     * Creates a basic chemical engine.
+     * @return A chemical engine
+     */
+    public static IRocketEngine createChemicalEngine() {
+        return getEngine(ResourceLocation.parse(GalacticSpace.MOD_ID + ":solid_fuel_engine"));
+    }
+    
+    /**
+     * Creates an advanced chemical engine.
+     * @return An advanced chemical engine
+     */
+    public static IRocketEngine createAdvancedChemicalEngine() {
+        return getEngine(ResourceLocation.parse(GalacticSpace.MOD_ID + ":liquid_fuel_engine"));
+    }
+    
+    /**
+     * Creates an ion engine.
+     * @return An ion engine
+     */
+    public static IRocketEngine createIonEngine() {
+        return getEngine(ResourceLocation.parse(GalacticSpace.MOD_ID + ":ion_engine"));
+    }
+    
+    /**
+     * Creates a basic fuel tank.
+     * @return A basic fuel tank
+     */
+    public static IFuelTank createBasicFuelTank() {
+        return getFuelTank(ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_small"));
+    }
+    
+    /**
+     * Creates a standard fuel tank.
+     * @return A standard fuel tank
+     */
+    public static IFuelTank createStandardFuelTank() {
+        return getFuelTank(ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_medium"));
+    }
+    
+    /**
+     * Creates an advanced fuel tank.
+     * @return An advanced fuel tank
+     */
+    public static IFuelTank createAdvancedFuelTank() {
+        return getFuelTank(ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_large"));
+    }
+    
+    /**
+     * Creates a basic cargo bay.
+     * @return A basic cargo bay
+     */
+    public static ICargoBay createBasicCargoBay() {
+        return getCargoBay(ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_small"));
+    }
+    
+    /**
+     * Creates a standard cargo bay.
+     * @return A standard cargo bay
+     */
+    public static ICargoBay createStandardCargoBay() {
+        return getCargoBay(ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_medium"));
+    }
+    
+    /**
+     * Creates an advanced cargo bay.
+     * @return An advanced cargo bay
+     */
+    public static ICargoBay createAdvancedCargoBay() {
+        return getCargoBay(ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_large"));
+    }
+    
+    /**
+     * Creates a basic passenger compartment.
+     * @return A basic passenger compartment
+     */
+    public static IPassengerCompartment createBasicPassengerCompartment() {
+        return getPassengerCompartment(ResourceLocation.parse(GalacticSpace.MOD_ID + ":passenger_compartment_basic"));
+    }
+    
+    /**
+     * Creates an advanced passenger compartment.
+     * @return An advanced passenger compartment
+     */
+    public static IPassengerCompartment createAdvancedPassengerCompartment() {
+        return getPassengerCompartment(ResourceLocation.parse(GalacticSpace.MOD_ID + ":passenger_compartment_advanced"));
+    }
+    
+    /**
+     * Creates a basic shield.
+     * @return A basic shield
+     */
+    public static IShield createBasicShield() {
+        return getShield(ResourceLocation.parse(GalacticSpace.MOD_ID + ":heat_shield_basic"));
+    }
+    
+    /**
+     * Creates an advanced shield.
+     * @return An advanced shield
+     */
+    public static IShield createAdvancedShield() {
+        return getShield(ResourceLocation.parse(GalacticSpace.MOD_ID + ":heat_shield_advanced"));
+    }
+    
+    /**
+     * Creates a basic life support system.
+     * @return A basic life support system
+     */
+    public static ILifeSupport createBasicLifeSupport() {
+        return getLifeSupport(ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_basic"));
+    }
+    
+    /**
+     * Creates an advanced life support system.
+     * @return An advanced life support system
+     */
+    public static ILifeSupport createAdvancedLifeSupport() {
+        return getLifeSupport(ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_advanced"));
+    }
+    
     // Component implementation classes
     
     /**
