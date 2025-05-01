@@ -195,49 +195,84 @@ button:disabled {
     margin-bottom: 15px;
 }
 
-.module-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 12px;
-}
-
-.module-card {
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
+.module-bars {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    transition: transform 0.2s, box-shadow 0.2s;
+    gap: 10px;
 }
 
-.module-card:hover {
+.module-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 12px 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.module-bar:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
+.module-info {
+    width: 150px;
+    flex-shrink: 0;
+    z-index: 2;
+}
+
 .module-name {
-    font-weight: 500;
-    margin-bottom: 8px;
+    font-weight: 600;
     font-size: 14px;
+    margin-bottom: 4px;
+    color: #333;
+}
+
+.module-progress {
+    flex-grow: 1;
+    height: 24px;
+    background-color: #e1e1e1;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+.module-progress-bar {
+    height: 100%;
+    width: 0%;
+    transition: width 0.5s ease, background-color 0.3s;
+}
+
+.module-progress-bar.pending {
+    background-color: var(--pending-color);
+}
+
+.module-progress-bar.building {
+    background-color: var(--building-color);
+    animation: pulse-subtle 1.5s infinite;
+}
+
+.module-progress-bar.success {
+    background-color: var(--success-color);
+}
+
+.module-progress-bar.failed {
+    background-color: var(--danger-color);
 }
 
 .module-indicator {
-    width: 16px;
-    height: 16px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    margin-bottom: 8px;
-}
-
-@media (max-width: 480px) {
-    .module-name {
-        font-size: 13px;
-    }
-    
-    .module-indicator {
-        width: 14px;
-        height: 14px;
-    }
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    z-index: 2;
 }
 
 .module-indicator.pending {
@@ -253,14 +288,73 @@ button:disabled {
     background-color: var(--success-color);
 }
 
+.module-indicator.success:after {
+    content: "✓";
+    color: white;
+    font-weight: bold;
+}
+
+.module-bar.success-complete .module-task:after {
+    content: " 😊";
+}
+
 .module-indicator.failed {
     background-color: var(--danger-color);
+}
+
+.module-indicator.failed:after {
+    content: "✗";
+    color: white;
+    font-weight: bold;
+}
+
+.module-bar.failed-complete .module-task:after {
+    content: " 😞";
 }
 
 .module-task {
     font-size: 12px;
     color: #5f6368;
-    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .module-bar {
+        padding: 10px 12px;
+    }
+    
+    .module-info {
+        width: 120px;
+    }
+    
+    .module-name {
+        font-size: 13px;
+    }
+    
+    .module-task {
+        font-size: 11px;
+    }
+    
+    .module-progress {
+        height: 20px;
+    }
+    
+    .module-indicator {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+    }
+}
+
+@keyframes pulse-subtle {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 .build-output {

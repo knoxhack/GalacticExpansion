@@ -448,19 +448,54 @@ function updateModuleStatus(modules) {
     if (!modules) return;
     
     Object.entries(modules).forEach(([moduleName, status]) => {
-        const moduleCard = document.getElementById(`module-${moduleName}`);
-        if (moduleCard) {
+        const moduleBar = document.getElementById(`module-${moduleName}`);
+        if (moduleBar) {
+            // Update progress bar
+            const progressBar = moduleBar.querySelector('.module-progress-bar');
+            if (progressBar) {
+                // Update status class
+                progressBar.className = 'module-progress-bar';
+                progressBar.classList.add(status.status || 'pending');
+                
+                // Update progress width
+                let progressWidth = 0;
+                
+                if (status.status === 'success') {
+                    progressWidth = 100;
+                } else if (status.status === 'failed') {
+                    progressWidth = 100;
+                } else if (status.status === 'building') {
+                    // If we have progress info, use it, otherwise use 50%
+                    progressWidth = status.progress ? status.progress * 100 : 50;
+                }
+                
+                progressBar.style.width = `${progressWidth}%`;
+            }
+            
             // Update indicator
-            const indicator = moduleCard.querySelector('.module-indicator');
+            const indicator = moduleBar.querySelector('.module-indicator');
             if (indicator) {
                 indicator.className = 'module-indicator';
                 indicator.classList.add(status.status || 'pending');
             }
             
             // Update task name
-            const taskElement = moduleCard.querySelector('.module-task');
+            const taskElement = moduleBar.querySelector('.module-task');
             if (taskElement) {
                 taskElement.textContent = status.currentTask || '';
+                
+                // For success status, add a check mark symbol and smiley
+                if (status.status === 'success' && !status.currentTask) {
+                    taskElement.textContent = 'Build complete';
+                    moduleBar.classList.add('success-complete');
+                } else if (status.status === 'failed' && !status.currentTask) {
+                    taskElement.textContent = 'Build failed';
+                    moduleBar.classList.add('failed-complete');
+                } else {
+                    // Remove classes if the status changes
+                    moduleBar.classList.remove('success-complete');
+                    moduleBar.classList.remove('failed-complete');
+                }
             }
         }
     });
