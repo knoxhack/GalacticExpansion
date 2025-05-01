@@ -5,12 +5,17 @@ import com.astroframe.galactic.space.implementation.SpaceBodies;
 import com.astroframe.galactic.space.implementation.SpaceTravelManager;
 import com.astroframe.galactic.space.implementation.component.RocketComponentFactory;
 import com.astroframe.galactic.space.registry.SpaceRegistry;
+import net.minecraft.server.MinecraftServer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.LogicalSide;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,6 +30,7 @@ public class GalacticSpace {
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
     
     private static SpaceTravelManager spaceTravelManager;
+    private static MinecraftServer server;
 
     /**
      * Initialize the Galactic Space module.
@@ -39,6 +45,33 @@ public class GalacticSpace {
         
         // Register event listeners
         modEventBus.register(this);
+        
+        // Register server lifecycle events
+        NeoForge.EVENT_BUS.addListener(this::onServerStarted);
+        NeoForge.EVENT_BUS.addListener(this::onServerStopping);
+    }
+    
+    /**
+     * Server started event handler.
+     * Caches the server instance for later use.
+     */
+    public void onServerStarted(ServerStartedEvent event) {
+        server = event.getServer();
+        LOGGER.info("Galactic Space module detected server start");
+        
+        // Initialize the space travel manager if not already done
+        if (spaceTravelManager != null) {
+            spaceTravelManager.initialize();
+        }
+    }
+    
+    /**
+     * Server stopping event handler.
+     * Clears the server instance.
+     */
+    public void onServerStopping(ServerStoppingEvent event) {
+        LOGGER.info("Galactic Space module detected server stopping");
+        server = null;
     }
     
     /**
@@ -50,14 +83,7 @@ public class GalacticSpace {
         event.enqueueWork(() -> {
             LOGGER.info("Setting up Galactic Space module");
             
-            // Register default celestial bodies
-            SpaceBodies.registerAll();
-            
-            // Register rocket components
-            LOGGER.info("Registering rocket components");
-            RocketComponentFactory.registerAll();
-            
-            // Initialize and register the space travel manager
+            // Initialize the space travel manager
             initializeSpaceTravelManager();
         });
     }
@@ -71,6 +97,20 @@ public class GalacticSpace {
             spaceTravelManager = new SpaceTravelManager();
             SpaceAPI.setSpaceTravelManager(spaceTravelManager);
         }
+    }
+    
+    /**
+     * Gets the Minecraft server instance.
+     * @return The server instance, or null if not available
+     */
+    public static MinecraftServer getServer() {
+        // Try getting from cache first
+        if (server != null) {
+            return server;
+        }
+        
+        // Otherwise try to get from ServerLifecycleHooks
+        return ServerLifecycleHooks.getCurrentServer();
     }
     
     /**

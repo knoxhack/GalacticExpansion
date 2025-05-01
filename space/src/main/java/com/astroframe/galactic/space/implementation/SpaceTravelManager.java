@@ -1,175 +1,216 @@
 package com.astroframe.galactic.space.implementation;
 
 import com.astroframe.galactic.core.api.space.ICelestialBody;
-import com.astroframe.galactic.core.api.space.ISpaceTravelManager;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.resources.ResourceLocation;
+import com.astroframe.galactic.core.api.space.IRocket;
+import com.astroframe.galactic.core.api.space.ModularRocket;
+import com.astroframe.galactic.space.GalacticSpace;
+import com.astroframe.galactic.space.dimension.SpaceStationDimension;
+import com.astroframe.galactic.space.dimension.SpaceStationTeleporter;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
- * Implementation of the space travel manager.
+ * Manages travel between celestial bodies.
+ * This class coordinates rockets, players, and dimension teleportation.
  */
-public class SpaceTravelManager implements ISpaceTravelManager {
-    private static final String DISCOVERED_TAG = "GalacticDiscoveredBodies";
+@Mod.EventBusSubscriber(modid = GalacticSpace.MOD_ID)
+public class SpaceTravelManager {
+    private final Map<UUID, Set<ICelestialBody>> discoveredBodies = new HashMap<>();
+    private boolean isInitialized = false;
     
-    private final Map<UUID, List<ResourceLocation>> discoveredBodies = new HashMap<>();
+    /**
+     * Initialization logic.
+     */
+    public void initialize() {
+        if (isInitialized) {
+            return;
+        }
+        
+        GalacticSpace.LOGGER.info("Initializing Space Travel Manager");
+        isInitialized = true;
+    }
     
-    @Override
+    /**
+     * Server tick event handler to update space travel.
+     *
+     * @param event The tick event
+     */
+    @SubscribeEvent
+    public static void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            // Update rocket launch sequences
+            RocketLaunchController.updateLaunches();
+        }
+    }
+    
+    /**
+     * Initiates travel to a celestial body.
+     * This method is used when a player uses a rocket to travel to a celestial body.
+     *
+     * @param player The player
+     * @param destination The destination celestial body
+     * @param rocket The rocket being used
+     * @return true if the travel initiation was successful
+     */
+    public boolean initiateTravelWithRocket(ServerPlayer player, ICelestialBody destination, ModularRocket rocket) {
+        // Check if the rocket can reach the destination
+        if (!rocket.canReach(destination)) {
+            player.sendSystemMessage(Component.translatable("message.galactic-space.rocket_insufficient")
+                                    .withStyle(net.minecraft.ChatFormatting.RED));
+            return false;
+        }
+        
+        // Start the launch sequence using the RocketLaunchController
+        return RocketLaunchController.startLaunch(player, rocket, destination);
+    }
+    
+    /**
+     * Teleports a player to a celestial body.
+     * This is a direct teleport without a rocket, primarily used for commands or testing.
+     *
+     * @param player The player
+     * @param destination The destination celestial body
+     * @return true if the teleportation was successful
+     */
     public boolean travelTo(ServerPlayer player, ICelestialBody destination) {
-        // Get the destination's ID
-        ResourceLocation destinationId = destination.getId();
-        
-        // Handle special case for the Space Station
-        if (destinationId.equals(SpaceBodies.SPACE_STATION.getId())) {
-            return com.astroframe.galactic.space.dimension.SpaceStationTeleporter.teleportToSpaceStation(player);
+        // Right now we only support travel to space station
+        if (destination == SpaceBodies.SPACE_STATION) {
+            return SpaceStationTeleporter.teleportToSpaceStation(player);
+        } else if (destination == SpaceBodies.EARTH) {
+            return SpaceStationTeleporter.teleportToOverworld(player);
+        } else {
+            // Unsupported destination
+            player.sendSystemMessage(Component.translatable("message.galactic-space.destination_not_implemented")
+                                    .withStyle(net.minecraft.ChatFormatting.RED));
+            return false;
         }
+    }
+    
+    /**
+     * Checks if a player is currently in a specific celestial body's dimension.
+     *
+     * @param player The player
+     * @param body The celestial body
+     * @return true if the player is in the celestial body's dimension
+     */
+    public boolean isPlayerAt(ServerPlayer player, ICelestialBody body) {
+        ServerLevel level = player.serverLevel();
         
-        // Handle special case for Earth/Overworld
-        if (destinationId.equals(SpaceBodies.EARTH.getId())) {
-            return com.astroframe.galactic.space.dimension.SpaceStationTeleporter.teleportToOverworld(player);
+        if (body == SpaceBodies.SPACE_STATION) {
+            return SpaceStationDimension.isSpaceStation(level);
+        } else if (body == SpaceBodies.EARTH) {
+            return level.dimension().equals(Level.OVERWORLD);
         }
-        
-        // For other celestial bodies (to be implemented in the Exploration module)
-        // Just log a message for now
-        GalacticSpace.LOGGER.info("Player {} attempted to travel to {}, but this destination is not yet implemented",
-                                   player.getName().getString(), destination.getName());
-        player.sendSystemMessage(Component.translatable("message.galactic-space.destination_not_implemented")
-                                .append(": " + destination.getName()));
         
         return false;
     }
-
-    @Override
-    public List<ICelestialBody> getDiscoveredCelestialBodies(Player player) {
-        List<ICelestialBody> bodies = new ArrayList<>();
-        List<ResourceLocation> discovered = discoveredBodies.getOrDefault(player.getUUID(), new ArrayList<>());
+    
+    /**
+     * Marks a celestial body as discovered by a player.
+     *
+     * @param player The player
+     * @param body The celestial body
+     */
+    public void discoverCelestialBody(ServerPlayer player, ICelestialBody body) {
+        UUID playerId = player.getUUID();
         
-        for (ResourceLocation id : discovered) {
-            getCelestialBody(id).ifPresent(bodies::add);
+        // Initialize set if this is the player's first discovery
+        if (!discoveredBodies.containsKey(playerId)) {
+            discoveredBodies.put(playerId, new HashSet<>());
+        }
+        
+        // Add the body to the player's discoveries
+        if (discoveredBodies.get(playerId).add(body)) {
+            // If it's a new discovery, notify the player
+            player.sendSystemMessage(Component.translatable("message.galactic-space.discovered_body", 
+                                                         body.getName())
+                                   .withStyle(net.minecraft.ChatFormatting.GREEN));
+            
+            // TODO: Trigger advancements when the body is discovered
+        }
+    }
+    
+    /**
+     * Checks if a player has discovered a celestial body.
+     *
+     * @param player The player
+     * @param body The celestial body
+     * @return true if the player has discovered the body
+     */
+    public boolean hasDiscovered(ServerPlayer player, ICelestialBody body) {
+        UUID playerId = player.getUUID();
+        
+        // Earth is always discovered
+        if (body == SpaceBodies.EARTH) {
+            return true;
+        }
+        
+        // Check if player has discovered the body
+        return discoveredBodies.containsKey(playerId) && 
+               discoveredBodies.get(playerId).contains(body);
+    }
+    
+    /**
+     * Gets a list of celestial bodies discovered by a player.
+     *
+     * @param player The player
+     * @return A list of discovered celestial bodies
+     */
+    public List<ICelestialBody> getDiscoveredBodies(ServerPlayer player) {
+        UUID playerId = player.getUUID();
+        
+        // Create a list with Earth (always discovered)
+        List<ICelestialBody> bodies = new ArrayList<>();
+        bodies.add(SpaceBodies.EARTH);
+        
+        // Add other discovered bodies
+        if (discoveredBodies.containsKey(playerId)) {
+            bodies.addAll(discoveredBodies.get(playerId));
         }
         
         return bodies;
     }
-
-    @Override
-    public boolean hasDiscovered(Player player, ICelestialBody body) {
-        return discoveredBodies.getOrDefault(player.getUUID(), new ArrayList<>())
-                .contains(body.getId());
+    
+    /**
+     * Aborts an in-progress travel sequence.
+     *
+     * @param player The player
+     * @return true if a travel sequence was aborted
+     */
+    public boolean abortTravel(ServerPlayer player) {
+        if (RocketLaunchController.isLaunching(player)) {
+            RocketLaunchController.cancelLaunch(player);
+            return true;
+        }
+        return false;
     }
     
     /**
-     * Records a celestial body as discovered by a player.
+     * Calculates the travel time between two celestial bodies.
      * 
-     * @param player The player who made the discovery
-     * @param body The celestial body that was discovered
+     * @param from Source celestial body
+     * @param to Destination celestial body
+     * @param rocketTier The tier of the rocket being used
+     * @return Travel time in ticks
      */
-    @Override
-    public void discoverCelestialBody(Player player, ICelestialBody body) {
-        UUID playerId = player.getUUID();
-        List<ResourceLocation> playerDiscoveries = discoveredBodies.computeIfAbsent(playerId, k -> new ArrayList<>());
+    public int calculateTravelTime(ICelestialBody from, ICelestialBody to, int rocketTier) {
+        // Base travel time based on distance between bodies
+        int distance = Math.abs(to.getDistanceFromHome() - from.getDistanceFromHome());
         
-        // Only add if not already discovered
-        if (!playerDiscoveries.contains(body.getId())) {
-            playerDiscoveries.add(body.getId());
-            
-            // Notify the player
-            if (player instanceof ServerPlayer) {
-                ((ServerPlayer) player).sendSystemMessage(
-                    Component.translatable("message.galactic-space.discovered_body", body.getName())
-                );
-            }
-            
-            // Save the discovery to persistent data
-            saveDiscoveries(player);
-        }
-    }
-
-    @Override
-    public Optional<ICelestialBody> getCurrentCelestialBody(Player player) {
-        // In a full implementation, this would check the player's dimension
-        // For now, just return Earth as the default
-        return getCelestialBody(SpaceBodies.EARTH.getId());
-    }
-
-    @Override
-    public void registerCelestialBody(ICelestialBody body) {
-        CelestialBodyRegistry.register(body);
-    }
-
-    @Override
-    public Optional<ICelestialBody> getCelestialBody(ResourceLocation id) {
-        return CelestialBodyRegistry.get(id);
-    }
-
-    @Override
-    public List<ICelestialBody> getAllCelestialBodies() {
-        return new ArrayList<>(CelestialBodyRegistry.getAll());
-    }
-
-    @Override
-    public int calculateFuelRequired(ICelestialBody origin, ICelestialBody destination) {
-        // Simple fuel calculation based on distance
-        return Math.abs(destination.getDistanceFromHome() - origin.getDistanceFromHome()) * 10;
-    }
-
-    @Override
-    public boolean canTravelTo(Player player, ICelestialBody destination) {
-        // In a full implementation, this would check if the player has the necessary equipment
-        // For now, just check if the celestial body has been discovered
-        return hasDiscovered(player, destination);
-    }
-    
-    /**
-     * Saves the player's discovered celestial bodies.
-     * @param player The player
-     */
-    private void saveDiscoveries(Player player) {
-        CompoundTag persistentData = player.getPersistentData();
-        CompoundTag data = persistentData.getCompound(Player.PERSISTED_NBT_TAG);
+        // Base time: 1 second per 10 distance units
+        int baseTime = distance * 2;
         
-        List<ResourceLocation> discovered = discoveredBodies.getOrDefault(
-                player.getUUID(), new ArrayList<>());
+        // Adjust for rocket tier (higher tier = faster travel)
+        float tierMultiplier = 1.0f / rocketTier;
         
-        ListTag list = new ListTag();
-        for (ResourceLocation id : discovered) {
-            list.add(StringTag.valueOf(id.toString()));
-        }
-        
-        data.put(DISCOVERED_TAG, list);
-        persistentData.put(Player.PERSISTED_NBT_TAG, data);
-    }
-    
-    /**
-     * Loads the player's discovered celestial bodies.
-     * @param player The player
-     */
-    public void loadDiscoveries(Player player) {
-        CompoundTag persistentData = player.getPersistentData();
-        
-        if (persistentData.contains(Player.PERSISTED_NBT_TAG)) {
-            CompoundTag data = persistentData.getCompound(Player.PERSISTED_NBT_TAG);
-            
-            if (data.contains(DISCOVERED_TAG)) {
-                ListTag list = data.getList(DISCOVERED_TAG, 8); // 8 is the ID for StringTag
-                List<ResourceLocation> discovered = new ArrayList<>();
-                
-                for (int i = 0; i < list.size(); i++) {
-                    String idString = list.getString(i);
-                    discovered.add(ResourceLocation.parse(idString));
-                }
-                
-                discoveredBodies.put(player.getUUID(), discovered);
-            }
-        }
+        // Calculate final time (in ticks, 20 ticks = 1 second)
+        return Math.max(60, Math.round(baseTime * tierMultiplier) * 20);
     }
 }

@@ -113,7 +113,7 @@ public class RocketLaunchController {
                     }
                     
                     // Play launch sound
-                    player.playSound(net.minecraft.sounds.SoundEvents.GENERIC_EXPLODE, 1.0F, 0.5F);
+                    player.playSound(net.minecraft.sounds.SoundEvents.GENERIC_EXPLODE.value(), 1.0F, 0.5F);
                 }
             }
             // Handle launch phase
@@ -229,8 +229,10 @@ public class RocketLaunchController {
     public static void cancelLaunch(Player player) {
         LaunchState state = playerLaunchStates.remove(player.getUUID());
         if (state != null) {
-            player.sendSystemMessage(Component.translatable("message.galactic-space.launch_aborted")
-                                   .withStyle(ChatFormatting.RED));
+            if (player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.sendSystemMessage(Component.translatable("message.galactic-space.launch_aborted")
+                                     .withStyle(ChatFormatting.RED));
+            }
             
             // Set rocket status back to ready
             if (state.rocket instanceof IRocket) {

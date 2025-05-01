@@ -16,13 +16,13 @@ public class SpaceStationDimension {
      * The dimension location for the space station.
      */
     public static final ResourceLocation SPACE_STATION_LOCATION = 
-        ResourceLocation.of(GalacticSpace.MOD_ID + ":space_station", ':');
+        new ResourceLocation(GalacticSpace.MOD_ID, "space_station");
     
     /**
      * The dimension type location for the space station.
      */
     public static final ResourceLocation SPACE_STATION_TYPE_LOCATION = 
-        ResourceLocation.of(GalacticSpace.MOD_ID + ":space_station_type", ':');
+        new ResourceLocation(GalacticSpace.MOD_ID, "space_station_type");
     
     /**
      * The resource key for the space station dimension.
