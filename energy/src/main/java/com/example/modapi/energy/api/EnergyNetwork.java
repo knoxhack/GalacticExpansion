@@ -13,8 +13,8 @@ import java.util.*;
  */
 @Deprecated
 public class EnergyNetwork {
-    private final Set<BlockPos> connectedBlocks = new HashSet<>();
-    private final Map<BlockPos, IEnergyHandler> energyHandlers = new HashMap<>();
+    private final Set<net.minecraft.core.BlockPos> connectedBlocks = new HashSet<>();
+    private final Map<net.minecraft.core.BlockPos, IEnergyHandler> energyHandlers = new HashMap<>();
     private final UUID networkId;
     private int transferRate = 1000;
     
@@ -70,7 +70,7 @@ public class EnergyNetwork {
      * @param pos The block position
      * @return Whether the block was added successfully
      */
-    public boolean addBlock(Level level, BlockPos pos) {
+    public boolean addBlock(Level level, net.minecraft.core.BlockPos pos) {
         if (connectedBlocks.contains(pos)) {
             return false; // Already in the network
         }
@@ -91,7 +91,7 @@ public class EnergyNetwork {
      * @param pos The block position
      * @return Whether the block was removed
      */
-    public boolean removeBlock(BlockPos pos) {
+    public boolean removeBlock(net.minecraft.core.BlockPos pos) {
         if (connectedBlocks.remove(pos)) {
             energyHandlers.remove(pos);
             return true;
