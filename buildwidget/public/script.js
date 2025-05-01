@@ -150,52 +150,66 @@ function connectWebSocket() {
         
         console.log('Received message type:', message.type);
         
-        // Ensure we have data
-        const data = message.data || {}; 
-        
-        switch (message.type) {
-            case 'status':
-                updateBuildStatus(data);
-                break;
-            case 'buildOutput':
-                updateBuildOutput(data);
-                break;
-            case 'tasks':
-                updateTaskList(data);
-                break;
-            case 'metrics':
-                updateBuildMetrics(data);
-                break;
-            case 'notifications':
-                // Handle array of notifications
-                if (Array.isArray(data)) {
-                    data.forEach(notification => {
+        try {
+            // Ensure we have data
+            const data = message.data || {}; 
+            
+            switch (message.type) {
+                case 'status':
+                    updateBuildStatus(data);
+                    break;
+                case 'buildOutput':
+                    updateBuildOutput(data);
+                    break;
+                case 'tasks':
+                    updateTaskList(data);
+                    break;
+                case 'metrics':
+                    updateBuildMetrics(data);
+                    break;
+                case 'notifications':
+                    // Handle array of notifications
+                    if (Array.isArray(data)) {
+                        data.forEach(notification => {
+                            showNotification(
+                                notification.title || 'Notification', 
+                                notification.message || '', 
+                                notification.type || 'info'
+                            );
+                        });
+                    } else if (data && typeof data === 'object') {
                         showNotification(
-                            notification.title || 'Notification', 
-                            notification.message || '', 
-                            notification.type || 'info'
+                            data.title || 'Notification', 
+                            data.message || '', 
+                            data.type || 'info'
                         );
-                    });
-                } else if (data && typeof data === 'object') {
-                    showNotification(
-                        data.title || 'Notification', 
-                        data.message || '', 
-                        data.type || 'info'
-                    );
-                }
-                break;
-            case 'checkpointStatus':
-                updateCheckpointStatus(data);
-                break;
-            case 'moduleStatus':
-                updateModuleStatus(data);
-                break;
-            case 'versionHistory':
-            case 'versionInfo':
-                updateVersionInfo(data);
-                break;
-            default:
-                console.warn('Unknown message type:', message.type);
+                    }
+                    break;
+                case 'checkpointStatus':
+                    updateCheckpointStatus(data);
+                    break;
+                case 'moduleStatus':
+                    updateModuleStatus(data);
+                    break;
+                case 'versionHistory':
+                case 'versionInfo':
+                    updateVersionInfo(data);
+                    break;
+                case 'error':
+                    showNotification('Error', data.message || String(data), 'error');
+                    break;
+                default:
+                    console.warn('Unknown message type:', message.type);
+            }
+        } catch (error) {
+            console.error('Error handling message data:', error, message);
+            // Try to show an error notification if possible
+            try {
+                showNotification('Error', 'Failed to process server message', 'error');
+            } catch (e) {
+                // Last resort: log to console
+                console.error('Critical error:', e);
+            }
         }
     }
     

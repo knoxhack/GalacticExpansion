@@ -732,11 +732,60 @@ function broadcastStatus() {
 
 // Broadcast build output only
 function broadcastOutput(output) {
-  clients.forEach((handlers, client) => {
-    if (client.readyState === client.OPEN) {
-      handlers.sendBuildOutput(output);
+  // Enhanced error handling and formatting
+  try {
+    // Ensure output is in expected format for all client types
+    let formattedOutput;
+    
+    // Format the output consistently regardless of how it's called
+    if (Array.isArray(output)) {
+      // If it's an array, ensure each item is properly formatted
+      formattedOutput = output.map(item => {
+        if (typeof item === 'string') {
+          return { type: 'info', message: item };
+        } else if (typeof item === 'object' && item !== null) {
+          return {
+            type: item.type || 'info',
+            message: item.message || String(item)
+          };
+        } else {
+          return { type: 'info', message: String(item) };
+        }
+      });
+    } else if (typeof output === 'string') {
+      // Single string becomes a single-item array
+      formattedOutput = [{ type: 'info', message: output }];
+    } else if (typeof output === 'object' && output !== null) {
+      // Single object becomes a single-item array
+      formattedOutput = [{
+        type: output.type || 'info',
+        message: output.message || String(output)
+      }];
+    } else {
+      // Fallback
+      formattedOutput = [{ type: 'info', message: String(output) }];
     }
-  });
+    
+    // Direct broadcast to all websocket clients
+    wss.clients.forEach(client => {
+      if (client.readyState === client.OPEN) {
+        const message = JSON.stringify({
+          type: 'buildOutput',
+          data: formattedOutput
+        });
+        client.send(message);
+      }
+    });
+    
+    // Also use the handler approach for backward compatibility
+    clients.forEach((handlers, client) => {
+      if (client.readyState === client.OPEN) {
+        handlers.sendBuildOutput(formattedOutput);
+      }
+    });
+  } catch (error) {
+    console.error('Error in broadcastOutput:', error);
+  }
 }
 
 // Broadcast error message
