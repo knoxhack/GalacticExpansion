@@ -595,23 +595,47 @@ public class RocketComponentFactory {
      * Implementation of a rocket engine.
      */
     private static class RocketEngine implements IRocketEngine {
-        private final String id;
+        private final ResourceLocation id;
+        private final String name;
+        private final String description;
         private final int tier;
         private final int mass;
+        private final int maxDurability;
+        private int currentDurability;
         private final float efficiency;
-        private final EngineType type;
+        private final FuelType fuelType;
         private final boolean atmosphereOperable;
         private final boolean spaceOperable;
         
-        public RocketEngine(String id, int tier, int mass, float efficiency,
-                          EngineType type, boolean atmosphereOperable, boolean spaceOperable) {
+        public RocketEngine(ResourceLocation id, String name, String description, 
+                          int tier, int mass, int maxDurability, float efficiency,
+                          FuelType fuelType, boolean atmosphereOperable, boolean spaceOperable) {
             this.id = id;
+            this.name = name;
+            this.description = description;
             this.tier = tier;
             this.mass = mass;
+            this.maxDurability = maxDurability;
+            this.currentDurability = maxDurability;
             this.efficiency = efficiency;
-            this.type = type;
+            this.fuelType = fuelType;
             this.atmosphereOperable = atmosphereOperable;
             this.spaceOperable = spaceOperable;
+        }
+        
+        @Override
+        public ResourceLocation getId() {
+            return id;
+        }
+        
+        @Override
+        public String getName() {
+            return name;
+        }
+        
+        @Override
+        public String getDescription() {
+            return description;
         }
         
         @Override
@@ -620,8 +644,33 @@ public class RocketComponentFactory {
         }
         
         @Override
+        public RocketComponentType getType() {
+            return RocketComponentType.ENGINE;
+        }
+        
+        @Override
         public int getMass() {
             return mass;
+        }
+        
+        @Override
+        public int getMaxDurability() {
+            return maxDurability;
+        }
+        
+        @Override
+        public int getCurrentDurability() {
+            return currentDurability;
+        }
+        
+        @Override
+        public void damage(int amount) {
+            currentDurability = Math.max(0, currentDurability - amount);
+        }
+        
+        @Override
+        public void repair(int amount) {
+            currentDurability = Math.min(maxDurability, currentDurability + amount);
         }
         
         @Override
@@ -630,8 +679,8 @@ public class RocketComponentFactory {
         }
         
         @Override
-        public EngineType getEngineType() {
-            return type;
+        public FuelType getFuelType() {
+            return fuelType;
         }
         
         @Override
@@ -653,39 +702,51 @@ public class RocketComponentFactory {
         public int getThrust() {
             return tier * 100;
         }
-        
-        @Override
-        public String getId() {
-            return id;
-        }
-        
-        /**
-         * Types of rocket engines.
-         */
-        public enum EngineType {
-            SOLID,
-            LIQUID,
-            ION,
-            NUCLEAR,
-            CHEMICAL,
-            PLASMA
-        }
     }
     
     /**
      * Implementation of a fuel tank.
      */
     private static class FuelTank implements IFuelTank {
-        private final String id;
+        private final ResourceLocation id;
+        private final String name;
+        private final String description;
         private final int tier;
         private final int mass;
+        private final int maxDurability;
+        private int currentDurability;
         private final int fuelCapacity;
+        private final float explosionResistance;
+        private IRocketEngine.FuelType fuelType;
         
-        public FuelTank(String id, int tier, int mass, int fuelCapacity) {
+        public FuelTank(ResourceLocation id, String name, String description, 
+                       int tier, int mass, int maxDurability, int fuelCapacity, 
+                       float explosionResistance, IRocketEngine.FuelType fuelType) {
             this.id = id;
+            this.name = name;
+            this.description = description;
             this.tier = tier;
             this.mass = mass;
+            this.maxDurability = maxDurability;
+            this.currentDurability = maxDurability;
             this.fuelCapacity = fuelCapacity;
+            this.explosionResistance = explosionResistance;
+            this.fuelType = fuelType;
+        }
+        
+        @Override
+        public ResourceLocation getId() {
+            return id;
+        }
+        
+        @Override
+        public String getName() {
+            return name;
+        }
+        
+        @Override
+        public String getDescription() {
+            return description;
         }
         
         @Override
@@ -694,8 +755,33 @@ public class RocketComponentFactory {
         }
         
         @Override
+        public RocketComponentType getType() {
+            return RocketComponentType.FUEL_TANK;
+        }
+        
+        @Override
         public int getMass() {
             return mass;
+        }
+        
+        @Override
+        public int getMaxDurability() {
+            return maxDurability;
+        }
+        
+        @Override
+        public int getCurrentDurability() {
+            return currentDurability;
+        }
+        
+        @Override
+        public void damage(int amount) {
+            currentDurability = Math.max(0, currentDurability - amount);
+        }
+        
+        @Override
+        public void repair(int amount) {
+            currentDurability = Math.min(maxDurability, currentDurability + amount);
         }
         
         @Override
@@ -704,8 +790,13 @@ public class RocketComponentFactory {
         }
         
         @Override
-        public String getId() {
-            return id;
+        public float getExplosionResistance() {
+            return explosionResistance;
+        }
+        
+        @Override
+        public IRocketEngine.FuelType getFuelType() {
+            return fuelType;
         }
     }
     

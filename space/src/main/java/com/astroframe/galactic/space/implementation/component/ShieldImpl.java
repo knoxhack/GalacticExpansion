@@ -183,4 +183,141 @@ public class ShieldImpl implements IShield {
         
         return tooltip;
     }
+    
+    /**
+     * Builder for ShieldImpl.
+     */
+    public static class Builder {
+        private final ResourceLocation id;
+        private String name = "Shield";
+        private String description = "A shield component for protection.";
+        private int tier = 1;
+        private int mass = 200;
+        private int maxDurability = 1000;
+        private int impactResistance = 5;
+        private int heatResistance = 10;
+        private int radiationResistance = 5;
+        private int maxShieldStrength = 100;
+        private boolean meteorResistance = false;
+        
+        /**
+         * Creates a new builder with required parameters.
+         * @param id The component ID
+         */
+        public Builder(ResourceLocation id) {
+            this.id = id;
+        }
+        
+        /**
+         * Sets the name.
+         * @param name The name
+         * @return This builder
+         */
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+        
+        /**
+         * Sets the description.
+         * @param description The description
+         * @return This builder
+         */
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+        
+        /**
+         * Sets the tier.
+         * @param tier The tier level (1-3)
+         * @return This builder
+         */
+        public Builder tier(int tier) {
+            this.tier = Math.max(1, Math.min(3, tier));
+            return this;
+        }
+        
+        /**
+         * Sets the mass.
+         * @param mass The mass
+         * @return This builder
+         */
+        public Builder mass(int mass) {
+            this.mass = mass;
+            return this;
+        }
+        
+        /**
+         * Sets the max durability.
+         * @param maxDurability The max durability
+         * @return This builder
+         */
+        public Builder maxDurability(int maxDurability) {
+            this.maxDurability = maxDurability;
+            return this;
+        }
+        
+        /**
+         * Sets the impact resistance.
+         * @param impactResistance The impact resistance
+         * @return This builder
+         */
+        public Builder impactResistance(int impactResistance) {
+            this.impactResistance = impactResistance;
+            return this;
+        }
+        
+        /**
+         * Sets the heat resistance.
+         * @param heatResistance The heat resistance
+         * @return This builder
+         */
+        public Builder heatResistance(int heatResistance) {
+            this.heatResistance = heatResistance;
+            return this;
+        }
+        
+        /**
+         * Sets the radiation resistance.
+         * @param radiationResistance The radiation resistance
+         * @return This builder
+         */
+        public Builder radiationResistance(int radiationResistance) {
+            this.radiationResistance = radiationResistance;
+            return this;
+        }
+        
+        /**
+         * Sets the max shield strength.
+         * @param shieldStrength The max shield strength
+         * @return This builder
+         */
+        public Builder shieldStrength(int shieldStrength) {
+            this.maxShieldStrength = shieldStrength;
+            return this;
+        }
+        
+        /**
+         * Sets whether this shield has meteor resistance.
+         * @param meteorResistance True if has meteor resistance
+         * @return This builder
+         */
+        public Builder meteorResistance(boolean meteorResistance) {
+            this.meteorResistance = meteorResistance;
+            return this;
+        }
+        
+        /**
+         * Builds the shield.
+         * @return A new ShieldImpl
+         */
+        public ShieldImpl build() {
+            return new ShieldImpl(
+                id, name, description, tier, mass, maxDurability,
+                impactResistance, heatResistance, radiationResistance,
+                maxShieldStrength
+            );
+        }
+    }
 }
