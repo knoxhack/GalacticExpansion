@@ -73,7 +73,9 @@ public class EnergyNetwork {
         }
         
         // Check if the block has an energy handler
-        if (level.getBlockEntity(pos) instanceof IEnergyHandler energyHandler) {
+        Object blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof IEnergyHandler) {
+            IEnergyHandler energyHandler = (IEnergyHandler) blockEntity;
             connectedBlocks.add(pos);
             energyHandlers.put(pos, energyHandler);
             return true;

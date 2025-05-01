@@ -7,7 +7,7 @@ package com.example.modapi.energy.api;
  * @deprecated Use the new energy API directly
  */
 @Deprecated
-public class EnergyStorageAdapter implements EnergyStorage {
+public class EnergyStorageAdapter implements IEnergyHandler {
     private final com.astroframe.galactic.energy.api.EnergyStorage original;
     
     /**
@@ -39,12 +39,12 @@ public class EnergyStorageAdapter implements EnergyStorage {
     }
     
     @Override
-    public int getEnergy() {
+    public int getEnergyStored() {
         return original.getEnergy();
     }
     
     @Override
-    public int getMaxEnergy() {
+    public int getMaxEnergyStored() {
         return original.getMaxEnergy();
     }
     
@@ -58,14 +58,8 @@ public class EnergyStorageAdapter implements EnergyStorage {
         return original.canReceive();
     }
     
-    /**
-     * Get the energy type of this storage.
-     * 
-     * @return The energy type
-     */
-    public EnergyType getEnergyType() {
-        // Convert from new to old energy type
-        String id = original.getEnergyType().getId();
-        return EnergyType.byId(id);
+    @Override
+    public com.astroframe.galactic.energy.api.EnergyUnit getEnergyUnit() {
+        return com.astroframe.galactic.energy.api.EnergyUnit.FORGE_ENERGY;
     }
 }

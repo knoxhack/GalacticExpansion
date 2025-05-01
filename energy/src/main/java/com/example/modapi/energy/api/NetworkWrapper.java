@@ -57,9 +57,15 @@ public class NetworkWrapper {
      */
     public void addStorage(BlockPos pos, EnergyStorage storage) {
         WorldPosition position = BlockPosAdapter.toWorldPosition(pos, level);
-        // Convert to the new API's storage type
+        // We need to adapt the old storage to the new API
+        // For now we'll create a simple adapter
         com.astroframe.galactic.energy.api.EnergyStorage newStorage = 
-            new com.astroframe.galactic.energy.api.EnergyStorageAdapter(storage);
+            new com.astroframe.galactic.energy.implementation.SimpleEnergyStorage(
+                storage.getMaxEnergyStored(), 
+                storage.getMaxEnergyStored(), 
+                storage.getMaxEnergyStored(),
+                storage.getEnergyStored(),
+                com.astroframe.galactic.energy.api.EnergyType.ELECTRICAL);
         network.addStorage(position, newStorage);
     }
     
@@ -90,16 +96,14 @@ public class NetworkWrapper {
      * @param pos The position
      * @return The energy storage, or null if none exists
      */
-    public EnergyStorage getStorage(BlockPos pos) {
+    public IEnergyHandler getStorage(BlockPos pos) {
         WorldPosition position = BlockPosAdapter.toWorldPosition(pos, level);
         com.astroframe.galactic.energy.api.EnergyStorage storage = network.getStorage(position);
         if (storage == null) {
             return null;
         }
-        if (storage instanceof com.astroframe.galactic.energy.api.EnergyStorageAdapter) {
-            return ((com.astroframe.galactic.energy.api.EnergyStorageAdapter) storage).getOriginal();
-        }
-        // Create a wrapper for the new storage
+        // We're just going to create a new adapter since we don't have a direct reference
+        // to the original storage
         return new EnergyStorageAdapter(storage);
     }
 }
