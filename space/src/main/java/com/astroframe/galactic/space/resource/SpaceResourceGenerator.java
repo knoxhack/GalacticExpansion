@@ -17,7 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +43,7 @@ public class SpaceResourceGenerator {
         registerCelestialBodyResources(SpaceBodies.EARTH.getId(), new ResourceDistribution());
         
         // Register block break handler
-        MinecraftForge.EVENT_BUS.addListener(SpaceResourceGenerator::onBlockBreak);
+        NeoForge.EVENT_BUS.addListener(SpaceResourceGenerator::onBlockBreak);
         
         GalacticSpace.LOGGER.info("Space resource generator initialized");
     }
