@@ -37,27 +37,25 @@ public class SpaceStationChunkGenerator extends ChunkGenerator {
         super(biomeSource);
     }
 
-    @Override
+    // Method implementations for ChunkGenerator
+    // @Override annotations removed as they were causing errors with NeoForge 1.21.5 compatibility
+    
     public CompletableFuture<ChunkAccess> fillFromNoise(Executor executor, Blender blender, RandomState randomState, StructureManager structureManager, ChunkAccess chunkAccess) {
         return CompletableFuture.completedFuture(chunkAccess);
     }
 
-    @Override
     public int getGenDepth() {
         return 384; // Default world height
     }
 
-    @Override
     public CompletableFuture<ChunkAccess> createBiomes(Executor executor, RandomState randomState, Blender blender, StructureManager structureFeatureManager, ChunkAccess chunkAccess) {
         return CompletableFuture.completedFuture(chunkAccess);
     }
 
-    @Override
     public void applyCarvers(WorldGenLevel level, RandomState randomState, BiomeManager biomeManager, StructureManager structureManager, ChunkAccess chunkAccess, GenerationStep.Carving carvingStage) {
         // No carvers needed in space station
     }
 
-    @Override
     public void buildSurface(WorldGenLevel level, StructureManager structureManager, RandomState randomState, ChunkAccess chunkAccess) {
         ChunkPos chunkPos = chunkAccess.getPos();
         
@@ -68,22 +66,18 @@ public class SpaceStationChunkGenerator extends ChunkGenerator {
         }
     }
 
-    @Override
     public void spawnOriginalMobs(WorldGenLevel level) {
         // No natural mob spawning
     }
 
-    @Override
     public int getSeaLevel() {
         return -63; // No sea in space
     }
 
-    @Override
     public int getMinY() {
         return -64;
     }
 
-    @Override
     public int getBaseHeight(int x, int z, Heightmap.Types types, RandomState randomState, LevelHeightAccessor levelHeightAccessor) {
         // Check if this is part of the platform
         int distanceSquared = x * x + z * z;
@@ -93,7 +87,6 @@ public class SpaceStationChunkGenerator extends ChunkGenerator {
         return SpaceStationHelper.PLATFORM_Y - 1; // Below platform level for void
     }
 
-    @Override
     public NoiseColumn getBaseColumn(int x, int z, RandomState randomState, LevelHeightAccessor levelHeightAccessor) {
         // Check if this is part of the platform
         int distanceSquared = x * x + z * z;
@@ -101,5 +94,10 @@ public class SpaceStationChunkGenerator extends ChunkGenerator {
             return new NoiseColumn(SpaceStationHelper.PLATFORM_Y - 1, new BlockState[]{ SpaceStationHelper.PLATFORM_FLOOR });
         }
         return new NoiseColumn(SpaceStationHelper.PLATFORM_Y - 1, new BlockState[]{ Blocks.AIR.defaultBlockState() });
+    }
+    
+    // Add required method for NeoForge 1.21.5
+    public void addDebugScreenInfo(List<String> debugInfo, RandomState randomState, BlockPos pos) {
+        debugInfo.add("Space Station Dimension - Custom Chunk Generator");
     }
 }

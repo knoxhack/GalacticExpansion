@@ -120,6 +120,7 @@ public class SpaceTravelManager implements ISpaceTravelManager {
     
     /**
      * Implementation of the interface method - handles any Player type
+     * Discovers a celestial body for a player, adds it to their discovered bodies list.
      */
     @Override
     public void discoverCelestialBody(Player player, ICelestialBody body) {
@@ -292,18 +293,7 @@ public class SpaceTravelManager implements ISpaceTravelManager {
         }
     }
     
-    /**
-     * Marks a celestial body as discovered for a player.
-     * 
-     * @param player The player
-     * @param body The celestial body to discover
-     */
-    @Override
-    public void discoverCelestialBody(Player player, ICelestialBody body) {
-        if (player instanceof ServerPlayer serverPlayer) {
-            discoverCelestialBodyInternal(serverPlayer, body);
-        }
-    }
+    // Second implementation of discoverCelestialBody removed to fix ambiguous reference error
     
     /**
      * Calculates the fuel required to travel between two celestial bodies.
