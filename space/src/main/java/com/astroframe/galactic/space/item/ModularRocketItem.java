@@ -152,7 +152,11 @@ public class ModularRocketItem extends Item {
      */
     public static void saveRocketToStack(ItemStack stack, IRocket rocket) {
         if (stack.getItem() instanceof ModularRocketItem) {
-            CompoundTag tag = stack.getOrCreateTag();
+            CompoundTag tag = stack.getTag();
+            if (tag == null) {
+                tag = new CompoundTag();
+                stack.setTag(tag);
+            }
             
             CompoundTag rocketTag = new CompoundTag();
             rocket.saveToTag(rocketTag);
