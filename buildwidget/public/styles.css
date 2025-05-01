@@ -119,6 +119,16 @@ select {
     background-color: #2d8c47;
 }
 
+.btn-info {
+    background-color: #3498db;
+    color: white;
+    border: none;
+}
+
+.btn-info:hover {
+    background-color: #2980b9;
+}
+
 button:disabled {
     opacity: 0.6;
     cursor: not-allowed;

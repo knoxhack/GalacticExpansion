@@ -7,6 +7,7 @@ const outputText = document.getElementById('outputText');
 const taskContainer = document.getElementById('taskContainer');
 const startBuildBtn = document.getElementById('startBuild');
 const stopBuildBtn = document.getElementById('stopBuild');
+const createCheckpointBtn = document.getElementById('createCheckpoint');
 const createReleaseBtn = document.getElementById('createRelease');
 const buildCommandSelect = document.getElementById('buildCommand');
 const clearOutputBtn = document.getElementById('clearOutput');
@@ -769,6 +770,102 @@ if (filterSelect) {
         }));
     });
 };
+
+// Handle checkpoint creation - creates git commit + build + release together
+createCheckpointBtn.addEventListener('click', () => {
+    // Show a modal dialog for checkpoint information
+    const checkpointName = prompt('Enter checkpoint name (required):', `Checkpoint ${new Date().toLocaleDateString()}`);
+    
+    if (!checkpointName) {
+        // User canceled or didn't provide a name
+        return;
+    }
+    
+    const description = prompt('Enter checkpoint description (optional):', 'Automated checkpoint with build and release');
+    
+    // Disable the button while processing
+    createCheckpointBtn.disabled = true;
+    createCheckpointBtn.textContent = 'Processing Checkpoint...';
+    
+    // Add checkpoint message to output
+    const checkpointMessage = document.createElement('span');
+    checkpointMessage.className = 'output-info';
+    checkpointMessage.textContent = `[Checkpoint] Creating checkpoint "${checkpointName}"...`;
+    outputText.appendChild(checkpointMessage);
+    outputText.appendChild(document.createElement('br'));
+    
+    // Auto-scroll to bottom
+    if (autoScrollCheckbox.checked) {
+        outputText.parentElement.scrollTop = outputText.parentElement.scrollHeight;
+    }
+    
+    // Call the API to create a checkpoint
+    fetch('/api/checkpoint', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: checkpointName,
+            description: description || ''
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Re-enable the button
+        createCheckpointBtn.disabled = false;
+        createCheckpointBtn.textContent = 'Create Checkpoint';
+        
+        if (data.success) {
+            // Add success message
+            const successMessage = document.createElement('span');
+            successMessage.className = 'output-success';
+            successMessage.textContent = `[Checkpoint] Checkpoint "${checkpointName}" created and build process started.`;
+            outputText.appendChild(successMessage);
+            outputText.appendChild(document.createElement('br'));
+            
+            // Show notification
+            showNotification('Checkpoint Created', `Checkpoint "${checkpointName}" created and build process started.`, 'success');
+        } else {
+            // Add error message
+            const errorMessage = document.createElement('span');
+            errorMessage.className = 'output-error';
+            errorMessage.textContent = `[Checkpoint Error] ${data.message}`;
+            outputText.appendChild(errorMessage);
+            outputText.appendChild(document.createElement('br'));
+            
+            // Show notification
+            showNotification('Checkpoint Failed', data.message, 'error');
+        }
+        
+        // Auto-scroll to bottom
+        if (autoScrollCheckbox.checked) {
+            outputText.parentElement.scrollTop = outputText.parentElement.scrollHeight;
+        }
+    })
+    .catch(error => {
+        console.error('Error creating checkpoint:', error);
+        
+        // Re-enable the button
+        createCheckpointBtn.disabled = false;
+        createCheckpointBtn.textContent = 'Create Checkpoint';
+        
+        // Add error message
+        const errorMessage = document.createElement('span');
+        errorMessage.className = 'output-error';
+        errorMessage.textContent = `[Checkpoint Error] ${error.message || 'Unknown error occurred'}`;
+        outputText.appendChild(errorMessage);
+        outputText.appendChild(document.createElement('br'));
+        
+        // Show notification
+        showNotification('Checkpoint Failed', 'Error creating checkpoint', 'error');
+        
+        // Auto-scroll to bottom
+        if (autoScrollCheckbox.checked) {
+            outputText.parentElement.scrollTop = outputText.parentElement.scrollHeight;
+        }
+    });
+});
 
 createReleaseBtn.addEventListener('click', () => {
     if (confirm('Create a new GitHub release with all versioned module JARs?')) {
