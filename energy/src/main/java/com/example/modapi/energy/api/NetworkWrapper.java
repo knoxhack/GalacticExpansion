@@ -2,8 +2,6 @@ package com.example.modapi.energy.api;
 
 import com.astroframe.galactic.energy.api.EnergyNetwork;
 import com.astroframe.galactic.energy.api.energynetwork.WorldPosition;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
 
 /**
  * Wrapper class for EnergyNetwork.
@@ -57,9 +55,12 @@ public class NetworkWrapper {
      * @param pos The position
      * @param storage The energy storage
      */
-    public void addStorage(net.minecraft.core.BlockPos pos, EnergyStorage storage) {
+    public void addStorage(BlockPos pos, EnergyStorage storage) {
         WorldPosition position = BlockPosAdapter.toWorldPosition(pos, level);
-        network.addStorage(position, storage);
+        // Convert to the new API's storage type
+        com.astroframe.galactic.energy.api.EnergyStorage newStorage = 
+            new com.astroframe.galactic.energy.api.EnergyStorageAdapter(storage);
+        network.addStorage(position, newStorage);
     }
     
     /**
@@ -67,7 +68,7 @@ public class NetworkWrapper {
      * 
      * @param pos The position
      */
-    public void removeStorage(net.minecraft.core.BlockPos pos) {
+    public void removeStorage(BlockPos pos) {
         WorldPosition position = BlockPosAdapter.toWorldPosition(pos, level);
         network.removeStorage(position);
     }
@@ -78,7 +79,7 @@ public class NetworkWrapper {
      * @param pos The position
      * @return True if a storage exists
      */
-    public boolean hasStorage(net.minecraft.core.BlockPos pos) {
+    public boolean hasStorage(BlockPos pos) {
         WorldPosition position = BlockPosAdapter.toWorldPosition(pos, level);
         return network.hasStorage(position);
     }
@@ -89,8 +90,16 @@ public class NetworkWrapper {
      * @param pos The position
      * @return The energy storage, or null if none exists
      */
-    public EnergyStorage getStorage(net.minecraft.core.BlockPos pos) {
+    public EnergyStorage getStorage(BlockPos pos) {
         WorldPosition position = BlockPosAdapter.toWorldPosition(pos, level);
-        return network.getStorage(position);
+        com.astroframe.galactic.energy.api.EnergyStorage storage = network.getStorage(position);
+        if (storage == null) {
+            return null;
+        }
+        if (storage instanceof com.astroframe.galactic.energy.api.EnergyStorageAdapter) {
+            return ((com.astroframe.galactic.energy.api.EnergyStorageAdapter) storage).getOriginal();
+        }
+        // Create a wrapper for the new storage
+        return new EnergyStorageAdapter(storage);
     }
 }

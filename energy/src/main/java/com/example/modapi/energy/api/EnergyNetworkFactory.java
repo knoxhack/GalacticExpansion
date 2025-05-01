@@ -1,6 +1,5 @@
 package com.example.modapi.energy.api;
 
-import com.astroframe.galactic.energy.api.energynetwork.Level;
 import com.astroframe.galactic.energy.implementation.CachedEnergyNetwork;
 import java.util.UUID;
 
@@ -14,15 +13,19 @@ public class EnergyNetworkFactory {
      * Create a new energy network.
      * 
      * @param networkId The network ID
-     * @param level The Minecraft level
+     * @param mcLevel The Minecraft level or any other level object
      * @return The energy network
      */
-    public static EnergyNetworkSimplified createNetwork(UUID networkId, net.minecraft.world.level.Level level) {
-        Level customLevel = BlockPosAdapter.toCustomLevel(level);
+    public static EnergyNetworkSimplified createNetwork(UUID networkId, Object mcLevel) {
+        // Convert to our custom Level class
+        Level customLevelOld = Level.fromMinecraftLevel(mcLevel);
+        com.astroframe.galactic.energy.api.energynetwork.Level customLevel = 
+            new com.astroframe.galactic.energy.api.energynetwork.Level(customLevelOld.getDimension());
+        
         com.astroframe.galactic.energy.api.EnergyNetwork network = 
             new CachedEnergyNetwork(com.astroframe.galactic.energy.api.EnergyType.ELECTRICAL, customLevel);
         
-        NetworkWrapper wrapper = new NetworkWrapper(network, level);
+        NetworkWrapper wrapper = new NetworkWrapper(network, customLevelOld);
         return new EnergyNetworkSimplified(networkId, wrapper);
     }
     
@@ -30,12 +33,16 @@ public class EnergyNetworkFactory {
      * Create a new energy network with a specific energy type.
      * 
      * @param networkId The network ID
-     * @param level The Minecraft level
+     * @param mcLevel The Minecraft level or any other level object
      * @param type The energy type
      * @return The energy network
      */
-    public static EnergyNetworkSimplified createNetwork(UUID networkId, net.minecraft.world.level.Level level, EnergyType type) {
-        Level customLevel = BlockPosAdapter.toCustomLevel(level);
+    public static EnergyNetworkSimplified createNetwork(UUID networkId, Object mcLevel, EnergyType type) {
+        // Convert to our custom Level class
+        Level customLevelOld = Level.fromMinecraftLevel(mcLevel);
+        com.astroframe.galactic.energy.api.energynetwork.Level customLevel = 
+            new com.astroframe.galactic.energy.api.energynetwork.Level(customLevelOld.getDimension());
+        
         com.astroframe.galactic.energy.api.EnergyType newType;
         
         // Convert the old energy type to the new energy type
@@ -44,7 +51,7 @@ public class EnergyNetworkFactory {
         com.astroframe.galactic.energy.api.EnergyNetwork network = 
             new CachedEnergyNetwork(newType, customLevel);
         
-        NetworkWrapper wrapper = new NetworkWrapper(network, level);
+        NetworkWrapper wrapper = new NetworkWrapper(network, customLevelOld);
         return new EnergyNetworkSimplified(networkId, wrapper);
     }
 }
