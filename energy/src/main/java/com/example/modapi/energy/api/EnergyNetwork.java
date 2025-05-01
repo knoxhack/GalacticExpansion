@@ -168,7 +168,7 @@ public class EnergyNetwork {
             // Distribute to each consumer
             int totalExtracted = 0;
             
-            for (Map.Entry<net.minecraft.core.BlockPos, IEnergyHandler> consumerEntry : consumers) {
+            for (Map.Entry<BlockPos, IEnergyHandler> consumerEntry : consumers) {
                 IEnergyHandler consumer = consumerEntry.getValue();
                 
                 // Skip if the consumer is full
@@ -233,19 +233,19 @@ public class EnergyNetwork {
      */
     public List<EnergyNetwork> split(Level level) {
         List<EnergyNetwork> networks = new ArrayList<>();
-        Set<net.minecraft.core.BlockPos> remainingBlocks = new HashSet<>(connectedBlocks);
+        Set<BlockPos> remainingBlocks = new HashSet<>(connectedBlocks);
         
         while (!remainingBlocks.isEmpty()) {
             // Start a new network with the first remaining block
-            net.minecraft.core.BlockPos startPos = remainingBlocks.iterator().next();
+            BlockPos startPos = remainingBlocks.iterator().next();
             EnergyNetwork newNetwork = new EnergyNetwork();
             newNetwork.setTransferRate(this.transferRate);
             
             // Find all connected blocks using breadth-first search
-            Set<net.minecraft.core.BlockPos> connectedToStart = findConnectedBlocks(level, startPos);
+            Set<BlockPos> connectedToStart = findConnectedBlocks(level, startPos);
             
             // Add all connected blocks to the new network
-            for (net.minecraft.core.BlockPos pos : connectedToStart) {
+            for (BlockPos pos : connectedToStart) {
                 if (energyHandlers.containsKey(pos)) {
                     newNetwork.addBlock(level, pos);
                 }
@@ -265,15 +265,15 @@ public class EnergyNetwork {
      * @param startPos The starting position
      * @return A set of connected block positions
      */
-    private Set<net.minecraft.core.BlockPos> findConnectedBlocks(Level level, net.minecraft.core.BlockPos startPos) {
-        Set<net.minecraft.core.BlockPos> visited = new HashSet<>();
-        Queue<net.minecraft.core.BlockPos> queue = new LinkedList<>();
+    private Set<BlockPos> findConnectedBlocks(Level level, BlockPos startPos) {
+        Set<BlockPos> visited = new HashSet<>();
+        Queue<BlockPos> queue = new LinkedList<>();
         
         queue.add(startPos);
         visited.add(startPos);
         
         while (!queue.isEmpty()) {
-            net.minecraft.core.BlockPos current = queue.poll();
+            BlockPos current = queue.poll();
             
             // Check all adjacent positions
             for (int dx = -1; dx <= 1; dx++) {
@@ -282,7 +282,7 @@ public class EnergyNetwork {
                         // Skip diagonals
                         if (Math.abs(dx) + Math.abs(dy) + Math.abs(dz) != 1) continue;
                         
-                        net.minecraft.core.BlockPos neighbor = current.offset(dx, dy, dz);
+                        BlockPos neighbor = current.offset(dx, dy, dz);
                         
                         // If this neighbor is in our network and not visited yet
                         if (connectedBlocks.contains(neighbor) && !visited.contains(neighbor)) {
