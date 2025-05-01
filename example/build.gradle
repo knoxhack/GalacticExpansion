@@ -1,8 +1,17 @@
 dependencies {
-    // The example module depends on all other modules
+    // The example module depends on core modules
     implementation project(':core')
-    implementation project(':energy')
+    implementation project(':power')
     implementation project(':machinery')
+    
+    // Additional modules can be added as needed
+    // implementation project(':space')
+    // implementation project(':robotics')
+    // implementation project(':construction')
+    // implementation project(':utilities')
+    // implementation project(':vehicles')
+    // implementation project(':weaponry')
+    // implementation project(':biotech')
 }
 
 jar {
