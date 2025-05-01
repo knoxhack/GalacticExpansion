@@ -420,7 +420,7 @@ public class ModularRocket implements IRocket {
         }
         
         // Add component based on its type
-        RocketComponentType type = component.getComponentType();
+        RocketComponentType type = component.getType();
         
         switch (type) {
             case COCKPIT:
@@ -441,7 +441,7 @@ public class ModularRocket implements IRocket {
                     return true;
                 }
                 break;
-            case CARGO_BAY:
+            case STORAGE:
                 if (component instanceof ICargoBay) {
                     cargoBays.add((ICargoBay) component);
                     return true;
@@ -453,7 +453,7 @@ public class ModularRocket implements IRocket {
                     return true;
                 }
                 break;
-            case SHIELD:
+            case SHIELDING:
                 if (component instanceof IShield) {
                     shields.add((IShield) component);
                     return true;

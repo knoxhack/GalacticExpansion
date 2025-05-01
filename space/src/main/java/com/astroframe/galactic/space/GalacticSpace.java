@@ -48,6 +48,9 @@ public class GalacticSpace {
     public GalacticSpace(IEventBus modEventBus) {
         LOGGER.info("Initializing Galactic Space module");
         
+        // Store the mod event bus for static access
+        MOD_EVENT_BUS = modEventBus;
+        
         // Register all items
         SpaceItems.register();
         
