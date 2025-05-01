@@ -69,6 +69,7 @@ public class ModularRocketItem extends Item {
     }
     
     // Handles right-click usage of the rocket
+    @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         

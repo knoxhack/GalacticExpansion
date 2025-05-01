@@ -53,15 +53,16 @@ public class SpaceStationChunkGenerator extends ChunkGenerator {
         return CompletableFuture.completedFuture(chunkAccess);
     }
 
+    // Implementation for pre-NeoForge 1.21.5
     public void applyCarvers(WorldGenLevel level, RandomState randomState, BiomeManager biomeManager, StructureManager structureManager, ChunkAccess chunkAccess, GenerationStep.Carving carvingStage) {
         // No carvers needed in space station
     }
-
-    // Implementation for pre-NeoForge 1.21.5
-    public void buildSurface(WorldGenLevel level, StructureManager structureManager, RandomState randomState, ChunkAccess chunkAccess) {
-        buildSpaceStationSurface(chunkAccess);
-    }
     
+    // Implementation for NeoForge 1.21.5
+    public void applyCarvers(WorldGenRegion region, long seed, RandomState randomState, BiomeManager biomeManager, StructureManager structureManager, ChunkAccess chunkAccess) {
+        // No carvers needed in space station
+    }
+
     // Implementation for NeoForge 1.21.5 abstract method
     public void buildSurface(WorldGenRegion region, StructureManager structureManager, RandomState randomState, ChunkAccess chunkAccess) {
         buildSpaceStationSurface(chunkAccess);

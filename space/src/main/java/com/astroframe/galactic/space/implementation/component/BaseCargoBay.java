@@ -35,37 +35,37 @@ public class BaseCargoBay implements ICargoBay {
         this.isEMPShielded = builder.isEMPShielded;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public ResourceLocation getId() {
         return id;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public Component getDisplayName() {
         return displayName;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public int getTier() {
         return tier;
     }
     
-    @Override
-    public ComponentType getType() {
-        return ComponentType.CARGO_BAY;
+    // Implementation of IRocketComponent method
+    public RocketComponentType getType() {
+        return RocketComponentType.CARGO_BAY;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public int getMass() {
         return mass;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public float getMaxHealth() {
         return maxHealth;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public List<Component> getTooltip(boolean detailed) {
         List<Component> tooltip = new ArrayList<>();
         tooltip.add(displayName);
@@ -83,24 +83,34 @@ public class BaseCargoBay implements ICargoBay {
         return tooltip;
     }
     
-    @Override
+    // Implementation of ICargoBay method
     public int getStorageCapacity() {
         return storageCapacity;
     }
     
-    @Override
+    // Implementation of ICargoBay method
     public boolean isClimateControlled() {
         return isClimateControlled;
     }
     
-    @Override
+    // Implementation of ICargoBay method
     public boolean isRadiationShielded() {
         return isRadiationShielded;
     }
     
-    @Override
+    // Implementation of ICargoBay method
     public boolean isEMPShielded() {
         return isEMPShielded;
+    }
+    
+    // Implementation for IRocketComponent method
+    public boolean isBroken() {
+        return false; // Default implementation always returns false until we implement durability
+    }
+    
+    // Implementation for IRocketComponent method
+    public void repair(int amount) {
+        // No-op until we implement durability
     }
     
     /**
