@@ -1,0 +1,442 @@
+package com.astroframe.galactic.space.items;
+
+import com.astroframe.galactic.core.api.space.ModularRocket;
+import com.astroframe.galactic.core.api.space.component.*;
+import com.astroframe.galactic.space.GalacticSpace;
+import com.astroframe.galactic.space.implementation.component.RocketComponentFactory;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+
+import javax.annotation.Nullable;
+import java.util.*;
+
+/**
+ * Item representing a customizable modular rocket.
+ */
+public class ModularRocketItem extends Item {
+    
+    /**
+     * Creates a new modular rocket item.
+     * @param properties The item properties
+     */
+    public ModularRocketItem(Properties properties) {
+        super(properties);
+    }
+    
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        CompoundTag tag = stack.getOrCreateTag();
+        
+        if (hasValidRocket(stack)) {
+            // Add basic rocket info
+            int tier = getRocketTier(stack);
+            tooltip.add(Component.translatable("item.galactic-space.modular_rocket.tier", tier)
+                    .withStyle(getTierStyle(tier)));
+            
+            // Add component details if shift is pressed
+            if (flag.isAdvanced()) {
+                tooltip.add(Component.translatable("item.galactic-space.modular_rocket.components").withStyle(ChatFormatting.GRAY));
+                
+                // Command module
+                String commandModuleId = tag.getString("commandModule");
+                tooltip.add(Component.translatable("item.galactic-space.modular_rocket.command_module",
+                        getComponentName(commandModuleId)).withStyle(ChatFormatting.BLUE));
+                
+                // Engines
+                ListTag enginesList = tag.getList("engines", 8); // 8 is the NBT type for String
+                if (!enginesList.isEmpty()) {
+                    tooltip.add(Component.translatable("item.galactic-space.modular_rocket.engines", 
+                            enginesList.size()).withStyle(ChatFormatting.RED));
+                }
+                
+                // Fuel tanks
+                ListTag fuelTanksList = tag.getList("fuelTanks", 8);
+                if (!fuelTanksList.isEmpty()) {
+                    tooltip.add(Component.translatable("item.galactic-space.modular_rocket.fuel_tanks", 
+                            fuelTanksList.size()).withStyle(ChatFormatting.GREEN));
+                }
+                
+                // Other component counts
+                addComponentCountToTooltip(tooltip, tag, "cargoBays", "cargo_bays", ChatFormatting.YELLOW);
+                addComponentCountToTooltip(tooltip, tag, "passengerCompartments", "passenger_compartments", ChatFormatting.AQUA);
+                addComponentCountToTooltip(tooltip, tag, "shields", "shields", ChatFormatting.GOLD);
+                addComponentCountToTooltip(tooltip, tag, "lifeSupports", "life_supports", ChatFormatting.LIGHT_PURPLE);
+            } else {
+                tooltip.add(Component.translatable("item.galactic-space.modular_rocket.shift_for_details")
+                        .withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+            }
+        } else {
+            tooltip.add(Component.translatable("item.galactic-space.modular_rocket.incomplete")
+                    .withStyle(ChatFormatting.RED));
+            tooltip.add(Component.translatable("item.galactic-space.modular_rocket.use_rocket_builder")
+                    .withStyle(ChatFormatting.GRAY));
+        }
+    }
+    
+    /**
+     * Helper method to add component counts to tooltip.
+     */
+    private void addComponentCountToTooltip(List<Component> tooltip, CompoundTag tag, 
+                                           String tagKey, String translationKey, ChatFormatting color) {
+        ListTag list = tag.getList(tagKey, 8);
+        if (!list.isEmpty()) {
+            tooltip.add(Component.translatable("item.galactic-space.modular_rocket." + translationKey, 
+                    list.size()).withStyle(color));
+        }
+    }
+    
+    /**
+     * Gets the chat formatting style for a tier.
+     */
+    private ChatFormatting getTierStyle(int tier) {
+        switch (tier) {
+            case 1:
+                return ChatFormatting.GREEN;
+            case 2:
+                return ChatFormatting.BLUE;
+            case 3:
+                return ChatFormatting.LIGHT_PURPLE;
+            default:
+                return ChatFormatting.GRAY;
+        }
+    }
+    
+    /**
+     * Gets the name of a component.
+     */
+    private String getComponentName(String componentId) {
+        if (componentId.isEmpty()) {
+            return "None";
+        }
+        
+        // Try to get the component from the registry
+        Optional<IRocketComponent> component = RocketComponentRegistry.getComponent(componentId);
+        return component.map(c -> c.getDisplayName().getString()).orElse("Unknown");
+    }
+    
+    /**
+     * Checks if the rocket has all required components.
+     */
+    public boolean hasValidRocket(ItemStack stack) {
+        CompoundTag tag = stack.getOrCreateTag();
+        
+        // Must have command module
+        if (!tag.contains("commandModule") || tag.getString("commandModule").isEmpty()) {
+            return false;
+        }
+        
+        // Must have at least one engine
+        if (!tag.contains("engines") || tag.getList("engines", 8).isEmpty()) {
+            return false;
+        }
+        
+        // Must have at least one fuel tank
+        if (!tag.contains("fuelTanks") || tag.getList("fuelTanks", 8).isEmpty()) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Gets the tier of the rocket.
+     */
+    public int getRocketTier(ItemStack stack) {
+        if (!hasValidRocket(stack)) {
+            return 0;
+        }
+        
+        CompoundTag tag = stack.getOrCreateTag();
+        
+        // Get command module tier
+        String commandModuleId = tag.getString("commandModule");
+        Optional<IRocketComponent> commandModule = RocketComponentRegistry.getComponent(commandModuleId);
+        int commandModuleTier = commandModule.map(IRocketComponent::getTier).orElse(0);
+        
+        // Get highest engine tier
+        ListTag enginesList = tag.getList("engines", 8);
+        int highestEngineTier = 0;
+        for (int i = 0; i < enginesList.size(); i++) {
+            String engineId = enginesList.getString(i);
+            Optional<IRocketComponent> engine = RocketComponentRegistry.getComponent(engineId);
+            highestEngineTier = Math.max(highestEngineTier, engine.map(IRocketComponent::getTier).orElse(0));
+        }
+        
+        // Return the minimum of the two (a rocket is limited by its weakest critical component)
+        return Math.min(commandModuleTier, highestEngineTier);
+    }
+    
+    /**
+     * Creates a rocket from the item stack.
+     */
+    public ModularRocket createRocket(ItemStack stack, Level level) {
+        if (!hasValidRocket(stack)) {
+            return null;
+        }
+        
+        CompoundTag tag = stack.getOrCreateTag();
+        
+        // Create a rocket builder
+        ModularRocket.Builder builder = new ModularRocket.Builder(
+                new ResourceLocation(GalacticSpace.MOD_ID, "player_rocket_" + UUID.randomUUID().toString())
+        );
+        
+        // Add command module
+        String commandModuleId = tag.getString("commandModule");
+        Optional<IRocketComponent> commandModuleOpt = RocketComponentRegistry.getComponent(commandModuleId);
+        if (commandModuleOpt.isPresent() && commandModuleOpt.get() instanceof ICommandModule) {
+            builder.commandModule((ICommandModule) commandModuleOpt.get());
+        } else {
+            return null;
+        }
+        
+        // Add engines
+        ListTag enginesList = tag.getList("engines", 8);
+        for (int i = 0; i < enginesList.size(); i++) {
+            String engineId = enginesList.getString(i);
+            Optional<IRocketComponent> engineOpt = RocketComponentRegistry.getComponent(engineId);
+            if (engineOpt.isPresent() && engineOpt.get() instanceof IRocketEngine) {
+                builder.addEngine((IRocketEngine) engineOpt.get());
+            }
+        }
+        
+        // Add fuel tanks
+        ListTag fuelTanksList = tag.getList("fuelTanks", 8);
+        for (int i = 0; i < fuelTanksList.size(); i++) {
+            String fuelTankId = fuelTanksList.getString(i);
+            Optional<IRocketComponent> fuelTankOpt = RocketComponentRegistry.getComponent(fuelTankId);
+            if (fuelTankOpt.isPresent() && fuelTankOpt.get() instanceof IFuelTank) {
+                builder.addFuelTank((IFuelTank) fuelTankOpt.get());
+            }
+        }
+        
+        // Add cargo bays
+        ListTag cargoBaysList = tag.getList("cargoBays", 8);
+        for (int i = 0; i < cargoBaysList.size(); i++) {
+            String cargoBayId = cargoBaysList.getString(i);
+            Optional<IRocketComponent> cargoBayOpt = RocketComponentRegistry.getComponent(cargoBayId);
+            if (cargoBayOpt.isPresent() && cargoBayOpt.get() instanceof ICargoBay) {
+                builder.addCargoBay((ICargoBay) cargoBayOpt.get());
+            }
+        }
+        
+        // Add passenger compartments
+        ListTag passengerCompartmentsList = tag.getList("passengerCompartments", 8);
+        for (int i = 0; i < passengerCompartmentsList.size(); i++) {
+            String compartmentId = passengerCompartmentsList.getString(i);
+            Optional<IRocketComponent> compartmentOpt = RocketComponentRegistry.getComponent(compartmentId);
+            if (compartmentOpt.isPresent() && compartmentOpt.get() instanceof IPassengerCompartment) {
+                builder.addPassengerCompartment((IPassengerCompartment) compartmentOpt.get());
+            }
+        }
+        
+        // Add shields
+        ListTag shieldsList = tag.getList("shields", 8);
+        for (int i = 0; i < shieldsList.size(); i++) {
+            String shieldId = shieldsList.getString(i);
+            Optional<IRocketComponent> shieldOpt = RocketComponentRegistry.getComponent(shieldId);
+            if (shieldOpt.isPresent() && shieldOpt.get() instanceof IShield) {
+                builder.addShield((IShield) shieldOpt.get());
+            }
+        }
+        
+        // Add life support systems
+        ListTag lifeSupportsList = tag.getList("lifeSupports", 8);
+        for (int i = 0; i < lifeSupportsList.size(); i++) {
+            String lifeSupportId = lifeSupportsList.getString(i);
+            Optional<IRocketComponent> lifeSupportOpt = RocketComponentRegistry.getComponent(lifeSupportId);
+            if (lifeSupportOpt.isPresent() && lifeSupportOpt.get() instanceof ILifeSupport) {
+                builder.addLifeSupport((ILifeSupport) lifeSupportOpt.get());
+            }
+        }
+        
+        // Try to build the rocket
+        try {
+            return builder.build();
+        } catch (IllegalStateException e) {
+            GalacticSpace.LOGGER.error("Failed to build rocket: " + e.getMessage());
+            return null;
+        }
+    }
+    
+    /**
+     * Creates a pre-built tier 1 rocket.
+     */
+    public static ItemStack createTier1Rocket() {
+        ItemStack stack = new ItemStack(SpaceItems.MODULAR_ROCKET.get());
+        CompoundTag tag = stack.getOrCreateTag();
+        
+        // Add command module
+        ICommandModule commandModule = RocketComponentFactory.createBasicCommandModule();
+        tag.putString("commandModule", commandModule.getId().toString());
+        
+        // Add engines
+        IRocketEngine engine = RocketComponentFactory.createChemicalEngine();
+        ListTag enginesList = new ListTag();
+        enginesList.add(StringTag.valueOf(engine.getId().toString()));
+        tag.put("engines", enginesList);
+        
+        // Add fuel tanks
+        IFuelTank fuelTank = RocketComponentFactory.createBasicFuelTank();
+        ListTag fuelTanksList = new ListTag();
+        fuelTanksList.add(StringTag.valueOf(fuelTank.getId().toString()));
+        tag.put("fuelTanks", fuelTanksList);
+        
+        // Add cargo bay
+        ICargoBay cargoBay = RocketComponentFactory.createBasicCargoBay();
+        ListTag cargoBaysList = new ListTag();
+        cargoBaysList.add(StringTag.valueOf(cargoBay.getId().toString()));
+        tag.put("cargoBays", cargoBaysList);
+        
+        // Add passenger compartment
+        IPassengerCompartment passengerCompartment = RocketComponentFactory.createBasicPassengerCompartment();
+        ListTag passengerCompartmentsList = new ListTag();
+        passengerCompartmentsList.add(StringTag.valueOf(passengerCompartment.getId().toString()));
+        tag.put("passengerCompartments", passengerCompartmentsList);
+        
+        return stack;
+    }
+    
+    /**
+     * Creates a pre-built tier 2 rocket.
+     */
+    public static ItemStack createTier2Rocket() {
+        ItemStack stack = new ItemStack(SpaceItems.MODULAR_ROCKET.get());
+        CompoundTag tag = stack.getOrCreateTag();
+        
+        // Add command module
+        ICommandModule commandModule = RocketComponentFactory.createStandardCommandModule();
+        tag.putString("commandModule", commandModule.getId().toString());
+        
+        // Add engines
+        IRocketEngine engine = RocketComponentFactory.createIonEngine();
+        ListTag enginesList = new ListTag();
+        enginesList.add(StringTag.valueOf(engine.getId().toString()));
+        enginesList.add(StringTag.valueOf(engine.getId().toString())); // Add two engines
+        tag.put("engines", enginesList);
+        
+        // Add fuel tanks
+        IFuelTank fuelTank = RocketComponentFactory.createStandardFuelTank();
+        ListTag fuelTanksList = new ListTag();
+        fuelTanksList.add(StringTag.valueOf(fuelTank.getId().toString()));
+        fuelTanksList.add(StringTag.valueOf(fuelTank.getId().toString())); // Add two fuel tanks
+        tag.put("fuelTanks", fuelTanksList);
+        
+        // Add cargo bay
+        ICargoBay cargoBay = RocketComponentFactory.createStandardCargoBay();
+        ListTag cargoBaysList = new ListTag();
+        cargoBaysList.add(StringTag.valueOf(cargoBay.getId().toString()));
+        tag.put("cargoBays", cargoBaysList);
+        
+        // Add passenger compartment
+        IPassengerCompartment passengerCompartment = RocketComponentFactory.createStandardPassengerCompartment();
+        ListTag passengerCompartmentsList = new ListTag();
+        passengerCompartmentsList.add(StringTag.valueOf(passengerCompartment.getId().toString()));
+        tag.put("passengerCompartments", passengerCompartmentsList);
+        
+        // Add shield
+        IShield shield = RocketComponentFactory.createThermalShield();
+        ListTag shieldsList = new ListTag();
+        shieldsList.add(StringTag.valueOf(shield.getId().toString()));
+        tag.put("shields", shieldsList);
+        
+        // Add life support
+        ILifeSupport lifeSupport = RocketComponentFactory.createStandardLifeSupport();
+        ListTag lifeSupportsList = new ListTag();
+        lifeSupportsList.add(StringTag.valueOf(lifeSupport.getId().toString()));
+        tag.put("lifeSupports", lifeSupportsList);
+        
+        return stack;
+    }
+    
+    /**
+     * Creates a pre-built tier 3 rocket.
+     */
+    public static ItemStack createTier3Rocket() {
+        ItemStack stack = new ItemStack(SpaceItems.MODULAR_ROCKET.get());
+        CompoundTag tag = stack.getOrCreateTag();
+        
+        // Add command module
+        ICommandModule commandModule = RocketComponentFactory.createAdvancedCommandModule();
+        tag.putString("commandModule", commandModule.getId().toString());
+        
+        // Add engines
+        IRocketEngine engine = RocketComponentFactory.createPlasmaEngine();
+        ListTag enginesList = new ListTag();
+        enginesList.add(StringTag.valueOf(engine.getId().toString()));
+        enginesList.add(StringTag.valueOf(engine.getId().toString()));
+        enginesList.add(StringTag.valueOf(engine.getId().toString())); // Add three engines
+        tag.put("engines", enginesList);
+        
+        // Add fuel tanks
+        IFuelTank fuelTank = RocketComponentFactory.createAdvancedFuelTank();
+        ListTag fuelTanksList = new ListTag();
+        fuelTanksList.add(StringTag.valueOf(fuelTank.getId().toString()));
+        fuelTanksList.add(StringTag.valueOf(fuelTank.getId().toString()));
+        fuelTanksList.add(StringTag.valueOf(RocketComponentFactory.createQuantumFuelTank().getId().toString()));
+        tag.put("fuelTanks", fuelTanksList);
+        
+        // Add cargo bay
+        ICargoBay cargoBay = RocketComponentFactory.createAdvancedCargoBay();
+        ListTag cargoBaysList = new ListTag();
+        cargoBaysList.add(StringTag.valueOf(cargoBay.getId().toString()));
+        cargoBaysList.add(StringTag.valueOf(cargoBay.getId().toString())); // Add two cargo bays
+        tag.put("cargoBays", cargoBaysList);
+        
+        // Add passenger compartment
+        IPassengerCompartment passengerCompartment = RocketComponentFactory.createAdvancedPassengerCompartment();
+        ListTag passengerCompartmentsList = new ListTag();
+        passengerCompartmentsList.add(StringTag.valueOf(passengerCompartment.getId().toString()));
+        passengerCompartmentsList.add(StringTag.valueOf(
+                RocketComponentFactory.createScientificPassengerCompartment().getId().toString()));
+        tag.put("passengerCompartments", passengerCompartmentsList);
+        
+        // Add shield
+        IShield shield = RocketComponentFactory.createDeflectorShield();
+        ListTag shieldsList = new ListTag();
+        shieldsList.add(StringTag.valueOf(shield.getId().toString()));
+        shieldsList.add(StringTag.valueOf(RocketComponentFactory.createQuantumShield().getId().toString()));
+        tag.put("shields", shieldsList);
+        
+        // Add life support
+        ILifeSupport lifeSupport = RocketComponentFactory.createAdvancedLifeSupport();
+        ListTag lifeSupportsList = new ListTag();
+        lifeSupportsList.add(StringTag.valueOf(lifeSupport.getId().toString()));
+        lifeSupportsList.add(StringTag.valueOf(
+                RocketComponentFactory.createBioregenerativeLifeSupport().getId().toString()));
+        tag.put("lifeSupports", lifeSupportsList);
+        
+        return stack;
+    }
+    
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack itemstack = player.getItemInHand(hand);
+        
+        if (!level.isClientSide && hasValidRocket(itemstack)) {
+            // Here you would spawn the rocket entity or open a GUI
+            player.displayClientMessage(
+                    Component.translatable("item.galactic-space.modular_rocket.use_message"), true);
+            
+            // For now, just testing the rocket creation
+            ModularRocket rocket = createRocket(itemstack, level);
+            if (rocket != null) {
+                player.displayClientMessage(
+                        Component.literal("Created rocket with tier: " + rocket.getTier()), false);
+            }
+        }
+        
+        return InteractionResultHolder.sidedSuccess(itemstack, level.isClientSide);
+    }
+}

@@ -17,7 +17,7 @@ public class RocketComponentFactory {
      */
     public static ICommandModule createBasicCommandModule() {
         return new CommandModuleImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "command_module_basic"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_basic"),
                 Component.translatable("component.galactic-space.command_module_basic"),
                 1,
                 150,
@@ -38,7 +38,7 @@ public class RocketComponentFactory {
      */
     public static ICommandModule createStandardCommandModule() {
         return new CommandModuleImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "command_module_standard"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_standard"),
                 Component.translatable("component.galactic-space.command_module_standard"),
                 2,
                 200,
@@ -59,7 +59,7 @@ public class RocketComponentFactory {
      */
     public static ICommandModule createAdvancedCommandModule() {
         return new CommandModuleImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "command_module_advanced"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_advanced"),
                 Component.translatable("component.galactic-space.command_module_advanced"),
                 3,
                 250,
@@ -80,7 +80,7 @@ public class RocketComponentFactory {
      */
     public static ICommandModule createQuantumCommandModule() {
         return new CommandModuleImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "command_module_quantum"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_quantum"),
                 Component.translatable("component.galactic-space.command_module_quantum"),
                 3,
                 300,
@@ -101,7 +101,7 @@ public class RocketComponentFactory {
      */
     public static IRocketEngine createChemicalEngine() {
         return new RocketEngineImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "engine_chemical"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":engine_chemical"),
                 Component.translatable("component.galactic-space.engine_chemical"),
                 1,
                 300,
@@ -122,7 +122,7 @@ public class RocketComponentFactory {
      */
     public static IRocketEngine createIonEngine() {
         return new RocketEngineImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "engine_ion"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":engine_ion"),
                 Component.translatable("component.galactic-space.engine_ion"),
                 2,
                 150,
@@ -143,7 +143,7 @@ public class RocketComponentFactory {
      */
     public static IRocketEngine createPlasmaEngine() {
         return new RocketEngineImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "engine_plasma"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":engine_plasma"),
                 Component.translatable("component.galactic-space.engine_plasma"),
                 3,
                 200,
@@ -164,7 +164,7 @@ public class RocketComponentFactory {
      */
     public static IFuelTank createBasicFuelTank() {
         return new FuelTankImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "fuel_tank_basic"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_basic"),
                 Component.translatable("component.galactic-space.fuel_tank_basic"),
                 1,
                 250,
@@ -183,7 +183,7 @@ public class RocketComponentFactory {
      */
     public static IFuelTank createStandardFuelTank() {
         return new FuelTankImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "fuel_tank_standard"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_standard"),
                 Component.translatable("component.galactic-space.fuel_tank_standard"),
                 2,
                 350,
@@ -202,7 +202,7 @@ public class RocketComponentFactory {
      */
     public static IFuelTank createAdvancedFuelTank() {
         return new FuelTankImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "fuel_tank_advanced"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_advanced"),
                 Component.translatable("component.galactic-space.fuel_tank_advanced"),
                 3,
                 450,
@@ -221,7 +221,7 @@ public class RocketComponentFactory {
      */
     public static IFuelTank createQuantumFuelTank() {
         return new FuelTankImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "fuel_tank_quantum"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_quantum"),
                 Component.translatable("component.galactic-space.fuel_tank_quantum"),
                 3,
                 500,
@@ -240,7 +240,7 @@ public class RocketComponentFactory {
      */
     public static ICargoBay createBasicCargoBay() {
         return new CargoBayImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "cargo_bay_basic"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_basic"),
                 Component.translatable("component.galactic-space.cargo_bay_basic"),
                 1,
                 200,
@@ -260,7 +260,7 @@ public class RocketComponentFactory {
      */
     public static ICargoBay createStandardCargoBay() {
         return new CargoBayImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "cargo_bay_standard"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_standard"),
                 Component.translatable("component.galactic-space.cargo_bay_standard"),
                 2,
                 300,
@@ -280,7 +280,7 @@ public class RocketComponentFactory {
      */
     public static ICargoBay createAdvancedCargoBay() {
         return new CargoBayImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "cargo_bay_advanced"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_advanced"),
                 Component.translatable("component.galactic-space.cargo_bay_advanced"),
                 3,
                 400,
@@ -300,7 +300,7 @@ public class RocketComponentFactory {
      */
     public static IPassengerCompartment createBasicPassengerCompartment() {
         return new PassengerCompartmentImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "passenger_compartment_basic"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":passenger_compartment_basic"),
                 Component.translatable("component.galactic-space.passenger_compartment_basic"),
                 1,
                 200,
@@ -320,7 +320,7 @@ public class RocketComponentFactory {
      */
     public static IPassengerCompartment createStandardPassengerCompartment() {
         return new PassengerCompartmentImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "passenger_compartment_standard"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":passenger_compartment_standard"),
                 Component.translatable("component.galactic-space.passenger_compartment_standard"),
                 2,
                 300,
@@ -340,7 +340,7 @@ public class RocketComponentFactory {
      */
     public static IPassengerCompartment createAdvancedPassengerCompartment() {
         return new PassengerCompartmentImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "passenger_compartment_advanced"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":passenger_compartment_advanced"),
                 Component.translatable("component.galactic-space.passenger_compartment_advanced"),
                 3,
                 400,
@@ -360,7 +360,7 @@ public class RocketComponentFactory {
      */
     public static IPassengerCompartment createScientificPassengerCompartment() {
         return new PassengerCompartmentImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "passenger_compartment_scientific"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":passenger_compartment_scientific"),
                 Component.translatable("component.galactic-space.passenger_compartment_scientific"),
                 3,
                 350,
@@ -380,7 +380,7 @@ public class RocketComponentFactory {
      */
     public static IShield createBasicShield() {
         return new ShieldImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "shield_basic"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":shield_basic"),
                 Component.translatable("component.galactic-space.shield_basic"),
                 1,
                 180,
@@ -401,7 +401,7 @@ public class RocketComponentFactory {
      */
     public static IShield createThermalShield() {
         return new ShieldImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "shield_thermal"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":shield_thermal"),
                 Component.translatable("component.galactic-space.shield_thermal"),
                 2,
                 220,
@@ -422,7 +422,7 @@ public class RocketComponentFactory {
      */
     public static IShield createDeflectorShield() {
         return new ShieldImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "shield_deflector"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":shield_deflector"),
                 Component.translatable("component.galactic-space.shield_deflector"),
                 3,
                 250,
@@ -443,7 +443,7 @@ public class RocketComponentFactory {
      */
     public static IShield createQuantumShield() {
         return new ShieldImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "shield_quantum"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":shield_quantum"),
                 Component.translatable("component.galactic-space.shield_quantum"),
                 3,
                 300,
@@ -464,7 +464,7 @@ public class RocketComponentFactory {
      */
     public static ILifeSupport createBasicLifeSupport() {
         return new LifeSupportImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "life_support_basic"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_basic"),
                 Component.translatable("component.galactic-space.life_support_basic"),
                 1,
                 150,
@@ -486,7 +486,7 @@ public class RocketComponentFactory {
      */
     public static ILifeSupport createStandardLifeSupport() {
         return new LifeSupportImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "life_support_standard"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_standard"),
                 Component.translatable("component.galactic-space.life_support_standard"),
                 2,
                 200,
@@ -508,7 +508,7 @@ public class RocketComponentFactory {
      */
     public static ILifeSupport createAdvancedLifeSupport() {
         return new LifeSupportImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "life_support_advanced"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_advanced"),
                 Component.translatable("component.galactic-space.life_support_advanced"),
                 3,
                 250,
@@ -530,7 +530,7 @@ public class RocketComponentFactory {
      */
     public static ILifeSupport createBioregenerativeLifeSupport() {
         return new LifeSupportImpl(
-                new ResourceLocation(GalacticSpace.MOD_ID, "life_support_bioregenerative"),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_bioregenerative"),
                 Component.translatable("component.galactic-space.life_support_bioregenerative"),
                 3,
                 350,
