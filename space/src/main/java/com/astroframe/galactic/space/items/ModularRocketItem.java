@@ -448,6 +448,6 @@ public class ModularRocketItem extends Item {
             }
         }
         
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     }
 }
