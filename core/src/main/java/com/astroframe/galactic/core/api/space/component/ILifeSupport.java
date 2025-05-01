@@ -1,45 +1,76 @@
 package com.astroframe.galactic.core.api.space.component;
 
-import com.astroframe.galactic.core.api.space.component.enums.LifeSupportType;
-
 /**
  * Interface for rocket life support systems.
  */
 public interface ILifeSupport extends IRocketComponent {
     
     /**
-     * Gets the maximum crew capacity this life support system can handle.
+     * Gets the maximum number of crew this life support system can sustain.
      * @return The maximum crew capacity
      */
     int getMaxCrewCapacity();
     
     /**
-     * Gets the oxygen efficiency of this life support system (0.0-1.0).
-     * @return The oxygen efficiency
+     * Gets the oxygen generation rate in units per minute.
+     * @return The oxygen generation rate
      */
-    float getOxygenEfficiency();
+    int getOxygenGenerationRate();
     
     /**
-     * Gets the water recycling rate of this life support system (0.0-1.0).
-     * @return The water recycling rate
+     * Gets the water recycling efficiency (0-1).
+     * Higher values mean more water is recycled.
+     * @return The water recycling efficiency
      */
-    float getWaterRecyclingRate();
+    float getWaterRecyclingEfficiency();
     
     /**
-     * Checks if this system has advanced medical facilities.
-     * @return True if has advanced medical
+     * Gets the food production rate in units per day.
+     * @return The food production rate
      */
-    boolean hasAdvancedMedical();
+    int getFoodProductionRate();
     
     /**
-     * Checks if this system has radiation scrubbers.
-     * @return True if has radiation scrubbers
+     * Gets the waste management efficiency (0-1).
+     * Higher values mean more waste is processed.
+     * @return The waste management efficiency
      */
-    boolean hasRadiationScrubbers();
+    float getWasteManagementEfficiency();
     
     /**
-     * Gets the type of this life support system.
-     * @return The life support type
+     * Gets the atmospheric quality (0-1).
+     * Higher values mean better air quality.
+     * @return The atmospheric quality
      */
-    LifeSupportType getLifeSupportType();
+    float getAtmosphericQuality();
+    
+    /**
+     * Whether this life support system has backup systems.
+     * @return true if the system has backups
+     */
+    boolean hasBackupSystems();
+    
+    /**
+     * Whether this life support system has radiation filtering.
+     * @return true if the system has radiation filtering
+     */
+    boolean hasRadiationFiltering();
+    
+    /**
+     * Whether this life support system can operate in emergency mode.
+     * @return true if the system has emergency mode
+     */
+    boolean hasEmergencyMode();
+    
+    /**
+     * Activates or deactivates emergency mode.
+     * @param active Whether to activate emergency mode
+     */
+    void setEmergencyMode(boolean active);
+    
+    /**
+     * Whether emergency mode is currently active.
+     * @return true if emergency mode is active
+     */
+    boolean isEmergencyModeActive();
 }

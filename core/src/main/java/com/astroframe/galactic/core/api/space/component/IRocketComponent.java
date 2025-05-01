@@ -1,9 +1,17 @@
 package com.astroframe.galactic.core.api.space.component;
 
+import net.minecraft.resources.ResourceLocation;
+
 /**
  * Base interface for all rocket components.
  */
 public interface IRocketComponent {
+    
+    /**
+     * Gets the unique ID of this component.
+     * @return The component ID
+     */
+    ResourceLocation getId();
     
     /**
      * Gets the type of this component.

@@ -1,6 +1,8 @@
 package com.astroframe.galactic.core.api.space.component;
 
-import com.astroframe.galactic.core.api.space.component.enums.CompartmentType;
+import net.minecraft.world.entity.player.Player;
+
+import java.util.List;
 
 /**
  * Interface for rocket passenger compartments.
@@ -8,32 +10,52 @@ import com.astroframe.galactic.core.api.space.component.enums.CompartmentType;
 public interface IPassengerCompartment extends IRocketComponent {
     
     /**
-     * Gets the maximum number of passengers this compartment can hold.
+     * Gets the number of passengers this compartment can hold.
      * @return The passenger capacity
      */
     int getPassengerCapacity();
     
     /**
-     * Checks if this compartment has artificial gravity.
-     * @return True if has artificial gravity
+     * Gets the current passengers in this compartment.
+     * @return A list of passengers
      */
-    boolean hasArtificialGravity();
+    List<Player> getPassengers();
     
     /**
-     * Checks if this compartment has sleeping quarters.
-     * @return True if has sleeping quarters
+     * Adds a passenger to this compartment.
+     * @param player The player to add
+     * @return true if the player was added successfully
      */
-    boolean hasSleepingQuarters();
+    boolean addPassenger(Player player);
     
     /**
-     * Checks if this compartment has emergency medical facilities.
-     * @return True if has emergency medical
+     * Removes a passenger from this compartment.
+     * @param player The player to remove
      */
-    boolean hasEmergencyMedical();
+    void removePassenger(Player player);
     
     /**
-     * Gets the type of this compartment.
-     * @return The compartment type
+     * Gets the comfort level of this compartment (1-10).
+     * Higher comfort reduces passenger fatigue during long journeys.
+     * @return The comfort level
      */
-    CompartmentType getCompartmentType();
+    int getComfortLevel();
+    
+    /**
+     * Whether this compartment has life support systems.
+     * @return true if the compartment has life support
+     */
+    boolean hasLifeSupport();
+    
+    /**
+     * Whether this compartment has gravity simulation.
+     * @return true if the compartment has gravity simulation
+     */
+    boolean hasGravitySimulation();
+    
+    /**
+     * Whether this compartment has radiation shielding.
+     * @return true if the compartment has radiation shielding
+     */
+    boolean hasRadiationShielding();
 }

@@ -1,51 +1,66 @@
 package com.astroframe.galactic.core.api.space.component;
 
-import com.astroframe.galactic.core.api.space.component.enums.ShieldType;
-
 /**
  * Interface for rocket shields.
  */
 public interface IShield extends IRocketComponent {
     
     /**
-     * Gets the maximum shield strength.
+     * Gets the maximum shield strength this shield can provide.
      * @return The maximum shield strength
      */
-    float getMaxShieldStrength();
+    int getMaxShieldStrength();
     
     /**
-     * Gets the shield regeneration rate per second.
-     * @return The regeneration rate
+     * Gets the current shield strength.
+     * @return The current shield strength
      */
-    float getRegenerationRate();
+    int getCurrentShieldStrength();
     
     /**
-     * Gets the impact resistance level (1-10).
+     * Gets the shield's impact resistance (1-10).
+     * Higher values provide better protection against physical impacts.
      * @return The impact resistance
      */
     int getImpactResistance();
     
     /**
-     * Checks if this shield provides radiation protection.
-     * @return True if radiation shielded
+     * Gets the shield's heat resistance (1-10).
+     * Higher values provide better protection against heat.
+     * @return The heat resistance
      */
-    boolean isRadiationShielded();
+    int getHeatResistance();
     
     /**
-     * Checks if this shield provides EMP protection.
-     * @return True if EMP shielded
+     * Gets the shield's radiation resistance (1-10).
+     * Higher values provide better protection against radiation.
+     * @return The radiation resistance
      */
-    boolean isEMPShielded();
+    int getRadiationResistance();
     
     /**
-     * Checks if this shield provides thermal protection.
-     * @return True if thermal shielded
+     * Applies damage to the shield.
+     * @param amount The amount of damage to apply
+     * @return The amount of damage that penetrated the shield
      */
-    boolean isThermalShielded();
+    int applyDamage(int amount);
     
     /**
-     * Gets the type of this shield.
-     * @return The shield type
+     * Regenerates shield strength.
+     * @param amount The amount to regenerate
+     * @return The amount actually regenerated
      */
-    ShieldType getShieldType();
+    int regenerate(int amount);
+    
+    /**
+     * Whether this shield is currently active.
+     * @return true if the shield is active
+     */
+    boolean isActive();
+    
+    /**
+     * Activates or deactivates this shield.
+     * @param active Whether to activate or deactivate
+     */
+    void setActive(boolean active);
 }
