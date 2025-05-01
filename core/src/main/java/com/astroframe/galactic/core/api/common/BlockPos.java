@@ -1,7 +1,5 @@
 package com.astroframe.galactic.core.api.common;
 
-import net.minecraft.core.BlockPos;
-
 /**
  * Abstraction for block position to avoid direct dependency on Minecraft classes.
  * This provides position handling for logistics systems.

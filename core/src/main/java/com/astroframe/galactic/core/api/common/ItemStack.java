@@ -2,7 +2,6 @@ package com.astroframe.galactic.core.api.common;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 
 /**
  * Abstraction for Minecraft's ItemStack class.
