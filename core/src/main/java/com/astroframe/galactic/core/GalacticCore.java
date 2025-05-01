@@ -1,9 +1,17 @@
 package com.astroframe.galactic.core;
 
+import com.astroframe.galactic.core.items.CoreItems;
+import com.astroframe.galactic.core.registry.CoreRegistry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +54,9 @@ public class GalacticCore {
         registerEnergyHandlers();
         registerMachineHandlers();
         
+        // Register creative tab
+        registerCreativeTab();
+        
         LOGGER.info("Galactic Core API module initialized");
     }
     
@@ -54,7 +65,7 @@ public class GalacticCore {
      */
     private void registerRegistries() {
         LOGGER.debug("Registering core registries");
-        // Registry setup will go here
+        CoreRegistry.register(modEventBus);
     }
     
     /**
@@ -71,6 +82,36 @@ public class GalacticCore {
     private void registerMachineHandlers() {
         LOGGER.debug("Registering machine API handlers");
         // Machine API setup will go here
+    }
+    
+    /**
+     * Registers the creative tab for all Galactic items.
+     */
+    private void registerCreativeTab() {
+        LOGGER.debug("Registering creative tab");
+        
+        CoreRegistry.CREATIVE_MODE_TABS.register(
+            "galactic_tab", 
+            () -> CreativeModeTab.builder()
+                .title(Component.translatable("itemGroup." + MOD_ID + ".galactic_tab"))
+                .icon(() -> new ItemStack(CoreItems.CIRCUIT_BOARD.get()))
+                .build()
+        );
+    }
+    
+    /**
+     * Event handler for populating the creative tab.
+     */
+    @SubscribeEvent
+    public void buildContents(BuildCreativeModeTabContentsEvent event) {
+        DeferredHolder<CreativeModeTab, CreativeModeTab> tabHolder = CoreRegistry.CREATIVE_MODE_TABS.getHolder(CoreRegistry.GALACTIC_TAB_KEY).get();
+        
+        if (event.getTab() == tabHolder.get()) {
+            // Add Core items
+            event.accept(CoreItems.CIRCUIT_BOARD.get());
+            event.accept(CoreItems.ADVANCED_CIRCUIT.get());
+            event.accept(CoreItems.QUANTUM_PROCESSOR.get());
+        }
     }
     
     /**
