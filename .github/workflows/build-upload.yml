@@ -1,0 +1,115 @@
+name: Build and Upload JAR Files
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up JDK 21
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: gradle
+    
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    
+    - name: Build with Gradle
+      run: ./gradlew clean build
+    
+    - name: Upload Main JAR
+      uses: actions/upload-artifact@v3
+      with:
+        name: main-jar
+        path: build/libs/*.jar
+        if-no-files-found: warn
+    
+    - name: Upload Module JARs
+      uses: actions/upload-artifact@v3
+      with:
+        name: module-jars
+        path: */build/libs/*.jar
+        if-no-files-found: warn
+    
+    - name: Create Release Directory
+      run: |
+        mkdir -p release
+        mkdir -p release/modules
+        cp build/libs/*.jar release/ || echo "No main JAR files found"
+        
+        # Copy each module's JAR to its own directory
+        for module in core power machinery biotech energy construction space utilities vehicles weaponry robotics; do
+          if [ -d "$module/build/libs" ]; then
+            mkdir -p "release/modules/$module"
+            cp $module/build/libs/*.jar "release/modules/$module/" || echo "No JARs for $module"
+          fi
+        done
+    
+    - name: Upload Release Bundle
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-bundle
+        path: release
+        if-no-files-found: warn
+
+  deploy-to-branch:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: builds
+        fetch-depth: 0
+      continue-on-error: true
+    
+    - name: Create builds branch if it doesn't exist
+      run: |
+        if [ $? -ne 0 ]; then
+          git checkout --orphan builds
+          git rm -rf .
+          echo "# Automated Builds" > README.md
+          git add README.md
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -m "Initialize builds branch"
+          git push origin builds
+        fi
+    
+    - uses: actions/download-artifact@v3
+      with:
+        name: release-bundle
+        path: release-bundle
+    
+    - name: Prepare release directory
+      run: |
+        build_date=$(date +%Y-%m-%d)
+        build_time=$(date +%H-%M-%S)
+        mkdir -p "builds/$build_date/$build_time"
+        cp -r release-bundle/* "builds/$build_date/$build_time/"
+        
+        # Create build info file
+        cat > "builds/$build_date/$build_time/build_info.txt" << EOF
+        Build Date: $(date)
+        GitHub Run ID: ${{ github.run_id }}
+        GitHub SHA: ${{ github.sha }}
+        GitHub Ref: ${{ github.ref }}
+        EOF
+        
+        echo "RELEASE_PATH=builds/$build_date/$build_time" >> $GITHUB_ENV
+    
+    - name: Commit and push
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add builds/
+        git commit -m "Automated build upload - $(date)"
+        git push origin builds

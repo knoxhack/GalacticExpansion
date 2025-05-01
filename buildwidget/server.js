@@ -25,16 +25,17 @@ let buildStatus = {
   progress: 0,
   tasks: {},
   modules: {
-    core: { status: 'pending' },
-    power: { status: 'pending' },
-    machinery: { status: 'pending' },
-    biotech: { status: 'pending' },
-    construction: { status: 'pending' },
-    robotics: { status: 'pending' },
-    space: { status: 'pending' },
-    utilities: { status: 'pending' },
-    vehicles: { status: 'pending' },
-    weaponry: { status: 'pending' }
+    core: { status: 'pending', lastBuild: null },
+    power: { status: 'pending', lastBuild: null },
+    machinery: { status: 'pending', lastBuild: null },
+    biotech: { status: 'pending', lastBuild: null },
+    energy: { status: 'pending', lastBuild: null },
+    construction: { status: 'pending', lastBuild: null },
+    space: { status: 'pending', lastBuild: null },
+    utilities: { status: 'pending', lastBuild: null },
+    vehicles: { status: 'pending', lastBuild: null },
+    weaponry: { status: 'pending', lastBuild: null },
+    robotics: { status: 'pending', lastBuild: null }
   },
   lastUpdate: new Date().toISOString(),
   buildOutput: []
@@ -155,8 +156,14 @@ async function startBuild(gradleCommand) {
   broadcastStatus();
   
   try {
-    // Execute Gradle build with output stream
-    const gradleProcess = exec(`cd .. && export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35 && ./gradlew ${gradleCommand} --console=plain`);
+    // Execute build script or Gradle command directly
+    const useScript = gradleCommand === 'clean build' || gradleCommand === 'build';
+    const buildCommand = useScript 
+      ? `cd .. && ./scripts/build_all_modules.sh` 
+      : `cd .. && export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35 && ./gradlew ${gradleCommand} --console=plain`;
+    
+    console.log(`Executing build command: ${buildCommand}`);
+    const gradleProcess = exec(buildCommand);
     
     // Process stdout in real-time
     gradleProcess.stdout.on('data', (data) => {
@@ -178,6 +185,51 @@ async function startBuild(gradleCommand) {
       buildStatus.progress = 100;
       buildStatus.lastUpdate = new Date().toISOString();
       broadcastStatus();
+      
+      // If build was successful, push to GitHub
+      if (code === 0) {
+        console.log('Build successful! Pushing JAR files to GitHub...');
+        
+        // Execute push script
+        const pushProcess = exec('cd .. && ./scripts/push_jars_to_github.sh');
+        
+        // Process push script output
+        pushProcess.stdout.on('data', (data) => {
+          const output = data.toString();
+          buildStatus.buildOutput.push({ 
+            type: 'info', 
+            message: `[GitHub Push] ${output}`
+          });
+          broadcastOutput([{ type: 'info', message: `[GitHub Push] ${output}` }]);
+        });
+        
+        pushProcess.stderr.on('data', (data) => {
+          const output = data.toString();
+          buildStatus.buildOutput.push({ 
+            type: 'error', 
+            message: `[GitHub Push Error] ${output}`
+          });
+          broadcastOutput([{ type: 'error', message: `[GitHub Push Error] ${output}` }]);
+        });
+        
+        pushProcess.on('close', (pushCode) => {
+          if (pushCode === 0) {
+            const successMessage = 'Successfully pushed JAR files to GitHub!';
+            buildStatus.buildOutput.push({ 
+              type: 'info', 
+              message: `[GitHub Push] ${successMessage}`
+            });
+            broadcastOutput([{ type: 'info', message: `[GitHub Push] ${successMessage}` }]);
+          } else {
+            const errorMessage = `Failed to push JAR files to GitHub (exit code: ${pushCode})`;
+            buildStatus.buildOutput.push({ 
+              type: 'error', 
+              message: `[GitHub Push Error] ${errorMessage}`
+            });
+            broadcastOutput([{ type: 'error', message: `[GitHub Push Error] ${errorMessage}` }]);
+          }
+        });
+      }
     });
   } catch (error) {
     buildStatus.status = 'failed';
