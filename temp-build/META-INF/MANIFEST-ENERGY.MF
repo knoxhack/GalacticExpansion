@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Title: Galactic Expansion Energy
-Implementation-Version: 1.0.0
-Implementation-Vendor: AstroFrame Team
-Main-Class: com.astroframe.galactic.energy.EnergySystem
-Built-By: AstroFrame Team
-Created-By: AstroFrame Team
