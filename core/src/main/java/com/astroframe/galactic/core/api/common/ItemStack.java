@@ -2,6 +2,7 @@ package com.astroframe.galactic.core.api.common;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack as MinecraftItemStack;
 
 /**
  * Abstraction for Minecraft's ItemStack class.
@@ -9,13 +10,13 @@ import net.minecraft.world.item.Item;
  * without direct dependency on Minecraft classes.
  */
 public class ItemStack {
-    private final net.minecraft.world.item.ItemStack mcStack;
+    private final MinecraftItemStack mcStack;
     
     /**
      * Creates a new empty ItemStack.
      */
     public ItemStack() {
-        this.mcStack = net.minecraft.world.item.ItemStack.EMPTY;
+        this.mcStack = MinecraftItemStack.EMPTY;
     }
     
     /**
@@ -24,14 +25,14 @@ public class ItemStack {
      * @param count The stack size
      */
     public ItemStack(Item item, int count) {
-        this.mcStack = new net.minecraft.world.item.ItemStack(item, count);
+        this.mcStack = new MinecraftItemStack(item, count);
     }
     
     /**
      * Creates a new abstracted ItemStack wrapping a Minecraft ItemStack.
      * @param mcStack The Minecraft ItemStack
      */
-    private ItemStack(net.minecraft.world.item.ItemStack mcStack) {
+    private ItemStack(MinecraftItemStack mcStack) {
         this.mcStack = mcStack;
     }
     
@@ -40,7 +41,7 @@ public class ItemStack {
      * @param mcStack The Minecraft ItemStack
      * @return A new abstracted ItemStack
      */
-    public static ItemStack fromMinecraft(net.minecraft.world.item.ItemStack mcStack) {
+    public static ItemStack fromMinecraft(MinecraftItemStack mcStack) {
         return new ItemStack(mcStack);
     }
     
@@ -48,7 +49,7 @@ public class ItemStack {
      * Gets the underlying Minecraft ItemStack.
      * @return The Minecraft ItemStack
      */
-    public net.minecraft.world.item.ItemStack toMinecraft() {
+    public MinecraftItemStack toMinecraft() {
         return mcStack;
     }
     
@@ -146,7 +147,7 @@ public class ItemStack {
      * @return true if the stacks can be merged
      */
     public boolean isSameItemSameTags(ItemStack other) {
-        return net.minecraft.world.item.ItemStack.isSameItemSameTags(
+        return MinecraftItemStack.isSameItemSameTags(
                 this.mcStack, other.mcStack);
     }
     
@@ -161,7 +162,7 @@ public class ItemStack {
         if (o == null || getClass() != o.getClass()) return false;
         
         ItemStack itemStack = (ItemStack) o;
-        return net.minecraft.world.item.ItemStack.isSameItemSameTags(mcStack, itemStack.mcStack);
+        return MinecraftItemStack.isSameItemSameTags(mcStack, itemStack.mcStack);
     }
     
     @Override
