@@ -95,7 +95,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation liquidEngineId = ResourceLocation.of(GalacticSpace.MOD_ID + ":liquid_fuel_engine", ':');
+        ResourceLocation liquidEngineId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":liquid_fuel_engine");
         registerEngine(
             liquidEngineId,
             new RocketEngineImpl.Builder(liquidEngineId)
@@ -112,7 +112,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation ionEngineId = ResourceLocation.of(GalacticSpace.MOD_ID + ":ion_engine", ':');
+        ResourceLocation ionEngineId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":ion_engine");
         registerEngine(
             ionEngineId,
             new RocketEngineImpl.Builder(ionEngineId)
@@ -143,7 +143,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation mediumTankId = ResourceLocation.of(GalacticSpace.MOD_ID + ":fuel_tank_medium", ':');
+        ResourceLocation mediumTankId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_medium");
         registerFuelTank(
             mediumTankId,
             new FuelTankImpl.Builder(mediumTankId)
@@ -157,7 +157,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation largeTankId = ResourceLocation.of(GalacticSpace.MOD_ID + ":fuel_tank_large", ':');
+        ResourceLocation largeTankId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_large");
         registerFuelTank(
             largeTankId,
             new FuelTankImpl.Builder(largeTankId)
@@ -173,7 +173,7 @@ public class RocketComponentFactory {
         );
         
         // Cargo Bays
-        ResourceLocation smallCargoBayId = ResourceLocation.of(GalacticSpace.MOD_ID + ":cargo_bay_small", ':');
+        ResourceLocation smallCargoBayId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_small");
         registerCargoBay(
             smallCargoBayId,
             new CargoBayImpl.Builder(smallCargoBayId)
@@ -185,7 +185,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation mediumCargoBayId = ResourceLocation.of(GalacticSpace.MOD_ID + ":cargo_bay_medium", ':');
+        ResourceLocation mediumCargoBayId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_medium");
         registerCargoBay(
             mediumCargoBayId,
             new CargoBayImpl.Builder(mediumCargoBayId)
@@ -198,7 +198,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation largeCargoBayId = ResourceLocation.of(GalacticSpace.MOD_ID + ":cargo_bay_large", ':');
+        ResourceLocation largeCargoBayId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_large");
         registerCargoBay(
             largeCargoBayId,
             new CargoBayImpl.Builder(largeCargoBayId)
@@ -214,7 +214,7 @@ public class RocketComponentFactory {
         );
         
         // Passenger Compartments
-        ResourceLocation basicCompartmentId = ResourceLocation.of(GalacticSpace.MOD_ID + ":passenger_compartment_basic", ':');
+        ResourceLocation basicCompartmentId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":passenger_compartment_basic");
         registerPassengerCompartment(
             basicCompartmentId,
             new PassengerCompartmentImpl.Builder(basicCompartmentId)
@@ -227,7 +227,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation advancedCompartmentId = ResourceLocation.of(GalacticSpace.MOD_ID + ":passenger_compartment_advanced", ':');
+        ResourceLocation advancedCompartmentId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":passenger_compartment_advanced");
         registerPassengerCompartment(
             advancedCompartmentId,
             new PassengerCompartmentImpl.Builder(advancedCompartmentId)
@@ -243,7 +243,7 @@ public class RocketComponentFactory {
         );
         
         // Shields
-        ResourceLocation basicShieldId = ResourceLocation.of(GalacticSpace.MOD_ID + ":heat_shield_basic", ':');
+        ResourceLocation basicShieldId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":heat_shield_basic");
         registerShield(
             basicShieldId,
             new ShieldImpl.Builder(basicShieldId)
