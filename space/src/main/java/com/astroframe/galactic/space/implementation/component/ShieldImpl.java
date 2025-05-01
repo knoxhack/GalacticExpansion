@@ -53,6 +53,38 @@ public class ShieldImpl implements IShield {
         this.maxShieldStrength = maxShieldStrength;
         this.currentShieldStrength = maxShieldStrength;
     }
+    
+    /**
+     * Creates a new shield component from Component display name, float values and shield type.
+     */
+    public ShieldImpl(
+            ResourceLocation id,
+            Component displayName,
+            int tier,
+            int mass,
+            float maxDurability,
+            float impactResistance,
+            float heatResistance,
+            float radiationResistance,
+            int maxShieldStrength,
+            boolean meteorResistance,
+            float regenerationRate,
+            com.astroframe.galactic.core.api.space.component.enums.ShieldType shieldType) {
+        this.id = id;
+        this.name = displayName.getString();
+        this.description = "Advanced shield with " + shieldType.name().toLowerCase() + " technology.";
+        this.tier = tier;
+        this.mass = mass;
+        this.maxDurability = (int)maxDurability;
+        this.currentDurability = this.maxDurability;
+        this.impactResistance = (int)impactResistance;
+        this.heatResistance = (int)heatResistance;
+        this.radiationResistance = (int)radiationResistance;
+        this.maxShieldStrength = maxShieldStrength;
+        this.currentShieldStrength = maxShieldStrength;
+        // meteorResistance and regenerationRate are ignored in this implementation
+        // shieldType is only used for the description
+    }
 
     @Override
     public ResourceLocation getId() {
