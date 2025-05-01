@@ -16,7 +16,8 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * The main class for the Galactic Space module.
- * Handles space travel, planetary exploration, and celestial bodies.
+ * Handles rocket systems and space station orbital mechanics.
+ * Note: Planetary exploration is handled by the Exploration module.
  */
 @Mod(GalacticSpace.MOD_ID)
 public class GalacticSpace {

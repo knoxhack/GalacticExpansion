@@ -14,6 +14,12 @@ public class ResourceLocationHelper {
      * @return The resource location
      */
     public static ResourceLocation of(String path) {
+        // Split into namespace and path if it already has a namespace
+        if (path.contains(":")) {
+            String[] parts = path.split(":", 2);
+            return new ResourceLocation(parts[0], parts[1]);
+        }
+        // Otherwise use our mod's namespace
         return new ResourceLocation(GalacticSpace.MOD_ID, path);
     }
 }

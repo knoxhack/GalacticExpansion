@@ -163,7 +163,7 @@ public class ModularRocketItem extends Item {
         
         // Get command module tier
         String commandModuleId = tag.getString("commandModule");
-        ResourceLocation cmdModRes = ResourceLocation.parse(commandModuleId);
+        ResourceLocation cmdModRes = ResourceLocationHelper.of(commandModuleId);
         Optional<IRocketComponent> commandModule = RocketComponentRegistry.getComponent(cmdModRes);
         int commandModuleTier = commandModule.map(IRocketComponent::getTier).orElse(0);
         
