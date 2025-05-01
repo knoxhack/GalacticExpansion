@@ -40,7 +40,7 @@ public class SpaceStationChunkGenerator extends ChunkGenerator {
     // Method implementations for ChunkGenerator
     // @Override annotations removed as they were causing errors with NeoForge 1.21.5 compatibility
     
-    public CompletableFuture<ChunkAccess> fillFromNoise(Executor executor, Blender blender, RandomState randomState, StructureManager structureManager, ChunkAccess chunkAccess) {
+    public CompletableFuture<ChunkAccess> fillFromNoise(Blender blender, RandomState randomState, StructureManager structureManager, ChunkAccess chunkAccess) {
         return CompletableFuture.completedFuture(chunkAccess);
     }
 
@@ -76,15 +76,6 @@ public class SpaceStationChunkGenerator extends ChunkGenerator {
 
     public int getMinY() {
         return -64;
-    }
-
-    public int getBaseHeight(int x, int z, Heightmap.Types types, RandomState randomState, LevelHeightAccessor levelHeightAccessor) {
-        // Check if this is part of the platform
-        int distanceSquared = x * x + z * z;
-        if (distanceSquared <= SpaceStationHelper.PLATFORM_RADIUS * SpaceStationHelper.PLATFORM_RADIUS) {
-            return SpaceStationHelper.PLATFORM_Y;
-        }
-        return SpaceStationHelper.PLATFORM_Y - 1; // Below platform level for void
     }
 
     public NoiseColumn getBaseColumn(int x, int z, LevelHeightAccessor levelHeightAccessor, RandomState randomState) {

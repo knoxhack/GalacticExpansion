@@ -53,57 +53,57 @@ public class LifeSupportImpl implements ILifeSupport {
         this.lifeSupportType = lifeSupportType;
     }
 
-    @Override
+    // Implementation of ILifeSupport.getId
     public ResourceLocation getId() {
         return id;
     }
 
-    @Override
+    // Implementation of ILifeSupport.getDisplayName
     public Component getDisplayName() {
         return displayName;
     }
 
-    @Override
+    // Implementation of ILifeSupport.getTier
     public int getTier() {
         return tier;
     }
     
-    @Override
+    // Implementation of ILifeSupport.getType
     public ComponentType getType() {
         return ComponentType.LIFE_SUPPORT;
     }
 
-    @Override
+    // Implementation of ILifeSupport.getMass
     public int getMass() {
         return mass;
     }
 
-    @Override
+    // Implementation of ILifeSupport.getMaxHealth
     public float getMaxHealth() {
         return maxHealth;
     }
 
-    @Override
+    // Implementation of ILifeSupport.getMaxCrewCapacity
     public int getMaxCrewCapacity() {
         return maxCrewCapacity;
     }
 
-    @Override
+    // Implementation of ILifeSupport.getOxygenEfficiency
     public float getOxygenEfficiency() {
         return oxygenEfficiency;
     }
 
-    @Override
+    // Implementation of ILifeSupport.getWaterRecyclingRate
     public float getWaterRecyclingRate() {
         return waterRecyclingRate;
     }
 
-    @Override
+    // Implementation of ILifeSupport.hasAdvancedMedical
     public boolean hasAdvancedMedical() {
         return hasAdvancedMedical;
     }
 
-    @Override
+    // Implementation of ILifeSupport.hasRadiationScrubbers
     public boolean hasRadiationScrubbers() {
         return hasRadiationScrubbers;
     }
