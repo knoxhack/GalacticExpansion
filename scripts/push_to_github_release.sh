@@ -230,13 +230,15 @@ CHANGELOG_CONTENT=$(<"$CHANGELOG_FILE")
 
 # Create the release on GitHub
 echo -e "${GREEN}Creating GitHub release: $RELEASE_TAG${NC}"
-RELEASE_NOTES="# Galactic Expansion ${VERSION}\n\n## Overview\nBuild #${BUILD_NUMBER} (${BUILD_DATE})\n\n## Build Info\n- Branch: $CURRENT_BRANCH\n- Commit: $CURRENT_COMMIT\n- Total JAR files: $(($MAIN_JAR_COUNT + $MODULE_JAR_COUNT))\n\n## Changelog\n${CHANGELOG_CONTENT}"
 
-# Create the release using GitHub API
+# Create a simplified release note with minimal content
+SIMPLE_NOTES="Galactic Expansion ${VERSION} - Build #${BUILD_NUMBER} (${BUILD_DATE})"
+
+# Create the release using GitHub API with minimal body content to avoid JSON parsing issues
 RELEASE_RESPONSE=$(curl -s -X POST \
   -H "Authorization: token $GITHUB_TOKEN" \
   -H "Accept: application/vnd.github.v3+json" \
-  -d "{\"tag_name\":\"$RELEASE_TAG\",\"name\":\"$RELEASE_NAME\",\"body\":\"$RELEASE_NOTES\",\"draft\":false,\"prerelease\":true}" \
+  -d "{\"tag_name\":\"$RELEASE_TAG\",\"name\":\"$RELEASE_NAME\",\"body\":\"$SIMPLE_NOTES\",\"draft\":false,\"prerelease\":true}" \
   "https://api.github.com/repos/$GIT_REPO/releases")
 
 # Extract the release ID from the response

@@ -1,7 +1,7 @@
-# Changelog for 0.1.0.b1-20250501
+# Changelog for 0.1.0.b2-20250501
 
 ## Release Information
-- **Build Number:** 1
+- **Build Number:** 2
 - **Release Date:** 2025-05-01
 - **Branch:** main
 - **Commit:** 93d63e792480013e5f71ee3346b897c9e04ae595
