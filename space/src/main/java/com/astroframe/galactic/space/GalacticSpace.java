@@ -38,6 +38,7 @@ public class GalacticSpace {
     
     private static SpaceTravelManager spaceTravelManager;
     private static MinecraftServer server;
+    public static IEventBus MOD_EVENT_BUS;
 
     /**
      * Initialize the Galactic Space module.

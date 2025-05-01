@@ -40,6 +40,12 @@ public interface IRocket {
     int addFuel(int amount);
     
     /**
+     * Sets the fuel level of the rocket.
+     * @param fuel The new fuel level (will be limited to capacity)
+     */
+    void setFuelLevel(int fuel);
+    
+    /**
      * Gets the maximum payload capacity of this rocket in inventory slots.
      * @return The payload capacity
      */

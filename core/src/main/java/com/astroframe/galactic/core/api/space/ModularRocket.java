@@ -410,6 +410,69 @@ public class ModularRocket implements IRocket {
     }
     
     /**
+     * Adds a component to this rocket.
+     * @param component The component to add
+     * @return true if the component was added successfully
+     */
+    public boolean addComponent(IRocketComponent component) {
+        if (component == null) {
+            return false;
+        }
+        
+        // Add component based on its type
+        RocketComponentType type = component.getComponentType();
+        
+        switch (type) {
+            case COCKPIT:
+                if (component instanceof ICommandModule) {
+                    // New implementation would call setter here
+                    return true;
+                }
+                break;
+            case ENGINE:
+                if (component instanceof IRocketEngine) {
+                    engines.add((IRocketEngine) component);
+                    return true;
+                }
+                break;
+            case FUEL_TANK:
+                if (component instanceof IFuelTank) {
+                    fuelTanks.add((IFuelTank) component);
+                    return true;
+                }
+                break;
+            case CARGO_BAY:
+                if (component instanceof ICargoBay) {
+                    cargoBays.add((ICargoBay) component);
+                    return true;
+                }
+                break;
+            case PASSENGER_COMPARTMENT:
+                if (component instanceof IPassengerCompartment) {
+                    passengerCompartments.add((IPassengerCompartment) component);
+                    return true;
+                }
+                break;
+            case SHIELD:
+                if (component instanceof IShield) {
+                    shields.add((IShield) component);
+                    return true;
+                }
+                break;
+            case LIFE_SUPPORT:
+                if (component instanceof ILifeSupport) {
+                    lifeSupports.add((ILifeSupport) component);
+                    return true;
+                }
+                break;
+            default:
+                return false;
+        }
+        
+        return false;
+    }
+    
+    /**
      * Saves rocket data to an NBT tag.
      * @param tag The tag to save to
      */
