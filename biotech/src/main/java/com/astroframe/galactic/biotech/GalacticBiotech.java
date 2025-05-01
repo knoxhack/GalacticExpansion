@@ -3,6 +3,7 @@ package com.astroframe.galactic.biotech;
 import com.astroframe.galactic.biotech.items.BiotechItems;
 import com.astroframe.galactic.biotech.registry.BiotechRegistry;
 import com.astroframe.galactic.core.registry.CoreRegistry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
