@@ -120,6 +120,23 @@ public class FuelTankImpl implements IFuelTank {
     public FuelType getFuelType() {
         return fuelType;
     }
+    
+    @Override
+    public int getMaxFuelCapacity() {
+        return capacity;
+    }
+    
+    @Override
+    public float getPressureRating() {
+        // Calculate pressure rating based on structural integrity and tier
+        return structuralIntegrity * (1.0f + (tier * 0.5f));
+    }
+    
+    @Override
+    public boolean isInsulated() {
+        // Tanks with cryogenic storage are insulated, as are higher tier tanks
+        return hasCryogenicStorage || tier >= 3;
+    }
 
     @Override
     public int getFlowRate() {

@@ -91,32 +91,50 @@ public class CargoBayImpl implements ICargoBay {
         return ComponentType.CARGO_BAY;
     }
 
-    @Override
+    /**
+     * Gets the number of slots in this cargo bay.
+     * @return The slot count
+     */
     public int getSlotCount() {
         return slotCount;
     }
 
-    @Override
+    /**
+     * Gets the weight capacity of this cargo bay.
+     * @return The weight capacity
+     */
     public int getWeightCapacity() {
         return weightCapacity;
     }
 
-    @Override
+    /**
+     * Checks if this cargo bay has automatic sorting.
+     * @return True if has automatic sorting
+     */
     public boolean hasAutomaticSorting() {
         return hasAutomaticSorting;
     }
 
-    @Override
+    /**
+     * Checks if this cargo bay has vacuum sealing.
+     * @return True if has vacuum sealing
+     */
     public boolean hasVacuumSealing() {
         return hasVacuumSealing;
     }
 
-    @Override
+    /**
+     * Gets the type of this cargo bay.
+     * @return The cargo bay type
+     */
     public CargoBayType getCargoType() {
         return cargoType;
     }
 
-    @Override
+    /**
+     * Gets the access speed of this cargo bay.
+     * @return The access speed
+     */
     public float getAccessSpeed() {
         return accessSpeed;
     }

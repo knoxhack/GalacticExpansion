@@ -80,6 +80,11 @@ public class RocketEngineImpl implements IRocketEngine {
     public float getMaxHealth() {
         return maxHealth;
     }
+    
+    @Override
+    public ComponentType getType() {
+        return ComponentType.ENGINE;
+    }
 
     @Override
     public int getThrust() {
