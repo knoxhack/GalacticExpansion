@@ -160,7 +160,7 @@ public class SpaceTravelCommands {
         }
         
         if (tier >= 3) {
-            rocket.addComponent(RocketComponentFactory.createShielding(RocketComponentType.SHIELDING, tier));
+            rocket.addComponent(RocketComponentFactory.createShield(RocketComponentType.SHIELDING, tier));
             rocket.addComponent(RocketComponentFactory.createLifeSupport(RocketComponentType.LIFE_SUPPORT, tier));
         }
         
