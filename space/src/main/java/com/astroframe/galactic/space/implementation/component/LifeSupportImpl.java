@@ -1,7 +1,7 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.ILifeSupport;
-import com.astroframe.galactic.core.api.space.component.enums.ComponentType;
+import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.core.api.space.component.enums.LifeSupportType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -68,9 +68,9 @@ public class LifeSupportImpl implements ILifeSupport {
         return tier;
     }
     
-    // Implementation of ILifeSupport.getType
-    public ComponentType getType() {
-        return ComponentType.LIFE_SUPPORT;
+    // Implementation of IRocketComponent.getType
+    public RocketComponentType getType() {
+        return RocketComponentType.LIFE_SUPPORT;
     }
 
     // Implementation of ILifeSupport.getMass

@@ -92,22 +92,22 @@ public class BasePassengerCompartment implements IPassengerCompartment {
         return passengerCapacity;
     }
     
-    @Override
+    // Implementation of IPassengerCompartment method
     public boolean hasArtificialGravity() {
         return hasArtificialGravity;
     }
     
-    @Override
+    // Implementation of IPassengerCompartment method
     public boolean hasSleepingQuarters() {
         return hasSleepingQuarters;
     }
     
-    @Override
+    // Implementation of IPassengerCompartment method
     public boolean hasEmergencyMedical() {
         return hasEmergencyMedical;
     }
     
-    @Override
+    // Implementation of IPassengerCompartment method
     public CompartmentType getCompartmentType() {
         return compartmentType;
     }
