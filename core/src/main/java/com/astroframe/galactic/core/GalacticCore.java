@@ -1,71 +1,83 @@
 package com.astroframe.galactic.core;
 
-import com.astroframe.galactic.core.registry.CoreRegistry;
-import com.astroframe.galactic.core.api.GalacticRegistry;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The main class for the Galactic Expansion Core module.
- * This module provides the core API and utilities for all other Galactic Expansion modules.
+ * The main class for the Galactic Core module.
+ * This is the central API module that houses all common code and interfaces.
  */
 @Mod(GalacticCore.MOD_ID)
 public class GalacticCore {
+    
+    /** The mod ID for the core module */
     public static final String MOD_ID = "galacticcore";
-    public static final Logger LOGGER = LoggerFactory.getLogger("Galactic Core");
-
-    // Registry manager instance
-    private static final GalacticRegistry REGISTRY = new CoreRegistry();
-
+    
+    /** Logger instance for the core module */
+    public static final Logger LOGGER = LoggerFactory.getLogger("GalacticCore");
+    
+    /** Singleton instance of the core mod */
+    public static GalacticCore INSTANCE;
+    
+    /** The mod's event bus */
+    private final IEventBus modEventBus;
+    
     /**
-     * Constructor for the Galactic Core mod.
-     * Initializes core components and registers event handlers.
+     * Constructs a new instance of the Galactic Core mod.
+     * This initializes all core APIs and registers event handlers.
      */
     public GalacticCore() {
-        LOGGER.info("Initializing Galactic Core module");
+        INSTANCE = this;
+        modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         
-        // Get the mod event bus
-        var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        LOGGER.info("Initializing Galactic Core API module");
         
-        // Register ourselves for server and other game events we are interested in
-        NeoForge.EVENT_BUS.register(this);
+        // Register ourselves for mod events
+        modEventBus.register(this);
         
-        // Register all deferred registers to the mod event bus
-        REGISTRY.registerAllTo(modEventBus);
+        // Initialize registries
+        registerRegistries();
         
-        // Register mod lifecycle events
-        modEventBus.addListener(this::setup);
+        // Register handlers for different APIs
+        registerEnergyHandlers();
+        registerMachineHandlers();
         
-        LOGGER.info("Galactic Core initialization complete");
+        LOGGER.info("Galactic Core API module initialized");
     }
     
     /**
-     * Setup method called during mod initialization.
-     * 
-     * @param event The setup event
+     * Registers all registries used by the core and modules.
      */
-    private void setup(final net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) {
-        LOGGER.info("Galactic Core setup phase starting");
-        
-        // Perform initialization steps that need to happen after registry objects exist
-        event.enqueueWork(() -> {
-            // Initialize components that depend on registered objects
-            LOGGER.info("Registering core capabilities");
-            // TODO: Register capabilities and other systems
-        });
-        
-        LOGGER.info("Galactic Core setup phase complete");
+    private void registerRegistries() {
+        LOGGER.debug("Registering core registries");
+        // Registry setup will go here
     }
     
     /**
-     * Get the global registry manager instance
-     * 
-     * @return The registry manager
+     * Registers handlers related to the energy API.
      */
-    public static GalacticRegistry getRegistry() {
-        return REGISTRY;
+    private void registerEnergyHandlers() {
+        LOGGER.debug("Registering energy API handlers");
+        // Energy API setup will go here
+    }
+    
+    /**
+     * Registers handlers related to the machine API.
+     */
+    private void registerMachineHandlers() {
+        LOGGER.debug("Registering machine API handlers");
+        // Machine API setup will go here
+    }
+    
+    /**
+     * Gets the mod event bus for registering events.
+     * 
+     * @return The mod event bus
+     */
+    public IEventBus getModEventBus() {
+        return modEventBus;
     }
 }
