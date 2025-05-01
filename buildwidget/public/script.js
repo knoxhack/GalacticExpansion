@@ -169,6 +169,18 @@ function connectWebSocket() {
                 case 'metrics':
                     updateBuildMetrics(message.data);
                     break;
+                case 'notifications':
+                    updateNotifications(message.data);
+                    break;
+                case 'versionHistory':
+                    updateVersionHistory(message.data);
+                    break;
+                case 'changelogHistory':
+                    updateChangelogHistory(message.data);
+                    break;
+                case 'dependencies':
+                    updateDependencies(message.data);
+                    break;
                 default:
                     console.warn('Unknown message type:', message.type);
             }
