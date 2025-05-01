@@ -27,7 +27,7 @@ public interface IRocket {
      * Gets the current amount of fuel in this rocket.
      * @return The current fuel level
      */
-    int getCurrentFuel();
+    int getFuelLevel();
     
     /**
      * Adds fuel to the rocket.

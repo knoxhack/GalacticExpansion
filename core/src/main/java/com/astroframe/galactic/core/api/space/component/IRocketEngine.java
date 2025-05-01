@@ -1,51 +1,64 @@
 package com.astroframe.galactic.core.api.space.component;
 
-import com.astroframe.galactic.core.api.space.component.enums.EngineType;
-
 /**
  * Interface for rocket engines.
  */
 public interface IRocketEngine extends IRocketComponent {
     
     /**
-     * Gets the thrust power of this engine.
-     * @return The thrust power
+     * Gets the thrust of this engine in newtons.
+     * @return The thrust
      */
     int getThrust();
     
     /**
-     * Gets the fuel efficiency of this engine (0.0-1.0).
-     * @return The fuel efficiency
+     * Gets the fuel consumption rate in units per second.
+     * @return The fuel consumption rate
+     */
+    int getFuelConsumptionRate();
+    
+    /**
+     * Gets the efficiency of this engine (0.1-2.0).
+     * Higher values mean more thrust per unit of fuel.
+     * @return The efficiency
      */
     float getEfficiency();
     
     /**
-     * Gets the type of this engine.
-     * @return The engine type
+     * Gets the type of fuel this engine uses.
+     * @return The fuel type
      */
-    EngineType getEngineType();
+    FuelType getFuelType();
     
     /**
-     * Gets the heat capacity of this engine.
-     * @return The heat capacity
-     */
-    int getHeatCapacity();
-    
-    /**
-     * Checks if this engine can operate underwater.
-     * @return True if can operate underwater
-     */
-    boolean canOperateUnderwater();
-    
-    /**
-     * Checks if this engine can operate in atmosphere.
-     * @return True if can operate in atmosphere
+     * Determines if this engine can operate in atmosphere.
+     * @return true if the engine can operate in atmosphere
      */
     boolean canOperateInAtmosphere();
     
     /**
-     * Checks if this engine can operate in space.
-     * @return True if can operate in space
+     * Determines if this engine can operate in space.
+     * @return true if the engine can operate in space
      */
     boolean canOperateInSpace();
+    
+    /**
+     * Enum representing the types of fuel a rocket engine can use.
+     */
+    enum FuelType {
+        /**
+         * Chemical fuel - common and less efficient.
+         */
+        CHEMICAL,
+        
+        /**
+         * Plasma fuel - more advanced and efficient.
+         */
+        PLASMA,
+        
+        /**
+         * Antimatter fuel - extremely advanced and efficient.
+         */
+        ANTIMATTER
+    }
 }

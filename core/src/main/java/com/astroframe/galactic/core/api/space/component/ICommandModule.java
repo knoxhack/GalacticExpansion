@@ -1,39 +1,52 @@
 package com.astroframe.galactic.core.api.space.component;
 
-import com.astroframe.galactic.core.api.space.component.enums.CommandModuleType;
-
 /**
  * Interface for rocket command modules.
  */
 public interface ICommandModule extends IRocketComponent {
     
     /**
-     * Gets the navigation level of this command module (1-10).
-     * @return The navigation level
-     */
-    int getNavigationLevel();
-    
-    /**
-     * Gets the crew capacity of this command module.
-     * @return The crew capacity
-     */
-    int getCrewCapacity();
-    
-    /**
-     * Gets the computing power of this command module (1-10).
+     * Gets the computing power of this command module.
+     * Higher tier modules have more computing power.
      * @return The computing power
      */
     int getComputingPower();
     
     /**
-     * Gets the communication range of this command module.
-     * @return The communication range
+     * Gets the sensor strength of this command module.
+     * Higher sensor strength allows detection of more distant celestial bodies.
+     * @return The sensor strength
      */
-    int getCommunicationRange();
+    int getSensorStrength();
     
     /**
-     * Gets the type of this command module.
-     * @return The command module type
+     * Gets the navigation accuracy of this command module.
+     * Higher accuracy means more precise landings.
+     * @return The navigation accuracy
      */
-    CommandModuleType getCommandModuleType();
+    float getNavigationAccuracy();
+    
+    /**
+     * Gets the number of crew this command module can hold.
+     * @return The crew capacity
+     */
+    int getCrewCapacity();
+    
+    /**
+     * Whether this command module has advanced life support systems.
+     * @return true if the module has advanced life support
+     */
+    boolean hasAdvancedLifeSupport();
+    
+    /**
+     * Whether this command module has automated landing systems.
+     * @return true if the module has automated landing
+     */
+    boolean hasAutomatedLanding();
+    
+    /**
+     * Whether this command module has emergency evacuation systems.
+     * @return true if the module has emergency evacuation
+     */
+    boolean hasEmergencyEvacuation();
 }

@@ -1,31 +1,56 @@
 package com.astroframe.galactic.core.api.space.component;
 
+import net.minecraft.world.item.ItemStack;
+
+import java.util.Map;
+
 /**
  * Interface for rocket cargo bays.
  */
 public interface ICargoBay extends IRocketComponent {
     
     /**
-     * Gets the storage capacity of this cargo bay in slots.
+     * Gets the number of storage slots this cargo bay provides.
      * @return The storage capacity
      */
     int getStorageCapacity();
     
     /**
-     * Checks if this cargo bay is climate controlled.
-     * @return True if climate controlled
+     * Gets the cargo contents of this bay.
+     * @return A map of slot index to item stack
      */
-    boolean isClimateControlled();
+    Map<Integer, ItemStack> getContents();
     
     /**
-     * Checks if this cargo bay is radiation shielded.
-     * @return True if radiation shielded
+     * Adds an item to this cargo bay.
+     * @param stack The item stack to add
+     * @return The remaining items that couldn't be added, or empty if all were added
      */
-    boolean isRadiationShielded();
+    ItemStack addItem(ItemStack stack);
     
     /**
-     * Checks if this cargo bay is EMP shielded.
-     * @return True if EMP shielded
+     * Takes an item from this cargo bay.
+     * @param slotIndex The slot to take from
+     * @param amount The number of items to take
+     * @return The items taken
      */
-    boolean isEMPShielded();
+    ItemStack takeItem(int slotIndex, int amount);
+    
+    /**
+     * Whether this cargo bay has vacuum sealing.
+     * @return true if the cargo bay has vacuum sealing
+     */
+    boolean hasVacuumSeal();
+    
+    /**
+     * Whether this cargo bay has temperature regulation.
+     * @return true if the cargo bay has temperature regulation
+     */
+    boolean hasTemperatureRegulation();
+    
+    /**
+     * Whether this cargo bay has radiation shielding.
+     * @return true if the cargo bay has radiation shielding
+     */
+    boolean hasRadiationShielding();
 }

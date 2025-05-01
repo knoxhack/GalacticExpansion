@@ -64,7 +64,7 @@ public class ModularRocket implements IRocket {
     }
     
     @Override
-    public int getCurrentFuel() {
+    public int getFuelLevel() {
         return currentFuel;
     }
     
