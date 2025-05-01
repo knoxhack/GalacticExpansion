@@ -6,12 +6,12 @@ dependencies {
 jar {
     manifest {
         attributes([
-            "Specification-Title": "ModApi Energy",
-            "Specification-Vendor": "Example Modder",
+            "Specification-Title": "Galactic Expansion Energy",
+            "Specification-Vendor": "AstroFrame",
             "Specification-Version": "1",
             "Implementation-Title": project.name,
             "Implementation-Version": project.version,
-            "Implementation-Vendor" :"Example Modder",
+            "Implementation-Vendor" :"AstroFrame",
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
