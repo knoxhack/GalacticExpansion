@@ -26,9 +26,27 @@ public class SpaceTravelManager implements ISpaceTravelManager {
     
     @Override
     public boolean travelTo(ServerPlayer player, ICelestialBody destination) {
-        // In a full implementation, this would handle teleportation to the celestial body
-        // For now, just return true to indicate successful travel
-        return true;
+        // Get the destination's ID
+        ResourceLocation destinationId = destination.getId();
+        
+        // Handle special case for the Space Station
+        if (destinationId.equals(SpaceBodies.SPACE_STATION.getId())) {
+            return com.astroframe.galactic.space.dimension.SpaceStationTeleporter.teleportToSpaceStation(player);
+        }
+        
+        // Handle special case for Earth/Overworld
+        if (destinationId.equals(SpaceBodies.EARTH.getId())) {
+            return com.astroframe.galactic.space.dimension.SpaceStationTeleporter.teleportToOverworld(player);
+        }
+        
+        // For other celestial bodies (to be implemented in the Exploration module)
+        // Just log a message for now
+        GalacticSpace.LOGGER.info("Player {} attempted to travel to {}, but this destination is not yet implemented",
+                                   player.getName().getString(), destination.getName());
+        player.sendSystemMessage(Component.translatable("message.galactic-space.destination_not_implemented")
+                                .append(": " + destination.getName()));
+        
+        return false;
     }
 
     @Override
@@ -48,14 +66,30 @@ public class SpaceTravelManager implements ISpaceTravelManager {
         return discoveredBodies.getOrDefault(player.getUUID(), new ArrayList<>())
                 .contains(body.getId());
     }
-
+    
+    /**
+     * Records a celestial body as discovered by a player.
+     * 
+     * @param player The player who made the discovery
+     * @param body The celestial body that was discovered
+     */
     @Override
     public void discoverCelestialBody(Player player, ICelestialBody body) {
-        List<ResourceLocation> discovered = discoveredBodies.computeIfAbsent(
-                player.getUUID(), k -> new ArrayList<>());
+        UUID playerId = player.getUUID();
+        List<ResourceLocation> playerDiscoveries = discoveredBodies.computeIfAbsent(playerId, k -> new ArrayList<>());
         
-        if (!discovered.contains(body.getId())) {
-            discovered.add(body.getId());
+        // Only add if not already discovered
+        if (!playerDiscoveries.contains(body.getId())) {
+            playerDiscoveries.add(body.getId());
+            
+            // Notify the player
+            if (player instanceof ServerPlayer) {
+                ((ServerPlayer) player).sendSystemMessage(
+                    Component.translatable("message.galactic-space.discovered_body", body.getName())
+                );
+            }
+            
+            // Save the discovery to persistent data
             saveDiscoveries(player);
         }
     }
