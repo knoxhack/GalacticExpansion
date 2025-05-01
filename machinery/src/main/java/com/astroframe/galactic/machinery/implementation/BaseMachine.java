@@ -1,8 +1,8 @@
 package com.astroframe.galactic.machinery.implementation;
 
-import com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit;
 import com.astroframe.galactic.energy.api.EnergyStorage;
 import com.astroframe.galactic.energy.api.EnergyType;
+import com.astroframe.galactic.energy.api.EnergyUnit;
 import com.astroframe.galactic.machinery.api.Machine;
 import com.astroframe.galactic.machinery.api.MachineType;
 import net.minecraft.core.BlockPos;
@@ -182,7 +182,7 @@ public abstract class BaseMachine implements Machine {
     
     @Override
     public EnergyUnit getEnergyUnit() {
-        return EnergyUnit.GALACTIC_ENERGY;
+        return EnergyUnit.GALACTIC_ENERGY_UNIT;
     }
     
     /**

@@ -1,5 +1,7 @@
 package com.astroframe.galactic.core.api.energy;
 
+import com.astroframe.galactic.energy.api.EnergyUnit;
+
 /**
  * Interface for blocks or entities that can handle energy.
  * This is the base interface for all energy-related operations.
@@ -59,43 +61,5 @@ public interface IEnergyHandler {
      */
     EnergyUnit getEnergyUnit();
     
-    /**
-     * Energy unit enum for standardizing energy measurements across modules.
-     */
-    enum EnergyUnit {
-        /** Forge Energy unit (FE) */
-        FORGE_ENERGY(1),
-        
-        /** Galactic Energy unit (GE) */
-        GALACTIC_ENERGY(10),
-        
-        /** Redstone Flux (RF, compatible with FE) */
-        REDSTONE_FLUX(1),
-        
-        /** Energy Units (EU, from Industrial Craft) */
-        ENERGY_UNITS(4);
-        
-        private final int conversionRate;
-        
-        EnergyUnit(int conversionRate) {
-            this.conversionRate = conversionRate;
-        }
-        
-        /**
-         * Converts an amount of energy from this unit to another unit.
-         * 
-         * @param amount The amount of energy in this unit
-         * @param to The target energy unit
-         * @return The amount of energy in the target unit
-         */
-        public int convertTo(int amount, EnergyUnit to) {
-            if (to == this) {
-                return amount;
-            }
-            
-            // Convert to common base (FE) and then to target unit
-            int baseAmount = amount * this.conversionRate;
-            return baseAmount / to.conversionRate;
-        }
-    }
+    // Using EnergyUnit from energy module
 }

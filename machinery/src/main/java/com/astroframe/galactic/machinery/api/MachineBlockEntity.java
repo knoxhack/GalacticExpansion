@@ -1,6 +1,6 @@
 package com.astroframe.galactic.machinery.api;
 
-import com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit;
+import com.astroframe.galactic.energy.api.EnergyUnit;
 import com.astroframe.galactic.machinery.energy.MachineEnergyStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -103,8 +103,8 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
             }
 
             @Override
-            public EnergyType getEnergyType() {
-                return EnergyType.ELECTRICAL;
+            public com.astroframe.galactic.energy.api.EnergyType getEnergyType() {
+                return com.astroframe.galactic.energy.api.EnergyType.ELECTRICAL;
             }
         };
     }
@@ -308,7 +308,7 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
     
     @Override
     public EnergyUnit getEnergyUnit() {
-        return EnergyUnit.GALACTIC_ENERGY;
+        return EnergyUnit.GALACTIC_ENERGY_UNIT;
     }
     
     /**

@@ -1,7 +1,7 @@
 package com.astroframe.galactic.machinery.api;
 
 import com.astroframe.galactic.core.api.energy.IEnergyHandler;
-import com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit;
+import com.astroframe.galactic.energy.api.EnergyUnit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 

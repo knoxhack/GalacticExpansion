@@ -1,6 +1,7 @@
 package com.astroframe.galactic.machinery.energy;
 
-import com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit;
+import com.astroframe.galactic.energy.api.EnergyUnit;
+import com.astroframe.galactic.energy.api.EnergyType;
 
 /**
  * Energy storage implementation for machines.
@@ -60,28 +61,8 @@ public interface MachineEnergyStorage {
      */
     EnergyType getEnergyType();
     
-    /**
-     * Energy type enum for machinery module.
+    /* 
+     * This interface now uses com.astroframe.galactic.energy.api.EnergyType instead of
+     * a local enum definition.
      */
-    enum EnergyType {
-        ELECTRICAL("electrical"),
-        MECHANICAL("mechanical"),
-        THERMAL("thermal"),
-        QUANTUM("quantum");
-        
-        private final String id;
-        
-        EnergyType(String id) {
-            this.id = id;
-        }
-        
-        /**
-         * Gets the ID of this energy type.
-         * 
-         * @return The ID
-         */
-        public String getId() {
-            return id;
-        }
-    }
 }
