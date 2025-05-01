@@ -7,9 +7,11 @@ public enum LifeSupportType {
     BASIC("Basic"),
     STANDARD("Standard"),
     ADVANCED("Advanced"),
-    BIOREGENERATIVE("Bioregenerative"),
-    RECYCLING("Recycling"),
-    SUSTAINABLE("Sustainable");
+    EXTENDED("Extended"),
+    EFFICIENT("Efficient"),
+    LUXURIOUS("Luxurious"),
+    MILITARY("Military"),
+    SCIENTIFIC("Scientific");
     
     private final String displayName;
     

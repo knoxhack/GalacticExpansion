@@ -133,11 +133,17 @@ public class ResourceLocationHelper {
             throw new IllegalArgumentException("Cannot parse empty string as ResourceLocation");
         }
         
-        String[] parts = str.split(":", 2);
-        if (parts.length == 2) {
-            return create(parts[0], parts[1]);
-        } else {
-            return create("minecraft", parts[0]);
+        // Use Minecraft's built-in parse method which is available in newer versions
+        try {
+            return ResourceLocation.parse(str);
+        } catch (Exception e) {
+            // Fall back to our implementation if needed
+            String[] parts = str.split(":", 2);
+            if (parts.length == 2) {
+                return create(parts[0], parts[1]);
+            } else {
+                return create("minecraft", parts[0]);
+            }
         }
     }
     
