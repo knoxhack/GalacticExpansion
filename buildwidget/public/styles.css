@@ -389,3 +389,107 @@ pre {
     box-shadow: 0 0 5px var(--warning-color);
     animation: pulse 1.5s infinite;
 }
+
+/* Build Timeline */
+.build-timeline {
+    padding: 20px;
+    background-color: var(--card-background);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.build-timeline h3 {
+    margin-bottom: 15px;
+}
+
+.timeline-container {
+    position: relative;
+    height: 100px;
+    background-color: #f1f3f4;
+    border-radius: 4px;
+    padding: 10px;
+    overflow-x: auto;
+    margin-top: 10px;
+}
+
+.timeline-event {
+    position: absolute;
+    height: 20px;
+    min-width: 2px;
+    border-radius: 2px;
+    top: 40px;
+    cursor: pointer;
+    transition: height 0.2s, top 0.2s;
+}
+
+.timeline-event:hover {
+    height: 30px;
+    top: 35px;
+    z-index: 10;
+}
+
+.timeline-event[data-status="success"] {
+    background-color: var(--success-color);
+}
+
+.timeline-event[data-status="failed"] {
+    background-color: var(--danger-color);
+}
+
+.timeline-event[data-status="running"] {
+    background-color: var(--primary-color);
+    animation: pulse 1.5s infinite;
+}
+
+.timeline-tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 100;
+    pointer-events: none;
+    white-space: nowrap;
+    transform: translateY(-100%);
+    top: -5px;
+}
+
+/* Build Metrics */
+.build-metrics {
+    padding: 20px;
+    background-color: var(--card-background);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.build-metrics h3 {
+    margin-bottom: 15px;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.metric-card {
+    background-color: #f1f3f4;
+    border-radius: 6px;
+    padding: 15px;
+    text-align: center;
+}
+
+.metric-title {
+    font-size: 14px;
+    color: #5f6368;
+    margin-bottom: 8px;
+}
+
+.metric-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary-color);
+}

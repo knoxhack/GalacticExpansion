@@ -30,6 +30,16 @@ let buildStatus = {
   buildOutput: []
 };
 
+// Build metrics storage
+const buildHistory = [];
+const buildMetrics = {
+  totalBuilds: 0,
+  successfulBuilds: 0,
+  averageBuildTime: 0,
+  lastSuccessful: null,
+  currentBuild: null
+};
+
 // Store connected clients with their handlers
 const clients = new Map();
 
@@ -282,6 +292,48 @@ function broadcastError(errorMessage) {
   clients.forEach((handlers, client) => {
     if (client.readyState === client.OPEN) {
       handlers.sendError(errorMessage);
+    }
+  });
+}
+
+// Broadcast build metrics to all clients
+function broadcastMetrics() {
+  // Calculate success rate
+  const successRate = buildMetrics.totalBuilds > 0 
+    ? Math.round((buildMetrics.successfulBuilds / buildMetrics.totalBuilds) * 100) 
+    : 0;
+  
+  // Format time
+  const formatTime = (seconds) => {
+    if (seconds < 60) return `${Math.round(seconds)}s`;
+    return `${Math.floor(seconds / 60)}m ${Math.round(seconds % 60)}s`;
+  };
+  
+  // Format date
+  const formatDate = (date) => {
+    if (!date) return 'Never';
+    return new Date(date).toLocaleString();
+  };
+  
+  // Prepare metrics data
+  const metricsData = {
+    totalBuilds: buildMetrics.totalBuilds,
+    successRate: `${successRate}%`,
+    averageBuildTime: formatTime(buildMetrics.averageBuildTime || 0),
+    lastSuccessful: formatDate(buildMetrics.lastSuccessful),
+    buildHistory: buildHistory.slice(-10).map(build => ({
+      id: build.id,
+      command: build.command,
+      status: build.status,
+      startTime: build.startTime,
+      duration: formatTime(build.duration || 0)
+    }))
+  };
+  
+  // Send to all clients
+  clients.forEach((handlers, client) => {
+    if (client.readyState === client.OPEN) {
+      client.send(JSON.stringify({ type: 'metrics', data: metricsData }));
     }
   });
 }
