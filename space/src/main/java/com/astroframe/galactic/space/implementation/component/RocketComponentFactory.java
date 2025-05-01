@@ -1435,7 +1435,8 @@ public class RocketComponentFactory {
          * Check if this component is broken (has no durability left).
          * @return true if broken, false otherwise
          */
-        private boolean isBroken() {
+        @Override
+        public boolean isBroken() {
             return currentDurability <= 0;
         }
     }

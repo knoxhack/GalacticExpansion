@@ -37,5 +37,20 @@ public enum RocketComponentType {
     /**
      * Life support component - provides oxygen and environmental control.
      */
-    LIFE_SUPPORT
+    LIFE_SUPPORT,
+    
+    /**
+     * Cargo bay component - provides storage space for items.
+     */
+    STORAGE,
+    
+    /**
+     * Fuel component - represents fuel itself.
+     */
+    FUEL,
+    
+    /**
+     * Passenger compartment - provides space for passengers.
+     */
+    PASSENGER_COMPARTMENT
 }

@@ -59,6 +59,11 @@ public interface IRocketEngine extends IRocketComponent {
         /**
          * Antimatter fuel - extremely advanced and efficient.
          */
-        ANTIMATTER
+        ANTIMATTER,
+        
+        /**
+         * Electrical fuel - sustainable and efficient for small engines.
+         */
+        ELECTRICAL
     }
 }

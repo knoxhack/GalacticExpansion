@@ -73,4 +73,10 @@ public interface ILifeSupport extends IRocketComponent {
      * @return true if emergency mode is active
      */
     boolean isEmergencyModeActive();
+    
+    /**
+     * Check if this component is broken (has no durability left).
+     * @return true if broken, false otherwise
+     */
+    boolean isBroken();
 }
