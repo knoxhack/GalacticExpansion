@@ -918,3 +918,110 @@ pre {
         opacity: 0;
     }
 }
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+        max-width: 100%;
+    }
+    
+    header h1 {
+        font-size: 24px;
+    }
+    
+    header h2 {
+        font-size: 18px;
+    }
+    
+    .build-controls {
+        flex-direction: column;
+        padding: 10px;
+    }
+    
+    .control-group {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    
+    select, button {
+        width: 100%;
+        max-width: 100%;
+        margin-right: 0;
+    }
+    
+    .build-status, .build-output, .task-list, .module-status {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .module-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 10px;
+    }
+    
+    .module-card {
+        padding: 10px;
+    }
+    
+    .output-container {
+        height: 200px;
+    }
+    
+    .progress-container {
+        height: 20px;
+    }
+    
+    .task-container {
+        max-height: 150px;
+    }
+    
+    .metric-card {
+        padding: 10px;
+    }
+    
+    .metric-value {
+        font-size: 22px;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 20px;
+    }
+    
+    header h2 {
+        font-size: 16px;
+    }
+    
+    .status-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .build-time {
+        margin-top: 5px;
+    }
+    
+    .output-controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .filter-controls {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+    
+    .filter-select {
+        width: 100%;
+    }
+    
+    .module-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
