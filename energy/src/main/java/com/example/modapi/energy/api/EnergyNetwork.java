@@ -1,6 +1,7 @@
 package com.example.modapi.energy.api;
 
 import net.minecraft.world.level.Level;
+import net.minecraft.core.BlockPos;
 
 import java.util.*;
 
@@ -12,8 +13,8 @@ import java.util.*;
  */
 @Deprecated
 public class EnergyNetwork {
-    private final Set<net.minecraft.core.BlockPos> connectedBlocks = new HashSet<>();
-    private final Map<net.minecraft.core.BlockPos, IEnergyHandler> energyHandlers = new HashMap<>();
+    private final Set<BlockPos> connectedBlocks = new HashSet<>();
+    private final Map<BlockPos, IEnergyHandler> energyHandlers = new HashMap<>();
     private final UUID networkId;
     private int transferRate = 1000;
     
@@ -69,7 +70,7 @@ public class EnergyNetwork {
      * @param pos The block position
      * @return Whether the block was added successfully
      */
-    public boolean addBlock(Level level, net.minecraft.core.BlockPos pos) {
+    public boolean addBlock(Level level, BlockPos pos) {
         if (connectedBlocks.contains(pos)) {
             return false; // Already in the network
         }
@@ -90,7 +91,7 @@ public class EnergyNetwork {
      * @param pos The block position
      * @return Whether the block was removed
      */
-    public boolean removeBlock(net.minecraft.core.BlockPos pos) {
+    public boolean removeBlock(BlockPos pos) {
         if (connectedBlocks.remove(pos)) {
             energyHandlers.remove(pos);
             return true;
@@ -104,7 +105,7 @@ public class EnergyNetwork {
      * @param pos The block position
      * @return Whether the block is in the network
      */
-    public boolean containsBlock(net.minecraft.core.BlockPos pos) {
+    public boolean containsBlock(BlockPos pos) {
         return connectedBlocks.contains(pos);
     }
     
@@ -113,7 +114,7 @@ public class EnergyNetwork {
      * 
      * @return An unmodifiable set of block positions
      */
-    public Set<net.minecraft.core.BlockPos> getConnectedBlocks() {
+    public Set<BlockPos> getConnectedBlocks() {
         return Collections.unmodifiableSet(connectedBlocks);
     }
     
@@ -122,7 +123,7 @@ public class EnergyNetwork {
      * 
      * @return An unmodifiable map of positions to energy handlers
      */
-    public Map<net.minecraft.core.BlockPos, IEnergyHandler> getEnergyHandlers() {
+    public Map<BlockPos, IEnergyHandler> getEnergyHandlers() {
         return Collections.unmodifiableMap(energyHandlers);
     }
     
@@ -132,10 +133,10 @@ public class EnergyNetwork {
      */
     public void distributeEnergy() {
         // Find energy providers and consumers
-        List<Map.Entry<net.minecraft.core.BlockPos, IEnergyHandler>> providers = new ArrayList<>();
-        List<Map.Entry<net.minecraft.core.BlockPos, IEnergyHandler>> consumers = new ArrayList<>();
+        List<Map.Entry<BlockPos, IEnergyHandler>> providers = new ArrayList<>();
+        List<Map.Entry<BlockPos, IEnergyHandler>> consumers = new ArrayList<>();
         
-        for (Map.Entry<net.minecraft.core.BlockPos, IEnergyHandler> entry : energyHandlers.entrySet()) {
+        for (Map.Entry<BlockPos, IEnergyHandler> entry : energyHandlers.entrySet()) {
             IEnergyHandler handler = entry.getValue();
             
             if (handler.canExtract() && handler.getEnergyStored() > 0) {
@@ -153,7 +154,7 @@ public class EnergyNetwork {
         }
         
         // Distribute energy from each provider
-        for (Map.Entry<net.minecraft.core.BlockPos, IEnergyHandler> providerEntry : providers) {
+        for (Map.Entry<BlockPos, IEnergyHandler> providerEntry : providers) {
             IEnergyHandler provider = providerEntry.getValue();
             
             // Calculate available energy to distribute
