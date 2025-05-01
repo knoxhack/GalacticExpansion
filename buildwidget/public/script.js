@@ -269,22 +269,52 @@ function updateBuildStatus(status) {
 function updateBuildOutput(output) {
     if (!output) return;
     
+    console.log('Processing build output:', typeof output, Array.isArray(output));
+    
+    // Handle array of outputs
+    if (Array.isArray(output)) {
+        output.forEach(line => processOutputLine(line));
+        return;
+    }
+    
+    // Handle object with type and message
+    if (typeof output === 'object' && output.type && output.message) {
+        processOutputLine(output);
+        return;
+    }
+    
+    // Handle string output (legacy format)
+    processOutputLine(output);
+}
+
+// Process a single line of output
+function processOutputLine(line) {
+    let outputType = 'info';
+    let outputText = '';
+    
     // Create span with appropriate class based on output type
     const outputLine = document.createElement('span');
     
-    // Determine output type based on content
-    if (output.includes('ERROR') || output.includes('FAILED')) {
-        outputLine.className = 'output-error';
-    } else if (output.includes('SUCCESS') || output.toLowerCase().includes('build successful')) {
-        outputLine.className = 'output-success';
-    } else if (output.includes('Task :')) {
-        outputLine.className = 'output-task';
+    // Handle object format
+    if (typeof line === 'object' && line.type && line.message) {
+        outputType = line.type;
+        outputText = line.message;
     } else {
-        outputLine.className = 'output-info';
+        outputText = String(line);
+        
+        // Determine type based on content
+        if (outputText.includes('ERROR') || outputText.includes('FAILED')) {
+            outputType = 'error';
+        } else if (outputText.includes('SUCCESS') || outputText.toLowerCase().includes('build successful')) {
+            outputType = 'success';
+        } else if (outputText.includes('Task :')) {
+            outputType = 'task';
+        }
     }
     
-    // Set output text
-    outputLine.textContent = output;
+    // Set class and text
+    outputLine.className = `output-${outputType}`;
+    outputLine.textContent = outputText;
     
     // Append to output container
     outputText.appendChild(outputLine);
