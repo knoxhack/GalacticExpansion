@@ -1,6 +1,8 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.IShield;
+import com.astroframe.galactic.core.api.space.component.enums.ComponentType;
+import com.astroframe.galactic.core.api.space.component.enums.ShieldType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 

@@ -1,6 +1,8 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.IPassengerCompartment;
+import com.astroframe.galactic.core.api.space.component.enums.CompartmentType;
+import com.astroframe.galactic.core.api.space.component.enums.ComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -82,15 +84,34 @@ public class PassengerCompartmentImpl implements IPassengerCompartment {
     }
 
     @Override
-    public float getComfortLevel() {
-        return comfortLevel;
+    public ComponentType getType() {
+        return ComponentType.PASSENGER_COMPARTMENT;
     }
-
+    
+    @Override
+    public boolean hasArtificialGravity() {
+        // Tier 3 compartments have artificial gravity
+        return tier >= 3;
+    }
+    
+    @Override
+    public boolean hasSleepingQuarters() {
+        // All compartments except emergency ones have sleeping quarters
+        return compartmentType != CompartmentType.EMERGENCY;
+    }
+    
+    @Override
+    public boolean hasEmergencyMedical() {
+        // Medical and luxury compartments have emergency medical
+        return compartmentType == CompartmentType.MEDICAL || 
+               compartmentType == CompartmentType.LUXURY;
+    }
+    
     @Override
     public CompartmentType getCompartmentType() {
         return compartmentType;
     }
-
+    
     @Override
     public boolean hasCryogenicSleep() {
         return hasCryogenicSleep;

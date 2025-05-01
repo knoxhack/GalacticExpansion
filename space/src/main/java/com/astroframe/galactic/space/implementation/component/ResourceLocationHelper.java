@@ -25,20 +25,26 @@ public class ResourceLocationHelper {
      */
     public static ResourceLocation create(String namespace, String path) {
         try {
-            // First try using the standard constructor
-            return new ResourceLocation(namespace, path);
+            // In NeoForge 1.21, ResourceLocation use methods from their parent class
+            return ResourceLocation.fromNamespaceAndPath(namespace, path);
         } catch (Exception e1) {
-            LOGGER.log(Level.WARNING, "Failed to create ResourceLocation using standard constructor, attempting fallbacks", e1);
+            LOGGER.log(Level.WARNING, "Failed to create ResourceLocation using fromNamespaceAndPath, attempting fallbacks", e1);
             
-            // Try using the string-only constructor format "namespace:path"
+            // Try using the string-only format "namespace:path"
             try {
-                return new ResourceLocation(namespace + ":" + path);
+                return ResourceLocation.of(namespace + ":" + path, ':');
             } catch (Exception e2) {
-                LOGGER.log(Level.WARNING, "Failed to create ResourceLocation using string-only constructor, attempting reflection", e2);
+                LOGGER.log(Level.WARNING, "Failed to create ResourceLocation using of method, attempting parse", e2);
                 
-                // Last resort: try using reflection to create the ResourceLocation
-                return createViaReflection(namespace, path)
-                        .orElseThrow(() -> new RuntimeException("Failed to create ResourceLocation by any method"));
+                try {
+                    return ResourceLocation.parse(namespace + ":" + path);
+                } catch (Exception e3) {
+                    LOGGER.log(Level.SEVERE, "Failed to create ResourceLocation via standard methods, attempting reflection", e3);
+                    
+                    // Last resort: try using reflection to create the ResourceLocation
+                    return createViaReflection(namespace, path)
+                            .orElseThrow(() -> new RuntimeException("Failed to create ResourceLocation by any method"));
+                }
             }
         }
     }
