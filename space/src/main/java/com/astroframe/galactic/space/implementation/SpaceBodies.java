@@ -298,8 +298,12 @@ public class SpaceBodies {
             this.discovered = discovered;
         }
         
-        // This is a custom method specific to this implementation and not part of the interface
-        public Component getDisplayName() {
+        /**
+         * Gets the display name component of this celestial body.
+         * This is a custom method specific to this implementation and not part of the ICelestialBody interface.
+         * @return The display name as a Component
+         */
+        public Component getDisplayComponent() {
             return name;
         }
     }
