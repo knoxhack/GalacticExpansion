@@ -79,7 +79,7 @@ public class SpaceResourceGenerator {
         
         // Get the celestial body for this dimension
         ICelestialBody celestialBody = getCelestialBodyForDimension(level);
-        if (celestialBody == null || !celestialBody.hasResources()) {
+        if (celestialBody == null || !celestialBody.hasUniqueResources()) {
             return;
         }
         
