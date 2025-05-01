@@ -98,11 +98,8 @@ public class SpaceStationTeleporter {
     private static boolean teleportPlayerToDimension(ServerPlayer player, ServerLevel targetLevel, Vec3 targetPos) {
         // Use the correct teleportation method for NeoForge 1.21.5
         try {
-            // Simple teleport with just the target position
-            player.teleportTo(targetLevel, 
-                             targetPos.x, 
-                             targetPos.y, 
-                             targetPos.z);
+            // First teleport within dimension to the target position
+            player.teleportTo(targetPos.x, targetPos.y, targetPos.z);
             
             // Send confirmation message
             String dimensionName = targetLevel.dimension().equals(Level.OVERWORLD) 

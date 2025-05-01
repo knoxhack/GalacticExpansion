@@ -16,9 +16,9 @@ public class SpaceBodies {
     
     // Earth (Overworld)
     public static final ICelestialBody EARTH = register(
-            new ResourceLocation(GalacticSpace.MOD_ID, "earth"),
+            makeLocation("earth"),
             new CelestialBody(
-                    "earth",
+                    makeLocation("earth"),
                     0, // Distance from home (it is home)
                     1, // Tier 1 rocket required
                     1.0f, // Full atmosphere
@@ -30,9 +30,9 @@ public class SpaceBodies {
     
     // Space Station
     public static final ICelestialBody SPACE_STATION = register(
-            new ResourceLocation(GalacticSpace.MOD_ID, "space_station"),
+            makeLocation("space_station"),
             new CelestialBody(
-                    "space_station",
+                    makeLocation("space_station"),
                     50, // Relatively close to Earth
                     1, // Tier 1 rocket required
                     0.2f, // Minimal atmosphere (life support required)
@@ -44,9 +44,9 @@ public class SpaceBodies {
     
     // Moon (future expansion)
     public static final ICelestialBody MOON = register(
-            new ResourceLocation(GalacticSpace.MOD_ID, "moon"),
+            makeLocation("moon"),
             new CelestialBody(
-                    "moon",
+                    makeLocation("moon"),
                     200, // Further than Space Station
                     2, // Tier 2 rocket required
                     0.0f, // No atmosphere
@@ -58,9 +58,9 @@ public class SpaceBodies {
     
     // Mars (future expansion)
     public static final ICelestialBody MARS = register(
-            new ResourceLocation(GalacticSpace.MOD_ID, "mars"),
+            makeLocation("mars"),
             new CelestialBody(
-                    "mars",
+                    makeLocation("mars"),
                     500, // Much further than Moon
                     3, // Tier 3 rocket required
                     0.1f, // Trace atmosphere
@@ -102,6 +102,18 @@ public class SpaceBodies {
     }
     
     /**
+     * Creates a ResourceLocation in the mod's namespace.
+     *
+     * @param path The path
+     * @return A new ResourceLocation
+     */
+    private static ResourceLocation makeLocation(String path) {
+        String namespace = GalacticSpace.MOD_ID;
+        String fullPath = namespace + ":" + path;
+        return ResourceLocation.tryParse(fullPath);
+    }
+    
+    /**
      * Registers all celestial bodies.
      * This method is automatically called during mod initialization.
      */
@@ -118,7 +130,7 @@ public class SpaceBodies {
      * Implementation of a celestial body.
      */
     private static class CelestialBody implements ICelestialBody {
-        private final String id;
+        private final ResourceLocation id;
         private final int distanceFromHome;
         private final int rocketTierRequired;
         private final float atmosphereDensity;
@@ -137,7 +149,7 @@ public class SpaceBodies {
          * @param gravity Gravity level relative to Earth (1.0 = Earth)
          * @param name Display name
          */
-        public CelestialBody(String id, int distanceFromHome, int rocketTierRequired,
+        public CelestialBody(ResourceLocation id, int distanceFromHome, int rocketTierRequired,
                            float atmosphereDensity, float radiationLevel, float gravity,
                            Component name) {
             this.id = id;
@@ -150,7 +162,7 @@ public class SpaceBodies {
         }
         
         @Override
-        public String getId() {
+        public ResourceLocation getId() {
             return id;
         }
         
@@ -187,6 +199,12 @@ public class SpaceBodies {
         @Override
         public Component getDisplayName() {
             return name;
+        }
+        
+        @Override
+        public boolean hasResources() {
+            // Simple implementation - all celestial bodies have resources except Earth
+            return !id.getPath().equals("earth");
         }
     }
 }
