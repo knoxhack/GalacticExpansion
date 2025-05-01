@@ -193,7 +193,40 @@ wss.on('connection', (ws) => {
   // Send build output to client
   const sendBuildOutput = (output) => {
     if (ws.readyState === ws.OPEN) {
-      ws.send(JSON.stringify({ type: 'buildOutput', data: output }));
+      try {
+        // Ensure output is properly formatted
+        let formattedOutput = output;
+        
+        // If output is an array of strings, convert each to an object
+        if (Array.isArray(output)) {
+          formattedOutput = output.map(item => {
+            if (typeof item === 'string') {
+              return { type: 'info', message: item };
+            }
+            return item;
+          });
+        }
+        // If it's a single string, convert to object
+        else if (typeof output === 'string') {
+          formattedOutput = { type: 'info', message: output };
+        }
+        
+        ws.send(JSON.stringify({ 
+          type: 'buildOutput', 
+          data: formattedOutput 
+        }));
+      } catch (error) {
+        console.error('Error sending build output:', error);
+        // Send a simpler format as fallback
+        try {
+          ws.send(JSON.stringify({ 
+            type: 'buildOutput', 
+            data: { type: 'error', message: 'Error formatting output' } 
+          }));
+        } catch (e) {
+          console.error('Fatal error sending output:', e);
+        }
+      }
     }
   };
   

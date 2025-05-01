@@ -372,13 +372,20 @@ function processOutputLine(line) {
     outputLine.className = `output-${outputType}`;
     outputLine.textContent = outputText;
     
+    // Get the container
+    const outputContainer = document.getElementById('outputText');
+    if (!outputContainer) {
+        console.error('Output container not found!');
+        return;
+    }
+    
     // Append to output container
-    outputText.appendChild(outputLine);
-    outputText.appendChild(document.createElement('br'));
+    outputContainer.appendChild(outputLine);
+    outputContainer.appendChild(document.createElement('br'));
     
     // Auto-scroll if enabled
     if (autoScrollCheckbox && autoScrollCheckbox.checked) {
-        outputText.parentElement.scrollTop = outputText.parentElement.scrollHeight;
+        outputContainer.parentElement.scrollTop = outputContainer.parentElement.scrollHeight;
     }
 }
 
