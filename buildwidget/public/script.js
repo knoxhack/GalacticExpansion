@@ -119,6 +119,9 @@ function connectWebSocket() {
                         outputText.scrollTop = outputText.scrollHeight;
                     }
                     break;
+                case 'metrics':
+                    updateBuildMetrics(message.data);
+                    break;
                 default:
                     console.warn('Unknown message type:', message.type);
             }
@@ -335,6 +338,163 @@ function padZero(num) {
 // Utility function to capitalize first letter
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+// Update build metrics display
+function updateBuildMetrics(metrics) {
+    // Create or get metrics container
+    let metricsContainer = document.getElementById('metricsContainer');
+    if (!metricsContainer) {
+        metricsContainer = document.createElement('div');
+        metricsContainer.id = 'metricsContainer';
+        metricsContainer.className = 'metrics-container';
+        document.querySelector('.container').appendChild(metricsContainer);
+        
+        // Add heading
+        const heading = document.createElement('h3');
+        heading.textContent = 'Build Metrics';
+        metricsContainer.appendChild(heading);
+        
+        // Create metrics grid
+        const metricsGrid = document.createElement('div');
+        metricsGrid.className = 'metrics-grid';
+        metricsContainer.appendChild(metricsGrid);
+        
+        // Success rate metric
+        const successRate = document.createElement('div');
+        successRate.className = 'metric-card';
+        successRate.innerHTML = `
+            <h4>Success Rate</h4>
+            <div id="successRateValue" class="metric-value">-</div>
+            <div class="metric-chart">
+                <div id="successRateBar" class="progress-bar"></div>
+            </div>
+        `;
+        metricsGrid.appendChild(successRate);
+        
+        // Average build time metric
+        const avgBuildTime = document.createElement('div');
+        avgBuildTime.className = 'metric-card';
+        avgBuildTime.innerHTML = `
+            <h4>Average Build Time</h4>
+            <div id="avgBuildTimeValue" class="metric-value">-</div>
+            <div id="avgBuildTimeChange" class="metric-change"></div>
+        `;
+        metricsGrid.appendChild(avgBuildTime);
+        
+        // Build timeline
+        const timelineCard = document.createElement('div');
+        timelineCard.className = 'metric-card timeline-card';
+        timelineCard.innerHTML = `
+            <h4>Build Timeline</h4>
+            <div id="buildTimeline" class="build-timeline"></div>
+        `;
+        metricsContainer.appendChild(timelineCard);
+    }
+    
+    // Update success rate
+    if (metrics.successRate !== undefined) {
+        const successRateElement = document.getElementById('successRateValue');
+        const successRateBar = document.getElementById('successRateBar');
+        
+        successRateElement.textContent = `${Math.round(metrics.successRate * 100)}%`;
+        successRateBar.style.width = `${metrics.successRate * 100}%`;
+        
+        // Add color based on success rate
+        successRateBar.className = 'progress-bar';
+        if (metrics.successRate >= 0.8) {
+            successRateBar.classList.add('success');
+        } else if (metrics.successRate >= 0.5) {
+            successRateBar.classList.add('warning');
+        } else {
+            successRateBar.classList.add('error');
+        }
+    }
+    
+    // Update average build time
+    if (metrics.avgBuildTime !== undefined) {
+        const avgBuildTimeElement = document.getElementById('avgBuildTimeValue');
+        const avgBuildTimeChange = document.getElementById('avgBuildTimeChange');
+        
+        // Format time as mm:ss
+        const minutes = Math.floor(metrics.avgBuildTime / 60000);
+        const seconds = Math.floor((metrics.avgBuildTime % 60000) / 1000);
+        avgBuildTimeElement.textContent = `${padZero(minutes)}:${padZero(seconds)}`;
+        
+        // Show trend if available
+        if (metrics.buildTimeTrend !== undefined) {
+            const trendPct = Math.abs(Math.round(metrics.buildTimeTrend * 100));
+            const trendSymbol = metrics.buildTimeTrend < 0 ? '↓' : '↑';
+            const trendClass = metrics.buildTimeTrend < 0 ? 'trend-down' : 'trend-up';
+            
+            avgBuildTimeChange.className = `metric-change ${trendClass}`;
+            avgBuildTimeChange.textContent = `${trendSymbol} ${trendPct}%`;
+        }
+    }
+    
+    // Update build timeline
+    if (metrics.recentBuilds && metrics.recentBuilds.length > 0) {
+        const timelineElement = document.getElementById('buildTimeline');
+        timelineElement.innerHTML = ''; // Clear existing timeline
+        
+        // Create timeline items
+        metrics.recentBuilds.forEach(build => {
+            const buildItem = document.createElement('div');
+            buildItem.className = `timeline-item status-${build.status}`;
+            
+            // Format date as relative time
+            const buildDate = new Date(build.timestamp);
+            const timeAgo = getRelativeTime(buildDate);
+            
+            buildItem.setAttribute('title', 
+                `${build.command}\n${buildDate.toLocaleString()}\nDuration: ${formatDuration(build.duration)}`);
+            
+            buildItem.innerHTML = `
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <div class="timeline-title">${build.command}</div>
+                    <div class="timeline-time">${timeAgo}</div>
+                </div>
+            `;
+            
+            timelineElement.appendChild(buildItem);
+        });
+    }
+}
+
+// Helper function to get relative time
+function getRelativeTime(date) {
+    const now = new Date();
+    const diffMs = now - date;
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHour = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHour / 24);
+    
+    if (diffDay > 0) {
+        return `${diffDay}d ago`;
+    } else if (diffHour > 0) {
+        return `${diffHour}h ago`;
+    } else if (diffMin > 0) {
+        return `${diffMin}m ago`;
+    } else {
+        return 'Just now';
+    }
+}
+
+// Helper function to format duration
+function formatDuration(ms) {
+    const seconds = Math.floor((ms / 1000) % 60);
+    const minutes = Math.floor((ms / (1000 * 60)) % 60);
+    const hours = Math.floor(ms / (1000 * 60 * 60));
+    
+    if (hours > 0) {
+        return `${hours}h ${padZero(minutes)}m ${padZero(seconds)}s`;
+    } else if (minutes > 0) {
+        return `${minutes}m ${padZero(seconds)}s`;
+    } else {
+        return `${seconds}s`;
+    }
 }
 
 // Event listeners
