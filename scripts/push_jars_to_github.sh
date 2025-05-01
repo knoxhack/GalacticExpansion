@@ -4,8 +4,9 @@
 # Run this after a successful build
 
 # Configuration
-GIT_USERNAME=""
-GIT_EMAIL=""
+GIT_USERNAME="knoxhack"
+GIT_EMAIL="knoxhack@users.noreply.github.com"
+GIT_REPO="knoxhack/GalacticExpansion"
 GIT_BRANCH="builds"
 
 # Colors
@@ -97,6 +98,26 @@ git commit -m "Build artifacts: $BUILD_DATE $BUILD_TIME"
 
 # Push to GitHub
 echo -e "${GREEN}Pushing to GitHub...${NC}"
+
+# Check if we need to update the remote URL to include credentials
+REMOTE_URL=$(git remote get-url origin)
+if [[ $REMOTE_URL != *"github.com/$GIT_USERNAME"* ]]; then
+    echo -e "${YELLOW}Updating remote URL to use your credentials...${NC}"
+    # If you're using SSH keys
+    if [[ $REMOTE_URL == git@* ]]; then
+        git remote set-url origin "git@github.com:$GIT_REPO.git"
+    else
+        # For HTTPS, we'll use a GitHub personal access token if available
+        if [ -n "$GITHUB_TOKEN" ]; then
+            git remote set-url origin "https://$GIT_USERNAME:$GITHUB_TOKEN@github.com/$GIT_REPO.git"
+        else
+            # If no token is available, try with just the username
+            git remote set-url origin "https://github.com/$GIT_REPO.git"
+        fi
+    fi
+fi
+
+# Push to the builds branch
 git push origin $GIT_BRANCH
 
 # Return to original branch
@@ -104,4 +125,4 @@ echo -e "${GREEN}Returning to original branch: $CURRENT_BRANCH${NC}"
 git checkout $CURRENT_BRANCH
 
 echo -e "${GREEN}Done! Build artifacts pushed to $GIT_BRANCH branch.${NC}"
-echo -e "${GREEN}View your artifacts at: https://github.com/[your-username]/[your-repo]/tree/$GIT_BRANCH/$ARTIFACTS_DIR${NC}"
+echo -e "${GREEN}View your artifacts at: https://github.com/$GIT_REPO/tree/$GIT_BRANCH/$ARTIFACTS_DIR${NC}"
