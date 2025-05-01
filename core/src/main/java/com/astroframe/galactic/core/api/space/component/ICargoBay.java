@@ -1,6 +1,6 @@
 package com.astroframe.galactic.core.api.space.component;
 
-import net.minecraft.world.item.ItemStack;
+import com.astroframe.galactic.core.api.common.ItemStack;
 
 import java.util.Map;
 

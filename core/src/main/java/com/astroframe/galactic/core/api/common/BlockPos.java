@@ -1,5 +1,7 @@
 package com.astroframe.galactic.core.api.common;
 
+import net.minecraft.core.BlockPos as MinecraftBlockPos;
+
 /**
  * Abstraction for block position to avoid direct dependency on Minecraft classes.
  * This provides position handling for logistics systems.
@@ -26,7 +28,7 @@ public class BlockPos {
      * @param pos The Minecraft BlockPos
      * @return A new abstracted BlockPos
      */
-    public static BlockPos fromMinecraft(net.minecraft.core.BlockPos pos) {
+    public static BlockPos fromMinecraft(MinecraftBlockPos pos) {
         return new BlockPos(pos.getX(), pos.getY(), pos.getZ());
     }
     
@@ -34,8 +36,8 @@ public class BlockPos {
      * Converts to a Minecraft BlockPos.
      * @return The equivalent Minecraft BlockPos
      */
-    public net.minecraft.core.BlockPos toMinecraft() {
-        return new net.minecraft.core.BlockPos(x, y, z);
+    public MinecraftBlockPos toMinecraft() {
+        return new MinecraftBlockPos(x, y, z);
     }
     
     /**

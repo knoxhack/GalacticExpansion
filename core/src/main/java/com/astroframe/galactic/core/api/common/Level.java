@@ -2,19 +2,21 @@ package com.astroframe.galactic.core.api.common;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.Level as MinecraftLevel;
+import net.minecraft.world.phys.AABB;
 
 /**
  * Abstraction for Minecraft's Level class.
  * This provides world access without direct dependency on Minecraft classes.
  */
 public class Level {
-    private final net.minecraft.world.level.Level mcLevel;
+    private final MinecraftLevel mcLevel;
     
     /**
      * Creates a new abstracted Level wrapping a Minecraft Level.
      * @param mcLevel The Minecraft Level
      */
-    private Level(net.minecraft.world.level.Level mcLevel) {
+    private Level(MinecraftLevel mcLevel) {
         this.mcLevel = mcLevel;
     }
     
@@ -23,7 +25,7 @@ public class Level {
      * @param mcLevel The Minecraft Level
      * @return A new abstracted Level
      */
-    public static Level fromMinecraft(net.minecraft.world.level.Level mcLevel) {
+    public static Level fromMinecraft(MinecraftLevel mcLevel) {
         return new Level(mcLevel);
     }
     
@@ -31,7 +33,7 @@ public class Level {
      * Gets the underlying Minecraft Level.
      * @return The Minecraft Level
      */
-    public net.minecraft.world.level.Level toMinecraft() {
+    public MinecraftLevel toMinecraft() {
         return mcLevel;
     }
     
@@ -65,8 +67,7 @@ public class Level {
             Class<T> entityClass, BlockPos min, BlockPos max) {
         return mcLevel.getEntitiesOfClass(
                 entityClass,
-                new net.minecraft.world.phys.AABB(
-                        min.toMinecraft(), max.toMinecraft()));
+                new AABB(min.toMinecraft(), max.toMinecraft()));
     }
     
     /**
