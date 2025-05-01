@@ -1,5 +1,6 @@
 package com.astroframe.galactic.space;
 
+import com.astroframe.galactic.core.api.space.ISpaceTravelManager;
 import com.astroframe.galactic.core.api.space.SpaceAPI;
 import com.astroframe.galactic.space.command.SpaceTravelCommands;
 import com.astroframe.galactic.space.dimension.SpaceStationDimension;

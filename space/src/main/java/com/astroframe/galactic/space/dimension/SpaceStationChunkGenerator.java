@@ -87,7 +87,7 @@ public class SpaceStationChunkGenerator extends ChunkGenerator {
         return SpaceStationHelper.PLATFORM_Y - 1; // Below platform level for void
     }
 
-    public NoiseColumn getBaseColumn(int x, int z, RandomState randomState, LevelHeightAccessor levelHeightAccessor) {
+    public NoiseColumn getBaseColumn(int x, int z, LevelHeightAccessor levelHeightAccessor, RandomState randomState) {
         // Check if this is part of the platform
         int distanceSquared = x * x + z * z;
         if (distanceSquared <= SpaceStationHelper.PLATFORM_RADIUS * SpaceStationHelper.PLATFORM_RADIUS) {

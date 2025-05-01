@@ -81,27 +81,27 @@ public class StructureImpl implements IRocketComponent {
         return rocketTier >= tier;
     }
     
-    @Override
+    // Method to check if the component is damaged
     public boolean isDamaged() {
         return damaged || durability < maxDurability;
     }
     
-    @Override
+    // Implementation of IRocketComponent.repair
     public void repair(int amount) {
         this.durability = Math.min(this.durability + amount, maxDurability);
     }
     
-    @Override
+    // Implementation of IRocketComponent.damage
     public void damage(int amount) {
         this.durability = Math.max(0, this.durability - amount);
     }
     
-    @Override
-    public int getDurability() {
+    // Implementation of IRocketComponent.getCurrentDurability
+    public int getCurrentDurability() {
         return durability;
     }
     
-    @Override
+    // Implementation of IRocketComponent.getMaxDurability
     public int getMaxDurability() {
         return maxDurability;
     }

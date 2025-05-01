@@ -70,7 +70,7 @@ public class ModularRocketItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         
         if (level.isClientSide()) {
-            return net.minecraft.world.InteractionResultHolder.success(stack);
+            return InteractionResultHolder.success(stack);
         }
         
         IRocket rocket = getRocketFromStack(stack);
@@ -81,16 +81,16 @@ public class ModularRocketItem extends Item {
             if (launchController.canLaunch()) {
                 GalacticSpace.LOGGER.info("Player {} starting rocket launch sequence", player.getName().getString());
                 launchController.startLaunchSequence();
-                return net.minecraft.world.InteractionResultHolder.consume(stack);
+                return InteractionResultHolder.consume(stack);
             } else {
                 // Report why launch failed
                 Component reason = launchController.getCannotLaunchReason();
                 serverPlayer.displayClientMessage(reason, false);
-                return net.minecraft.world.InteractionResultHolder.fail(stack);
+                return InteractionResultHolder.fail(stack);
             }
         }
         
-        return net.minecraft.world.InteractionResultHolder.pass(stack);
+        return InteractionResultHolder.pass(stack);
     }
     
     /**
@@ -131,7 +131,10 @@ public class ModularRocketItem extends Item {
     @Nullable
     public static IRocket getRocketFromStack(ItemStack stack) {
         if (stack.getItem() instanceof ModularRocketItem) {
-            CompoundTag tag = stack.getOrCreateTag(); // Use getOrCreateTag() instead of getTag()
+            CompoundTag tag = stack.getTag(); // Use NeoForge 1.21.5 method
+            if (tag == null) {
+                return null;
+            }
             
             if (tag.contains("rocket")) {
                 CompoundTag rocketTag = tag.getCompound("rocket");
@@ -150,7 +153,11 @@ public class ModularRocketItem extends Item {
      */
     public static void saveRocketToStack(ItemStack stack, IRocket rocket) {
         if (stack.getItem() instanceof ModularRocketItem) {
-            CompoundTag tag = stack.getOrCreateTag(); // Use getOrCreateTag() instead of getTag()/setTag()
+            CompoundTag tag = stack.getTag(); // Use NeoForge 1.21.5 method
+            if (tag == null) {
+                tag = new CompoundTag();
+                stack.setTag(tag); // In NeoForge 1.21.5 we use setTag
+            }
             
             CompoundTag rocketTag = new CompoundTag();
             rocket.saveToTag(rocketTag);
