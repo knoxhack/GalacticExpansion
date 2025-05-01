@@ -243,7 +243,8 @@ public class ModularRocketItem extends Item {
         ListTag passengerCompartmentsList = tag.getList("passengerCompartments", 8);
         for (int i = 0; i < passengerCompartmentsList.size(); i++) {
             String compartmentId = passengerCompartmentsList.getString(i);
-            Optional<IRocketComponent> compartmentOpt = RocketComponentRegistry.getComponent(compartmentId);
+            ResourceLocation compartmentRes = ResourceLocation.parse(compartmentId);
+            Optional<IRocketComponent> compartmentOpt = RocketComponentRegistry.getComponent(compartmentRes);
             if (compartmentOpt.isPresent() && compartmentOpt.get() instanceof IPassengerCompartment) {
                 builder.addPassengerCompartment((IPassengerCompartment) compartmentOpt.get());
             }
@@ -253,7 +254,8 @@ public class ModularRocketItem extends Item {
         ListTag shieldsList = tag.getList("shields", 8);
         for (int i = 0; i < shieldsList.size(); i++) {
             String shieldId = shieldsList.getString(i);
-            Optional<IRocketComponent> shieldOpt = RocketComponentRegistry.getComponent(shieldId);
+            ResourceLocation shieldRes = ResourceLocation.parse(shieldId);
+            Optional<IRocketComponent> shieldOpt = RocketComponentRegistry.getComponent(shieldRes);
             if (shieldOpt.isPresent() && shieldOpt.get() instanceof IShield) {
                 builder.addShield((IShield) shieldOpt.get());
             }
@@ -263,7 +265,8 @@ public class ModularRocketItem extends Item {
         ListTag lifeSupportsList = tag.getList("lifeSupports", 8);
         for (int i = 0; i < lifeSupportsList.size(); i++) {
             String lifeSupportId = lifeSupportsList.getString(i);
-            Optional<IRocketComponent> lifeSupportOpt = RocketComponentRegistry.getComponent(lifeSupportId);
+            ResourceLocation lifeSupportRes = ResourceLocation.parse(lifeSupportId);
+            Optional<IRocketComponent> lifeSupportOpt = RocketComponentRegistry.getComponent(lifeSupportRes);
             if (lifeSupportOpt.isPresent() && lifeSupportOpt.get() instanceof ILifeSupport) {
                 builder.addLifeSupport((ILifeSupport) lifeSupportOpt.get());
             }
