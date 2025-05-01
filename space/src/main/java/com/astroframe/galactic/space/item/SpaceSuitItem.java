@@ -74,7 +74,7 @@ public abstract class SpaceSuitItem extends ArmorItem {
         }
     }
     
-    @Override
+    // Updates the item each tick when in inventory
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
         

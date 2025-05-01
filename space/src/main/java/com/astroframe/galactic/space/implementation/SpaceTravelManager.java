@@ -16,6 +16,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 
 import java.util.*;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Manages travel between celestial bodies.
@@ -24,6 +25,7 @@ import java.util.*;
 @Mod.EventBusSubscriber(modid = GalacticSpace.MOD_ID)
 public class SpaceTravelManager implements ISpaceTravelManager {
     private final Map<UUID, Set<ICelestialBody>> discoveredBodies = new HashMap<>();
+    private final Map<ResourceLocation, ICelestialBody> registeredBodies = new HashMap<>();
     private boolean isInitialized = false;
     
     /**
@@ -35,6 +37,11 @@ public class SpaceTravelManager implements ISpaceTravelManager {
         }
         
         GalacticSpace.LOGGER.info("Initializing Space Travel Manager");
+        
+        // Register default celestial bodies
+        registerCelestialBody(SpaceBodies.EARTH);
+        registerCelestialBody(SpaceBodies.SPACE_STATION);
+        
         isInitialized = true;
     }
     
@@ -213,5 +220,134 @@ public class SpaceTravelManager implements ISpaceTravelManager {
         
         // Calculate final time (in ticks, 20 ticks = 1 second)
         return Math.max(60, Math.round(baseTime * tierMultiplier) * 20);
+    }
+    
+    /**
+     * Registers a celestial body with the manager.
+     *
+     * @param body The celestial body to register
+     */
+    @Override
+    public void registerCelestialBody(ICelestialBody body) {
+        registeredBodies.put(body.getId(), body);
+        GalacticSpace.LOGGER.info("Registered celestial body: {}", body.getName());
+    }
+    
+    /**
+     * Gets a celestial body by its ID.
+     *
+     * @param id The celestial body ID
+     * @return The celestial body, or empty if not found
+     */
+    @Override
+    public Optional<ICelestialBody> getCelestialBody(ResourceLocation id) {
+        return Optional.ofNullable(registeredBodies.get(id));
+    }
+    
+    /**
+     * Gets all registered celestial bodies.
+     *
+     * @return A list of all celestial bodies
+     */
+    @Override
+    public List<ICelestialBody> getAllCelestialBodies() {
+        return new ArrayList<>(registeredBodies.values());
+    }
+    
+    /**
+     * Gets all discovered celestial bodies for a player.
+     * 
+     * @param player The player
+     * @return A list of discovered celestial bodies
+     */
+    @Override
+    public List<ICelestialBody> getDiscoveredCelestialBodies(Player player) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            return getDiscoveredBodies(serverPlayer);
+        } else {
+            // Client-side, just return all bodies
+            return getAllCelestialBodies();
+        }
+    }
+    
+    /**
+     * Checks if a player has discovered a celestial body.
+     * 
+     * @param player The player
+     * @param body The celestial body
+     * @return true if discovered
+     */
+    @Override
+    public boolean hasDiscovered(Player player, ICelestialBody body) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            return hasDiscovered(serverPlayer, body);
+        } else {
+            // On client side, assume discovered
+            return true;
+        }
+    }
+    
+    /**
+     * Marks a celestial body as discovered for a player.
+     * 
+     * @param player The player
+     * @param body The celestial body to discover
+     */
+    @Override
+    public void discoverCelestialBody(Player player, ICelestialBody body) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            discoverCelestialBody(serverPlayer, body);
+        }
+    }
+    
+    /**
+     * Calculates the fuel required to travel between two celestial bodies.
+     * 
+     * @param origin The origin celestial body
+     * @param destination The destination celestial body
+     * @return The amount of fuel required
+     */
+    @Override
+    public int calculateFuelRequired(ICelestialBody origin, ICelestialBody destination) {
+        // Base fuel required based on distance
+        int distance = Math.abs(destination.getDistanceFromHome() - origin.getDistanceFromHome());
+        
+        // Basic formula: 10 fuel per distance unit
+        return Math.max(100, distance * 10);
+    }
+    
+    /**
+     * Checks if a player can travel to the specified celestial body.
+     * 
+     * @param player The player
+     * @param destination The destination
+     * @return true if travel is possible
+     */
+    @Override
+    public boolean canTravelTo(Player player, ICelestialBody destination) {
+        // Currently only Earth and Space Station are implemented
+        return destination == SpaceBodies.EARTH || destination == SpaceBodies.SPACE_STATION;
+    }
+    
+    /**
+     * Gets the current celestial body the player is on.
+     * 
+     * @param player The player
+     * @return The current celestial body, or empty if in an unrelated dimension
+     */
+    @Override
+    public Optional<ICelestialBody> getCurrentCelestialBody(Player player) {
+        // Check for space station dimension
+        if (SpaceStationDimension.isSpaceStation(player.level())) {
+            return Optional.of(SpaceBodies.SPACE_STATION);
+        }
+        
+        // Check for overworld
+        if (player.level().dimension().equals(Level.OVERWORLD)) {
+            return Optional.of(SpaceBodies.EARTH);
+        }
+        
+        // Unknown dimension
+        return Optional.empty();
     }
 }

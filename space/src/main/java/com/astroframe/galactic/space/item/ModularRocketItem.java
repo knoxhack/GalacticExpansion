@@ -35,7 +35,7 @@ public class ModularRocketItem extends Item {
                 .fireResistant());
     }
     
-    @Override
+    // Adds tooltip information
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, 
                               TooltipFlag flag) {
         IRocket rocket = getRocketFromStack(stack);
@@ -65,7 +65,7 @@ public class ModularRocketItem extends Item {
         }
     }
     
-    @Override
+    // Handles right-click usage of the rocket
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         
