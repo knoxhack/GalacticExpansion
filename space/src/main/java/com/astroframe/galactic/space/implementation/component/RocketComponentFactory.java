@@ -241,8 +241,8 @@ public class RocketComponentFactory {
                 .mass(250)
                 .passengerCapacity(4)
                 .comfortLevel(7)
-                .hasLifeSupport(true)
-                .hasRadiationShielding(true)
+                .lifeSupport(true)
+                .radiationShielding(true)
                 .build()
         );
         
@@ -719,13 +719,16 @@ public class RocketComponentFactory {
         private final int mass;
         private final int maxDurability;
         private int currentDurability;
-        private final int fuelCapacity;
+        private final int maxFuelCapacity;
+        private int currentFuelLevel;
+        private final float leakResistance;
         private final float explosionResistance;
-        private IRocketEngine.FuelType fuelType;
+        private final IRocketEngine.FuelType fuelType;
         
         public FuelTank(ResourceLocation id, String name, String description, 
-                       int tier, int mass, int maxDurability, int fuelCapacity, 
-                       float explosionResistance, IRocketEngine.FuelType fuelType) {
+                       int tier, int mass, int maxDurability, int maxFuelCapacity, 
+                       IRocketEngine.FuelType fuelType, float leakResistance,
+                       float explosionResistance) {
             this.id = id;
             this.name = name;
             this.description = description;
@@ -733,7 +736,9 @@ public class RocketComponentFactory {
             this.mass = mass;
             this.maxDurability = maxDurability;
             this.currentDurability = maxDurability;
-            this.fuelCapacity = fuelCapacity;
+            this.maxFuelCapacity = maxFuelCapacity;
+            this.currentFuelLevel = 0; // Start empty
+            this.leakResistance = leakResistance;
             this.explosionResistance = explosionResistance;
             this.fuelType = fuelType;
         }
@@ -790,7 +795,27 @@ public class RocketComponentFactory {
         
         @Override
         public int getMaxFuelCapacity() {
-            return fuelCapacity;
+            return maxFuelCapacity;
+        }
+        
+        @Override
+        public int getCurrentFuelLevel() {
+            return currentFuelLevel;
+        }
+        
+        @Override
+        public int addFuel(int amount) {
+            int spaceAvailable = maxFuelCapacity - currentFuelLevel;
+            int actualAmount = Math.min(amount, spaceAvailable);
+            currentFuelLevel += actualAmount;
+            return actualAmount;
+        }
+        
+        @Override
+        public int consumeFuel(int amount) {
+            int availableFuel = Math.min(currentFuelLevel, amount);
+            currentFuelLevel -= availableFuel;
+            return availableFuel;
         }
         
         @Override
@@ -805,7 +830,7 @@ public class RocketComponentFactory {
         
         @Override
         public float getLeakResistance() {
-            return tier * 0.1f + 0.7f; // Basic formula: tier 1 = 0.8, tier 2 = 0.9, tier 3 = 1.0
+            return leakResistance;
         }
     }
     
@@ -821,6 +846,7 @@ public class RocketComponentFactory {
         private final int maxDurability;
         private int currentDurability;
         private final int storageCapacity;
+        private final Map<Integer, ItemStack> contents = new HashMap<>();
         
         public CargoBay(ResourceLocation id, String name, String description, 
                        int tier, int mass, int maxDurability, int storageCapacity) {
