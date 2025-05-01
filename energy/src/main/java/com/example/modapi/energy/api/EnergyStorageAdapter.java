@@ -58,7 +58,11 @@ public class EnergyStorageAdapter implements EnergyStorage {
         return original.canReceive();
     }
     
-    @Override
+    /**
+     * Get the energy type of this storage.
+     * 
+     * @return The energy type
+     */
     public EnergyType getEnergyType() {
         // Convert from new to old energy type
         String id = original.getEnergyType().getId();

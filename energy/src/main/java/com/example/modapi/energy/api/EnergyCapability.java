@@ -1,10 +1,6 @@
 package com.example.modapi.energy.api;
 
-import com.astroframe.galactic.energy.api.EnergyCapability;
-import com.astroframe.galactic.energy.api.IEnergyHandler;
 import com.example.modapi.energy.ModApiEnergy;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 
 /**
  * Compatibility class for the energy capability.

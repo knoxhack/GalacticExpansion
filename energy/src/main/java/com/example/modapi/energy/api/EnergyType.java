@@ -65,4 +65,19 @@ public enum EnergyType {
     public int getColor() {
         return color;
     }
+    
+    /**
+     * Gets an energy type by ID.
+     * 
+     * @param id The energy type ID
+     * @return The energy type, or FORGE_ENERGY if not found
+     */
+    public static EnergyType byId(String id) {
+        for (EnergyType type : values()) {
+            if (type.getId().equals(id)) {
+                return type;
+            }
+        }
+        return FORGE_ENERGY; // Default
+    }
 }

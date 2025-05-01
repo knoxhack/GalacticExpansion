@@ -38,7 +38,7 @@ public class GalacticEnergy extends AbstractModuleIntegration {
     public GalacticEnergy() {
         super(MOD_ID, "Galactic Expansion Energy");
         
-        info("Initializing Galactic Expansion Energy");
+        LOGGER.info("Initializing Galactic Expansion Energy");
         
         // Register event listeners
         ModContainer container = ModLoadingContext.get().getActiveContainer();
@@ -48,7 +48,7 @@ public class GalacticEnergy extends AbstractModuleIntegration {
         // Initialize energy-specific registries
         initializeRegistries();
         
-        info("Galactic Expansion Energy initialized");
+        LOGGER.info("Galactic Expansion Energy initialized");
     }
     
     @Override
