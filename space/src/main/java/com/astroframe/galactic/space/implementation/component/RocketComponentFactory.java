@@ -391,6 +391,8 @@ public class RocketComponentFactory {
                 0.5f,
                 0.2f,
                 0,
+                false,
+                0.6f,
                 ShieldType.PHYSICAL
         );
     }
@@ -410,6 +412,8 @@ public class RocketComponentFactory {
                 0.8f,
                 0.7f,
                 10,
+                false,
+                0.8f,
                 ShieldType.THERMAL
         );
     }
@@ -429,6 +433,8 @@ public class RocketComponentFactory {
                 1.2f,
                 1.0f,
                 25,
+                true,
+                0.95f,
                 ShieldType.DEFLECTOR
         );
     }
