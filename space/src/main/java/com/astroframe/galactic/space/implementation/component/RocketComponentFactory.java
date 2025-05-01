@@ -257,7 +257,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation advancedShieldId = ResourceLocation.of(GalacticSpace.MOD_ID + ":heat_shield_advanced", ':');
+        ResourceLocation advancedShieldId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":heat_shield_advanced");
         registerShield(
             advancedShieldId,
             new ShieldImpl.Builder(advancedShieldId)
@@ -273,9 +273,10 @@ public class RocketComponentFactory {
         );
         
         // Life Support Systems
+        ResourceLocation basicLifeSupportId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_basic");
         registerLifeSupport(
-            new ResourceLocation(GalacticSpace.MOD_ID, "life_support_basic"),
-            new BaseLifeSupport.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "life_support_basic"))
+            basicLifeSupportId,
+            new BaseLifeSupport.Builder(basicLifeSupportId)
                 .name("Basic Life Support System")
                 .description("A simple system providing essential life support functions.")
                 .tier(1)
@@ -286,9 +287,10 @@ public class RocketComponentFactory {
                 .build()
         );
         
+        ResourceLocation advancedLifeSupportId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_advanced");
         registerLifeSupport(
-            new ResourceLocation(GalacticSpace.MOD_ID, "life_support_advanced"),
-            new BaseLifeSupport.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "life_support_advanced"))
+            advancedLifeSupportId,
+            new BaseLifeSupport.Builder(advancedLifeSupportId)
                 .name("Advanced Life Support System")
                 .description("An enhanced life support system for extended missions.")
                 .tier(2)
@@ -375,16 +377,132 @@ public class RocketComponentFactory {
      * Implementation of a command module.
      */
     private static class CommandModule implements ICommandModule {
-        private final String id;
+        
+        /**
+         * Builder for CommandModule
+         */
+        public static class Builder {
+            private final ResourceLocation id;
+            private String name = "Command Module";
+            private String description = "Standard command module";
+            private int tier = 1;
+            private int mass = 500;
+            private int crewCapacity = 3;
+            private int computingPower = 100;
+            private int sensorStrength = 50;
+            private float navigationAccuracy = 0.75f;
+            private boolean advancedLifeSupport = false;
+            private boolean automatedLanding = false;
+            private boolean emergencyEvacuation = false;
+            private int maxDurability = 1000;
+            
+            public Builder(ResourceLocation id) {
+                this.id = id;
+            }
+            
+            public Builder name(String name) {
+                this.name = name;
+                return this;
+            }
+            
+            public Builder description(String description) {
+                this.description = description;
+                return this;
+            }
+            
+            public Builder tier(int tier) {
+                this.tier = tier;
+                return this;
+            }
+            
+            public Builder mass(int mass) {
+                this.mass = mass;
+                return this;
+            }
+            
+            public Builder crewCapacity(int crewCapacity) {
+                this.crewCapacity = crewCapacity;
+                return this;
+            }
+            
+            public Builder computingPower(int computingPower) {
+                this.computingPower = computingPower;
+                return this;
+            }
+            
+            public Builder sensorStrength(int sensorStrength) {
+                this.sensorStrength = sensorStrength;
+                return this;
+            }
+            
+            public Builder navigationAccuracy(float navigationAccuracy) {
+                this.navigationAccuracy = navigationAccuracy;
+                return this;
+            }
+            
+            public Builder advancedLifeSupport(boolean advancedLifeSupport) {
+                this.advancedLifeSupport = advancedLifeSupport;
+                return this;
+            }
+            
+            public Builder automatedLanding(boolean automatedLanding) {
+                this.automatedLanding = automatedLanding;
+                return this;
+            }
+            
+            public Builder emergencyEvacuation(boolean emergencyEvacuation) {
+                this.emergencyEvacuation = emergencyEvacuation;
+                return this;
+            }
+            
+            public Builder maxDurability(int maxDurability) {
+                this.maxDurability = maxDurability;
+                return this;
+            }
+            
+            public CommandModule build() {
+                return new CommandModule(
+                    id, name, description, tier, mass, crewCapacity, computingPower, 
+                    sensorStrength, navigationAccuracy, advancedLifeSupport, 
+                    automatedLanding, emergencyEvacuation, maxDurability
+                );
+            }
+        }
+    
+        private final ResourceLocation id;
         private final int tier;
         private final int mass;
         private final int crewCapacity;
+        private final int computingPower;
+        private final int sensorStrength;
+        private final float navigationAccuracy;
+        private final boolean advancedLifeSupport;
+        private final boolean automatedLanding;
+        private final boolean emergencyEvacuation;
+        private final int maxDurability;
+        private int currentDurability;
+        private final String name;
+        private final String description;
         
-        public CommandModule(String id, int tier, int mass, int crewCapacity) {
+        public CommandModule(ResourceLocation id, String name, String description, int tier, int mass, 
+                              int crewCapacity, int computingPower, int sensorStrength, 
+                              float navigationAccuracy, boolean advancedLifeSupport, 
+                              boolean automatedLanding, boolean emergencyEvacuation,
+                              int maxDurability) {
             this.id = id;
+            this.name = name;
+            this.description = description;
             this.tier = tier;
             this.mass = mass;
             this.crewCapacity = crewCapacity;
+            this.computingPower = computingPower;
+            this.sensorStrength = sensorStrength;
+            this.navigationAccuracy = navigationAccuracy;
+            this.advancedLifeSupport = advancedLifeSupport;
+            this.automatedLanding = automatedLanding;
+            this.emergencyEvacuation = emergencyEvacuation;
+            this.maxDurability = maxDurability;
+            this.currentDurability = maxDurability;
         }
         
         @Override
@@ -403,8 +521,73 @@ public class RocketComponentFactory {
         }
         
         @Override
-        public String getId() {
+        public ResourceLocation getId() {
             return id;
+        }
+        
+        @Override
+        public int getComputingPower() {
+            return computingPower;
+        }
+        
+        @Override
+        public int getSensorStrength() {
+            return sensorStrength;
+        }
+        
+        @Override
+        public float getNavigationAccuracy() {
+            return navigationAccuracy;
+        }
+        
+        @Override
+        public boolean hasAdvancedLifeSupport() {
+            return advancedLifeSupport;
+        }
+        
+        @Override
+        public boolean hasAutomatedLanding() {
+            return automatedLanding;
+        }
+        
+        @Override
+        public boolean hasEmergencyEvacuation() {
+            return emergencyEvacuation;
+        }
+        
+        @Override
+        public RocketComponentType getType() {
+            return RocketComponentType.COMMAND_MODULE;
+        }
+        
+        @Override
+        public String getName() {
+            return name;
+        }
+        
+        @Override
+        public String getDescription() {
+            return description;
+        }
+        
+        @Override
+        public int getMaxDurability() {
+            return maxDurability;
+        }
+        
+        @Override
+        public int getCurrentDurability() {
+            return currentDurability;
+        }
+        
+        @Override
+        public void damage(int amount) {
+            currentDurability = Math.max(0, currentDurability - amount);
+        }
+        
+        @Override
+        public void repair(int amount) {
+            currentDurability = Math.min(maxDurability, currentDurability + amount);
         }
     }
     
