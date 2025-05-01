@@ -102,13 +102,18 @@ public class ModularRocketItem extends Item {
      */
     public static ItemStack createBasicRocket() {
         ItemStack stack = new ItemStack(SpaceItems.MODULAR_ROCKET.get());
-        ModularRocket rocket = new ModularRocket();
+        
+        // Create a basic rocket using builder pattern
+        ModularRocket.Builder builder = new ModularRocket.Builder(
+                net.minecraft.resources.ResourceLocation.parse("galactic:basic_rocket"));
         
         // Add basic components for a Tier 1 rocket
-        rocket.addComponent(RocketComponentFactory.createEngine(RocketComponentType.ENGINE, 1));
-        rocket.addComponent(RocketComponentFactory.createFuelTank(RocketComponentType.FUEL_TANK, 1));
-        rocket.addComponent(RocketComponentFactory.createCockpit(RocketComponentType.COCKPIT, 1));
-        rocket.addComponent(RocketComponentFactory.createStructure(RocketComponentType.STRUCTURE, 1));
+        builder.commandModule(RocketComponentFactory.createCockpit(RocketComponentType.COCKPIT, 1));
+        builder.addEngine(RocketComponentFactory.createEngine(RocketComponentType.ENGINE, 1));
+        builder.addFuelTank(RocketComponentFactory.createFuelTank(RocketComponentType.FUEL_TANK, 1));
+        
+        // We need at least these components for a valid rocket
+        ModularRocket rocket = builder.build();
         
         // Set full fuel
         rocket.setFuelLevel(rocket.getFuelCapacity());

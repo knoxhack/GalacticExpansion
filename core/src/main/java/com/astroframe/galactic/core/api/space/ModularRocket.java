@@ -59,7 +59,7 @@ public class ModularRocket implements IRocket {
      * Components need to be added manually after construction.
      */
     public ModularRocket() {
-        this.id = new ResourceLocation("galactic-space", "rocket_" + UUID.randomUUID().toString().substring(0, 8));
+        this.id = ResourceLocation.parse("galactic:rocket_" + UUID.randomUUID().toString().substring(0, 8));
         this.commandModule = null;  // Will need to be set
         this.engines = new ArrayList<>();
         this.fuelTanks = new ArrayList<>();
@@ -109,8 +109,10 @@ public class ModularRocket implements IRocket {
     
     @Override
     public int getPassengerCapacity() {
-        return passengerCompartments.stream().mapToInt(IPassengerCompartment::getPassengerCapacity).sum() 
-             + commandModule.getCrewCapacity(); // Command modules can hold some crew directly
+        int compartmentCapacity = passengerCompartments.stream().mapToInt(IPassengerCompartment::getPassengerCapacity).sum();
+        int commandModuleCapacity = commandModule != null ? commandModule.getCrewCapacity() : 0;
+        
+        return compartmentCapacity + commandModuleCapacity; // Command modules can hold some crew directly
     }
     
     @Override
@@ -220,7 +222,9 @@ public class ModularRocket implements IRocket {
      * @return The total mass
      */
     private int getTotalMass() {
-        int componentMass = commandModule.getMass() +
+        int commandModuleMass = commandModule != null ? commandModule.getMass() : 0;
+        
+        int componentMass = commandModuleMass +
                 engines.stream().mapToInt(IRocketComponent::getMass).sum() +
                 fuelTanks.stream().mapToInt(IRocketComponent::getMass).sum() +
                 cargoBays.stream().mapToInt(IRocketComponent::getMass).sum() +
@@ -305,7 +309,9 @@ public class ModularRocket implements IRocket {
      */
     public List<IRocketComponent> getAllComponents() {
         List<IRocketComponent> components = new ArrayList<>();
-        components.add(commandModule);
+        if (commandModule != null) {
+            components.add(commandModule);
+        }
         components.addAll(engines);
         components.addAll(fuelTanks);
         components.addAll(cargoBays);
@@ -441,7 +447,7 @@ public class ModularRocket implements IRocket {
         
         try {
             String idStr = tag.getString("id");
-            ResourceLocation id = new ResourceLocation(idStr);
+            ResourceLocation id = ResourceLocation.parse(idStr);
             int tier = tag.getInt("tier");
             int fuel = tag.getInt("fuel");
             float health = tag.contains("health") ? tag.getFloat("health") : 100f;
