@@ -24,6 +24,9 @@ public class CargoBayImpl implements ICargoBay {
     private final boolean hasVacuumSealing;
     private final float accessSpeed;
     private final CargoBayType cargoType;
+    private final boolean isClimateControlled;
+    private final boolean isRadiationShielded;
+    private final boolean isEMPShielded;
     
     /**
      * Creates a new cargo bay.
@@ -51,6 +54,11 @@ public class CargoBayImpl implements ICargoBay {
         this.hasVacuumSealing = hasVacuumSealing;
         this.accessSpeed = accessSpeed;
         this.cargoType = cargoType;
+        
+        // Determine special properties based on type
+        this.isClimateControlled = cargoType == CargoBayType.REFRIGERATED || tier >= 3;
+        this.isRadiationShielded = cargoType == CargoBayType.HAZARDOUS || tier >= 2;
+        this.isEMPShielded = cargoType == CargoBayType.REINFORCED || tier >= 3;
     }
 
     @Override
@@ -111,6 +119,26 @@ public class CargoBayImpl implements ICargoBay {
     @Override
     public float getAccessSpeed() {
         return accessSpeed;
+    }
+    
+    @Override
+    public int getStorageCapacity() {
+        return slotCount;
+    }
+    
+    @Override
+    public boolean isClimateControlled() {
+        return isClimateControlled;
+    }
+    
+    @Override
+    public boolean isRadiationShielded() {
+        return isRadiationShielded;
+    }
+    
+    @Override
+    public boolean isEMPShielded() {
+        return isEMPShielded;
     }
 
     @Override

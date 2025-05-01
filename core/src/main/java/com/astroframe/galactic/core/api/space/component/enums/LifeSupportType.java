@@ -11,7 +11,8 @@ public enum LifeSupportType {
     EFFICIENT("Efficient"),
     LUXURIOUS("Luxurious"),
     MILITARY("Military"),
-    SCIENTIFIC("Scientific");
+    SCIENTIFIC("Scientific"),
+    BIOREGENERATIVE("Bioregenerative");
     
     private final String displayName;
     

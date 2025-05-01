@@ -30,21 +30,15 @@ public class ResourceLocationHelper {
         } catch (Exception e1) {
             LOGGER.log(Level.WARNING, "Failed to create ResourceLocation using fromNamespaceAndPath, attempting fallbacks", e1);
             
-            // Try using the string-only format "namespace:path"
+            // Try using the string-only format "namespace:path" and ResourceLocation.parse
             try {
-                return ResourceLocation.of(namespace + ":" + path, ':');
+                return ResourceLocation.parse(namespace + ":" + path);
             } catch (Exception e2) {
-                LOGGER.log(Level.WARNING, "Failed to create ResourceLocation using of method, attempting parse", e2);
+                LOGGER.log(Level.WARNING, "Failed to create ResourceLocation using parse method, attempting reflection", e2);
                 
-                try {
-                    return ResourceLocation.parse(namespace + ":" + path);
-                } catch (Exception e3) {
-                    LOGGER.log(Level.SEVERE, "Failed to create ResourceLocation via standard methods, attempting reflection", e3);
-                    
-                    // Last resort: try using reflection to create the ResourceLocation
-                    return createViaReflection(namespace, path)
-                            .orElseThrow(() -> new RuntimeException("Failed to create ResourceLocation by any method"));
-                }
+                // Last resort: try using reflection to create the ResourceLocation
+                return createViaReflection(namespace, path)
+                        .orElseThrow(() -> new RuntimeException("Failed to create ResourceLocation by any method"));
             }
         }
     }

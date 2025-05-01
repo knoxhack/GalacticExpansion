@@ -1,6 +1,8 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.IFuelTank;
+import com.astroframe.galactic.core.api.space.component.enums.ComponentType;
+import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -97,6 +99,11 @@ public class FuelTankImpl implements IFuelTank {
     @Override
     public float getMaxHealth() {
         return maxHealth;
+    }
+    
+    @Override
+    public ComponentType getType() {
+        return ComponentType.FUEL_TANK;
     }
 
     @Override
