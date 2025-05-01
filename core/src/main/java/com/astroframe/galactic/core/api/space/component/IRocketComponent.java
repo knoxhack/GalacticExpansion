@@ -1,31 +1,31 @@
 package com.astroframe.galactic.core.api.space.component;
 
+import com.astroframe.galactic.core.api.space.component.enums.ComponentType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
 /**
- * Interface for all rocket components.
- * Components are used to build custom rockets with different capabilities.
+ * Base interface for all rocket components.
  */
 public interface IRocketComponent {
     
     /**
-     * Gets the unique identifier for this component.
-     * @return The component's identifier
+     * Gets the unique ID of this component.
+     * @return The component ID
      */
     ResourceLocation getId();
     
     /**
      * Gets the display name of this component.
-     * @return The component's name
+     * @return The display name
      */
     Component getDisplayName();
     
     /**
-     * Gets the tier of this component.
-     * @return The component tier (1-3)
+     * Gets the tier level of this component (1-3).
+     * @return The tier level
      */
     int getTier();
     
@@ -36,35 +36,21 @@ public interface IRocketComponent {
     ComponentType getType();
     
     /**
-     * Gets the mass of this component in arbitrary units.
-     * Affects fuel consumption and rocket performance.
-     * @return The component's mass
+     * Gets the mass of this component.
+     * @return The mass
      */
     int getMass();
     
     /**
-     * Gets the health points of this component.
-     * @return The component's maximum health
+     * Gets the maximum health of this component.
+     * @return The maximum health
      */
     float getMaxHealth();
     
     /**
-     * Gets a list of tooltip lines for this component.
-     * @param detailed Whether to show detailed information
-     * @return List of tooltip components
+     * Gets the tooltip information for this component.
+     * @param detailed Whether to include detailed information
+     * @return The tooltip
      */
     List<Component> getTooltip(boolean detailed);
-    
-    /**
-     * Enum representing the different types of rocket components.
-     */
-    enum ComponentType {
-        COMMAND_MODULE,
-        ENGINE,
-        FUEL_TANK,
-        CARGO_BAY,
-        PASSENGER_COMPARTMENT,
-        SHIELD,
-        LIFE_SUPPORT
-    }
 }

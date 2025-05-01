@@ -1,74 +1,51 @@
 package com.astroframe.galactic.core.api.space.component;
 
+import com.astroframe.galactic.core.api.space.component.enums.ShieldType;
+
 /**
- * Interface for rocket shield components.
- * Shields protect the rocket from environmental hazards and damage.
+ * Interface for rocket shields.
  */
 public interface IShield extends IRocketComponent {
     
     /**
      * Gets the maximum shield strength.
-     * Higher values provide more protection.
      * @return The maximum shield strength
      */
     float getMaxShieldStrength();
     
     /**
-     * Gets the shield regeneration rate.
-     * Higher values mean faster shield regeneration after taking damage.
-     * @return The shield regeneration rate in strength per second
+     * Gets the shield regeneration rate per second.
+     * @return The regeneration rate
      */
     float getRegenerationRate();
     
     /**
-     * Gets the shield type.
-     * @return The shield type
-     */
-    ShieldType getShieldType();
-    
-    /**
-     * Gets the energy consumption of this shield when active.
-     * @return The energy consumption rate
-     */
-    int getEnergyConsumption();
-    
-    /**
-     * Gets the heat resistance of this shield.
-     * Higher values provide better protection during atmospheric entry.
-     * @return The heat resistance level (1-10)
-     */
-    int getHeatResistance();
-    
-    /**
-     * Gets the impact resistance of this shield.
-     * Higher values provide better protection against physical impacts.
-     * @return The impact resistance level (1-10)
+     * Gets the impact resistance level (1-10).
+     * @return The impact resistance
      */
     int getImpactResistance();
     
     /**
-     * Enum representing the different types of shields.
+     * Checks if this shield provides radiation protection.
+     * @return True if radiation shielded
      */
-    enum ShieldType {
-        HEAT_SHIELD("Heat Shield"),           // Protects from atmospheric entry heat
-        IMPACT_SHIELD("Impact Shield"),       // Protects from physical impacts
-        RADIATION_SHIELD("Radiation Shield"), // Protects from cosmic radiation
-        ENERGY_SHIELD("Energy Shield"),       // Advanced shield using energy field
-        COMPOSITE("Composite Shield");        // Balanced protection against multiple threats
-        
-        private final String displayName;
-        
-        ShieldType(String displayName) {
-            this.displayName = displayName;
-        }
-        
-        public String getDisplayName() {
-            return this.displayName;
-        }
-    }
+    boolean isRadiationShielded();
     
-    @Override
-    default ComponentType getType() {
-        return ComponentType.SHIELD;
-    }
+    /**
+     * Checks if this shield provides EMP protection.
+     * @return True if EMP shielded
+     */
+    boolean isEMPShielded();
+    
+    /**
+     * Checks if this shield provides thermal protection.
+     * @return True if thermal shielded
+     */
+    boolean isThermalShielded();
+    
+    /**
+     * Gets the type of this shield.
+     * @return The shield type
+     */
+    ShieldType getShieldType();
 }

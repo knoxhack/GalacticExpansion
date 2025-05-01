@@ -1,67 +1,51 @@
 package com.astroframe.galactic.core.api.space.component;
 
+import com.astroframe.galactic.core.api.space.component.enums.EngineType;
+
 /**
- * Interface for rocket engine components.
+ * Interface for rocket engines.
  */
 public interface IRocketEngine extends IRocketComponent {
     
     /**
      * Gets the thrust power of this engine.
-     * Higher values provide more acceleration.
      * @return The thrust power
      */
     int getThrust();
     
     /**
-     * Gets the fuel efficiency of this engine.
-     * Higher values mean less fuel consumption.
+     * Gets the fuel efficiency of this engine (0.0-1.0).
      * @return The fuel efficiency
      */
     float getEfficiency();
     
     /**
-     * Gets the engine type.
+     * Gets the type of this engine.
      * @return The engine type
      */
     EngineType getEngineType();
     
     /**
-     * Gets the maximum heat level this engine can handle.
-     * @return The maximum heat capacity
+     * Gets the heat capacity of this engine.
+     * @return The heat capacity
      */
     int getHeatCapacity();
     
     /**
-     * Checks if this engine can operate in water.
-     * @return true if the engine works underwater
+     * Checks if this engine can operate underwater.
+     * @return True if can operate underwater
      */
     boolean canOperateUnderwater();
     
     /**
      * Checks if this engine can operate in atmosphere.
-     * @return true if the engine works in atmosphere
+     * @return True if can operate in atmosphere
      */
     boolean canOperateInAtmosphere();
     
     /**
      * Checks if this engine can operate in space.
-     * @return true if the engine works in space
+     * @return True if can operate in space
      */
     boolean canOperateInSpace();
-    
-    /**
-     * Enum representing the different types of rocket engines.
-     */
-    enum EngineType {
-        CHEMICAL,
-        ION,
-        PLASMA,
-        FUSION,
-        ANTIMATTER
-    }
-    
-    @Override
-    default ComponentType getType() {
-        return ComponentType.ENGINE;
-    }
 }
