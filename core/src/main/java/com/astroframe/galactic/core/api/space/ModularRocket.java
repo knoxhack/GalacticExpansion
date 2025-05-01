@@ -83,7 +83,7 @@ public class ModularRocket implements IRocket {
     @Override
     public int getPassengerCapacity() {
         return passengerCompartments.stream().mapToInt(IPassengerCompartment::getPassengerCapacity).sum() 
-             + commandModule.getBasicLifeSupportCapacity();
+             + commandModule.getCrewCapacity(); // Command modules can hold some crew directly
     }
     
     @Override
@@ -248,14 +248,14 @@ public class ModularRocket implements IRocket {
         // Apply shield protection if available
         if (!shields.isEmpty()) {
             float totalShieldCoverage = shields.stream()
-                    .map(IShield::getCoveragePercentage)
-                    .max(Float::compare)
-                    .orElse(0f) / 100f;
-            
-            float totalImpactProtection = shields.stream()
-                    .map(IShield::getImpactProtection)
+                    .map(shield -> shield.getMaxShieldStrength() / 100f) // Shield strength as coverage percentage
                     .max(Float::compare)
                     .orElse(0f);
+            
+            float totalImpactProtection = shields.stream()
+                    .map(IShield::getImpactResistance)
+                    .max(Integer::compare)
+                    .orElse(0) * 10f; // Convert 1-10 scale to percentage
             
             // Reduce damage based on shields
             amount *= (1 - (totalShieldCoverage * (totalImpactProtection / 100)));
@@ -466,11 +466,11 @@ public class ModularRocket implements IRocket {
             // Check if has sufficient life support
             int totalPassengerCapacity = passengerCompartments.stream()
                     .mapToInt(IPassengerCompartment::getPassengerCapacity)
-                    .sum() 
-                    + commandModule.getBasicLifeSupportCapacity();
+                    .sum()
+                    + commandModule.getCrewCapacity(); // Command modules can hold crew
                     
             int totalLifeSupportCapacity = lifeSupports.stream()
-                    .mapToInt(ILifeSupport::getSupportCapacity)
+                    .mapToInt(ILifeSupport::getMaxCrewCapacity)
                     .sum();
                     
             if (totalLifeSupportCapacity < totalPassengerCapacity && !lifeSupports.isEmpty()) {

@@ -1,0 +1,226 @@
+package com.astroframe.galactic.space.implementation.component;
+
+import com.astroframe.galactic.core.api.space.component.ICommandModule;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Base implementation of the ICommandModule interface.
+ */
+public class BaseCommandModule implements ICommandModule {
+    
+    private final ResourceLocation id;
+    private final Component displayName;
+    private final int tier;
+    private final int mass;
+    private final float maxHealth;
+    private final int navigationLevel;
+    private final int crewCapacity;
+    private final int computingPower;
+    private final int communicationRange;
+    private final CommandModuleType commandModuleType;
+    
+    private BaseCommandModule(Builder builder) {
+        this.id = builder.id;
+        this.displayName = builder.displayName;
+        this.tier = builder.tier;
+        this.mass = builder.mass;
+        this.maxHealth = builder.maxHealth;
+        this.navigationLevel = builder.navigationLevel;
+        this.crewCapacity = builder.crewCapacity;
+        this.computingPower = builder.computingPower;
+        this.communicationRange = builder.communicationRange;
+        this.commandModuleType = builder.commandModuleType;
+    }
+    
+    @Override
+    public ResourceLocation getId() {
+        return id;
+    }
+    
+    @Override
+    public Component getDisplayName() {
+        return displayName;
+    }
+    
+    @Override
+    public int getTier() {
+        return tier;
+    }
+    
+    @Override
+    public ComponentType getType() {
+        return ComponentType.COMMAND_MODULE;
+    }
+    
+    @Override
+    public int getMass() {
+        return mass;
+    }
+    
+    @Override
+    public float getMaxHealth() {
+        return maxHealth;
+    }
+    
+    @Override
+    public List<Component> getTooltip(boolean detailed) {
+        List<Component> tooltip = new ArrayList<>();
+        tooltip.add(displayName);
+        tooltip.add(Component.literal("Type: " + commandModuleType.getDisplayName()));
+        tooltip.add(Component.literal("Tier: " + tier));
+        
+        if (detailed) {
+            tooltip.add(Component.literal("Navigation: " + navigationLevel + "/10"));
+            tooltip.add(Component.literal("Computing: " + computingPower + "/10"));
+            tooltip.add(Component.literal("Crew Capacity: " + crewCapacity));
+            tooltip.add(Component.literal("Communication Range: " + communicationRange));
+            tooltip.add(Component.literal("Mass: " + mass));
+            tooltip.add(Component.literal("Max Health: " + maxHealth));
+        }
+        
+        return tooltip;
+    }
+    
+    @Override
+    public int getNavigationLevel() {
+        return navigationLevel;
+    }
+    
+    @Override
+    public int getCrewCapacity() {
+        return crewCapacity;
+    }
+    
+    @Override
+    public int getComputingPower() {
+        return computingPower;
+    }
+    
+    @Override
+    public int getCommunicationRange() {
+        return communicationRange;
+    }
+    
+    @Override
+    public CommandModuleType getCommandModuleType() {
+        return commandModuleType;
+    }
+    
+    /**
+     * Builder for BaseCommandModule.
+     */
+    public static class Builder {
+        private final ResourceLocation id;
+        private final Component displayName;
+        private int tier = 1;
+        private int mass = 500;
+        private float maxHealth = 100.0f;
+        private int navigationLevel = 1;
+        private int crewCapacity = 1;
+        private int computingPower = 1;
+        private int communicationRange = 100;
+        private CommandModuleType commandModuleType = CommandModuleType.BASIC;
+        
+        /**
+         * Creates a new builder with required parameters.
+         * @param id The component ID
+         * @param displayName The display name
+         */
+        public Builder(ResourceLocation id, Component displayName) {
+            this.id = id;
+            this.displayName = displayName;
+        }
+        
+        /**
+         * Sets the tier.
+         * @param tier The tier level (1-3)
+         * @return This builder
+         */
+        public Builder tier(int tier) {
+            this.tier = Math.max(1, Math.min(3, tier));
+            return this;
+        }
+        
+        /**
+         * Sets the mass.
+         * @param mass The mass
+         * @return This builder
+         */
+        public Builder mass(int mass) {
+            this.mass = mass;
+            return this;
+        }
+        
+        /**
+         * Sets the max health.
+         * @param maxHealth The max health
+         * @return This builder
+         */
+        public Builder maxHealth(float maxHealth) {
+            this.maxHealth = maxHealth;
+            return this;
+        }
+        
+        /**
+         * Sets the navigation level.
+         * @param navigationLevel The navigation level (1-10)
+         * @return This builder
+         */
+        public Builder navigationLevel(int navigationLevel) {
+            this.navigationLevel = Math.max(1, Math.min(10, navigationLevel));
+            return this;
+        }
+        
+        /**
+         * Sets the crew capacity.
+         * @param crewCapacity The crew capacity
+         * @return This builder
+         */
+        public Builder crewCapacity(int crewCapacity) {
+            this.crewCapacity = crewCapacity;
+            return this;
+        }
+        
+        /**
+         * Sets the computing power.
+         * @param computingPower The computing power (1-10)
+         * @return This builder
+         */
+        public Builder computingPower(int computingPower) {
+            this.computingPower = Math.max(1, Math.min(10, computingPower));
+            return this;
+        }
+        
+        /**
+         * Sets the communication range.
+         * @param communicationRange The communication range
+         * @return This builder
+         */
+        public Builder communicationRange(int communicationRange) {
+            this.communicationRange = communicationRange;
+            return this;
+        }
+        
+        /**
+         * Sets the command module type.
+         * @param commandModuleType The command module type
+         * @return This builder
+         */
+        public Builder commandModuleType(CommandModuleType commandModuleType) {
+            this.commandModuleType = commandModuleType;
+            return this;
+        }
+        
+        /**
+         * Builds the command module.
+         * @return A new BaseCommandModule
+         */
+        public BaseCommandModule build() {
+            return new BaseCommandModule(this);
+        }
+    }
+}
