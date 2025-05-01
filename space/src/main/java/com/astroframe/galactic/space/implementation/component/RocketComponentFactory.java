@@ -28,7 +28,7 @@ public class RocketComponentFactory {
      */
     public static void registerAll() {
         // Command Modules (Tiers 1-3)
-        ResourceLocation cmdBasicId = ResourceLocation.of(GalacticSpace.MOD_ID + ":command_module_basic", ':');
+        ResourceLocation cmdBasicId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_basic");
         registerCommandModule(
             cmdBasicId,
             new CommandModuleImpl.Builder(cmdBasicId)
@@ -43,7 +43,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation cmdAdvancedId = ResourceLocation.of(GalacticSpace.MOD_ID + ":command_module_advanced", ':');
+        ResourceLocation cmdAdvancedId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_advanced");
         registerCommandModule(
             cmdAdvancedId,
             new CommandModuleImpl.Builder(cmdAdvancedId)
@@ -59,7 +59,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation cmdEliteId = ResourceLocation.of(GalacticSpace.MOD_ID + ":command_module_elite", ':');
+        ResourceLocation cmdEliteId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_elite");
         registerCommandModule(
             cmdEliteId,
             new CommandModuleImpl.Builder(cmdEliteId)
@@ -78,7 +78,7 @@ public class RocketComponentFactory {
         );
         
         // Engines (Various tiers and types)
-        ResourceLocation solidEngineId = ResourceLocation.of(GalacticSpace.MOD_ID + ":solid_fuel_engine", ':');
+        ResourceLocation solidEngineId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":solid_fuel_engine");
         registerEngine(
             solidEngineId,
             new RocketEngineImpl.Builder(solidEngineId)
@@ -130,7 +130,7 @@ public class RocketComponentFactory {
         );
         
         // Fuel Tanks (Various sizes)
-        ResourceLocation smallTankId = ResourceLocation.of(GalacticSpace.MOD_ID + ":fuel_tank_small", ':');
+        ResourceLocation smallTankId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_small");
         registerFuelTank(
             smallTankId,
             new FuelTankImpl.Builder(smallTankId)
@@ -243,9 +243,10 @@ public class RocketComponentFactory {
         );
         
         // Shields
+        ResourceLocation basicShieldId = ResourceLocation.of(GalacticSpace.MOD_ID + ":heat_shield_basic", ':');
         registerShield(
-            new ResourceLocation(GalacticSpace.MOD_ID, "heat_shield_basic"),
-            new ShieldImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "heat_shield_basic"))
+            basicShieldId,
+            new ShieldImpl.Builder(basicShieldId)
                 .name("Basic Heat Shield")
                 .description("A simple shield for atmospheric reentry.")
                 .tier(1)
@@ -256,9 +257,10 @@ public class RocketComponentFactory {
                 .build()
         );
         
+        ResourceLocation advancedShieldId = ResourceLocation.of(GalacticSpace.MOD_ID + ":heat_shield_advanced", ':');
         registerShield(
-            new ResourceLocation(GalacticSpace.MOD_ID, "heat_shield_advanced"),
-            new ShieldImpl.Builder(new ResourceLocation(GalacticSpace.MOD_ID, "heat_shield_advanced"))
+            advancedShieldId,
+            new ShieldImpl.Builder(advancedShieldId)
                 .name("Advanced Heat Shield")
                 .description("An improved shield with better protection.")
                 .tier(2)
