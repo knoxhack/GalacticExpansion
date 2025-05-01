@@ -32,7 +32,9 @@ public class MachineRegistry {
      * @param registry The mod registry
      */
     public void registerAllContent(RegistryManager registry) {
-        registry.addRegister(BLOCK_ENTITY_TYPES);
+        // Since RegistryManager doesn't have an addRegister method, we need to 
+        // register the deferred register with the appropriate bus elsewhere
+        // This will be handled directly by the GalacticMachinery class
     }
     
     /**

@@ -3,213 +3,78 @@ package com.astroframe.galactic.core.api.space;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 /**
- * Interface for celestial bodies like planets, moons, and asteroids.
- * This is a central concept for the Space Frontier module.
+ * Interface representing a celestial body like a planet, moon, or asteroid.
+ * Used by the Space module to manage different planets and their properties.
  */
 public interface ICelestialBody {
-    
+
     /**
      * Gets the unique identifier for this celestial body.
-     * 
-     * @return The ID
+     * @return A unique resource location
      */
     ResourceLocation getId();
     
     /**
-     * Gets the display name of this celestial body.
-     * 
+     * Gets the name of this celestial body.
      * @return The display name
      */
-    String getDisplayName();
+    String getName();
     
     /**
-     * Gets the type of this celestial body.
-     * 
-     * @return The body type
+     * Gets the gravity factor for this celestial body.
+     * Earth = 1.0, Moon = 0.16, etc.
+     * @return The gravity factor
      */
-    CelestialBodyType getBodyType();
+    float getGravityFactor();
     
     /**
-     * Gets the parent celestial body, if any.
-     * 
-     * @return The parent body, or null if this is a star or other root body
+     * Gets the distance from the home planet (Earth) in arbitrary units.
+     * @return The distance
      */
-    ICelestialBody getParent();
+    int getDistanceFromHome();
     
     /**
-     * Gets the children celestial bodies (e.g., moons of a planet).
-     * 
-     * @return A set of child bodies
+     * Gets the atmospheric density factor.
+     * Earth = 1.0, Moon = 0.0 (no atmosphere), etc.
+     * @return The atmosphere density
      */
-    Set<ICelestialBody> getChildren();
+    float getAtmosphereDensity();
     
     /**
-     * Gets the orbital properties of this body.
-     * 
-     * @return The orbital properties
+     * Gets the dimension level for this celestial body.
+     * @return The level, or null if not yet created
      */
-    OrbitalProperties getOrbitalProperties();
+    Level getLevel();
     
     /**
-     * Gets the physical properties of this body.
-     * 
-     * @return The physical properties
+     * Returns whether this celestial body has breathable atmosphere.
+     * @return true if players can breathe without assistance
      */
-    PhysicalProperties getPhysicalProperties();
+    boolean hasBreathableAtmosphere();
     
     /**
-     * Gets the atmospheric properties of this body.
-     * 
-     * @return The atmospheric properties
-     */
-    AtmosphericProperties getAtmosphericProperties();
-    
-    /**
-     * Gets the surface gravity relative to Earth (1.0 = Earth gravity).
-     * 
-     * @return The surface gravity
-     */
-    float getSurfaceGravity();
-    
-    /**
-     * Gets the dimension/level associated with this celestial body.
-     * 
-     * @return The dimension, or null if not applicable
-     */
-    Level getDimension();
-    
-    /**
-     * Gets the dimension ID associated with this celestial body.
-     * 
-     * @return The dimension ID, or null if not applicable
-     */
-    ResourceLocation getDimensionId();
-    
-    /**
-     * Gets all available landing sites on this celestial body.
-     * 
-     * @return A list of landing sites
-     */
-    List<LandingSite> getLandingSites();
-    
-    /**
-     * Gets the resources that can be found on this celestial body.
-     * 
-     * @return A map of resource IDs to abundance levels (0.0 to 1.0)
-     */
-    Map<ResourceLocation, Float> getResources();
-    
-    /**
-     * Gets the temperature range on this celestial body in degrees Celsius.
-     * 
-     * @return An array of [min, max] temperatures
+     * Gets the temperature range on this celestial body.
+     * @return An array of [min, max] temperatures in Celsius
      */
     float[] getTemperatureRange();
     
     /**
-     * Gets the survival difficulty level for this celestial body.
-     * 
-     * @return A value from 0.0 (easy) to 10.0 (extreme)
+     * Gets the amount of radiation present on this celestial body.
+     * Earth = 1.0, higher values mean more radiation
+     * @return The radiation level
      */
-    float getSurvivalDifficulty();
+    float getRadiationLevel();
     
     /**
-     * Gets the orbital position of this body at the given time.
-     * 
-     * @param timeInTicks The game time in ticks
-     * @return The orbital position as [x, y, z] coordinates
+     * Returns whether this celestial body has natural resources that can be mined.
+     * @return true if resources are available
      */
-    double[] getOrbitalPosition(long timeInTicks);
+    boolean hasResources();
     
     /**
-     * Gets the distance to another celestial body in space units.
-     * 
-     * @param other The other celestial body
-     * @param timeInTicks The game time in ticks
-     * @return The distance
+     * Gets the tier of rocket needed to reach this celestial body.
+     * @return The rocket tier
      */
-    double getDistanceTo(ICelestialBody other, long timeInTicks);
-    
-    /**
-     * Checks if this celestial body is within the habitable zone of its parent star.
-     * 
-     * @return Whether this body is habitable
-     */
-    boolean isHabitable();
-    
-    /**
-     * Gets the travel time to this celestial body from another body in ticks.
-     * 
-     * @param from The starting celestial body
-     * @param rocketTier The tier of the rocket (higher = faster)
-     * @return The travel time in ticks
-     */
-    long getTravelTimeFrom(ICelestialBody from, int rocketTier);
-    
-    /**
-     * Classes representing different properties of celestial bodies.
-     */
-    class OrbitalProperties {
-        private double semiMajorAxis; // Distance from parent in space units
-        private double eccentricity; // Orbital eccentricity (0 = circular)
-        private double inclination; // Orbital inclination in degrees
-        private double longitudeOfAscendingNode; // In degrees
-        private double argumentOfPeriapsis; // In degrees
-        private double meanAnomaly; // In degrees
-        private double orbitalPeriod; // In MC days
-        
-        // Getters and setters
-    }
-    
-    class PhysicalProperties {
-        private double radius; // In space units
-        private double mass; // In Earth masses
-        private double density; // In g/cm³
-        private float albedo; // Reflectivity (0.0 to 1.0)
-        private int rotationPeriod; // In MC ticks
-        private boolean tidallyLocked; // Whether rotation matches orbital period
-        
-        // Getters and setters
-    }
-    
-    class AtmosphericProperties {
-        private boolean hasAtmosphere;
-        private float pressure; // In Earth atmospheres
-        private Map<String, Float> composition; // Gas name to percentage
-        private boolean breathable;
-        private float toxicity; // 0.0 to 1.0
-        private boolean corrosive;
-        
-        // Getters and setters
-    }
-    
-    class LandingSite {
-        private String name;
-        private int x, y, z; // Coordinates
-        private Set<String> features; // Special features of this site
-        private float difficulty; // Landing difficulty (0.0 to 1.0)
-        
-        // Getters and setters
-    }
-    
-    /**
-     * Types of celestial bodies.
-     */
-    enum CelestialBodyType {
-        STAR,
-        PLANET,
-        DWARF_PLANET,
-        MOON,
-        ASTEROID,
-        COMET,
-        SPACE_STATION,
-        BLACK_HOLE,
-        NEBULA,
-        ARTIFICIAL
-    }
+    int getRocketTierRequired();
 }

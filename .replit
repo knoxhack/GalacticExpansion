@@ -2,7 +2,7 @@ modules = ["java", "java-21", "nodejs-20"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["unzip", "jdk21_headless", "wget"]
+packages = ["unzip", "jdk21_headless", "wget", "imagemagick"]
 
 [workflows]
 runButton = "Project"
@@ -47,7 +47,7 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd buildwidget && node server.js"
-waitForPort = 5000
+waitForPort = 5001
 
 [deployment]
 run = ["sh", "-c", "export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35 && ./gradlew :core:build :power:build :machinery:build :biotech:build"]
@@ -55,3 +55,7 @@ run = ["sh", "-c", "export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 5001
+externalPort = 3000

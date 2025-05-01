@@ -1,7 +1,7 @@
 package com.astroframe.galactic.machinery.api;
 
-import com.astroframe.galactic.energy.api.EnergyType;
-import com.astroframe.galactic.energy.api.IEnergyHandler;
+import com.astroframe.galactic.core.api.energy.IEnergyHandler;
+import com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
@@ -89,4 +89,39 @@ public interface Machine extends IEnergyHandler {
         }
         return false;
     }
+    
+    /**
+     * Gets the name of the machine.
+     * 
+     * @return The machine name
+     */
+    String getName();
+    
+    /**
+     * Gets the progress of the current operation.
+     * 
+     * @return The progress from 0.0 to 1.0
+     */
+    float getProgress();
+    
+    /**
+     * Gets the efficiency of the machine.
+     * 
+     * @return The efficiency factor
+     */
+    float getEfficiency();
+    
+    /**
+     * Start the machine's operation.
+     * 
+     * @return True if the machine was started successfully
+     */
+    boolean start();
+    
+    /**
+     * Stop the machine's operation.
+     * 
+     * @return True if the machine was stopped successfully
+     */
+    boolean stop();
 }

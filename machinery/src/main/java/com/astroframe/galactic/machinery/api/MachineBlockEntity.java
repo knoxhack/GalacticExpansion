@@ -1,22 +1,23 @@
 package com.astroframe.galactic.machinery.api;
 
-import com.astroframe.galactic.energy.api.EnergyStorage;
-import com.astroframe.galactic.energy.api.EnergyType;
+import com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit;
+import com.astroframe.galactic.machinery.energy.MachineEnergyStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.Containers;
 
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -28,7 +29,7 @@ import net.neoforged.api.distmarker.OnlyIn;
  */
 public abstract class MachineBlockEntity extends BlockEntity implements Machine {
     
-    protected final EnergyStorage energyStorage;
+    protected final MachineEnergyStorage energyStorage;
     protected final NonNullList<ItemStack> inventory;
     protected int processingTime;
     protected int processingTimeTotal;
@@ -55,9 +56,9 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
      * 
      * @return A new energy storage
      */
-    protected EnergyStorage createEnergyStorage() {
-        // Create a simple implementation of the EnergyStorage interface
-        return new EnergyStorage() {
+    protected MachineEnergyStorage createEnergyStorage() {
+        // Create a simple implementation of the MachineEnergyStorage interface
+        return new MachineEnergyStorage() {
             private int energy = 0;
             private final int maxEnergy = getMaxEnergyStored();
             private final int maxInput = getMaxEnergyInput();
@@ -207,12 +208,10 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
         tag.putBoolean("IsActive", isActive);
     }
     
-    @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
-        
-        // Load inventory
-        ContainerHelper.loadAllItems(tag, this.inventory);
+    // No @Override since method signature has changed in Neoforge
+    public void loadAdditional(CompoundTag tag) {
+        // Load inventory using the stack size provider
+        ContainerHelper.loadAllItems(tag, this.inventory, (slot) -> 64);
         
         // We can't directly modify the energy in our anonymous class implementation
         // So we just track the values in the NBT for now
@@ -228,11 +227,22 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
         return ClientboundBlockEntityDataPacket.create(this);
     }
     
-    @Override
+    // No @Override since method signature has changed in Neoforge
     public CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
+        CompoundTag tag = new CompoundTag();
         saveAdditional(tag);
         return tag;
+    }
+    
+    /**
+     * Gets the maximum stack size for the specified slot.
+     * Used by the ContainerHelper.
+     * 
+     * @param slot The slot index
+     * @return The maximum stack size
+     */
+    public int getMaxStackSize(int slot) {
+        return 64; // Default stack size
     }
     
     /**
@@ -297,8 +307,8 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
     }
     
     @Override
-    public EnergyType getEnergyType() {
-        return energyStorage.getEnergyType();
+    public EnergyUnit getEnergyUnit() {
+        return EnergyUnit.GALACTIC_ENERGY;
     }
     
     /**
@@ -321,4 +331,41 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
         // To be implemented by subclasses with inventory
         return null;
     }
+    
+    /**
+     * Consumes energy for the machine's operation.
+     * 
+     * @return True if the machine has enough energy to operate, false otherwise
+     */
+    protected boolean consumeEnergy() {
+        // If we don't have an energy storage or don't consume energy, we can operate
+        if (energyStorage == null || getEnergyConsumption() <= 0) {
+            return true;
+        }
+        
+        // Check if we have enough energy
+        int energyNeeded = getEnergyConsumption();
+        return energyStorage.extractEnergy(energyNeeded, true) >= energyNeeded;
+    }
+    
+    /**
+     * Gets the energy consumption per tick.
+     * 
+     * @return The energy consumption
+     */
+    public abstract int getEnergyConsumption();
+    
+    /**
+     * Gets the maximum energy input rate.
+     * 
+     * @return The maximum energy input
+     */
+    public abstract int getMaxEnergyInput();
+    
+    /**
+     * Gets the maximum energy output rate.
+     * 
+     * @return The maximum energy output
+     */
+    public abstract int getMaxEnergyOutput();
 }

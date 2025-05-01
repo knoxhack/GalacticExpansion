@@ -1,8 +1,11 @@
 package com.astroframe.galactic.machinery.implementation;
 
+import com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit;
 import com.astroframe.galactic.energy.api.EnergyStorage;
 import com.astroframe.galactic.energy.api.EnergyType;
 import com.astroframe.galactic.machinery.api.MachineType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 /**
  * A machine that generates energy.
@@ -73,6 +76,24 @@ public class GeneratorMachine extends BaseMachine {
     }
     
     @Override
+    public int getEnergyConsumption() {
+        // Generators produce energy, they don't consume it
+        return 0;
+    }
+    
+    @Override
+    public int getMaxEnergyOutput() {
+        // Generators can output energy at the rate they produce it
+        return energyProduced;
+    }
+    
+    @Override
+    public int getMaxEnergyInput() {
+        // Generators don't receive energy from external sources
+        return 0;
+    }
+    
+    @Override
     protected boolean canStartProcessing() {
         if (energyStorage == null) {
             return false;
@@ -105,7 +126,7 @@ public class GeneratorMachine extends BaseMachine {
     }
     
     @Override
-    public void tick() {
+    public void tick(Level level, BlockPos pos) {
         if (!active) {
             // Auto-start if we have fuel and can generate
             if (canStartProcessing()) {
@@ -135,5 +156,11 @@ public class GeneratorMachine extends BaseMachine {
                 stop();
             }
         }
+    }
+    
+    // For backward compatibility
+    @Override
+    public void tick() {
+        // This is now a stub - the real logic is in tick(Level, BlockPos)
     }
 }

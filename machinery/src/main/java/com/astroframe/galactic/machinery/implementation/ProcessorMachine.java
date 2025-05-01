@@ -1,8 +1,11 @@
 package com.astroframe.galactic.machinery.implementation;
 
+import com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit;
 import com.astroframe.galactic.energy.api.EnergyStorage;
 import com.astroframe.galactic.energy.api.EnergyType;
 import com.astroframe.galactic.machinery.api.MachineType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 import java.util.function.Supplier;
 
@@ -44,6 +47,25 @@ public class ProcessorMachine extends BaseMachine {
         
         // Default recipe processor (does nothing)
         this.recipeProcessor = () -> {};
+    }
+    
+    @Override
+    public int getEnergyConsumption() {
+        // Return the energy per tick value stored in the BaseMachine class
+        return energyPerTick;
+    }
+    
+    @Override
+    public int getMaxEnergyOutput() {
+        // Processors don't output energy
+        return 0;
+    }
+    
+    @Override
+    public int getMaxEnergyInput() {
+        // Processors need to receive energy to operate
+        // Default to twice the consumption rate to allow for some buffer
+        return energyPerTick * 2;
     }
     
     /**
@@ -128,5 +150,17 @@ public class ProcessorMachine extends BaseMachine {
         
         // Use the recipe validator to check if we can process the current inputs
         return recipeValidator.get();
+    }
+    
+    @Override
+    public void tick(Level level, BlockPos pos) {
+        // Delegate to parent implementation
+        super.tick(level, pos);
+    }
+    
+    // For backward compatibility
+    @Override
+    public void tick() {
+        // This is now a stub - the real logic is in tick(Level, BlockPos)
     }
 }

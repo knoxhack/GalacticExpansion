@@ -1,0 +1,55 @@
+# This is an example mods.toml file. It contains the data relating to the loading mods.
+# There are several mandatory fields, and many more that are optional.
+# The overall format is standard TOML format, v0.5.0.
+# Note that there are a couple of TOML lists in this file.
+# Find more information on toml format here:  https://github.com/toml-lang/toml
+
+# The name of the mod loader type to load - for regular Java FML mods it should be javafml
+modLoader="javafml" 
+loaderVersion="${loader_version}" # Minimum version of the mod loader required to load the mod. (Mods are loaded in order of until the maximum specified loaderVersion is exceeded)
+
+# A URL to refer people to when problems occur with this mod
+#issueTrackerURL="https://github.com/yourname/yourmod/issues" 
+
+# License
+license="All Rights Reserved"
+
+# A URL to the main website or forum for this mod
+#displayURL="https://yourmod.website" 
+
+[[mods]] 
+modId="galactic-space" 
+version="${version}" 
+displayName="Galactic Space" 
+#updateJSONURL="https://yoururl/update.json" 
+#displayURL="https://yoururl" 
+#logoFile="assets/galactic/logo.png" 
+credits="The Galactic Framework team" 
+authors="Astroframe" 
+description='''
+The Space module of the Galactic Framework, providing celestial bodies, space travel, and rocket systems.
+
+Explore distant planets and harness the resources of the cosmos!
+'''
+
+# Dependencies
+[[dependencies.galactic-space]] 
+    modId="neoforge" 
+    type="required" 
+    versionRange="${neo_version}" 
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.galactic-space]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.galactic-space]]
+    modId="galactic-core"
+    type="required"
+    versionRange="${version}"
+    ordering="AFTER"
+    side="BOTH"

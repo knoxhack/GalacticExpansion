@@ -1,9 +1,12 @@
 package com.astroframe.galactic.machinery.implementation;
 
+import com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit;
 import com.astroframe.galactic.energy.api.EnergyStorage;
 import com.astroframe.galactic.energy.api.EnergyType;
 import com.astroframe.galactic.machinery.api.Machine;
 import com.astroframe.galactic.machinery.api.MachineType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,6 +76,22 @@ public abstract class BaseMachine implements Machine {
     }
     
     @Override
+    public String getMachineId() {
+        // Use a sanitized version of the name as the ID
+        return name.toLowerCase().replace(' ', '_');
+    }
+    
+    @Override
+    public String getMachineName() {
+        return name;
+    }
+    
+    @Override
+    public int getMachineTier() {
+        return 1; // Default tier
+    }
+    
+    @Override
     public Optional<EnergyStorage> getEnergyStorage() {
         return Optional.ofNullable(energyStorage);
     }
@@ -83,7 +102,7 @@ public abstract class BaseMachine implements Machine {
     }
     
     @Override
-    public void tick() {
+    public void tick(Level level, BlockPos pos) {
         if (!active) {
             return;
         }
@@ -113,6 +132,12 @@ public abstract class BaseMachine implements Machine {
                 stop();
             }
         }
+    }
+    
+    // Legacy method for backward compatibility with subclasses
+    public void tick() {
+        // This is now a default implementation that should be overridden by subclasses
+        // to provide proper level and position context
     }
     
     @Override
@@ -153,6 +178,11 @@ public abstract class BaseMachine implements Machine {
     @Override
     public float getEfficiency() {
         return efficiency;
+    }
+    
+    @Override
+    public EnergyUnit getEnergyUnit() {
+        return EnergyUnit.GALACTIC_ENERGY;
     }
     
     /**

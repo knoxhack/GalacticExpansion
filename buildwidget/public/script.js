@@ -13,7 +13,8 @@ const autoScrollCheckbox = document.getElementById('autoScroll');
 
 // Establish WebSocket connection
 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-const wsUrl = `${protocol}//${window.location.host}/ws`;
+const host = window.location.host.replace('5000', '5001');  // Use port 5001 instead
+const wsUrl = `${protocol}//${host}/ws`;
 let socket;
 let reconnectInterval;
 let buildStartTime;

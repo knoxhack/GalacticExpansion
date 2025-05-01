@@ -1,0 +1,29 @@
+{
+  "itemGroup.galactic-space.space_tab": "Galactic Space",
+  
+  "item.galactic-space.rocket_part": "Rocket Part",
+  "item.galactic-space.moon_dust": "Moon Dust",
+  "item.galactic-space.mars_rock": "Mars Rock",
+  "item.galactic-space.space_helmet": "Space Helmet",
+  "item.galactic-space.oxygen_tank": "Oxygen Tank",
+  
+  "item.galactic-space.tier_1_rocket": "Tier 1 Rocket",
+  "item.galactic-space.tier_2_rocket": "Tier 2 Rocket",
+  "item.galactic-space.tier_3_rocket": "Tier 3 Rocket",
+  
+  "item.galactic-space.rocket.tier": "Tier: %s",
+  "item.galactic-space.rocket.destination.moon": "Can travel to: The Moon",
+  "item.galactic-space.rocket.destination.mars": "Can travel to: Mars, Moon",
+  "item.galactic-space.rocket.destination.deepspace": "Can travel to: All celestial bodies",
+  
+  "celestial_body.galactic-space.earth": "Earth",
+  "celestial_body.galactic-space.moon": "Moon",
+  "celestial_body.galactic-space.mars": "Mars",
+  "celestial_body.galactic-space.europa": "Europa",
+  "celestial_body.galactic-space.proxima_b": "Proxima Centauri b",
+  
+  "message.galactic-space.discovery": "You have discovered %s!",
+  "message.galactic-space.travel_start": "Launching to %s...",
+  "message.galactic-space.travel_complete": "You have arrived at %s.",
+  "message.galactic-space.not_enough_fuel": "Not enough fuel to reach %s."
+}

@@ -10,7 +10,11 @@ const execAsync = promisify(exec);
 // Initialize express app
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server, path: '/ws' });
+const wss = new WebSocketServer({ 
+  server, 
+  path: '/ws',
+  clientTracking: true 
+});
 
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -288,6 +292,13 @@ function broadcastStatus() {
       handlers.sendStatus();
     }
   });
+  
+  // Also send directly to all clients using WebSocketServer's client tracking
+  wss.clients.forEach(client => {
+    if (client.readyState === client.OPEN) {
+      client.send(JSON.stringify({ type: 'status', data: buildStatus }));
+    }
+  });
 }
 
 // Broadcast build output only
@@ -342,8 +353,15 @@ function broadcastMetrics() {
     }))
   };
   
-  // Send to all clients
+  // Send to all clients - both ways to ensure delivery
   clients.forEach((handlers, client) => {
+    if (client.readyState === client.OPEN) {
+      handlers.sendStatus();
+    }
+  });
+  
+  // Also send to all clients using the WSS clients collection
+  wss.clients.forEach(client => {
     if (client.readyState === client.OPEN) {
       client.send(JSON.stringify({ type: 'metrics', data: metricsData }));
     }
@@ -446,7 +464,7 @@ async function checkBuildSuccess() {
 }
 
 // Start the server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Build status server running on port ${PORT}`);
   
