@@ -4,11 +4,14 @@ package com.astroframe.galactic.core.api.space.component.enums;
  * Represents different types of rocket cargo bays.
  */
 public enum CargoBayType {
+    BASIC("Basic"),
     STANDARD("Standard"),
-    REINFORCED("Reinforced"),
-    INSULATED("Insulated"),
+    STORAGE("Storage"),
     REFRIGERATED("Refrigerated"),
-    PRESSURIZED("Pressurized");
+    PRESSURIZED("Pressurized"),
+    REINFORCED("Reinforced"),
+    HAZARDOUS("Hazardous"),
+    SPECIALIZED("Specialized");
     
     private final String displayName;
     

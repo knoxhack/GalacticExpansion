@@ -7,9 +7,10 @@ public enum CompartmentType {
     BASIC("Basic"),
     STANDARD("Standard"),
     LUXURY("Luxury"),
-    MEDICAL("Medical"),
     SCIENTIFIC("Scientific"),
-    CRYOGENIC("Cryogenic");
+    MEDICAL("Medical"),
+    HIBERNATION("Hibernation"),
+    EMERGENCY("Emergency");
     
     private final String displayName;
     

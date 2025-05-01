@@ -10,7 +10,12 @@ public enum ComponentType {
     CARGO_BAY("Cargo Bay"),
     PASSENGER_COMPARTMENT("Passenger Compartment"),
     SHIELD("Shield"),
-    LIFE_SUPPORT("Life Support");
+    LIFE_SUPPORT("Life Support"),
+    POWER_SYSTEM("Power System"),
+    COMMUNICATION("Communication System"),
+    NAVIGATION("Navigation System"),
+    DOCKING("Docking System"),
+    LANDING_GEAR("Landing Gear");
     
     private final String displayName;
     

@@ -14,6 +14,11 @@ public interface IEnergyHandler {
         FE("Forge Energy", "FE"),
         J("Joules", "J"),
         GJ("Galactic Joules", "GJ");
+
+        /**
+         * The default energy unit used by Galactic Expansion.
+         */
+        public static final EnergyUnit GALACTIC_ENERGY_UNIT = GJ;
         
         private final String displayName;
         private final String symbol;

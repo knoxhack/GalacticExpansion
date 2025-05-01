@@ -4,12 +4,14 @@ package com.astroframe.galactic.core.api.space.component.enums;
  * Represents different types of rocket shields.
  */
 public enum ShieldType {
+    BASIC("Basic"),
     THERMAL("Thermal"),
     PHYSICAL("Physical"),
     RADIATION("Radiation"),
     DEFLECTOR("Deflector"),
     QUANTUM("Quantum"),
-    ENERGY("Energy");
+    ENERGY("Energy"),
+    ADVANCED("Advanced");
     
     private final String displayName;
     
