@@ -87,33 +87,39 @@ public class CommandModuleImpl implements ICommandModule {
     }
 
     @Override
-    public float getNavigationAccuracy() {
-        return navigationAccuracy;
+    public int getNavigationLevel() {
+        return (int)(navigationAccuracy * 10); // Convert to 1-10 scale
     }
-
+    
     @Override
-    public int getComputerTier() {
+    public int getCrewCapacity() {
+        return basicLifeSupportCapacity; // Use the basic life support capacity as crew capacity
+    }
+    
+    @Override
+    public int getComputingPower() {
         return computerTier;
     }
-
+    
     @Override
-    public int getScanningRange() {
-        return scanningRange;
+    public int getCommunicationRange() {
+        return scanningRange; // Use scanning range as communication range
     }
-
-    @Override
+    
+    /**
+     * Gets the autopilot level of this command module.
+     * @return The autopilot level
+     */
     public int getAutopilotLevel() {
         return autopilotLevel;
     }
-
-    @Override
+    
+    /**
+     * Checks if this command module has emergency teleport.
+     * @return True if emergency teleport is available
+     */
     public boolean hasEmergencyTeleport() {
         return hasEmergencyTeleport;
-    }
-
-    @Override
-    public int getBasicLifeSupportCapacity() {
-        return basicLifeSupportCapacity;
     }
 
     @Override

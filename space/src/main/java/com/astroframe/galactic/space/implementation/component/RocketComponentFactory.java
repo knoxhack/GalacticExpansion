@@ -419,6 +419,27 @@ public class RocketComponentFactory {
     }
     
     /**
+     * Creates a radiation shield.
+     * @return A new shield
+     */
+    public static IShield createRadiationShield() {
+        return new ShieldImpl(
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":shield_radiation"),
+                Component.translatable("component.galactic-space.shield_radiation"),
+                2,
+                240,
+                230.0f,
+                0.5f,
+                0.7f,
+                0.95f,
+                15,
+                false,
+                0.85f,
+                ShieldType.RADIATION
+        );
+    }
+    
+    /**
      * Creates an advanced tier 3 shield.
      * @return A new shield
      */
@@ -436,6 +457,27 @@ public class RocketComponentFactory {
                 true,
                 0.95f,
                 ShieldType.DEFLECTOR
+        );
+    }
+    
+    /**
+     * Creates an advanced quantum shield.
+     * @return A new shield
+     */
+    public static IShield createQuantumShield() {
+        return new ShieldImpl(
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":shield_quantum"),
+                Component.translatable("component.galactic-space.shield_quantum"),
+                4,
+                350,
+                500.0f,
+                0.95f,
+                1.4f,
+                1.3f,
+                40,
+                true,
+                0.99f,
+                ShieldType.QUANTUM
         );
     }
     
@@ -554,7 +596,9 @@ public class RocketComponentFactory {
         // Shields
         RocketComponentRegistry.register(createBasicShield());
         RocketComponentRegistry.register(createThermalShield());
+        RocketComponentRegistry.register(createRadiationShield());
         RocketComponentRegistry.register(createDeflectorShield());
+        RocketComponentRegistry.register(createQuantumShield());
         
         // Life support systems
         RocketComponentRegistry.register(createBasicLifeSupport());
