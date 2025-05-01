@@ -106,7 +106,7 @@ wss.on('connection', (ws) => {
       } else if (data.type === 'requestTasks') {
         sendTaskUpdates(buildStatus.tasks);
       } else if (data.type === 'createRelease') {
-        console.log('Client requested to create GitHub release');
+        console.log('Client requested to create GitHub release with versioned module JARs');
         
         // Check if build is successful
         if (buildStatus.status !== 'success' && !buildStatus.releaseReady) {
@@ -118,17 +118,32 @@ wss.on('connection', (ws) => {
         const { exec } = require('child_process');
         const releaseProcess = exec('cd .. && bash scripts/push_to_github_release.sh');
         
-        buildStatus.buildOutput.push({ type: 'info', message: '[GitHub Release] Starting release process...' });
-        sendBuildOutput([{ type: 'info', message: '[GitHub Release] Starting release process...' }]);
+        buildStatus.buildOutput.push({ type: 'info', message: '[GitHub Release] Starting versioned release process...' });
+        sendBuildOutput([{ type: 'info', message: '[GitHub Release] Starting versioned release process...' }]);
         
         // Process release script output
         releaseProcess.stdout.on('data', (data) => {
           const output = data.toString();
-          buildStatus.buildOutput.push({ 
-            type: 'info', 
-            message: `[GitHub Release] ${output}`
-          });
-          sendBuildOutput([{ type: 'info', message: `[GitHub Release] ${output}` }]);
+          
+          // Check for version information
+          const versionMatch = output.match(/Creating release version: ([0-9]+\.[0-9]+\.[0-9]+\.b[0-9]+-[0-9]+)/);
+          if (versionMatch && versionMatch[1]) {
+            const version = versionMatch[1];
+            buildStatus.releaseVersion = version;
+            
+            // Highlight version info in the output
+            buildStatus.buildOutput.push({ 
+              type: 'success', 
+              message: `[GitHub Release] Creating release version: ${version}`
+            });
+            sendBuildOutput([{ type: 'success', message: `[GitHub Release] Creating release version: ${version}` }]);
+          } else {
+            buildStatus.buildOutput.push({ 
+              type: 'info', 
+              message: `[GitHub Release] ${output}`
+            });
+            sendBuildOutput([{ type: 'info', message: `[GitHub Release] ${output}` }]);
+          }
         });
         
         releaseProcess.stderr.on('data', (data) => {
@@ -142,12 +157,13 @@ wss.on('connection', (ws) => {
         
         releaseProcess.on('close', (code) => {
           if (code === 0) {
-            const successMessage = 'Successfully created GitHub release!';
+            const versionInfo = buildStatus.releaseVersion ? ` (v${buildStatus.releaseVersion})` : '';
+            const successMessage = `Successfully created GitHub release${versionInfo} with all module JARs!`;
             buildStatus.buildOutput.push({ 
-              type: 'info', 
+              type: 'success', 
               message: `[GitHub Release] ${successMessage}`
             });
-            sendBuildOutput([{ type: 'info', message: `[GitHub Release] ${successMessage}` }]);
+            sendBuildOutput([{ type: 'success', message: `[GitHub Release] ${successMessage}` }]);
             
             buildStatus.releaseCreated = true;
             buildStatus.releaseTime = new Date().toISOString();
