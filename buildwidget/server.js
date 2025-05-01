@@ -7,6 +7,19 @@ const { exec } = require('child_process');
 const { promisify } = require('util');
 const execAsync = promisify(exec);
 
+// Import build-and-release functions
+const { 
+  buildAndRelease, 
+  getBuildNumber, 
+  getVersionString, 
+  getGitHubStatus,
+  getBuildMetrics,
+  getVersionHistory,
+  getChangelogHistory,
+  getModuleDependencies,
+  formatChangelogMarkdown
+} = require('./build-and-release');
+
 // Initialize express app
 const app = express();
 const server = http.createServer(app);
@@ -15,6 +28,9 @@ const wss = new WebSocketServer({
   path: '/ws',
   clientTracking: true 
 });
+
+// Middleware for JSON handling
+app.use(express.json());
 
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -25,8 +41,8 @@ let buildStatus = {
   progress: 0,
   tasks: {},
   version: {
-    current: '0.1.0',
-    buildNumber: 1,
+    current: getVersionString(),
+    buildNumber: getBuildNumber(),
     lastReleaseDate: null,
     lastReleaseTag: null
   },
@@ -44,17 +60,26 @@ let buildStatus = {
     robotics: { status: 'pending', lastBuild: null }
   },
   lastUpdate: new Date().toISOString(),
-  buildOutput: []
+  buildOutput: [],
+  notifications: []
 };
 
-// Build metrics storage
-const buildHistory = [];
+// Store notification stack
+let notificationStack = [];
+
+// Build metrics storage with improved fields
+const buildHistory = getVersionHistory().slice(0, 10);
 const buildMetrics = {
-  totalBuilds: 0,
-  successfulBuilds: 0,
-  averageBuildTime: 0,
-  lastSuccessful: null,
-  currentBuild: null
+  totalBuilds: buildHistory.length,
+  successfulBuilds: buildHistory.filter(b => b.buildMetrics?.result === 'success').length,
+  averageBuildTime: buildHistory.length > 0 
+    ? buildHistory.filter(b => b.buildMetrics?.duration)
+                 .reduce((sum, b) => sum + b.buildMetrics.duration, 0) / 
+      buildHistory.filter(b => b.buildMetrics?.duration).length
+    : 0,
+  lastSuccessful: buildHistory.find(b => b.buildMetrics?.result === 'success')?.date || null,
+  currentBuild: null,
+  moduleActivity: {} // Will be populated from build history
 };
 
 // Store connected clients with their handlers
