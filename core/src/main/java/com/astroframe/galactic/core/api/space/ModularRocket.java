@@ -425,8 +425,16 @@ public class ModularRocket implements IRocket {
         switch (type) {
             case COCKPIT:
                 if (component instanceof ICommandModule) {
-                    // New implementation would call setter here
-                    return true;
+                    // Set the command module through reflection as the field is final
+                    try {
+                        java.lang.reflect.Field field = ModularRocket.class.getDeclaredField("commandModule");
+                        field.setAccessible(true);
+                        field.set(this, component);
+                        return true;
+                    } catch (Exception e) {
+                        // Fallback to normal behavior if reflection fails
+                        return false;
+                    }
                 }
                 break;
             case ENGINE:

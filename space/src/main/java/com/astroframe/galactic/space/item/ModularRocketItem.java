@@ -87,7 +87,7 @@ public class ModularRocketItem extends Item {
             } else {
                 // Report why launch failed
                 Component reason = launchController.getCannotLaunchReason();
-                player.sendSystemMessage(reason);
+                serverPlayer.displayClientMessage(reason, false);
                 return InteractionResultHolder.fail(stack);
             }
         }
@@ -153,8 +153,8 @@ public class ModularRocketItem extends Item {
     public static void saveRocketToStack(ItemStack stack, IRocket rocket) {
         if (stack.getItem() instanceof ModularRocketItem) {
             CompoundTag tag = stack.getOrCreateTag();
-            CompoundTag rocketTag = new CompoundTag();
             
+            CompoundTag rocketTag = new CompoundTag();
             rocket.saveToTag(rocketTag);
             tag.put("rocket", rocketTag);
         }

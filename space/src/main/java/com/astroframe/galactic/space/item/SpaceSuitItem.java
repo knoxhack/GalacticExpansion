@@ -19,17 +19,19 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingAttackEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * Space suit armor item, provides protection in space environments.
  */
 public abstract class SpaceSuitItem extends ArmorItem {
 
-    private static final SpaceSuitMaterial MATERIAL = new SpaceSuitMaterial();
+    private static final ArmorMaterial MATERIAL = new SpaceSuitMaterial();
     private final int tier;
 
     /**
@@ -43,7 +45,7 @@ public abstract class SpaceSuitItem extends ArmorItem {
         this.tier = Math.max(1, Math.min(3, tier)); // Clamp between 1-3
         
         // Register event handler for environmental damage protection
-        NeoForge.EVENT_BUS.addListener(this::onLivingDamage);
+        NeoForge.EVENT_BUS.addListener(this::onLivingHurt);
     }
     
     /**
@@ -58,8 +60,6 @@ public abstract class SpaceSuitItem extends ArmorItem {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, 
                               TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
-        
         tooltip.add(Component.translatable("item.galactic-space.space_suit.tier", getTier())
                 .withStyle(ChatFormatting.GRAY));
         
@@ -132,7 +132,7 @@ public abstract class SpaceSuitItem extends ArmorItem {
      * 
      * @param event The damage event
      */
-    private void onLivingDamage(LivingDamageEvent event) {
+    private void onLivingHurt(LivingHurtEvent event) {
         if (!(event.getEntity() instanceof Player player)) {
             return;
         }
@@ -247,45 +247,49 @@ public abstract class SpaceSuitItem extends ArmorItem {
      * Space suit material definition.
      */
     private static class SpaceSuitMaterial implements ArmorMaterial {
-        private static final int[] DURABILITY_PER_SLOT = new int[] {200, 280, 260, 220};
-        private static final int[] PROTECTION_PER_SLOT = new int[] {3, 6, 5, 3};
+        private static final Map<EquipmentSlot, Integer> DURABILITY_PER_SLOT = new EnumMap<>(EquipmentSlot.class);
+        private static final Map<EquipmentSlot, Integer> PROTECTION_PER_SLOT = new EnumMap<>(EquipmentSlot.class);
         
-        @Override
-        public int getDurabilityForSlot(EquipmentSlot slot) {
-            return DURABILITY_PER_SLOT[slot.getIndex()];
+        static {
+            DURABILITY_PER_SLOT.put(EquipmentSlot.HEAD, 200);
+            DURABILITY_PER_SLOT.put(EquipmentSlot.CHEST, 280);
+            DURABILITY_PER_SLOT.put(EquipmentSlot.LEGS, 260);
+            DURABILITY_PER_SLOT.put(EquipmentSlot.FEET, 220);
+            
+            PROTECTION_PER_SLOT.put(EquipmentSlot.HEAD, 3);
+            PROTECTION_PER_SLOT.put(EquipmentSlot.CHEST, 6);
+            PROTECTION_PER_SLOT.put(EquipmentSlot.LEGS, 5);
+            PROTECTION_PER_SLOT.put(EquipmentSlot.FEET, 3);
         }
         
-        @Override
-        public int getDefenseForSlot(EquipmentSlot slot) {
-            return PROTECTION_PER_SLOT[slot.getIndex()];
+        public int getDurabilityForType(Type type) {
+            return DURABILITY_PER_SLOT.getOrDefault(type.getSlot(), 0);
         }
         
-        @Override
+        public int getDefenseForType(Type type) {
+            return PROTECTION_PER_SLOT.getOrDefault(type.getSlot(), 0);
+        }
+        
         public int getEnchantmentValue() {
             return 15;
         }
         
-        @Override
         public net.minecraft.sounds.SoundEvent getEquipSound() {
-            return net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_IRON;
+            return net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_IRON.value();
         }
         
-        @Override
         public Ingredient getRepairIngredient() {
             return Ingredient.of(Tags.Items.INGOTS_IRON);
         }
         
-        @Override
         public String getName() {
             return "space_suit";
         }
         
-        @Override
         public float getToughness() {
             return 2.0F;
         }
         
-        @Override
         public float getKnockbackResistance() {
             return 0.1F;
         }
