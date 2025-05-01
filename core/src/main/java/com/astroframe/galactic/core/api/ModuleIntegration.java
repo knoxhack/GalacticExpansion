@@ -119,7 +119,8 @@ public interface ModuleIntegration {
         // Use raw type to bypass generic type checking
         Registry rawRegistry = baseRegistry;
         
-        return rawRegistry.register(getModId(), path, value);
+        // Cast the result back to RegistryEntry<T>
+        return (RegistryEntry<T>) rawRegistry.register(getModId(), path, value);
     }
     
     /**

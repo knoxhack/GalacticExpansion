@@ -27,12 +27,12 @@ public class Registry<T> {
      * @param namespace The namespace (usually mod ID)
      * @param key The object key
      * @param value The object to register
-     * @return The registered object
+     * @return The registry entry that was created
      */
-    public T register(String namespace, String key, T value) {
+    public RegistryEntry<T> register(String namespace, String key, T value) {
         String fullKey = namespace + ":" + key;
         entries.put(fullKey, value);
-        return value;
+        return new RegistryEntry<>(namespace, key, value);
     }
     
     /**

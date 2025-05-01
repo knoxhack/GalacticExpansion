@@ -1,68 +1,38 @@
 package com.astroframe.galactic.core.registry.tag;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
- * Manages all tags in the Galactic Expansion mod.
- * This is a singleton class that provides access to all type-specific tag collections.
+ * Manages all tags in the mod.
+ * This is a simple singleton implementation for testing.
  */
 public class TagManager {
+    private static TagManager instance;
     
-    private static final TagManager INSTANCE = new TagManager();
+    private final Map<String, Map<String, Tag<?>>> tags = new HashMap<>();
     
-    private final Map<String, Map<String, Tag<?>>> tagsByType = new HashMap<>();
+    /**
+     * Gets the singleton instance.
+     * @return The tag manager instance
+     */
+    public static TagManager getInstance() {
+        if (instance == null) {
+            instance = new TagManager();
+        }
+        return instance;
+    }
     
     /**
      * Private constructor to enforce singleton pattern.
      */
     private TagManager() {
-        // Private constructor to enforce singleton pattern
+        // Private constructor
     }
     
     /**
-     * Get the singleton instance of the TagManager.
-     * 
-     * @return The TagManager instance
-     */
-    public static TagManager getInstance() {
-        return INSTANCE;
-    }
-    
-    /**
-     * Create a new tag with the specified type and ID.
-     * 
-     * @param <T> The type of objects the tag will contain
-     * @param typeKey A string key representing the type of objects in the tag
-     * @param id The unique identifier for the tag
-     * @return The newly created tag
-     * @throws IllegalArgumentException if a tag with the same type and ID already exists
-     */
-    @SuppressWarnings("unchecked")
-    public <T> Tag<T> createTag(String typeKey, String id) {
-        Map<String, Tag<?>> tags = tagsByType.computeIfAbsent(typeKey, k -> new HashMap<>());
-        
-        if (tags.containsKey(id)) {
-            throw new IllegalArgumentException("Tag with ID '" + id + "' already exists for type '" + typeKey + "'");
-        }
-        
-        Tag<T> tag = new Tag<>(id);
-        tags.put(id, tag);
-        
-        return tag;
-    }
-    
-    /**
-     * Get a tag by its type and ID.
-     * 
+     * Gets a tag by type and ID.
      * @param <T> The expected type of objects in the tag
      * @param typeKey A string key representing the type of objects in the tag
      * @param id The unique identifier for the tag
@@ -70,178 +40,43 @@ public class TagManager {
      */
     @SuppressWarnings("unchecked")
     public <T> Optional<Tag<T>> getTag(String typeKey, String id) {
-        Map<String, Tag<?>> tags = tagsByType.get(typeKey);
-        
-        if (tags == null) {
+        Map<String, Tag<?>> typeTags = tags.get(typeKey);
+        if (typeTags == null) {
             return Optional.empty();
         }
         
-        return Optional.ofNullable((Tag<T>) tags.get(id));
+        Tag<?> tag = typeTags.get(id);
+        if (tag == null) {
+            return Optional.empty();
+        }
+        
+        // This cast is potentially unsafe, but is managed by the caller
+        return Optional.of((Tag<T>) tag);
     }
     
     /**
-     * Get or create a tag with the specified type and ID.
-     * 
-     * @param <T> The type of objects the tag will contain
+     * Gets or creates a tag.
+     * @param <T> The type of objects in the tag
      * @param typeKey A string key representing the type of objects in the tag
      * @param id The unique identifier for the tag
-     * @return The existing or newly created tag
+     * @return The tag, either existing or newly created
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("unchecked")
     public <T> Tag<T> getOrCreateTag(String typeKey, String id) {
         Optional<Tag<T>> existingTag = getTag(typeKey, id);
         if (existingTag.isPresent()) {
             return existingTag.get();
-        } else {
-            Tag<T> tag = new Tag<>(id);
-            Map<String, Tag<?>> tags = tagsByType.computeIfAbsent(typeKey, k -> new HashMap<>());
-            tags.put(id, tag);
-            return tag;
-        }
-    }
-    
-    /**
-     * Check if a tag with the specified type and ID exists.
-     * 
-     * @param typeKey A string key representing the type of objects in the tag
-     * @param id The unique identifier for the tag
-     * @return true if a tag with the type and ID exists, false otherwise
-     */
-    public boolean hasTag(String typeKey, String id) {
-        Map<String, Tag<?>> tags = tagsByType.get(typeKey);
-        
-        if (tags == null) {
-            return false;
         }
         
-        return tags.containsKey(id);
-    }
-    
-    /**
-     * Get all tag IDs for a specific type.
-     * 
-     * @param typeKey A string key representing the type of objects in the tags
-     * @return An unmodifiable set of tag IDs
-     */
-    public Set<String> getTagIds(String typeKey) {
-        Map<String, Tag<?>> tags = tagsByType.get(typeKey);
+        // Create a new tag
+        Tag<T> newTag = new Tag<>(id);
         
-        if (tags == null) {
-            return Collections.emptySet();
-        }
+        // Ensure the type map exists
+        tags.computeIfAbsent(typeKey, k -> new HashMap<>());
         
-        return Collections.unmodifiableSet(tags.keySet());
-    }
-    
-    /**
-     * Get all tags for a specific type.
-     * 
-     * @param <T> The expected type of objects in the tags
-     * @param typeKey A string key representing the type of objects in the tags
-     * @return An unmodifiable collection of tags
-     */
-    @SuppressWarnings("unchecked")
-    public <T> Collection<Tag<T>> getTags(String typeKey) {
-        Map<String, Tag<?>> tags = tagsByType.get(typeKey);
+        // Store the new tag
+        tags.get(typeKey).put(id, newTag);
         
-        if (tags == null) {
-            return Collections.emptyList();
-        }
-        
-        return Collections.unmodifiableCollection(
-                tags.values().stream()
-                        .map(tag -> (Tag<T>) tag)
-                        .collect(Collectors.toList())
-        );
-    }
-    
-    /**
-     * Get all types that have tags.
-     * 
-     * @return An unmodifiable set of type keys
-     */
-    public Set<String> getTypes() {
-        return Collections.unmodifiableSet(tagsByType.keySet());
-    }
-    
-    /**
-     * Remove a tag with the specified type and ID.
-     * 
-     * @param typeKey A string key representing the type of objects in the tag
-     * @param id The unique identifier for the tag
-     * @return true if the tag was removed, false if it didn't exist
-     */
-    public boolean removeTag(String typeKey, String id) {
-        Map<String, Tag<?>> tags = tagsByType.get(typeKey);
-        
-        if (tags == null) {
-            return false;
-        }
-        
-        return tags.remove(id) != null;
-    }
-    
-    /**
-     * Find all tags of a specific type that match a predicate.
-     * 
-     * @param <T> The expected type of objects in the tags
-     * @param typeKey A string key representing the type of objects in the tags
-     * @param predicate The predicate to match tags against
-     * @return A collection of matching tags
-     */
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public <T> Collection<Tag<T>> findTags(String typeKey, Predicate<Tag<T>> predicate) {
-        Collection<Tag<T>> allTags = getTags(typeKey);
-        
-        // Create a raw predicate to avoid type safety issues
-        Predicate rawPredicate = predicate;
-        
-        // Use explicit typing for the result collection to avoid type safety issues
-        List<Tag<T>> result = new ArrayList<>();
-        
-        for (Tag<T> tag : allTags) {
-            if (rawPredicate.test(tag)) {
-                result.add(tag);
-            }
-        }
-        
-        return result;
-    }
-    
-    /**
-     * Clear all tags for a specific type.
-     * 
-     * @param typeKey A string key representing the type of objects in the tags
-     */
-    public void clearType(String typeKey) {
-        tagsByType.remove(typeKey);
-    }
-    
-    /**
-     * Clear all tags.
-     * This is primarily for testing purposes and should be used with caution.
-     */
-    public void clear() {
-        tagsByType.clear();
-    }
-    
-    /**
-     * Adds a tag to the manager using a ResourceLocation.
-     * This method is for backwards compatibility with the test code.
-     * 
-     * @param <T> The type of objects in the tag
-     * @param tagId The ResourceLocation identifier for the tag
-     * @param tag The tag to add
-     */
-    @SuppressWarnings("unchecked")
-    public <T> void addTag(Object tagId, Tag<T> tag) {
-        // Extract string from the ResourceLocation-like object
-        String id = tag.getId();
-        
-        // Use default type key
-        String typeKey = "default";
-        
-        Map<String, Tag<?>> tags = tagsByType.computeIfAbsent(typeKey, k -> new HashMap<>());
-        tags.put(id, tag);
+        return newTag;
     }
 }
