@@ -122,7 +122,8 @@ public class ModularRocketItem extends Item {
         }
         
         // Try to get the component from the registry
-        Optional<IRocketComponent> component = RocketComponentRegistry.getComponent(componentId);
+        ResourceLocation resLoc = ResourceLocation.parse(componentId);
+        Optional<IRocketComponent> component = RocketComponentRegistry.getComponent(resLoc);
         return component.map(c -> c.getDisplayName().getString()).orElse("Unknown");
     }
     
@@ -162,7 +163,8 @@ public class ModularRocketItem extends Item {
         
         // Get command module tier
         String commandModuleId = tag.getString("commandModule");
-        Optional<IRocketComponent> commandModule = RocketComponentRegistry.getComponent(commandModuleId);
+        ResourceLocation cmdModRes = ResourceLocation.parse(commandModuleId);
+        Optional<IRocketComponent> commandModule = RocketComponentRegistry.getComponent(cmdModRes);
         int commandModuleTier = commandModule.map(IRocketComponent::getTier).orElse(0);
         
         // Get highest engine tier
@@ -170,7 +172,8 @@ public class ModularRocketItem extends Item {
         int highestEngineTier = 0;
         for (int i = 0; i < enginesList.size(); i++) {
             String engineId = enginesList.getString(i);
-            Optional<IRocketComponent> engine = RocketComponentRegistry.getComponent(engineId);
+            ResourceLocation engineRes = ResourceLocation.parse(engineId);
+            Optional<IRocketComponent> engine = RocketComponentRegistry.getComponent(engineRes);
             highestEngineTier = Math.max(highestEngineTier, engine.map(IRocketComponent::getTier).orElse(0));
         }
         
@@ -195,7 +198,8 @@ public class ModularRocketItem extends Item {
         
         // Add command module
         String commandModuleId = tag.getString("commandModule");
-        Optional<IRocketComponent> commandModuleOpt = RocketComponentRegistry.getComponent(commandModuleId);
+        ResourceLocation cmdModRes = ResourceLocation.parse(commandModuleId);
+        Optional<IRocketComponent> commandModuleOpt = RocketComponentRegistry.getComponent(cmdModRes);
         if (commandModuleOpt.isPresent() && commandModuleOpt.get() instanceof ICommandModule) {
             builder.commandModule((ICommandModule) commandModuleOpt.get());
         } else {
@@ -206,7 +210,8 @@ public class ModularRocketItem extends Item {
         ListTag enginesList = tag.getList("engines", 8);
         for (int i = 0; i < enginesList.size(); i++) {
             String engineId = enginesList.getString(i);
-            Optional<IRocketComponent> engineOpt = RocketComponentRegistry.getComponent(engineId);
+            ResourceLocation engineRes = ResourceLocation.parse(engineId);
+            Optional<IRocketComponent> engineOpt = RocketComponentRegistry.getComponent(engineRes);
             if (engineOpt.isPresent() && engineOpt.get() instanceof IRocketEngine) {
                 builder.addEngine((IRocketEngine) engineOpt.get());
             }
@@ -216,7 +221,8 @@ public class ModularRocketItem extends Item {
         ListTag fuelTanksList = tag.getList("fuelTanks", 8);
         for (int i = 0; i < fuelTanksList.size(); i++) {
             String fuelTankId = fuelTanksList.getString(i);
-            Optional<IRocketComponent> fuelTankOpt = RocketComponentRegistry.getComponent(fuelTankId);
+            ResourceLocation fuelTankRes = ResourceLocation.parse(fuelTankId);
+            Optional<IRocketComponent> fuelTankOpt = RocketComponentRegistry.getComponent(fuelTankRes);
             if (fuelTankOpt.isPresent() && fuelTankOpt.get() instanceof IFuelTank) {
                 builder.addFuelTank((IFuelTank) fuelTankOpt.get());
             }
@@ -226,7 +232,8 @@ public class ModularRocketItem extends Item {
         ListTag cargoBaysList = tag.getList("cargoBays", 8);
         for (int i = 0; i < cargoBaysList.size(); i++) {
             String cargoBayId = cargoBaysList.getString(i);
-            Optional<IRocketComponent> cargoBayOpt = RocketComponentRegistry.getComponent(cargoBayId);
+            ResourceLocation cargoBayRes = ResourceLocation.parse(cargoBayId);
+            Optional<IRocketComponent> cargoBayOpt = RocketComponentRegistry.getComponent(cargoBayRes);
             if (cargoBayOpt.isPresent() && cargoBayOpt.get() instanceof ICargoBay) {
                 builder.addCargoBay((ICargoBay) cargoBayOpt.get());
             }
