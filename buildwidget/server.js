@@ -847,6 +847,65 @@ app.delete('/api/notifications/:id', (req, res) => {
   res.json({ success: true, message: 'Notification removed' });
 });
 
+// API endpoint for checkpoints - automatically creates a commit, builds, and releases
+app.post('/api/checkpoint', express.json(), async (req, res) => {
+  const { name, description } = req.body;
+  
+  if (!name) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Checkpoint name is required' 
+    });
+  }
+  
+  // Add notification for checkpoint start
+  addNotification({
+    type: 'info',
+    title: 'Checkpoint Processing',
+    message: `Processing checkpoint: ${name}`,
+    autoHide: false
+  });
+  
+  try {
+    // Load the handleCheckpoint function from build-and-release.js
+    const { handleCheckpoint } = require('./build-and-release');
+    
+    // Process the checkpoint
+    const result = await handleCheckpoint(name, description || '');
+    
+    // Add notification for result
+    addNotification({
+      type: result.success ? 'success' : 'error',
+      title: result.success ? 'Checkpoint Successful' : 'Checkpoint Failed',
+      message: result.message,
+      autoHide: false
+    });
+    
+    res.json({
+      success: result.success,
+      message: result.message,
+      version: result.version,
+      commitSuccess: result.commitSuccess
+    });
+  } catch (error) {
+    console.error('Error handling checkpoint:', error);
+    
+    // Add error notification
+    addNotification({
+      type: 'error',
+      title: 'Checkpoint Error',
+      message: `Error processing checkpoint: ${error.message}`,
+      autoHide: false
+    });
+    
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error processing checkpoint', 
+      error: error.message 
+    });
+  }
+});
+
 // API endpoint to create GitHub release
 app.post('/api/release', (req, res) => {
   if (buildStatus.status !== 'success' && !buildStatus.releaseReady) {
