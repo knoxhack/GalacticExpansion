@@ -175,4 +175,141 @@ public class PassengerCompartmentImpl implements IPassengerCompartment {
         
         return tooltip;
     }
+    
+    /**
+     * Builder for PassengerCompartmentImpl.
+     */
+    public static class Builder {
+        private final ResourceLocation id;
+        private String name = "Passenger Compartment";
+        private String description = "A compartment for passengers.";
+        private int tier = 1;
+        private int mass = 300;
+        private int maxDurability = 800;
+        private int passengerCapacity = 4;
+        private int comfortLevel = 5;
+        private boolean hasLifeSupport = false;
+        private boolean hasGravitySimulation = false;
+        private boolean hasRadiationShielding = false;
+        
+        /**
+         * Creates a new builder with required parameters.
+         * @param id The component ID
+         */
+        public Builder(ResourceLocation id) {
+            this.id = id;
+        }
+        
+        /**
+         * Sets the name.
+         * @param name The name
+         * @return This builder
+         */
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+        
+        /**
+         * Sets the description.
+         * @param description The description
+         * @return This builder
+         */
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+        
+        /**
+         * Sets the tier.
+         * @param tier The tier level (1-3)
+         * @return This builder
+         */
+        public Builder tier(int tier) {
+            this.tier = Math.max(1, Math.min(3, tier));
+            return this;
+        }
+        
+        /**
+         * Sets the mass.
+         * @param mass The mass
+         * @return This builder
+         */
+        public Builder mass(int mass) {
+            this.mass = mass;
+            return this;
+        }
+        
+        /**
+         * Sets the max durability.
+         * @param maxDurability The max durability
+         * @return This builder
+         */
+        public Builder maxDurability(int maxDurability) {
+            this.maxDurability = maxDurability;
+            return this;
+        }
+        
+        /**
+         * Sets the passenger capacity.
+         * @param passengerCapacity The passenger capacity
+         * @return This builder
+         */
+        public Builder passengerCapacity(int passengerCapacity) {
+            this.passengerCapacity = passengerCapacity;
+            return this;
+        }
+        
+        /**
+         * Sets the comfort level.
+         * @param comfortLevel The comfort level (1-10)
+         * @return This builder
+         */
+        public Builder comfortLevel(int comfortLevel) {
+            this.comfortLevel = Math.max(1, Math.min(10, comfortLevel));
+            return this;
+        }
+        
+        /**
+         * Sets whether this compartment has life support.
+         * @param hasLifeSupport True if has life support
+         * @return This builder
+         */
+        public Builder lifeSupport(boolean hasLifeSupport) {
+            this.hasLifeSupport = hasLifeSupport;
+            return this;
+        }
+        
+        /**
+         * Sets whether this compartment has gravity simulation.
+         * @param hasGravitySimulation True if has gravity simulation
+         * @return This builder
+         */
+        public Builder gravitySimulation(boolean hasGravitySimulation) {
+            this.hasGravitySimulation = hasGravitySimulation;
+            return this;
+        }
+        
+        /**
+         * Sets whether this compartment has radiation shielding.
+         * @param hasRadiationShielding True if has radiation shielding
+         * @return This builder
+         */
+        public Builder radiationShielding(boolean hasRadiationShielding) {
+            this.hasRadiationShielding = hasRadiationShielding;
+            return this;
+        }
+        
+        /**
+         * Builds the passenger compartment.
+         * @return A new PassengerCompartmentImpl
+         */
+        public PassengerCompartmentImpl build() {
+            return new PassengerCompartmentImpl(
+                id, name, description, tier, mass, maxDurability,
+                passengerCapacity, comfortLevel, hasLifeSupport,
+                hasGravitySimulation, hasRadiationShielding
+            );
+        }
+    }
 }

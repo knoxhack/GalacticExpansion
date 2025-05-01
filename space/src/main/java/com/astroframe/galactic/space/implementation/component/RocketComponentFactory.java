@@ -557,7 +557,7 @@ public class RocketComponentFactory {
         
         @Override
         public RocketComponentType getType() {
-            return RocketComponentType.COMMAND_MODULE;
+            return RocketComponentType.COCKPIT;
         }
         
         @Override
