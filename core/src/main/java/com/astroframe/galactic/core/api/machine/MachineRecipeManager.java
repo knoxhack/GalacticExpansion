@@ -3,7 +3,6 @@ package com.astroframe.galactic.core.api.machine;
 import com.astroframe.galactic.core.GalacticCore;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 
 import java.util.*;
@@ -16,6 +15,7 @@ import java.util.stream.Collectors;
 public class MachineRecipeManager {
     
     private static final Map<ResourceLocation, IMachineRecipeType<?>> RECIPE_TYPES = new HashMap<>();
+    private static final Map<ResourceLocation, List<IMachineRecipe>> RECIPES = new HashMap<>();
     
     /**
      * Registers a new machine recipe type.
@@ -35,7 +35,36 @@ public class MachineRecipeManager {
         }
         
         RECIPE_TYPES.put(id, recipeType);
+        RECIPES.put(id, new ArrayList<>());
         GalacticCore.LOGGER.info("Registered machine recipe type: {}", id);
+    }
+    
+    /**
+     * Registers a new machine recipe.
+     * 
+     * @param recipe The recipe to register
+     */
+    public static void registerRecipe(IMachineRecipe recipe) {
+        if (recipe == null) {
+            GalacticCore.LOGGER.error("Cannot register null recipe");
+            return;
+        }
+        
+        IMachineRecipeType<?> type = recipe.getType();
+        if (type == null) {
+            GalacticCore.LOGGER.error("Recipe has null type: {}", recipe.getId());
+            return;
+        }
+        
+        ResourceLocation typeId = type.getId();
+        if (!RECIPE_TYPES.containsKey(typeId)) {
+            GalacticCore.LOGGER.error("Recipe type {} is not registered", typeId);
+            return;
+        }
+        
+        List<IMachineRecipe> recipes = RECIPES.get(typeId);
+        recipes.add(recipe);
+        GalacticCore.LOGGER.info("Registered machine recipe: {}", recipe.getId());
     }
     
     /**
@@ -61,14 +90,22 @@ public class MachineRecipeManager {
      * Gets all recipes of a specific type.
      * 
      * @param <T> The recipe type
-     * @param level The level to get recipes from
+     * @param level The level (not used in this implementation but kept for API compatibility)
      * @param recipeType The recipe type to get
      * @return A list of all recipes of the specified type
      */
     @SuppressWarnings("unchecked")
     public static <T extends IMachineRecipe> List<T> getRecipesForType(Level level, IMachineRecipeType<T> recipeType) {
-        RecipeManager recipeManager = level.getRecipeManager();
-        return recipeManager.getAllRecipesFor((net.minecraft.world.item.crafting.RecipeType<T>) recipeType);
+        if (recipeType == null) {
+            return Collections.emptyList();
+        }
+        
+        List<IMachineRecipe> recipes = RECIPES.get(recipeType.getId());
+        if (recipes == null) {
+            return Collections.emptyList();
+        }
+        
+        return (List<T>) Collections.unmodifiableList(recipes);
     }
     
     /**

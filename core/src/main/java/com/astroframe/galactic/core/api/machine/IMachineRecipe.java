@@ -3,7 +3,6 @@ package com.astroframe.galactic.core.api.machine;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -83,15 +82,6 @@ public interface IMachineRecipe {
      * @return Experience points
      */
     float getExperience();
-    
-    /**
-     * Gets the vanilla recipe type for this machine recipe.
-     * 
-     * @return The recipe type
-     */
-    default RecipeType<?> getRecipeType() {
-        return getType();
-    }
     
     /**
      * Gets the result of this recipe.

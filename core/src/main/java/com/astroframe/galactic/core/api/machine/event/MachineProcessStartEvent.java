@@ -5,12 +5,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.ICancellableEvent;
 
 /**
  * Event fired when a machine starts processing a recipe.
  * This can be used to modify the process before it begins.
  */
-public class MachineProcessStartEvent extends Event {
+public class MachineProcessStartEvent extends Event implements ICancellableEvent {
     
     private final BlockEntity machine;
     private final Level level;
@@ -114,25 +115,22 @@ public class MachineProcessStartEvent extends Event {
     }
     
     /**
-     * Gets whether the process has been canceled.
+     * Checks if the event is canceled.
      * 
-     * @return Whether the process is canceled
+     * @return Whether the event is canceled
      */
+    @Override
     public boolean isCanceled() {
         return canceled;
     }
     
     /**
-     * Sets whether the process should be canceled.
+     * Sets the canceled state of the event.
      * 
-     * @param canceled Whether to cancel the process
+     * @param cancel Whether to cancel the event
      */
-    public void setCanceled(boolean canceled) {
-        this.canceled = canceled;
-    }
-    
     @Override
-    public boolean isCancelable() {
-        return true;
+    public void setCanceled(boolean cancel) {
+        this.canceled = cancel;
     }
 }

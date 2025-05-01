@@ -1,83 +1,46 @@
 package com.astroframe.galactic.core.registry;
 
 import com.astroframe.galactic.core.GalacticCore;
-import com.astroframe.galactic.core.api.GalacticRegistry;
+import com.astroframe.galactic.core.items.CoreItems;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
 /**
- * Implementation of the GalacticRegistry interface.
- * Handles the registration of objects to the game.
+ * Registry handler for the Core module.
+ * This centralizes all registrations for the module.
  */
-public class CoreRegistry implements GalacticRegistry {
-    
-    private final List<DeferredRegister<?>> registers = new ArrayList<>();
-    private final List<Runnable> validationHandlers = new ArrayList<>();
-    
+public class CoreRegistry {
+
+    // Deferred Registers
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, GalacticCore.MOD_ID);
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, GalacticCore.MOD_ID);
+
+    // Creative Tab
+    public static final ResourceKey<CreativeModeTab> GALACTIC_TAB_KEY = ResourceKey.create(
+            Registries.CREATIVE_MODE_TAB, 
+            new ResourceLocation(GalacticCore.MOD_ID, "galactic_tab")
+    );
+
     /**
-     * Adds a deferred register to this registry manager.
-     *
-     * @param register The deferred register to add
-     */
-    @Override
-    public void addRegister(DeferredRegister<?> register) {
-        if (register == null) {
-            GalacticCore.LOGGER.warn("Attempted to add null DeferredRegister to CoreRegistry");
-            return;
-        }
-        
-        registers.add(register);
-        GalacticCore.LOGGER.debug("Added {} to CoreRegistry", register.getRegistryKey());
-    }
-    
-    /**
-     * Registers all deferred registers to the provided event bus.
+     * Registers all registry objects with the given event bus.
      *
      * @param eventBus The mod event bus to register with
      */
-    @Override
-    public void registerAllTo(IEventBus eventBus) {
-        if (eventBus == null) {
-            GalacticCore.LOGGER.error("Cannot register to null event bus");
-            return;
-        }
+    public static void register(IEventBus eventBus) {
+        GalacticCore.LOGGER.info("Registering Core module objects");
         
-        GalacticCore.LOGGER.info("Registering {} DeferredRegisters to event bus", registers.size());
-        registers.forEach(register -> register.register(eventBus));
+        // Initialize items
+        CoreItems.init();
         
-        // Register to receive registry validation complete event
-        eventBus.addListener(this::onRegistriesValidated);
-    }
-    
-    /**
-     * Registers a handler for when registry validation is complete.
-     *
-     * @param handler The handler to call when validation is complete
-     */
-    @Override
-    public void onRegistryValidation(Runnable handler) {
-        if (handler != null) {
-            validationHandlers.add(handler);
-        }
-    }
-    
-    /**
-     * Handles the registry validation complete event.
-     * Calls all registered validation handlers.
-     * 
-     * @param event The registry validation complete event
-     */
-    private void onRegistriesValidated(final net.neoforged.neoforge.registries.RegisterEvent event) {
-        GalacticCore.LOGGER.debug("Registry validation event for {}", event.getRegistryKey());
+        // Register objects
+        ITEMS.register(eventBus);
+        CREATIVE_MODE_TABS.register(eventBus);
         
-        // Only run handlers when all registries are validated
-        if (event.getRegistryKey() == net.minecraft.core.registries.Registries.BLOCK) {
-            GalacticCore.LOGGER.info("All registries validated, running {} handlers", validationHandlers.size());
-            validationHandlers.forEach(Runnable::run);
-        }
+        GalacticCore.LOGGER.info("Core module registration complete");
     }
 }

@@ -2,15 +2,15 @@ package com.astroframe.galactic.core.api.machine;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.Recipe;
 
 /**
  * Interface for machine recipe types.
- * Extends Minecraft's RecipeType to provide additional functionality for machines.
+ * Acts as a custom recipe type system for machines in the mod.
  * 
  * @param <T> The specific type of machine recipe
  */
-public interface IMachineRecipeType<T extends IMachineRecipe> extends RecipeType<T> {
+public interface IMachineRecipeType<T extends IMachineRecipe> {
     
     /**
      * Gets the unique identifier for this recipe type.
