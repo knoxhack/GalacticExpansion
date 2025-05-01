@@ -1,6 +1,5 @@
 package com.example.modapi.energy.api;
 
-import com.astroframe.galactic.energy.api.energynetwork.Level;
 import com.astroframe.galactic.energy.api.energynetwork.WorldPosition;
 
 /**
@@ -16,11 +15,12 @@ public class BlockPosAdapter {
      * Convert a BlockPos to a WorldPosition.
      * 
      * @param pos The BlockPos to convert
-     * @param level The Minecraft level
+     * @param level The level
      * @return The equivalent WorldPosition
      */
-    public static WorldPosition toWorldPosition(BlockPos pos, net.minecraft.world.level.Level level) {
-        Level customLevel = new Level(level.dimension().location().toString());
+    public static WorldPosition toWorldPosition(BlockPos pos, Level level) {
+        com.astroframe.galactic.energy.api.energynetwork.Level customLevel = 
+            new com.astroframe.galactic.energy.api.energynetwork.Level(level.getDimension());
         return new WorldPosition(pos.getX(), pos.getY(), pos.getZ(), customLevel);
     }
     
@@ -54,10 +54,21 @@ public class BlockPosAdapter {
     /**
      * Create a custom Level from a Minecraft Level.
      * 
-     * @param level The Minecraft level
+     * @param mcLevel The Minecraft level object
      * @return The custom Level
      */
-    public static Level toCustomLevel(net.minecraft.world.level.Level level) {
-        return new Level(level.dimension().location().toString());
+    public static com.astroframe.galactic.energy.api.energynetwork.Level toCustomLevel(Object mcLevel) {
+        try {
+            // Use reflection to get the dimension ID
+            Class<?> levelClass = mcLevel.getClass();
+            Object dimension = levelClass.getMethod("dimension").invoke(mcLevel);
+            Object location = dimension.getClass().getMethod("location").invoke(dimension);
+            String dimensionId = location.toString();
+            
+            return new com.astroframe.galactic.energy.api.energynetwork.Level(dimensionId);
+        } catch (Exception e) {
+            // If reflection fails, return a default level
+            return new com.astroframe.galactic.energy.api.energynetwork.Level("unknown");
+        }
     }
 }

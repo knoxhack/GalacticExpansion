@@ -2,7 +2,8 @@ package com.astroframe.galactic.energy.implementation;
 
 import com.astroframe.galactic.energy.api.EnergyStorage;
 import com.astroframe.galactic.energy.api.EnergyType;
-import net.minecraft.nbt.CompoundTag;
+import com.astroframe.galactic.energy.api.EnergyUnit;
+import com.astroframe.galactic.energy.nbt.CompoundTag;
 
 /**
  * A simple implementation of the EnergyStorage interface.
