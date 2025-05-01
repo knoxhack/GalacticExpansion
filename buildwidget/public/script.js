@@ -786,8 +786,155 @@ createReleaseBtn.addEventListener('click', () => {
     }
 });
 
+// Update notifications display
+function updateNotifications(notifications) {
+    // Get or create notifications container
+    let notificationsContainer = document.getElementById('notificationsContainer');
+    if (!notificationsContainer) {
+        notificationsContainer = document.createElement('div');
+        notificationsContainer.id = 'notificationsContainer';
+        notificationsContainer.className = 'notifications-container';
+        document.body.appendChild(notificationsContainer);
+    }
+    
+    // Clear existing notifications
+    notificationsContainer.innerHTML = '';
+    
+    // Add each notification
+    notifications.forEach(notification => {
+        const notificationElement = document.createElement('div');
+        notificationElement.className = `notification notification-${notification.type}`;
+        notificationElement.id = `notification-${notification.id}`;
+        
+        // Create notification header
+        const header = document.createElement('div');
+        header.className = 'notification-header';
+        
+        // Add icon
+        const icon = document.createElement('span');
+        icon.className = 'notification-icon';
+        icon.textContent = notification.icon || ''; // Use the icon from server or default
+        header.appendChild(icon);
+        
+        // Add title
+        const title = document.createElement('span');
+        title.className = 'notification-title';
+        title.textContent = notification.title || 'Notification';
+        header.appendChild(title);
+        
+        // Add close button
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'notification-close';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.addEventListener('click', () => {
+            // Send dismissal message to server
+            socket.send(JSON.stringify({
+                type: 'dismissNotification',
+                id: notification.id
+            }));
+            
+            // Remove from UI immediately for better UX
+            notificationElement.classList.add('notification-hidden');
+            setTimeout(() => {
+                notificationElement.remove();
+            }, 300);
+        });
+        header.appendChild(closeBtn);
+        
+        notificationElement.appendChild(header);
+        
+        // Add notification message
+        const message = document.createElement('div');
+        message.className = 'notification-message';
+        message.textContent = notification.message;
+        notificationElement.appendChild(message);
+        
+        // Add timestamp if available
+        if (notification.timestamp) {
+            const time = document.createElement('div');
+            time.className = 'notification-time';
+            const notificationTime = new Date(notification.timestamp);
+            time.textContent = getRelativeTime(notificationTime);
+            notificationElement.appendChild(time);
+        }
+        
+        // Add to container
+        notificationsContainer.appendChild(notificationElement);
+        
+        // Animate entry
+        setTimeout(() => {
+            notificationElement.classList.add('notification-visible');
+        }, 10);
+    });
+}
+
+// Update version history display
+function updateVersionHistory(history) {
+    console.log('Version history:', history);
+    
+    // TODO: Implement version history UI
+    // This will be added in a future update
+}
+
+// Update changelog history display
+function updateChangelogHistory(changelog) {
+    console.log('Changelog history:', changelog);
+    
+    // TODO: Implement changelog history UI
+    // This will be added in a future update
+}
+
+// Update module dependencies display
+function updateDependencies(dependencies) {
+    console.log('Module dependencies:', dependencies);
+    
+    // TODO: Implement dependencies visualization
+    // This will be added in a future update
+}
+
+// Request notifications and other data
+function requestInitialData() {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+        // Request notifications
+        socket.send(JSON.stringify({ type: 'requestNotifications' }));
+        
+        // Request metrics
+        socket.send(JSON.stringify({ type: 'requestMetrics' }));
+    }
+}
+
+// Add button to clear all notifications
+function addClearNotificationsButton() {
+    // Check if the button already exists
+    if (document.getElementById('clearAllNotifications')) {
+        return;
+    }
+    
+    // Add clear all notifications button to the navbar
+    const navbar = document.querySelector('.navbar');
+    if (navbar) {
+        const clearAllNotificationsBtn = document.createElement('button');
+        clearAllNotificationsBtn.id = 'clearAllNotifications';
+        clearAllNotificationsBtn.className = 'clear-notifications-btn';
+        clearAllNotificationsBtn.textContent = 'Clear All Notifications';
+        clearAllNotificationsBtn.addEventListener('click', () => {
+            socket.send(JSON.stringify({
+                type: 'dismissNotification',
+                all: true
+            }));
+        });
+        navbar.appendChild(clearAllNotificationsBtn);
+    }
+}
+
 // Initialize WebSocket connection
 connectWebSocket();
+
+// Request initial data after connection is established
+setTimeout(requestInitialData, 1000);
+
+// Add UI components after page is loaded
+setTimeout(addClearNotificationsButton, 1000);
 
 // Handle page unload
 window.addEventListener('beforeunload', () => {
