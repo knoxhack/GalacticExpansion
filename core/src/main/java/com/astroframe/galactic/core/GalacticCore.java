@@ -91,9 +91,9 @@ public class GalacticCore {
         LOGGER.debug("Registering creative tab");
         
         CoreRegistry.CREATIVE_MODE_TABS.register(
-            "galactic_tab", 
+            CoreRegistry.GALACTIC_TAB_ID, 
             () -> CreativeModeTab.builder()
-                .title(Component.translatable("itemGroup." + MOD_ID + ".galactic_tab"))
+                .title(Component.translatable("itemGroup." + MOD_ID + "." + CoreRegistry.GALACTIC_TAB_ID))
                 .icon(() -> new ItemStack(CoreItems.CIRCUIT_BOARD.get()))
                 .build()
         );
@@ -104,9 +104,8 @@ public class GalacticCore {
      */
     @SubscribeEvent
     public void buildContents(BuildCreativeModeTabContentsEvent event) {
-        DeferredHolder<CreativeModeTab, CreativeModeTab> tabHolder = CoreRegistry.CREATIVE_MODE_TABS.getHolder(CoreRegistry.GALACTIC_TAB_KEY).get();
-        
-        if (event.getTab() == tabHolder.get()) {
+        // Check if this is our tab that's being built
+        if (event.getTabKey() == CoreRegistry.GALACTIC_TAB_KEY) {
             // Add Core items
             event.accept(CoreItems.CIRCUIT_BOARD.get());
             event.accept(CoreItems.ADVANCED_CIRCUIT.get());

@@ -4,40 +4,33 @@ license="All Rights Reserved"
 issueTrackerURL="https://github.com/AstroFrame/GalacticExpansion/issues"
 
 [[mods]]
-modId="galacticmachinery"
+modId="galacticpower"
 version="0.1.0"
-displayName="Galactic Machinery"
+displayName="Galactic Power"
 displayURL="https://github.com/AstroFrame/GalacticExpansion"
 credits="The AstroFrame Team"
 authors="AstroFrame"
 description='''
-Machinery module for the Galactic Expansion mod.
-Adds various industrial machines and automation systems.
+Power module for the Galactic Expansion mod.
+Adds various power generation and storage systems.
 '''
 
-[[dependencies.galacticmachinery]]
+[[dependencies.galacticpower]]
     modId="neoforge"
     type="required"
     versionRange="[21,)"
     ordering="NONE"
     side="BOTH"
 
-[[dependencies.galacticmachinery]]
+[[dependencies.galacticpower]]
     modId="minecraft"
     type="required"
     versionRange="[1.21.1,1.22)"
     ordering="NONE"
     side="BOTH"
     
-[[dependencies.galacticmachinery]]
+[[dependencies.galacticpower]]
     modId="galacticcore"
-    type="required"
-    versionRange="[0.1.0,)"
-    ordering="AFTER"
-    side="BOTH"
-    
-[[dependencies.galacticmachinery]]
-    modId="galacticpower"
     type="required"
     versionRange="[0.1.0,)"
     ordering="AFTER"

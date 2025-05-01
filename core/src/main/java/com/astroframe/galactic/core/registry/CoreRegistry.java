@@ -21,9 +21,12 @@ public class CoreRegistry {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, GalacticCore.MOD_ID);
 
     // Creative Tab
+    public static final String GALACTIC_TAB_ID = "galactic_tab";
+    
+    // Creative tab key
     public static final ResourceKey<CreativeModeTab> GALACTIC_TAB_KEY = ResourceKey.create(
             Registries.CREATIVE_MODE_TAB, 
-            new ResourceLocation(GalacticCore.MOD_ID + ":galactic_tab")
+            new ResourceLocation(GalacticCore.MOD_ID, GALACTIC_TAB_ID)
     );
 
     /**

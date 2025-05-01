@@ -1,128 +1,63 @@
 package com.astroframe.galactic.machinery;
 
-import com.astroframe.galactic.core.api.AbstractModuleIntegration;
-import com.astroframe.galactic.core.registry.Registry;
-import com.astroframe.galactic.core.registry.annotation.RegistryScanner;
-import com.astroframe.galactic.energy.api.EnergyType;
-import com.astroframe.galactic.machinery.api.Machine;
-import com.astroframe.galactic.machinery.api.MachineType;
-import com.astroframe.galactic.machinery.registry.MachineRegistry;
-
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import com.astroframe.galactic.core.registry.CoreRegistry;
+import com.astroframe.galactic.machinery.items.MachineryItems;
+import com.astroframe.galactic.machinery.registry.MachineryRegistry;
+import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * The main class for the Galactic Expansion Machinery module.
- * This provides machinery functionality that builds upon the core and energy modules.
+ * The main class for the Galactic Machinery module.
+ * This module handles all industrial machines and automation.
  */
 @Mod(GalacticMachinery.MOD_ID)
-public class GalacticMachinery extends AbstractModuleIntegration {
+public class GalacticMachinery {
+    
+    /** The mod ID for the machinery module */
+    public static final String MOD_ID = "galacticmachinery";
+    
+    /** Logger instance for the machinery module */
+    public static final Logger LOGGER = LoggerFactory.getLogger("GalacticMachinery");
+    
+    /** Singleton instance of the machinery mod */
+    public static GalacticMachinery INSTANCE;
     
     /**
-     * The mod ID for the machinery module.
+     * Constructs a new instance of the Galactic Machinery mod.
+     * This initializes industrial machines and automation systems.
      */
-    public static final String MOD_ID = "galacticexpansion_machinery";
-    
-    /**
-     * Constructor for the machinery module.
-     * Initializes the mod and sets up event listeners.
-     */
-    public GalacticMachinery() {
-        super(MOD_ID, "Galactic Expansion Machinery");
+    public GalacticMachinery(IEventBus modEventBus) {
+        INSTANCE = this;
         
-        info("Initializing Galactic Expansion Machinery");
+        LOGGER.info("Initializing Galactic Machinery module");
         
-        // Register event listeners
-        NeoForge.EVENT_BUS.addListener(this::commonSetup);
+        // Register ourselves for mod events
+        modEventBus.register(this);
         
-        // Initialize machinery-specific registries
-        initializeRegistries();
+        // Initialize registries
+        MachineryRegistry.register(modEventBus);
         
-        info("Galactic Expansion Machinery initialized");
-    }
-    
-    @Override
-    protected void configureRegistryMappings(RegistryScanner scanner) {
-        // Map machinery types to registries
-        scanner.mapTypeToRegistry(Machine.class, "machine");
-    }
-    
-    /**
-     * Initialize machinery-specific registries.
-     */
-    private void initializeRegistries() {
-        // Create machinery-specific registries
-        getRegistryManager().createRegistry("machine");
-        
-        // Create registries for each machine type
-        for (MachineType type : MachineType.values()) {
-            getRegistryManager().createRegistry("machine_" + type.getId());
-        }
-        
-        // Create tags for machine components
-        for (MachineType type : MachineType.values()) {
-            getTagManager().createTag("machine_type", type.getId());
-        }
-        
-        // Create tags for machine capabilities
-        getTagManager().createTag("machine_capability", "energy_producer");
-        getTagManager().createTag("machine_capability", "energy_consumer");
-        getTagManager().createTag("machine_capability", "item_processor");
-        getTagManager().createTag("machine_capability", "fluid_processor");
+        LOGGER.info("Galactic Machinery module initialized");
     }
     
     /**
-     * Common setup event handler.
-     * This is called during mod initialization.
-     * 
-     * @param event The common setup event
+     * Event handler for populating the creative tab.
      */
-    private void commonSetup(final net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) {
-        info("Running Galactic Expansion Machinery common setup");
-        
-        // Register machinery components using annotation-based registration
-        registerFromClasses(
-            com.astroframe.galactic.machinery.registry.MachineRegistrations.class
-        );
-        
-        // Process machinery tags
-        processTagsFromClasses(
-            com.astroframe.galactic.machinery.registry.MachineRegistrations.class
-        );
-        
-        // Initialize the MachineRegistry singleton
-        com.astroframe.galactic.machinery.registry.MachineRegistrations.initialize();
-        
-        // Log registry statistics
-        logRegistryStatistics();
-        
-        info("Galactic Expansion Machinery common setup complete");
-    }
-    
-    /**
-     * Log statistics about the machinery registries and tags.
-     */
-    private void logRegistryStatistics() {
-        info("Machinery Registry statistics:");
-        
-        Registry<?> machineRegistry = getRegistry("machine").orElse(null);
-        if (machineRegistry != null) {
-            info("  Registry 'machine': {} entries", machineRegistry.size());
+    @SubscribeEvent
+    public void buildContents(BuildCreativeModeTabContentsEvent event) {
+        // Check if this is our tab that's being built
+        if (event.getTabKey() == CoreRegistry.GALACTIC_TAB_KEY) {
+            // Add Machinery items
+            event.accept(MachineryItems.CRUSHER.get());
+            event.accept(MachineryItems.SMELTER.get());
+            event.accept(MachineryItems.EXTRACTOR.get());
+            event.accept(MachineryItems.CENTRIFUGE.get());
+            event.accept(MachineryItems.ASSEMBLER.get());
         }
-        
-        for (MachineType type : MachineType.values()) {
-            String registryName = "machine_" + type.getId();
-            Registry<?> typeRegistry = getRegistry(registryName).orElse(null);
-            
-            if (typeRegistry != null) {
-                info("  Registry '{}': {} entries", registryName, typeRegistry.size());
-            }
-        }
-        
-        info("Machinery Tag statistics:");
-        info("  Machine type tags: {}", getTagManager().getTagIds("machine_type").size());
-        info("  Machine capability tags: {}", getTagManager().getTagIds("machine_capability").size());
     }
 }

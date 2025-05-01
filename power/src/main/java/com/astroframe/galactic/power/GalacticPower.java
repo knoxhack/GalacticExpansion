@@ -53,9 +53,8 @@ public class GalacticPower {
      */
     @SubscribeEvent
     public void buildContents(BuildCreativeModeTabContentsEvent event) {
-        DeferredHolder<CreativeModeTab, CreativeModeTab> tabHolder = CoreRegistry.CREATIVE_MODE_TABS.getHolder(CoreRegistry.GALACTIC_TAB_KEY).get();
-        
-        if (event.getTab() == tabHolder.get()) {
+        // Check if this is our tab that's being built
+        if (event.getTabKey() == CoreRegistry.GALACTIC_TAB_KEY) {
             // Add Power items
             event.accept(PowerItems.BASIC_GENERATOR.get());
             event.accept(PowerItems.ADVANCED_GENERATOR.get());
