@@ -39,24 +39,11 @@ public abstract class SpaceSuitItem extends ArmorItem {
      * @param tier The tier/level of the space suit (1-3)
      */
     public SpaceSuitItem(EquipmentSlot slot, int tier) {
-        super(MATERIAL, typeForSlot(slot), new Properties().stacksTo(1).fireResistant().durability(800));
+        super(MATERIAL, slot, new Properties().stacksTo(1).fireResistant().durability(800));
         this.tier = Math.max(1, Math.min(3, tier)); // Clamp between 1-3
         
         // Register event handler for environmental damage protection
         NeoForge.EVENT_BUS.addListener(this::onLivingDamage);
-    }
-    
-    /**
-     * Converts an EquipmentSlot to the corresponding ArmorItem.Type
-     */
-    private static ArmorItem.Type typeForSlot(EquipmentSlot slot) {
-        return switch(slot) {
-            case HEAD -> ArmorItem.Type.HELMET;
-            case CHEST -> ArmorItem.Type.CHESTPLATE;
-            case LEGS -> ArmorItem.Type.LEGGINGS;
-            case FEET -> ArmorItem.Type.BOOTS;
-            default -> throw new IllegalArgumentException("Invalid armor slot: " + slot);
-        };
     }
     
     /**
@@ -264,13 +251,13 @@ public abstract class SpaceSuitItem extends ArmorItem {
         private static final int[] PROTECTION_PER_SLOT = new int[] {3, 6, 5, 3};
         
         @Override
-        public int getDurabilityForType(ArmorItem.Type armorType) {
-            return DURABILITY_PER_SLOT[armorType.getSlot().getFilterFlag()];
+        public int getDurabilityForSlot(EquipmentSlot slot) {
+            return DURABILITY_PER_SLOT[slot.getIndex()];
         }
         
         @Override
-        public int getDefenseForType(ArmorItem.Type armorType) {
-            return PROTECTION_PER_SLOT[armorType.getSlot().getFilterFlag()];
+        public int getDefenseForSlot(EquipmentSlot slot) {
+            return PROTECTION_PER_SLOT[slot.getIndex()];
         }
         
         @Override

@@ -5,6 +5,7 @@ import com.astroframe.galactic.core.api.space.IRocket;
 import com.astroframe.galactic.core.api.space.ModularRocket;
 import com.astroframe.galactic.core.api.space.component.IRocketEngine;
 import com.astroframe.galactic.space.GalacticSpace;
+import com.astroframe.galactic.space.implementation.SpaceBodies;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,6 +27,78 @@ public class RocketLaunchController {
     private static final int COUNTDOWN_TIME = 100; // 5 seconds (20 ticks per second)
     private static final int LAUNCH_TIME = 60;     // 3 seconds
     private static final int TRAVEL_TIME = 200;    // 10 seconds
+    
+    private final ServerPlayer player;
+    private final IRocket rocket;
+    private final ICelestialBody destination;
+    
+    /**
+     * Creates a new rocket launch controller for immediate use.
+     *
+     * @param player The player
+     * @param rocket The rocket
+     */
+    public RocketLaunchController(ServerPlayer player, IRocket rocket) {
+        this.player = player;
+        this.rocket = rocket;
+        this.destination = SpaceBodies.SPACE_STATION; // Default destination
+    }
+    
+    /**
+     * Checks if the rocket can be launched.
+     *
+     * @return true if the rocket can be launched
+     */
+    public boolean canLaunch() {
+        // Check if player is already in a launch
+        if (playerLaunchStates.containsKey(player.getUUID())) {
+            return false;
+        }
+        
+        // Check if the rocket can reach the destination
+        if (rocket instanceof ModularRocket) {
+            if (!canReachDestination((ModularRocket)rocket, destination)) {
+                return false;
+            }
+        }
+        
+        // For now, other checks are simplified
+        return true;
+    }
+    
+    /**
+     * Gets the reason why the rocket cannot be launched.
+     *
+     * @return The reason
+     */
+    public Component getCannotLaunchReason() {
+        if (playerLaunchStates.containsKey(player.getUUID())) {
+            return Component.translatable("message.galactic-space.already_launching")
+                   .withStyle(ChatFormatting.RED);
+        }
+        
+        if (rocket instanceof ModularRocket) {
+            if (!canReachDestination((ModularRocket)rocket, destination)) {
+                return Component.translatable("message.galactic-space.rocket_insufficient")
+                       .withStyle(ChatFormatting.RED);
+            }
+        }
+        
+        return Component.translatable("message.galactic-space.unknown_error")
+                .withStyle(ChatFormatting.RED);
+    }
+    
+    /**
+     * Starts the launch sequence.
+     *
+     * @return true if the launch sequence was started
+     */
+    public boolean startLaunchSequence() {
+        if (rocket instanceof ModularRocket) {
+            return startLaunch(player, (ModularRocket)rocket, destination);
+        }
+        return false;
+    }
     
     /**
      * Initiates a launch sequence for a player.
