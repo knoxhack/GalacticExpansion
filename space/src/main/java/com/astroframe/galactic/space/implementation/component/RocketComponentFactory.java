@@ -1293,12 +1293,21 @@ public class RocketComponentFactory {
         private int currentDurability;
         private final int maxCrewCapacity;
         private final int oxygenGeneration;
-        private final int waterRecycling;
-        private final int temperatureRegulation;
+        private final float waterRecycling;
+        private final int foodProduction;
+        private final float wasteManagement;
+        private final float atmosphericQuality;
+        private final boolean hasBackupSystems;
+        private final boolean hasRadiationFiltering;
+        private final boolean hasEmergencyMode;
+        private boolean emergencyModeActive = false;
         
         public LifeSupport(ResourceLocation id, String name, String description, 
                           int tier, int mass, int maxDurability, int maxCrewCapacity,
-                          int oxygenGeneration, int waterRecycling, int temperatureRegulation) {
+                          int oxygenGeneration, float waterRecycling, int foodProduction,
+                          float wasteManagement, float atmosphericQuality,
+                          boolean hasBackupSystems, boolean hasRadiationFiltering,
+                          boolean hasEmergencyMode) {
             this.id = id;
             this.name = name;
             this.description = description;
@@ -1309,7 +1318,12 @@ public class RocketComponentFactory {
             this.maxCrewCapacity = maxCrewCapacity;
             this.oxygenGeneration = oxygenGeneration;
             this.waterRecycling = waterRecycling;
-            this.temperatureRegulation = temperatureRegulation;
+            this.foodProduction = foodProduction;
+            this.wasteManagement = wasteManagement;
+            this.atmosphericQuality = atmosphericQuality;
+            this.hasBackupSystems = hasBackupSystems;
+            this.hasRadiationFiltering = hasRadiationFiltering;
+            this.hasEmergencyMode = hasEmergencyMode;
         }
         
         @Override
@@ -1373,13 +1387,48 @@ public class RocketComponentFactory {
         }
         
         @Override
-        public int getWaterRecyclingEfficiency() {
+        public float getWaterRecyclingEfficiency() {
             return waterRecycling;
         }
         
         @Override
-        public int getTemperatureRegulation() {
-            return temperatureRegulation;
+        public int getFoodProductionRate() {
+            return foodProduction;
+        }
+        
+        @Override
+        public float getWasteManagementEfficiency() {
+            return wasteManagement;
+        }
+        
+        @Override
+        public float getAtmosphericQuality() {
+            return atmosphericQuality;
+        }
+        
+        @Override
+        public boolean hasBackupSystems() {
+            return hasBackupSystems;
+        }
+        
+        @Override
+        public boolean hasRadiationFiltering() {
+            return hasRadiationFiltering;
+        }
+        
+        @Override
+        public boolean hasEmergencyMode() {
+            return hasEmergencyMode;
+        }
+        
+        @Override
+        public void setEmergencyMode(boolean active) {
+            this.emergencyModeActive = active && hasEmergencyMode;
+        }
+        
+        @Override
+        public boolean isEmergencyModeActive() {
+            return emergencyModeActive;
         }
     }
 }
