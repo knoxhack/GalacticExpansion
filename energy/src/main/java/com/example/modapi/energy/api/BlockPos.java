@@ -70,8 +70,21 @@ public class BlockPos {
      * @param mcPos The Minecraft BlockPos
      * @return The new BlockPos
      */
-    public static BlockPos fromMinecraftBlockPos(net.minecraft.core.BlockPos mcPos) {
-        return new BlockPos(mcPos.getX(), mcPos.getY(), mcPos.getZ());
+    public static BlockPos fromMinecraftBlockPos(Object mcPos) {
+        try {
+            Class<?> blockPosClass = Class.forName("net.minecraft.core.BlockPos");
+            java.lang.reflect.Method getXMethod = blockPosClass.getMethod("getX");
+            java.lang.reflect.Method getYMethod = blockPosClass.getMethod("getY");
+            java.lang.reflect.Method getZMethod = blockPosClass.getMethod("getZ");
+            
+            int x = (int) getXMethod.invoke(mcPos);
+            int y = (int) getYMethod.invoke(mcPos);
+            int z = (int) getZMethod.invoke(mcPos);
+            
+            return new BlockPos(x, y, z);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to extract coordinates from Minecraft BlockPos", e);
+        }
     }
     
     /**
@@ -79,8 +92,15 @@ public class BlockPos {
      * 
      * @return The Minecraft BlockPos
      */
-    public net.minecraft.core.BlockPos toMinecraftBlockPos() {
-        return new net.minecraft.core.BlockPos(x, y, z);
+    public Object toMinecraftBlockPos() {
+        // Due to class loading issues, we use reflection here
+        try {
+            Class<?> blockPosClass = Class.forName("net.minecraft.core.BlockPos");
+            return blockPosClass.getConstructor(int.class, int.class, int.class)
+                .newInstance(x, y, z);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create Minecraft BlockPos", e);
+        }
     }
     
     @Override
