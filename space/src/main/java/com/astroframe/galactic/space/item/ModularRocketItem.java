@@ -11,6 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -68,11 +69,11 @@ public class ModularRocketItem extends Item {
     }
     
     // Handles right-click usage of the rocket
-    public net.minecraft.world.item.InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         
         if (level.isClientSide()) {
-            return net.minecraft.world.item.InteractionResultHolder.success(stack);
+            return InteractionResultHolder.success(stack);
         }
         
         IRocket rocket = getRocketFromStack(stack);
@@ -83,16 +84,16 @@ public class ModularRocketItem extends Item {
             if (launchController.canLaunch()) {
                 GalacticSpace.LOGGER.info("Player {} starting rocket launch sequence", player.getName().getString());
                 launchController.startLaunchSequence();
-                return net.minecraft.world.item.InteractionResultHolder.consume(stack);
+                return InteractionResultHolder.consume(stack);
             } else {
                 // Report why launch failed
                 Component reason = launchController.getCannotLaunchReason();
                 serverPlayer.displayClientMessage(reason, false);
-                return net.minecraft.world.item.InteractionResultHolder.fail(stack);
+                return InteractionResultHolder.fail(stack);
             }
         }
         
-        return net.minecraft.world.item.InteractionResultHolder.pass(stack);
+        return InteractionResultHolder.pass(stack);
     }
     
     /**

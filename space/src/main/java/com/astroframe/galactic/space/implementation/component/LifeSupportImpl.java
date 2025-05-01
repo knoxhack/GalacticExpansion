@@ -142,6 +142,11 @@ public class LifeSupportImpl implements ILifeSupport {
         return false; // Default implementation always returns false until we implement durability
     }
     
+    // Implementation for IRocketComponent.repair
+    public void repair(int amount) {
+        // No-op until we implement durability
+    }
+    
     // Placeholder implementations for missing ILifeSupport methods
     public int getOxygenGenerationRate() {
         return (int)(oxygenEfficiency * 100);

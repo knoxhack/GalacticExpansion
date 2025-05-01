@@ -112,6 +112,21 @@ public class BasePassengerCompartment implements IPassengerCompartment {
         return compartmentType;
     }
     
+    // Implementation of IPassengerCompartment method
+    public boolean hasRadiationShielding() {
+        return tier >= 2; // Tier 2 and above have radiation shielding
+    }
+    
+    // Implementation for IRocketComponent method
+    public boolean isBroken() {
+        return false; // Default implementation always returns false until we implement durability
+    }
+    
+    // Implementation for IRocketComponent method
+    public void repair(int amount) {
+        // No-op until we implement durability
+    }
+    
     /**
      * Builder for BasePassengerCompartment.
      */

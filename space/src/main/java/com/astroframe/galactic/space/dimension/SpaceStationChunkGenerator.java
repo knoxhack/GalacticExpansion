@@ -57,7 +57,18 @@ public class SpaceStationChunkGenerator extends ChunkGenerator {
         // No carvers needed in space station
     }
 
+    // Implementation for pre-NeoForge 1.21.5
     public void buildSurface(WorldGenLevel level, StructureManager structureManager, RandomState randomState, ChunkAccess chunkAccess) {
+        buildSpaceStationSurface(chunkAccess);
+    }
+    
+    // Implementation for NeoForge 1.21.5 abstract method
+    public void buildSurface(WorldGenRegion region, StructureManager structureManager, RandomState randomState, ChunkAccess chunkAccess) {
+        buildSpaceStationSurface(chunkAccess);
+    }
+    
+    // Common implementation for both methods
+    private void buildSpaceStationSurface(ChunkAccess chunkAccess) {
         ChunkPos chunkPos = chunkAccess.getPos();
         
         // Only generate the platform in the origin chunk
@@ -68,11 +79,6 @@ public class SpaceStationChunkGenerator extends ChunkGenerator {
     }
 
     // Implementation for NeoForge 1.21.5
-    public void spawnOriginalMobs(WorldGenLevel level) {
-        // No natural mob spawning in space station
-    }
-    
-    // Implementation for NeoForge 1.21.5 abstract method
     public void spawnOriginalMobs(WorldGenRegion region) {
         // No natural mob spawning in space station
     }
