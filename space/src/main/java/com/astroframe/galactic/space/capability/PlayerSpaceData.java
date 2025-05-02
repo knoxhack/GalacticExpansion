@@ -133,7 +133,8 @@ public class PlayerSpaceData {
             for (int i = 0; i < bodiesTag.size(); i++) {
                 // Use getString method with orElse for Optional
                 String idString = "";
-                if (bodiesTag.getString(i) != null) {
+                // Direct access without using Optional
+                {
                     // Direct access to string content in NeoForge 1.21.5
                     if (bodiesTag.get(i) instanceof StringTag) {
                         idString = TagHelper.getStringValue(bodiesTag.get(i));
