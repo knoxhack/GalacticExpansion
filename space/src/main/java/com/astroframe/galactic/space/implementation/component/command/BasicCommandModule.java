@@ -265,8 +265,7 @@ public class BasicCommandModule implements ICommandModule {
     
     @Override
     public void load(CompoundTag tag) {
-        // In NeoForge 1.21.5, we need to call parent methods through default interfaces
-        super.setPosition(getPosition()); // Update position from parent
+        // No need to call super.setPosition since ICommandModule doesn't have a parent with setPosition
         
         // Load common properties manually
         if (tag.contains("PosX") && tag.contains("PosY") && tag.contains("PosZ")) {

@@ -1342,7 +1342,7 @@ public class RocketComponentFactory {
             // Add more compatible fuels based on engine type
             if (engineType == EngineType.HYBRID) {
                 compatibleFuels.add(FuelType.HYDROGEN);
-                compatibleFuels.add(FuelType.KEROSENE);
+                compatibleFuels.add(FuelType.CHEMICAL);
             }
             return compatibleFuels;
         }
@@ -1717,7 +1717,7 @@ public class RocketComponentFactory {
             float baseWeight = stack.getCount();
             
             // Items with NBT data might be more complex/heavier
-            if (stack.hasData()) {
+            if (stack.hasTag()) {
                 baseWeight += 1; // Add a bit more weight for items with tags
             }
             

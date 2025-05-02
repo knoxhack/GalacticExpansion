@@ -148,15 +148,9 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         float[] pos2 = applyMatrix(pose, x2, y2, z2);
         
         // Use the correct vertex method format for Minecraft 1.21.5
-        consumer.vertex(pos1[0], pos1[1], pos1[2])
-                .color(red, green, blue, alpha)
-                .normal(1, 0, 0)
-                .endVertex();
+        consumer.vertex(pos1[0], pos1[1], pos1[2], red, green, blue, alpha, 0, 0, 0, 0, 1, 0, 0);
                 
-        consumer.vertex(pos2[0], pos2[1], pos2[2])
-                .color(red, green, blue, alpha)
-                .normal(1, 0, 0)
-                .endVertex();
+        consumer.vertex(pos2[0], pos2[1], pos2[2], red, green, blue, alpha, 0, 0, 0, 0, 1, 0, 0);
     }
     
     /**
