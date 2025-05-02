@@ -101,22 +101,26 @@ done
 # Create GitHub release using GitHub API
 echo "Creating GitHub release with tag: $RELEASE_TAG"
 
-# Prepare JSON data for creating release
-RELEASE_DATA=$(cat <<EOF
-{
-  "tag_name": "$RELEASE_TAG",
-  "name": "$RELEASE_TITLE",
-  "body": "$CHANGELOG",
-  "draft": false,
-  "prerelease": true
-}
-EOF
-)
+# Properly escape the changelog for JSON
+CHANGELOG_ESCAPED=$(echo "$CHANGELOG" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/\n/\\n/g')
+
+# Create properly formatted JSON data
+RELEASE_JSON="{
+  \"tag_name\": \"$RELEASE_TAG\",
+  \"name\": \"$RELEASE_TITLE\",
+  \"body\": \"$CHANGELOG_ESCAPED\",
+  \"draft\": false,
+  \"prerelease\": true
+}"
+
+echo "Sending JSON data to GitHub API..."
+echo "$RELEASE_JSON" > release_payload.json
 
 # Create the release
 RESPONSE=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
      -H "Accept: application/vnd.github.v3+json" \
-     -d "$RELEASE_DATA" \
+     -H "Content-Type: application/json" \
+     -d "@release_payload.json" \
      "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases")
 
 # Extract release ID from response
@@ -145,8 +149,9 @@ for file in $RELEASE_DIR/*; do
   echo ""
 done
 
-# Clean up temporary directory
+# Clean up temporary directory and files
 rm -rf $RELEASE_DIR
+rm -f release_payload.json
 
 echo "Release created successfully!"
 echo "View your release at: https://github.com/$REPO_OWNER/$REPO_NAME/releases/tag/$RELEASE_TAG"
