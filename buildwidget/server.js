@@ -18,7 +18,9 @@ const {
   getChangelogHistory,
   getModuleDependencies,
   formatChangelogMarkdown,
-  handleCheckpoint
+  handleCheckpoint,
+  saveVersionHistory,
+  saveChangelogHistory
 } = require('./build-and-release');
 
 // Initialize express app

@@ -86,16 +86,31 @@ fi
 
 # Find JAR files to include in the release
 echo "Finding JAR files to include in release..."
-JAR_FILES=$(find . -name "*.jar" -not -path "*/build/tmp/*" -not -path "*/cache/*" -not -path "*/node_modules/*")
+JAR_FILES=$(find . -name "*.jar" -not -path "*/build/tmp/*" -not -path "*/cache/*" -not -path "*/node_modules/*" -not -path "*/.release_tmp/*")
 
-# Create temporary directory for release files
-RELEASE_DIR=".release_tmp"
-mkdir -p $RELEASE_DIR
+# Create temporary directory for release files with absolute path to avoid any path issues
+RELEASE_DIR="$(pwd)/.release_tmp"
+echo "Creating release directory at: $RELEASE_DIR"
+rm -rf "$RELEASE_DIR"  # Clean up any existing directory first
+mkdir -p "$RELEASE_DIR"
 
 # Copy JAR files to release directory
 for jar in $JAR_FILES; do
-  echo "Adding $jar to release..."
-  cp "$jar" "$RELEASE_DIR/"
+  # Get the basename of the jar file
+  jar_name=$(basename "$jar")
+  
+  # Create a unique destination filename to avoid collisions
+  module_name=$(echo "$jar" | sed -E 's/.*\/([^\/]+)\/build\/libs\/.*\.jar/\1/' | tr -cd '[:alnum:]')
+  if [ -z "$module_name" ] || [ "$module_name" = "$jar" ]; then
+    # If we can't extract a module name, use a simple counter
+    module_name="jar_$(date +%s)_$RANDOM"
+  fi
+  
+  # Create unique destination path
+  dest_file="$RELEASE_DIR/${module_name}_${jar_name}"
+  
+  echo "Adding $jar as ${module_name}_${jar_name}..."
+  cp "$jar" "$dest_file"
 done
 
 # Create GitHub release using GitHub API
