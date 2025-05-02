@@ -173,15 +173,22 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             float alpha = HOLOGRAM_ALPHA;
             float fadedAlpha = 0.3f * HOLOGRAM_ALPHA;
             
-            // Line from center to edge - in 1.21.5, we need to convert ints to floats
-            builder.vertex(pose.m00, pose.m01, pose.m02, pose.m03, 
-                    0.0f, 0.0f, 0.0f, 1.0f, 
+            // Line from center to edge - NeoForge 1.21.5 compatible method
+            Vector4f pos1 = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+            pos1.mul(pose);
+            builder.vertex(pos1.x, pos1.y, pos1.z, 
                     red, green, blue, alpha, 
-                    0, 1, 0, 1);
-            builder.vertex(pose.m00, pose.m01, pose.m02, pose.m03, 
-                    x1, 0.0f, z1, 1.0f, 
+                    0.0f, 1.0f, 
+                    0, 0, 1, 
+                    0);
+                    
+            Vector4f pos2 = new Vector4f(x1, 0.0f, z1, 1.0f);
+            pos2.mul(pose);
+            builder.vertex(pos2.x, pos2.y, pos2.z, 
                     red, green, blue, fadedAlpha, 
-                    0, 1, 0, 1);
+                    0.0f, 1.0f, 
+                    0, 0, 1, 
+                    0);
         }
     }
     
@@ -205,15 +212,22 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         float blue = HOLOGRAM_BLUE;
         float alpha = HOLOGRAM_ALPHA;
         
-        // Draw the line using the direct matrix method for NeoForge 1.21.5
-        builder.vertex(pose.m00, pose.m01, pose.m02, pose.m03, 
-                x1, y1, z1, 1.0f, 
+        // Draw the line using Vector4f transformation for NeoForge 1.21.5
+        Vector4f pos1 = new Vector4f(x1, y1, z1, 1.0f);
+        pos1.mul(pose);
+        builder.vertex(pos1.x, pos1.y, pos1.z, 
                 red, green, blue, alpha, 
-                0, 1, 0, 1);
-        builder.vertex(pose.m00, pose.m01, pose.m02, pose.m03, 
-                x2, y2, z2, 1.0f, 
+                0.0f, 1.0f, 
+                0, 0, 1, 
+                0);
+                
+        Vector4f pos2 = new Vector4f(x2, y2, z2, 1.0f);
+        pos2.mul(pose);
+        builder.vertex(pos2.x, pos2.y, pos2.z, 
                 red, green, blue, alpha, 
-                0, 1, 0, 1);
+                0.0f, 1.0f, 
+                0, 0, 1, 
+                0);
     }
     
     /**
@@ -319,15 +333,22 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         float green = HOLOGRAM_GREEN;
         float blue = HOLOGRAM_BLUE;
         
-        // Draw the line using the direct matrix method for NeoForge 1.21.5
-        builder.vertex(pose.m00, pose.m01, pose.m02, pose.m03, 
-                x1, y1, z1, 1.0f, 
+        // Draw the line using Vector4f transformation for NeoForge 1.21.5
+        Vector4f pos1 = new Vector4f(x1, y1, z1, 1.0f);
+        pos1.mul(pose);
+        builder.vertex(pos1.x, pos1.y, pos1.z, 
                 red, green, blue, alphaValue, 
-                0, 1, 0, 1);
-        builder.vertex(pose.m00, pose.m01, pose.m02, pose.m03, 
-                x2, y2, z2, 1.0f, 
+                0.0f, 1.0f, 
+                0, 0, 1, 
+                0);
+                
+        Vector4f pos2 = new Vector4f(x2, y2, z2, 1.0f);
+        pos2.mul(pose);
+        builder.vertex(pos2.x, pos2.y, pos2.z, 
                 red, green, blue, alphaValue, 
-                0, 1, 0, 1);
+                0.0f, 1.0f, 
+                0, 0, 1, 
+                0);
     }
     
     /**
