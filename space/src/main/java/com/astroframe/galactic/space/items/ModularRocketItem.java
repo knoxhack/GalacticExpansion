@@ -11,6 +11,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -213,14 +214,13 @@ public class ModularRocketItem extends Item {
         
         // Get highest engine tier
         int highestEngineTier = 0;
-        // Get engine list safely from Optional
+        // Get engine list without using ifPresent
         ListTag enginesList = new ListTag();
         if (tag.contains("engines")) {
-            tag.get("engines").ifPresent(engineTag -> {
-                if (engineTag instanceof ListTag listTag) {
-                    enginesList.addAll(listTag);
-                }
-            });
+            Tag engineTag = tag.get("engines");
+            if (engineTag != null && engineTag instanceof ListTag listTag) {
+                enginesList.addAll(listTag);
+            }
         }
         
         for (int i = 0; i < enginesList.size(); i++) {
@@ -261,14 +261,13 @@ public class ModularRocketItem extends Item {
             return null;
         }
         
-        // Add engines - safely get from Optional
+        // Add engines - get tag without using ifPresent
         ListTag enginesList = new ListTag();
         if (tag.contains("engines")) {
-            tag.get("engines").ifPresent(engineTag -> {
-                if (engineTag instanceof ListTag listTag) {
-                    enginesList.addAll(listTag);
-                }
-            });
+            Tag engineTag = tag.get("engines");
+            if (engineTag != null && engineTag instanceof ListTag listTag) {
+                enginesList.addAll(listTag);
+            }
         }
         
         for (int i = 0; i < enginesList.size(); i++) {
@@ -282,14 +281,13 @@ public class ModularRocketItem extends Item {
             }
         }
         
-        // Add fuel tanks - safely get from Optional
+        // Add fuel tanks - get tag without using ifPresent
         ListTag fuelTanksList = new ListTag();
         if (tag.contains("fuelTanks")) {
-            tag.get("fuelTanks").ifPresent(fuelTag -> {
-                if (fuelTag instanceof ListTag listTag) {
-                    fuelTanksList.addAll(listTag);
-                }
-            });
+            Tag fuelTag = tag.get("fuelTanks");
+            if (fuelTag != null && fuelTag instanceof ListTag listTag) {
+                fuelTanksList.addAll(listTag);
+            }
         }
         
         for (int i = 0; i < fuelTanksList.size(); i++) {
@@ -303,14 +301,13 @@ public class ModularRocketItem extends Item {
             }
         }
         
-        // Add cargo bays - safely get from Optional
+        // Add cargo bays - get tag without using ifPresent
         ListTag cargoBaysList = new ListTag();
         if (tag.contains("cargoBays")) {
-            tag.get("cargoBays").ifPresent(cargoTag -> {
-                if (cargoTag instanceof ListTag listTag) {
-                    cargoBaysList.addAll(listTag);
-                }
-            });
+            Tag cargoTag = tag.get("cargoBays");
+            if (cargoTag != null && cargoTag instanceof ListTag listTag) {
+                cargoBaysList.addAll(listTag);
+            }
         }
         
         for (int i = 0; i < cargoBaysList.size(); i++) {
@@ -324,14 +321,13 @@ public class ModularRocketItem extends Item {
             }
         }
         
-        // Add passenger compartments - safely get from Optional
+        // Add passenger compartments - get tag without using ifPresent
         ListTag passengerCompartmentsList = new ListTag();
         if (tag.contains("passengerCompartments")) {
-            tag.get("passengerCompartments").ifPresent(passengersTag -> {
-                if (passengersTag instanceof ListTag listTag) {
-                    passengerCompartmentsList.addAll(listTag);
-                }
-            });
+            Tag passengersTag = tag.get("passengerCompartments");
+            if (passengersTag != null && passengersTag instanceof ListTag listTag) {
+                passengerCompartmentsList.addAll(listTag);
+            }
         }
         
         for (int i = 0; i < passengerCompartmentsList.size(); i++) {
@@ -345,14 +341,13 @@ public class ModularRocketItem extends Item {
             }
         }
         
-        // Add shields - safely get from Optional
+        // Add shields - get tag without using ifPresent
         ListTag shieldsList = new ListTag();
         if (tag.contains("shields")) {
-            tag.get("shields").ifPresent(shieldsTag -> {
-                if (shieldsTag instanceof ListTag listTag) {
-                    shieldsList.addAll(listTag);
-                }
-            });
+            Tag shieldsTag = tag.get("shields");
+            if (shieldsTag != null && shieldsTag instanceof ListTag listTag) {
+                shieldsList.addAll(listTag);
+            }
         }
         
         for (int i = 0; i < shieldsList.size(); i++) {
