@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import com.astroframe.galactic.core.TagHelper;
+import net.minecraft.nbt.CompoundTag.Provider;
 
 import java.util.*;
 
@@ -369,9 +370,11 @@ public class RocketAssemblyTable extends BlockEntity {
         return false;
     }
     
-    // Override the BlockEntity's load method to handle NeoForge 1.21.5 changes
-    // In NeoForge 1.21.5, we no longer have load() but we'll handle this differently
-    public void handleLoad(CompoundTag tag) {
+    // Load method for NeoForge 1.21.5
+    @Override
+    public void load(CompoundTag tag, Provider provider) {
+        super.load(tag, provider);
+        
         // Load components
         components.clear();
         if (tag.contains("Components")) {
@@ -431,8 +434,8 @@ public class RocketAssemblyTable extends BlockEntity {
     
     // Override to handle saving in NeoForge 1.21.5
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, Provider provider) {
+        super.saveAdditional(tag, provider);
         
         // Save components
         CompoundTag componentsTag = new CompoundTag();
