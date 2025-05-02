@@ -1,5 +1,6 @@
 package com.astroframe.galactic.space;
 
+import com.astroframe.galactic.space.implementation.component.test.RocketComponentTester;
 import com.astroframe.galactic.space.implementation.hologram.HolographicProjectorBlock;
 import com.astroframe.galactic.space.implementation.hologram.HolographicProjectorBlockEntity;
 import com.astroframe.galactic.space.implementation.assembly.menu.RocketAssemblyMenu;
@@ -18,10 +19,13 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.function.Supplier;
 import java.util.Set;
 
@@ -32,6 +36,7 @@ import java.util.Set;
 @Mod("galactic_space")
 public class SpaceModule {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpaceModule.class);
     public static final String MODID = "galactic_space";
     
     // Registry for blocks
@@ -104,6 +109,32 @@ public class SpaceModule {
         // Register event handlers
         eventBus.addListener(this::registerRenderers);
         eventBus.addListener(this::addItemsToTabs);
+        eventBus.addListener(this::onCommonSetup);
+    }
+    
+    /**
+     * Handles common setup tasks when the mod is initialized.
+     * This is a good place to run tests and perform other initialization.
+     *
+     * @param event The common setup event
+     */
+    private void onCommonSetup(FMLCommonSetupEvent event) {
+        LOGGER.info("Space Module initializing...");
+        
+        // Run tests for the component system
+        LOGGER.info("Testing rocket component system...");
+        event.enqueueWork(() -> {
+            try {
+                boolean success = RocketComponentTester.runTests();
+                if (success) {
+                    LOGGER.info("Rocket component tests completed successfully!");
+                } else {
+                    LOGGER.error("Rocket component tests failed. Check logs for details.");
+                }
+            } catch (Exception e) {
+                LOGGER.error("Exception during rocket component tests", e);
+            }
+        });
     }
     
     /**
