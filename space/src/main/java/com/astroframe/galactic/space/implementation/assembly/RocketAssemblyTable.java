@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import com.astroframe.galactic.core.TagHelper;
 
 import java.util.*;
 
@@ -369,20 +370,18 @@ public class RocketAssemblyTable extends BlockEntity {
     }
     
     // Override the BlockEntity's load method to handle NeoForge 1.21.5 changes
-    @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
-        
+    // In NeoForge 1.21.5, we no longer have load() but we'll handle this differently
+    public void handleLoad(CompoundTag tag) {
         // Load components
         components.clear();
         if (tag.contains("Components")) {
-            CompoundTag componentsTag = tag.getCompound("Components").orElse(new CompoundTag());
-            int count = componentsTag.getInt("Count").orElse(0);
+            CompoundTag componentsTag = TagHelper.getCompound(tag, "Components");
+            int count = TagHelper.getInt(componentsTag, "Count", 0);
             
             for (int i = 0; i < count; i++) {
-                CompoundTag componentTag = componentsTag.getCompound("Component" + i).orElse(new CompoundTag());
-                String componentTypeString = componentTag.getString("Type").orElse("");
-                String idStr = componentTag.getString("ID").orElse("");
+                CompoundTag componentTag = TagHelper.getCompound(componentsTag, "Component" + i);
+                String componentTypeString = TagHelper.getString(componentTag, "Type", "");
+                String idStr = TagHelper.getString(componentTag, "ID", "");
                 
                 if (!componentTypeString.isEmpty() && !idStr.isEmpty()) {
                     ResourceLocation id = ResourceLocation.parse(idStr);
@@ -398,8 +397,8 @@ public class RocketAssemblyTable extends BlockEntity {
         
         // Load assembled rocket
         if (tag.contains("AssembledRocket")) {
-            CompoundTag rocketTag = tag.getCompound("AssembledRocket").orElse(new CompoundTag());
-            String idStr = rocketTag.getString("ID").orElse("");
+            CompoundTag rocketTag = TagHelper.getCompound(tag, "AssembledRocket");
+            String idStr = TagHelper.getString(rocketTag, "ID", "");
             
             if (!idStr.isEmpty()) {
                 ResourceLocation id = ResourceLocation.parse(idStr);
@@ -430,6 +429,7 @@ public class RocketAssemblyTable extends BlockEntity {
         }
     }
     
+    // Override to handle saving in NeoForge 1.21.5
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
