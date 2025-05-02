@@ -1346,11 +1346,11 @@ public class RocketComponentFactory {
         private int currentFuelLevel;
         private final float leakResistance;
         private final float explosionResistance;
-        private final IRocketEngine.FuelType fuelType;
+        private final FuelType fuelType;
         
         public FuelTank(ResourceLocation id, String name, String description, 
                        int tier, int mass, int maxDurability, int maxFuelCapacity, 
-                       IRocketEngine.FuelType fuelType, float leakResistance,
+                       FuelType fuelType, float leakResistance,
                        float explosionResistance) {
             this.id = id;
             this.name = name;
@@ -1447,7 +1447,7 @@ public class RocketComponentFactory {
         }
         
         @Override
-        public IRocketEngine.FuelType getFuelType() {
+        public FuelType getFuelType() {
             return fuelType;
         }
         
