@@ -281,7 +281,7 @@ public class BaseRocketEngine implements IRocketEngine {
          * @param canOperate True if the engine can operate in atmosphere
          * @return This builder
          */
-        public Builder operatesInAtmosphere(boolean canOperate) {
+        public Builder canOperateInAtmosphere(boolean canOperate) {
             this.canOperateInAtmosphere = canOperate;
             return this;
         }
@@ -291,7 +291,7 @@ public class BaseRocketEngine implements IRocketEngine {
          * @param canOperate True if the engine can operate in space
          * @return This builder
          */
-        public Builder operatesInSpace(boolean canOperate) {
+        public Builder canOperateInSpace(boolean canOperate) {
             this.canOperateInSpace = canOperate;
             return this;
         }

@@ -1,200 +1,263 @@
 package com.astroframe.galactic.space.implementation.component;
 
+import com.astroframe.galactic.core.api.common.ItemStack;
 import com.astroframe.galactic.core.api.space.component.ICargoBay;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Base implementation of the ICargoBay interface.
+ * Implementation of the ICargoBay interface.
+ * Handles storage of items in a rocket with additional features like vacuum sealing.
  */
 public class BaseCargoBay implements ICargoBay {
     
     private final ResourceLocation id;
-    private final Component displayName;
+    private final String name;
+    private final String description;
     private final int tier;
     private final int mass;
-    private final float maxHealth;
+    private final int maxDurability;
+    private int currentDurability;
     private final int storageCapacity;
-    private final boolean isClimateControlled;
-    private final boolean isRadiationShielded;
-    private final boolean isEMPShielded;
-    
-    // Mock inventory implementation, would be filled in later
-    private final java.util.Map<Integer, com.astroframe.galactic.core.api.common.ItemStack> contents = new java.util.HashMap<>();
+    private final Map<Integer, ItemStack> contents;
+    private final boolean hasVacuumSeal;
+    private final boolean hasTemperatureRegulation;
+    private final boolean hasRadiationShielding;
+    private final boolean hasEmpShielding;
     
     private BaseCargoBay(Builder builder) {
         this.id = builder.id;
-        this.displayName = builder.displayName;
+        this.name = builder.name;
+        this.description = builder.description;
         this.tier = builder.tier;
         this.mass = builder.mass;
-        this.maxHealth = builder.maxHealth;
+        this.maxDurability = builder.maxDurability;
+        this.currentDurability = this.maxDurability;
         this.storageCapacity = builder.storageCapacity;
-        this.isClimateControlled = builder.isClimateControlled;
-        this.isRadiationShielded = builder.isRadiationShielded;
-        this.isEMPShielded = builder.isEMPShielded;
+        this.contents = new HashMap<>();
+        this.hasVacuumSeal = builder.hasVacuumSeal;
+        this.hasTemperatureRegulation = builder.hasTemperatureRegulation;
+        this.hasRadiationShielding = builder.hasRadiationShielding;
+        this.hasEmpShielding = builder.hasEmpShielding;
     }
     
-    // Implementation of IRocketComponent method
+    @Override
     public ResourceLocation getId() {
         return id;
     }
     
-    // Implementation of IRocketComponent method
-    public Component getDisplayName() {
-        return displayName;
+    @Override
+    public String getName() {
+        return name;
     }
     
-    // Implementation of IRocketComponent method
+    @Override
+    public String getDescription() {
+        return description;
+    }
+    
+    @Override
     public int getTier() {
         return tier;
     }
     
-    // Implementation of IRocketComponent method
+    @Override
     public RocketComponentType getType() {
-        return RocketComponentType.STORAGE;
+        return RocketComponentType.CARGO;
     }
     
-    // Implementation of IRocketComponent method
+    @Override
     public int getMass() {
-        return mass;
-    }
-    
-    // Implementation of IRocketComponent method
-    public float getMaxHealth() {
-        return maxHealth;
-    }
-    
-    // Implementation of IRocketComponent method
-    public List<Component> getTooltip(boolean detailed) {
-        List<Component> tooltip = new ArrayList<>();
-        tooltip.add(displayName);
-        tooltip.add(Component.literal("Storage Capacity: " + storageCapacity + " slots"));
-        tooltip.add(Component.literal("Tier: " + tier));
-        
-        if (detailed) {
-            tooltip.add(Component.literal("Climate Controlled: " + (isClimateControlled ? "Yes" : "No")));
-            tooltip.add(Component.literal("Radiation Shielded: " + (isRadiationShielded ? "Yes" : "No")));
-            tooltip.add(Component.literal("EMP Shielded: " + (isEMPShielded ? "Yes" : "No")));
-            tooltip.add(Component.literal("Mass: " + mass));
-            tooltip.add(Component.literal("Max Health: " + maxHealth));
+        // Base mass plus the mass of contents (simplified)
+        int contentsMass = 0;
+        for (ItemStack stack : contents.values()) {
+            if (!stack.isEmpty()) {
+                contentsMass += stack.getCount();
+            }
         }
-        
-        return tooltip;
+        return mass + contentsMass / 10; // Approximate mass calculation
     }
     
-    // Implementation of ICargoBay method
+    @Override
+    public int getMaxDurability() {
+        return maxDurability;
+    }
+    
+    @Override
+    public int getCurrentDurability() {
+        return currentDurability;
+    }
+    
+    @Override
+    public void damage(int amount) {
+        currentDurability = Math.max(0, currentDurability - amount);
+        
+        // If severely damaged and no vacuum seal, items might be lost
+        if (currentDurability < maxDurability * 0.25 && !hasVacuumSeal) {
+            // Simulate item loss (random item removal)
+            if (!contents.isEmpty()) {
+                int randomSlot = contents.keySet().stream()
+                        .skip((int) (Math.random() * contents.size()))
+                        .findFirst()
+                        .orElse(0);
+                
+                ItemStack stack = contents.get(randomSlot);
+                if (stack != null && !stack.isEmpty()) {
+                    int lostAmount = Math.max(1, stack.getCount() / 4);
+                    stack.shrink(lostAmount);
+                    
+                    if (stack.isEmpty()) {
+                        contents.remove(randomSlot);
+                    }
+                }
+            }
+        }
+    }
+    
+    @Override
+    public void repair(int amount) {
+        currentDurability = Math.min(maxDurability, currentDurability + amount);
+    }
+    
+    @Override
     public int getStorageCapacity() {
         return storageCapacity;
     }
     
-    // Implementation of ICargoBay method
-    public boolean isClimateControlled() {
-        return isClimateControlled;
-    }
-    
-    // Implementation of ICargoBay method
-    public boolean isRadiationShielded() {
-        return isRadiationShielded;
-    }
-    
-    // Implementation of ICargoBay method
-    public boolean hasRadiationShielding() {
-        return isRadiationShielded;
-    }
-    
-    // Implementation of ICargoBay method
-    public boolean hasTemperatureRegulation() {
-        return isClimateControlled;
-    }
-    
-    // Implementation of ICargoBay method
-    public boolean hasVacuumSeal() {
-        return tier >= 2; // Tier 2+ cargo bays have vacuum sealing
-    }
-    
-    // Implementation of IRocketComponent methods
-    public int getMaxDurability() {
-        return (int)maxHealth;
-    }
-    
-    public int getCurrentDurability() {
-        return (int)maxHealth; // Currently always at max
-    }
-    
-    public void damage(int amount) {
-        // No-op until we implement durability
-    }
-    
-    public String getName() {
-        return displayName.getString();
-    }
-    
-    public String getDescription() {
-        return "Cargo Storage - " + storageCapacity + " slots";
-    }
-    
-    // Implementation of ICargoBay method
-    public boolean isEMPShielded() {
-        return isEMPShielded;
-    }
-    
-    // Implementation for IRocketComponent method
-    public boolean isBroken() {
-        return false; // Default implementation always returns false until we implement durability
-    }
-    
-    // Implementation for IRocketComponent method
-    public void repair(int amount) {
-        // No-op until we implement durability
-    }
-    
-    // Implementation of ICargoBay method
     @Override
-    public java.util.Map<Integer, com.astroframe.galactic.core.api.common.ItemStack> getContents() {
-        return new java.util.HashMap<>(contents);
+    public Map<Integer, ItemStack> getContents() {
+        // Return a copy of the contents to prevent direct modification
+        Map<Integer, ItemStack> contentsCopy = new HashMap<>();
+        for (Map.Entry<Integer, ItemStack> entry : contents.entrySet()) {
+            contentsCopy.put(entry.getKey(), entry.getValue().copy());
+        }
+        return contentsCopy;
     }
     
-    // Implementation of ICargoBay method
     @Override
-    public com.astroframe.galactic.core.api.common.ItemStack addItem(com.astroframe.galactic.core.api.common.ItemStack stack) {
-        // Simple implementation - find the first empty slot
+    public ItemStack addItem(ItemStack stack) {
+        if (stack.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        
+        // First try to find a slot with the same item
         for (int i = 0; i < storageCapacity; i++) {
-            if (!contents.containsKey(i)) {
-                contents.put(i, stack);
-                return new com.astroframe.galactic.core.api.common.ItemStack(stack.getItem(), 0);
+            ItemStack existingStack = contents.get(i);
+            if (existingStack != null && !existingStack.isEmpty() && 
+                    existingStack.isSameItemSameTags(stack) &&
+                    existingStack.getCount() < existingStack.getMaxStackSize()) {
+                
+                int spaceAvailable = existingStack.getMaxStackSize() - existingStack.getCount();
+                int amountToAdd = Math.min(stack.getCount(), spaceAvailable);
+                
+                existingStack.grow(amountToAdd);
+                
+                // Return remaining items
+                if (amountToAdd < stack.getCount()) {
+                    ItemStack remaining = stack.copy();
+                    remaining.setCount(stack.getCount() - amountToAdd);
+                    return remaining;
+                } else {
+                    return ItemStack.EMPTY;
+                }
             }
         }
         
-        // No space available, return the original stack
+        // If we can't stack with existing items, find an empty slot
+        for (int i = 0; i < storageCapacity; i++) {
+            if (!contents.containsKey(i)) {
+                contents.put(i, stack);
+                return ItemStack.EMPTY;
+            }
+        }
+        
+        // If we can't add the item, return the original stack
         return stack;
     }
     
-    // Implementation of ICargoBay method
     @Override
-    public com.astroframe.galactic.core.api.common.ItemStack takeItem(int slotIndex, int amount) {
-        if (slotIndex < 0 || slotIndex >= storageCapacity || !contents.containsKey(slotIndex)) {
-            return new com.astroframe.galactic.core.api.common.ItemStack(null, 0);
+    public ItemStack takeItem(int slotIndex, int amount) {
+        if (slotIndex < 0 || slotIndex >= storageCapacity) {
+            return ItemStack.EMPTY;
         }
         
-        com.astroframe.galactic.core.api.common.ItemStack stack = contents.get(slotIndex);
-        int toTake = Math.min(amount, stack.getCount());
+        ItemStack stack = contents.get(slotIndex);
+        if (stack == null || stack.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
         
-        if (toTake == stack.getCount()) {
-            // Remove the stack entirely
+        int amountToTake = Math.min(amount, stack.getCount());
+        ItemStack result = stack.copy();
+        result.setCount(amountToTake);
+        
+        stack.shrink(amountToTake);
+        
+        if (stack.isEmpty()) {
             contents.remove(slotIndex);
-            return stack;
-        } else {
-            // Take part of the stack
-            com.astroframe.galactic.core.api.common.ItemStack result = 
-                new com.astroframe.galactic.core.api.common.ItemStack(stack.getItem(), toTake);
-            contents.put(slotIndex, new com.astroframe.galactic.core.api.common.ItemStack(
-                stack.getItem(), stack.getCount() - toTake));
-            return result;
         }
+        
+        return result;
+    }
+    
+    @Override
+    public boolean hasVacuumSeal() {
+        return hasVacuumSeal;
+    }
+    
+    @Override
+    public boolean hasTemperatureRegulation() {
+        return hasTemperatureRegulation;
+    }
+    
+    @Override
+    public boolean hasRadiationShielding() {
+        return hasRadiationShielding;
+    }
+    
+    /**
+     * Whether this cargo bay has EMP shielding.
+     * @return true if the cargo bay has EMP shielding
+     */
+    public boolean hasEmpShielding() {
+        return hasEmpShielding;
+    }
+    
+    /**
+     * Gets the number of filled slots in this cargo bay.
+     * @return The number of filled slots
+     */
+    public int getFilledSlots() {
+        return contents.size();
+    }
+    
+    /**
+     * Gets a list of tooltip lines for this component.
+     * @param detailed Whether to include detailed information
+     * @return The tooltip lines
+     */
+    public List<Component> getTooltip(boolean detailed) {
+        List<Component> tooltip = new ArrayList<>();
+        tooltip.add(Component.literal(name));
+        tooltip.add(Component.literal("Tier: " + tier));
+        tooltip.add(Component.literal("Storage: " + getFilledSlots() + "/" + storageCapacity));
+        
+        if (detailed) {
+            tooltip.add(Component.literal("Vacuum Seal: " + (hasVacuumSeal ? "Yes" : "No")));
+            tooltip.add(Component.literal("Temperature Regulation: " + (hasTemperatureRegulation ? "Yes" : "No")));
+            tooltip.add(Component.literal("Radiation Shielding: " + (hasRadiationShielding ? "Yes" : "No")));
+            tooltip.add(Component.literal("EMP Shielding: " + (hasEmpShielding ? "Yes" : "No")));
+            tooltip.add(Component.literal("Mass (Empty): " + mass));
+            tooltip.add(Component.literal("Mass (Current): " + getMass()));
+            tooltip.add(Component.literal("Durability: " + currentDurability + "/" + maxDurability));
+        }
+        
+        return tooltip;
     }
     
     /**
@@ -202,23 +265,45 @@ public class BaseCargoBay implements ICargoBay {
      */
     public static class Builder {
         private final ResourceLocation id;
-        private final Component displayName;
+        private String name = "Cargo Bay";
+        private String description = "A bay for storing cargo on a rocket.";
         private int tier = 1;
-        private int mass = 300;
-        private float maxHealth = 100.0f;
+        private int mass = 200;
+        private int maxDurability = 100;
         private int storageCapacity = 9;
-        private boolean isClimateControlled = false;
-        private boolean isRadiationShielded = false;
-        private boolean isEMPShielded = false;
+        private boolean hasVacuumSeal = false;
+        private boolean hasTemperatureRegulation = false;
+        private boolean hasRadiationShielding = false;
+        private boolean hasEmpShielding = false;
         
         /**
          * Creates a new builder with required parameters.
          * @param id The component ID
-         * @param displayName The display name
+         * @param displayName The display name component
          */
         public Builder(ResourceLocation id, Component displayName) {
             this.id = id;
-            this.displayName = displayName;
+            this.name = displayName.getString();
+        }
+        
+        /**
+         * Sets the name.
+         * @param name The name
+         * @return This builder
+         */
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+        
+        /**
+         * Sets the description.
+         * @param description The description
+         * @return This builder
+         */
+        public Builder description(String description) {
+            this.description = description;
+            return this;
         }
         
         /**
@@ -242,17 +327,17 @@ public class BaseCargoBay implements ICargoBay {
         }
         
         /**
-         * Sets the max health.
-         * @param maxHealth The max health
+         * Sets the max durability.
+         * @param maxDurability The max durability
          * @return This builder
          */
-        public Builder maxHealth(float maxHealth) {
-            this.maxHealth = maxHealth;
+        public Builder maxDurability(int maxDurability) {
+            this.maxDurability = maxDurability;
             return this;
         }
         
         /**
-         * Sets the storage capacity in slots.
+         * Sets the storage capacity.
          * @param storageCapacity The storage capacity
          * @return This builder
          */
@@ -262,32 +347,42 @@ public class BaseCargoBay implements ICargoBay {
         }
         
         /**
-         * Sets whether the cargo bay is climate controlled.
-         * @param climateControlled True if climate controlled
+         * Sets whether the cargo bay has a vacuum seal.
+         * @param hasVacuumSeal True if the cargo bay has a vacuum seal
          * @return This builder
          */
-        public Builder climateControlled(boolean climateControlled) {
-            this.isClimateControlled = climateControlled;
+        public Builder vacuumSealed(boolean hasVacuumSeal) {
+            this.hasVacuumSeal = hasVacuumSeal;
             return this;
         }
         
         /**
-         * Sets whether the cargo bay is radiation shielded.
-         * @param radiationShielded True if radiation shielded
+         * Sets whether the cargo bay has temperature regulation.
+         * @param hasTemperatureRegulation True if the cargo bay has temperature regulation
          * @return This builder
          */
-        public Builder radiationShielded(boolean radiationShielded) {
-            this.isRadiationShielded = radiationShielded;
+        public Builder climateControlled(boolean hasTemperatureRegulation) {
+            this.hasTemperatureRegulation = hasTemperatureRegulation;
             return this;
         }
         
         /**
-         * Sets whether the cargo bay is EMP shielded.
-         * @param empShielded True if EMP shielded
+         * Sets whether the cargo bay has radiation shielding.
+         * @param hasRadiationShielding True if the cargo bay has radiation shielding
          * @return This builder
          */
-        public Builder empShielded(boolean empShielded) {
-            this.isEMPShielded = empShielded;
+        public Builder radiationShielded(boolean hasRadiationShielding) {
+            this.hasRadiationShielding = hasRadiationShielding;
+            return this;
+        }
+        
+        /**
+         * Sets whether the cargo bay has EMP shielding.
+         * @param hasEmpShielding True if the cargo bay has EMP shielding
+         * @return This builder
+         */
+        public Builder empShielded(boolean hasEmpShielding) {
+            this.hasEmpShielding = hasEmpShielding;
             return this;
         }
         
