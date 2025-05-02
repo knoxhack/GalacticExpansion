@@ -3,25 +3,25 @@ package com.astroframe.galactic.space.implementation.hologram;
 import com.astroframe.galactic.core.api.space.IRocket;
 import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
+import org.joml.Matrix4f;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.AABB;
 
 import java.util.List;
-import org.joml.Matrix4f;
 
 /**
  * Renderer for the Holographic Projector block entity.
  * Displays the holographic projection of a rocket based on components.
- * Uses a simplified approach with LevelRenderer.renderLineBox for rendering.
  */
 public class HolographicProjectorRenderer implements BlockEntityRenderer<HolographicProjectorBlockEntity> {
     
@@ -31,13 +31,17 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
     private static final float HOLOGRAM_BLUE = 1.0F;
     private static final float HOLOGRAM_ALPHA = 0.7F;
     
+    // Texture for lines
+    private static final ResourceLocation HOLOGRAM_TEXTURE = 
+            new ResourceLocation("galactic", "textures/hologram/hologram.png");
+    
     /**
      * Constructor for the renderer.
      *
      * @param context The renderer provider context
      */
     public HolographicProjectorRenderer(BlockEntityRendererProvider.Context context) {
-        // Renderer setup
+        // No initialization needed
     }
     
     /**
@@ -73,32 +77,24 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         // Apply the rotation for the spinning effect
         poseStack.mulPose(Axis.YP.rotationDegrees(angle));
         
-        // Set up rendering state
-        RenderSystem.setShaderColor(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
-        RenderSystem.disableDepthTest();
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
+        // Get a line renderer
+        VertexConsumer lines = bufferSource.getBuffer(RenderType.lines());
         
         // Render base platform
-        renderHologramBase(poseStack);
+        renderHologramBase(poseStack, lines);
         
         // If we have rocket data, render the rocket components
         if (rocketData != null) {
-            renderRocketComponents(rocketData, poseStack);
+            renderRocketComponents(rocketData, poseStack, lines);
         } else {
             // Render placeholder if no rocket data available
-            renderPlaceholderRocket(poseStack);
+            renderPlaceholderRocket(poseStack, lines);
         }
         
         // Add scan lines
         float time = (Minecraft.getInstance().level.getGameTime() % 80) / 80.0F;
         float scanHeight = Mth.sin(time * (float) Math.PI * 2) * 1.5F;
-        renderScanLines(poseStack, scanHeight);
-        
-        // Reset rendering state
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.enableDepthTest();
-        RenderSystem.disableBlend();
+        renderScanLines(poseStack, lines, scanHeight);
         
         poseStack.popPose();
     }
@@ -107,19 +103,51 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      * Renders the base platform of the hologram.
      *
      * @param poseStack The pose stack
+     * @param lines The line renderer
      */
-    private void renderHologramBase(PoseStack poseStack) {
+    private void renderHologramBase(PoseStack poseStack, VertexConsumer lines) {
         poseStack.pushPose();
         
         // Move to base position
         poseStack.translate(0, -0.4, 0);
-        poseStack.scale(1.2F, 0.02F, 1.2F);
+        poseStack.scale(1.0F, 0.02F, 1.0F);
         
-        // Render a circular platform
-        AABB basePlatform = new AABB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
-        LevelRenderer.renderLineBox(poseStack, basePlatform, HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
+        // Create a circular platform
+        renderCircle(poseStack, lines, 0.5f, 16);
         
         poseStack.popPose();
+    }
+    
+    /**
+     * Renders a circle in the XZ plane.
+     *
+     * @param poseStack The pose stack
+     * @param lines The line renderer
+     * @param radius The radius of the circle
+     * @param segments The number of segments to use
+     */
+    private void renderCircle(PoseStack poseStack, VertexConsumer lines, float radius, int segments) {
+        Matrix4f pose = poseStack.last().pose();
+        
+        // Draw a circle with lines
+        for (int i = 0; i < segments; i++) {
+            float angle1 = (float) (2 * Math.PI * i / segments);
+            float angle2 = (float) (2 * Math.PI * ((i + 1) % segments) / segments);
+            
+            float x1 = (float) (radius * Math.cos(angle1));
+            float z1 = (float) (radius * Math.sin(angle1));
+            
+            float x2 = (float) (radius * Math.cos(angle2));
+            float z2 = (float) (radius * Math.sin(angle2));
+            
+            // Draw line for the circle
+            lines.vertex(pose, x1, 0, z1).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA).normal(0, 1, 0).endVertex();
+            lines.vertex(pose, x2, 0, z2).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA).normal(0, 1, 0).endVertex();
+            
+            // Draw line from center
+            lines.vertex(pose, 0, 0, 0).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA).normal(0, 1, 0).endVertex();
+            lines.vertex(pose, x1, 0, z1).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, 0.3f * HOLOGRAM_ALPHA).normal(0, 1, 0).endVertex();
+        }
     }
     
     /**
@@ -127,8 +155,9 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      *
      * @param rocket The rocket data
      * @param poseStack The pose stack
+     * @param lines The line renderer
      */
-    private void renderRocketComponents(IRocket rocket, PoseStack poseStack) {
+    private void renderRocketComponents(IRocket rocket, PoseStack poseStack, VertexConsumer lines) {
         if (rocket == null) return;
         
         poseStack.pushPose();
@@ -141,7 +170,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         
         // Render each component
         for (IRocketComponent component : components) {
-            renderRocketComponent(component, poseStack);
+            renderRocketComponent(component, poseStack, lines);
         }
         
         poseStack.popPose();
@@ -152,13 +181,14 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      *
      * @param component The rocket component
      * @param poseStack The pose stack
+     * @param lines The line renderer
      */
-    private void renderRocketComponent(IRocketComponent component, PoseStack poseStack) {
+    private void renderRocketComponent(IRocketComponent component, PoseStack poseStack, VertexConsumer lines) {
         if (component == null) return;
         
         poseStack.pushPose();
         
-        // Get component position and size from the component
+        // Get component position and size
         Vec3 position = component.getPosition();
         Vec3 size = component.getSize();
         
@@ -168,19 +198,65 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         // Scale based on component size
         poseStack.scale((float)size.x, (float)size.y, (float)size.z);
         
-        // Render a holographic box for the component
-        AABB componentBox = new AABB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
-        LevelRenderer.renderLineBox(poseStack, componentBox, HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
+        // Render a box for the component
+        renderBox(poseStack, lines);
         
         poseStack.popPose();
+    }
+    
+    /**
+     * Renders a box centered at the origin with size 1x1x1.
+     *
+     * @param poseStack The pose stack
+     * @param lines The line renderer
+     */
+    private void renderBox(PoseStack poseStack, VertexConsumer lines) {
+        Matrix4f pose = poseStack.last().pose();
+        
+        // Draw 12 edges of a 1x1x1 cube centered at the origin
+        // Bottom face
+        drawLine(pose, lines, -0.5f, -0.5f, -0.5f, 0.5f, -0.5f, -0.5f);
+        drawLine(pose, lines, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f, 0.5f);
+        drawLine(pose, lines, 0.5f, -0.5f, 0.5f, -0.5f, -0.5f, 0.5f);
+        drawLine(pose, lines, -0.5f, -0.5f, 0.5f, -0.5f, -0.5f, -0.5f);
+        
+        // Top face
+        drawLine(pose, lines, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f);
+        drawLine(pose, lines, 0.5f, 0.5f, -0.5f, 0.5f, 0.5f, 0.5f);
+        drawLine(pose, lines, 0.5f, 0.5f, 0.5f, -0.5f, 0.5f, 0.5f);
+        drawLine(pose, lines, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f, -0.5f);
+        
+        // Connecting edges
+        drawLine(pose, lines, -0.5f, -0.5f, -0.5f, -0.5f, 0.5f, -0.5f);
+        drawLine(pose, lines, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, -0.5f);
+        drawLine(pose, lines, 0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f);
+        drawLine(pose, lines, -0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f);
+    }
+    
+    /**
+     * Draws a line between two points.
+     *
+     * @param pose The matrix pose
+     * @param lines The line renderer
+     * @param x1 Start X
+     * @param y1 Start Y
+     * @param z1 Start Z
+     * @param x2 End X
+     * @param y2 End Y
+     * @param z2 End Z
+     */
+    private void drawLine(Matrix4f pose, VertexConsumer lines, float x1, float y1, float z1, float x2, float y2, float z2) {
+        lines.vertex(pose, x1, y1, z1).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA).normal(0, 1, 0).endVertex();
+        lines.vertex(pose, x2, y2, z2).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA).normal(0, 1, 0).endVertex();
     }
     
     /**
      * Renders a placeholder rocket when no rocket data is available.
      *
      * @param poseStack The pose stack
+     * @param lines The line renderer
      */
-    private void renderPlaceholderRocket(PoseStack poseStack) {
+    private void renderPlaceholderRocket(PoseStack poseStack, VertexConsumer lines) {
         poseStack.pushPose();
         
         // Adjust position for placeholder
@@ -189,16 +265,14 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         // Body
         poseStack.pushPose();
         poseStack.scale(0.3F, 1.0F, 0.3F);
-        AABB rocketBody = new AABB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
-        LevelRenderer.renderLineBox(poseStack, rocketBody, HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
+        renderBox(poseStack, lines);
         poseStack.popPose();
         
-        // Nose cone (simplified as a small box)
+        // Nose cone
         poseStack.pushPose();
         poseStack.translate(0, 0.75, 0);
         poseStack.scale(0.2F, 0.3F, 0.2F);
-        AABB noseCone = new AABB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
-        LevelRenderer.renderLineBox(poseStack, noseCone, HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
+        renderBox(poseStack, lines);
         poseStack.popPose();
         
         // Fins
@@ -206,12 +280,9 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             poseStack.pushPose();
             poseStack.translate(0, -0.4, 0);
             poseStack.mulPose(Axis.YP.rotationDegrees(90 * i));
-            poseStack.translate(0.31, 0, 0);
-            poseStack.scale(0.1F, 0.3F, 0.3F);
-            
-            AABB fin = new AABB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
-            LevelRenderer.renderLineBox(poseStack, fin, HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
-            
+            poseStack.translate(0.2, 0, 0);
+            poseStack.scale(0.1F, 0.3F, 0.2F);
+            renderBox(poseStack, lines);
             poseStack.popPose();
         }
         
@@ -222,20 +293,37 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      * Renders holographic scan lines for added effect.
      *
      * @param poseStack The pose stack
+     * @param lines The line renderer
      * @param scanHeight The height of the scan effect
      */
-    private void renderScanLines(PoseStack poseStack, float scanHeight) {
+    private void renderScanLines(PoseStack poseStack, VertexConsumer lines, float scanHeight) {
         poseStack.pushPose();
         
         // Position the scan plane
         poseStack.translate(0, scanHeight, 0);
         
-        // Render a horizontal scan plane
+        // Render a grid of lines
+        Matrix4f pose = poseStack.last().pose();
         float size = 1.0F;
+        int gridSize = 4;
+        float step = size * 2 / gridSize;
         
-        // Render a grid
-        AABB scanPlane = new AABB(-size, 0, -size, size, 0, size);
-        LevelRenderer.renderLineBox(poseStack, scanPlane, HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, 0.3F * HOLOGRAM_ALPHA);
+        // Render the grid with lower alpha
+        float scanAlpha = 0.3F * HOLOGRAM_ALPHA;
+        
+        // Horizontal lines
+        for (int i = 0; i <= gridSize; i++) {
+            float z = -size + i * step;
+            lines.vertex(pose, -size, 0, z).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha).normal(0, 1, 0).endVertex();
+            lines.vertex(pose, size, 0, z).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha).normal(0, 1, 0).endVertex();
+        }
+        
+        // Vertical lines
+        for (int i = 0; i <= gridSize; i++) {
+            float x = -size + i * step;
+            lines.vertex(pose, x, 0, -size).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha).normal(0, 1, 0).endVertex();
+            lines.vertex(pose, x, 0, size).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha).normal(0, 1, 0).endVertex();
+        }
         
         poseStack.popPose();
     }

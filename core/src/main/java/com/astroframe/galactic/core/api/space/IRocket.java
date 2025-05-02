@@ -6,6 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 import java.util.Map;
 
+import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import net.minecraft.nbt.CompoundTag;
 
@@ -151,6 +152,12 @@ public interface IRocket {
      * @return true if the rocket has the component
      */
     boolean hasComponent(RocketComponentType type);
+    
+    /**
+     * Gets all components installed on this rocket.
+     * @return A list of all rocket components
+     */
+    List<IRocketComponent> getAllComponents();
     
     /**
      * Saves rocket data to an NBT tag.

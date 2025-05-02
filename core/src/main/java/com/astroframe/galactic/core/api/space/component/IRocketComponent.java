@@ -134,6 +134,7 @@ public interface IRocketComponent {
         // Save position if component has a non-default position
         Vec3 pos = getPosition();
         if (pos.x != 0 || pos.y != 0 || pos.z != 0) {
+            // In NeoForge 1.21.5, we must make sure our tag values are safe
             tag.putDouble("PosX", pos.x);
             tag.putDouble("PosY", pos.y);
             tag.putDouble("PosZ", pos.z);
@@ -150,9 +151,10 @@ public interface IRocketComponent {
     default void load(net.minecraft.nbt.CompoundTag tag) {
         // Load position if saved
         if (tag.contains("PosX") && tag.contains("PosY") && tag.contains("PosZ")) {
-            double x = tag.getDouble("PosX");
-            double y = tag.getDouble("PosY");
-            double z = tag.getDouble("PosZ");
+            // In NeoForge 1.21.5, tag methods return Optional values
+            double x = tag.getDouble("PosX").orElse(0.0);
+            double y = tag.getDouble("PosY").orElse(0.0);
+            double z = tag.getDouble("PosZ").orElse(0.0);
             setPosition(new Vec3(x, y, z));
         }
     }
