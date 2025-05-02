@@ -487,8 +487,10 @@ public class ModularRocket implements IRocket {
             CompoundTag itemTag = new CompoundTag();
             itemTag.putInt("Slot", entry.getKey());
             ItemStack stack = entry.getValue();
-            // In NeoForge 1.21.5, we need to use of(ItemStack) instead of save()
-            itemTag.put("Item", stack.saveToTag(new CompoundTag()));
+            // In NeoForge 1.21.5, we need to use save(CompoundTag) correctly
+            CompoundTag itemData = new CompoundTag();
+            stack.save(itemData);
+            itemTag.put("Item", itemData);
             cargoTag.put("Item" + i, itemTag);
             i++;
         }
