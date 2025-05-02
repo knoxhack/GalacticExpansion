@@ -410,6 +410,212 @@ public class ModularRocket implements IRocket {
     }
     
     /**
+     * Saves this rocket to an NBT tag.
+     * 
+     * @param tag The tag to save to
+     */
+    public void save(CompoundTag tag) {
+        // Save basic properties
+        tag.putString("ID", id.toString());
+        tag.putString("Status", status.name());
+        tag.putFloat("Health", health);
+        tag.putInt("Fuel", currentFuel);
+        
+        // Save components as a list
+        ListTag componentsList = new ListTag();
+        
+        // Save command module if present
+        if (commandModule != null) {
+            CompoundTag componentTag = new CompoundTag();
+            commandModule.save(componentTag);
+            componentsList.add(componentTag);
+        }
+        
+        // Save engines
+        for (IRocketEngine engine : engines) {
+            CompoundTag componentTag = new CompoundTag();
+            engine.save(componentTag);
+            componentsList.add(componentTag);
+        }
+        
+        // Save fuel tanks
+        for (IFuelTank fuelTank : fuelTanks) {
+            CompoundTag componentTag = new CompoundTag();
+            fuelTank.save(componentTag);
+            componentsList.add(componentTag);
+        }
+        
+        // Save cargo bays
+        for (ICargoBay cargoBay : cargoBays) {
+            CompoundTag componentTag = new CompoundTag();
+            cargoBay.save(componentTag);
+            componentsList.add(componentTag);
+        }
+        
+        // Save passenger compartments
+        for (IPassengerCompartment compartment : passengerCompartments) {
+            CompoundTag componentTag = new CompoundTag();
+            compartment.save(componentTag);
+            componentsList.add(componentTag);
+        }
+        
+        // Save shields
+        for (IShield shield : shields) {
+            CompoundTag componentTag = new CompoundTag();
+            shield.save(componentTag);
+            componentsList.add(componentTag);
+        }
+        
+        // Save life support systems
+        for (ILifeSupport lifeSupport : lifeSupports) {
+            CompoundTag componentTag = new CompoundTag();
+            lifeSupport.save(componentTag);
+            componentsList.add(componentTag);
+        }
+        
+        tag.put("Components", componentsList);
+        
+        // Save cargo
+        CompoundTag cargoTag = new CompoundTag();
+        cargoTag.putInt("Count", cargo.size());
+        
+        int i = 0;
+        for (Map.Entry<Integer, ItemStack> entry : cargo.entrySet()) {
+            CompoundTag itemTag = new CompoundTag();
+            itemTag.putInt("Slot", entry.getKey());
+            entry.getValue().save(itemTag);
+            cargoTag.put("Item" + i, itemTag);
+            i++;
+        }
+        
+        tag.put("Cargo", cargoTag);
+    }
+    
+    /**
+     * Loads a ModularRocket from an NBT tag.
+     * 
+     * @param tag The tag to load from
+     * @return The loaded rocket, or null if loading failed
+     */
+    public static ModularRocket fromTag(CompoundTag tag) {
+        // Get the ID from the tag
+        String idStr = tag.getString("ID").orElse("");
+        if (idStr.isEmpty()) {
+            return null;
+        }
+        
+        ResourceLocation id = ResourceLocation.parse(idStr);
+        
+        // Create a new builder
+        ModularRocket.Builder builder = new ModularRocket.Builder(id);
+        
+        try {
+            // Load components from ListTag
+            if (tag.contains("Components")) {
+                ListTag componentsList = tag.getList("Components", Tag.TAG_COMPOUND).orElse(new ListTag());
+                
+                for (int i = 0; i < componentsList.size(); i++) {
+                    CompoundTag componentTag = componentsList.getCompound(i);
+                    String typeString = componentTag.getString("Type").orElse("");
+                    ResourceLocation componentId = ResourceLocation.parse(componentTag.getString("ID").orElse(""));
+                    
+                    if (!typeString.isEmpty() && !componentId.toString().isEmpty()) {
+                        // Use the space module's factory to create the component
+                        IRocketComponent component = com.astroframe.galactic.space.implementation.component.RocketComponentFactory
+                                .createComponentFromTag(componentId, componentTag);
+                        
+                        // Add the component to the builder based on type
+                        if (component != null) {
+                            RocketComponentType type = RocketComponentType.valueOf(typeString);
+                            
+                            switch (type) {
+                                case COCKPIT:
+                                    if (component instanceof ICommandModule) {
+                                        builder.commandModule((ICommandModule) component);
+                                    }
+                                    break;
+                                case ENGINE:
+                                    if (component instanceof IRocketEngine) {
+                                        builder.addEngine((IRocketEngine) component);
+                                    }
+                                    break;
+                                case FUEL_TANK:
+                                    if (component instanceof IFuelTank) {
+                                        builder.addFuelTank((IFuelTank) component);
+                                    }
+                                    break;
+                                case STORAGE:
+                                    if (component instanceof ICargoBay) {
+                                        builder.addCargoBay((ICargoBay) component);
+                                    }
+                                    break;
+                                case PASSENGER_COMPARTMENT:
+                                    if (component instanceof IPassengerCompartment) {
+                                        builder.addPassengerCompartment((IPassengerCompartment) component);
+                                    }
+                                    break;
+                                case SHIELDING:
+                                    if (component instanceof IShield) {
+                                        builder.addShield((IShield) component);
+                                    }
+                                    break;
+                                case LIFE_SUPPORT:
+                                    if (component instanceof ILifeSupport) {
+                                        builder.addLifeSupport((ILifeSupport) component);
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Build the rocket
+            ModularRocket rocket = builder.build();
+            
+            // Load rocket status
+            if (tag.contains("Status")) {
+                String statusStr = tag.getString("Status").orElse("");
+                if (!statusStr.isEmpty()) {
+                    rocket.status = RocketStatus.valueOf(statusStr);
+                }
+            }
+            
+            // Load health
+            if (tag.contains("Health")) {
+                rocket.health = tag.getFloat("Health").orElse(100.0f);
+            }
+            
+            // Load fuel
+            if (tag.contains("Fuel")) {
+                rocket.currentFuel = tag.getInt("Fuel").orElse(0);
+            }
+            
+            // Load cargo
+            if (tag.contains("Cargo")) {
+                CompoundTag cargoTag = tag.getCompound("Cargo").orElse(new CompoundTag());
+                int count = cargoTag.getInt("Count").orElse(0);
+                
+                for (int i = 0; i < count; i++) {
+                    CompoundTag itemTag = cargoTag.getCompound("Item" + i).orElse(new CompoundTag());
+                    int slot = itemTag.getInt("Slot").orElse(-1);
+                    
+                    if (slot >= 0) {
+                        ItemStack stack = ItemStack.of(itemTag);
+                        if (!stack.isEmpty()) {
+                            rocket.cargo.put(slot, stack);
+                        }
+                    }
+                }
+            }
+            
+            return rocket;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    /**
      * Adds a component to this rocket.
      * @param component The component to add
      * @return true if the component was added successfully

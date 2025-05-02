@@ -368,9 +368,10 @@ public class RocketAssemblyTable extends BlockEntity {
         return false;
     }
     
+    // Override the BlockEntity's load method
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, BlockEntity.LoadMode loadMode) {
+        super.loadAdditional(tag, loadMode);
         
         // Load components
         components.clear();
@@ -404,12 +405,8 @@ public class RocketAssemblyTable extends BlockEntity {
                 ResourceLocation id = ResourceLocation.parse(idStr);
                 
                 try {
-                    // Recreate the rocket from the saved data
-                    // Since fromTag isn't implemented yet, we'll use a placeholder for now
-                    // assembledRocket = ModularRocket.fromTag(rocketTag);
-                    
-                    // Placeholder: create a new empty rocket
-                    assembledRocket = new ModularRocket();
+                    // Recreate the rocket from the saved data with our new fromTag method
+                    assembledRocket = ModularRocket.fromTag(rocketTag);
                     
                     // Set the status to complete if we loaded a rocket
                     if (assembledRocket != null) {

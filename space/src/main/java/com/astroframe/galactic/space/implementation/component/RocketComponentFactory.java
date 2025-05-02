@@ -878,10 +878,10 @@ public class RocketComponentFactory {
         // If we couldn't find the component in the registry, try to recreate it from the tag
         try {
             // Extract common properties
-            int tier = tag.getInt("Tier");
-            int mass = tag.getInt("Mass");
-            String name = tag.getString("Name");
-            String description = tag.getString("Description");
+            int tier = tag.getInt("Tier").orElse(1);
+            int mass = tag.getInt("Mass").orElse(100);
+            String name = tag.getString("Name").orElse("Unknown Component");
+            String description = tag.getString("Description").orElse("No description");
             
             // Create a new component based on type
             switch (type) {
@@ -891,10 +891,10 @@ public class RocketComponentFactory {
                             .description(description)
                             .tier(tier)
                             .mass(mass)
-                            .crewCapacity(tag.getInt("CrewCapacity"))
-                            .computingPower(tag.getInt("ComputingPower"))
-                            .sensorStrength(tag.getInt("SensorStrength"))
-                            .navigationAccuracy(tag.getFloat("NavigationAccuracy"))
+                            .crewCapacity(tag.getInt("CrewCapacity").orElse(1))
+                            .computingPower(tag.getInt("ComputingPower").orElse(50))
+                            .sensorStrength(tag.getInt("SensorStrength").orElse(40))
+                            .navigationAccuracy(tag.getFloat("NavigationAccuracy").orElse(0.6f))
                             .build();
                             
                 case ENGINE:
@@ -903,13 +903,13 @@ public class RocketComponentFactory {
                             .description(description)
                             .tier(tier)
                             .mass(mass)
-                            .thrust(tag.getInt("Thrust"))
-                            .efficiency(tag.getFloat("Efficiency"))
-                            .fuelConsumptionRate(tag.getInt("FuelConsumptionRate"))
-                            .fuelType(IRocketEngine.FuelType.valueOf(tag.getString("FuelType")))
-                            .atmosphereCapable(tag.getBoolean("AtmosphereCapable"))
-                            .spaceCapable(tag.getBoolean("SpaceCapable"))
-                            .engineType(com.astroframe.galactic.core.api.space.component.enums.EngineType.valueOf(tag.getString("EngineType")))
+                            .thrust(tag.getInt("Thrust").orElse(100))
+                            .efficiency(tag.getFloat("Efficiency").orElse(0.75f))
+                            .fuelConsumptionRate(tag.getInt("FuelConsumptionRate").orElse(10))
+                            .fuelType(IRocketEngine.FuelType.valueOf(tag.getString("FuelType").orElse("CHEMICAL")))
+                            .atmosphereCapable(tag.getBoolean("AtmosphereCapable").orElse(true))
+                            .spaceCapable(tag.getBoolean("SpaceCapable").orElse(true))
+                            .engineType(com.astroframe.galactic.core.api.space.component.enums.EngineType.valueOf(tag.getString("EngineType").orElse("CHEMICAL")))
                             .build();
                             
                 case FUEL_TANK:
@@ -918,10 +918,10 @@ public class RocketComponentFactory {
                             .description(description)
                             .tier(tier)
                             .mass(mass)
-                            .maxFuelCapacity(tag.getInt("MaxFuelCapacity"))
-                            .fuelType(IRocketEngine.FuelType.valueOf(tag.getString("FuelType")))
-                            .leakResistance(tag.contains("LeakResistance") ? tag.getFloat("LeakResistance") : 0.0f)
-                            .explosionResistance(tag.contains("ExplosionResistance") ? tag.getFloat("ExplosionResistance") : 0.0f)
+                            .maxFuelCapacity(tag.getInt("MaxFuelCapacity").orElse(1000))
+                            .fuelType(IRocketEngine.FuelType.valueOf(tag.getString("FuelType").orElse("CHEMICAL")))
+                            .leakResistance(tag.contains("LeakResistance") ? tag.getFloat("LeakResistance").orElse(0.0f) : 0.0f)
+                            .explosionResistance(tag.contains("ExplosionResistance") ? tag.getFloat("ExplosionResistance").orElse(0.0f) : 0.0f)
                             .build();
                             
                 case STORAGE:
@@ -930,10 +930,10 @@ public class RocketComponentFactory {
                             .description(description)
                             .tier(tier)
                             .mass(mass)
-                            .storageCapacity(tag.getInt("StorageCapacity"))
-                            .vacuumSeal(tag.contains("VacuumSeal") && tag.getBoolean("VacuumSeal"))
-                            .temperatureRegulation(tag.contains("TemperatureRegulation") && tag.getBoolean("TemperatureRegulation"))
-                            .radiationShielding(tag.contains("RadiationShielding") && tag.getBoolean("RadiationShielding"))
+                            .storageCapacity(tag.getInt("StorageCapacity").orElse(8))
+                            .vacuumSeal(tag.getBoolean("VacuumSeal").orElse(false))
+                            .temperatureRegulation(tag.getBoolean("TemperatureRegulation").orElse(false))
+                            .radiationShielding(tag.getBoolean("RadiationShielding").orElse(false))
                             .build();
                             
                 case PASSENGER_COMPARTMENT:
@@ -942,10 +942,10 @@ public class RocketComponentFactory {
                             .description(description)
                             .tier(tier)
                             .mass(mass)
-                            .passengerCapacity(tag.getInt("PassengerCapacity"))
-                            .comfortLevel(tag.getInt("ComfortLevel"))
-                            .lifeSupport(tag.contains("LifeSupport") && tag.getBoolean("LifeSupport"))
-                            .radiationShielding(tag.contains("RadiationShielding") && tag.getBoolean("RadiationShielding"))
+                            .passengerCapacity(tag.getInt("PassengerCapacity").orElse(2))
+                            .comfortLevel(tag.getInt("ComfortLevel").orElse(1))
+                            .lifeSupport(tag.getBoolean("LifeSupport").orElse(false))
+                            .radiationShielding(tag.getBoolean("RadiationShielding").orElse(false))
                             .build();
                             
                 case SHIELDING:
@@ -954,10 +954,10 @@ public class RocketComponentFactory {
                             .description(description)
                             .tier(tier)
                             .mass(mass)
-                            .maxDurability(tag.getInt("MaxDurability"))
-                            .impactResistance(tag.getInt("ImpactResistance"))
-                            .shieldStrength(tag.getInt("ShieldStrength"))
-                            .meteorResistance(tag.contains("MeteorResistance") && tag.getBoolean("MeteorResistance"))
+                            .maxDurability(tag.getInt("MaxDurability").orElse(1000))
+                            .impactResistance(tag.getInt("ImpactResistance").orElse(50))
+                            .shieldStrength(tag.getInt("ShieldStrength").orElse(100))
+                            .meteorResistance(tag.getBoolean("MeteorResistance").orElse(false))
                             .build();
                             
                 case LIFE_SUPPORT:
@@ -965,12 +965,12 @@ public class RocketComponentFactory {
                             .description(description)
                             .tier(tier)
                             .mass(mass)
-                            .maxCrewCapacity(tag.getInt("MaxCrewCapacity"))
-                            .oxygenGenerationRate(tag.getInt("OxygenGenerationRate"))
-                            .waterRecyclingEfficiency(tag.getFloat("WaterRecyclingEfficiency"))
-                            .foodProductionRate(tag.contains("FoodProductionRate") ? tag.getInt("FoodProductionRate") : 0)
-                            .wasteManagementEfficiency(tag.contains("WasteManagementEfficiency") ? tag.getFloat("WasteManagementEfficiency") : 0.0f)
-                            .backupSystems(tag.contains("BackupSystems") && tag.getBoolean("BackupSystems"))
+                            .maxCrewCapacity(tag.getInt("MaxCrewCapacity").orElse(4))
+                            .oxygenGenerationRate(tag.getInt("OxygenGenerationRate").orElse(10))
+                            .waterRecyclingEfficiency(tag.getFloat("WaterRecyclingEfficiency").orElse(0.8f))
+                            .foodProductionRate(tag.getInt("FoodProductionRate").orElse(0))
+                            .wasteManagementEfficiency(tag.getFloat("WasteManagementEfficiency").orElse(0.0f))
+                            .backupSystems(tag.getBoolean("BackupSystems").orElse(false))
                             .build();
                             
                 default:
