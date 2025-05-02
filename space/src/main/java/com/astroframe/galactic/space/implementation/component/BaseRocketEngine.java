@@ -285,6 +285,26 @@ public class BaseRocketEngine implements IRocketEngine {
         }
         
         /**
+         * Sets the engine type for categorization.
+         * @param type The engine type
+         * @return This builder
+         */
+        public Builder engineType(EngineType type) {
+            // This is for categorization only
+            return this;
+        }
+        
+        /**
+         * Sets the heat capacity of the engine.
+         * @param capacity The heat capacity
+         * @return This builder
+         */
+        public Builder heatCapacity(int capacity) {
+            // This is for future heat management features
+            return this;
+        }
+        
+        /**
          * Builds the rocket engine.
          * @return A new BaseRocketEngine
          */
