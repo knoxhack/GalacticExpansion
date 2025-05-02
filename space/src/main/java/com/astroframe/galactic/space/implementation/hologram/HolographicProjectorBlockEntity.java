@@ -84,11 +84,16 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
         if (tag.contains("LinkedTable")) {
             CompoundTag posTag = tag.getCompound("LinkedTable");
             if (posTag != null && !posTag.isEmpty()) {
-                // Read coordinates directly
-                int x = posTag.getInt("X");
-                int y = posTag.getInt("Y");
-                int z = posTag.getInt("Z");
-                linkedTablePos = new BlockPos(x, y, z);
+                // Read coordinates directly - assuming the tags are primitive integers
+                if (posTag.contains("X") && posTag.contains("Y") && posTag.contains("Z")) {
+                    // Use getInt with default value 0 to avoid Optional issues
+                    int x = posTag.getInt("X");
+                    int y = posTag.getInt("Y");
+                    int z = posTag.getInt("Z");
+                    linkedTablePos = new BlockPos(x, y, z);
+                } else {
+                    linkedTablePos = null;
+                }
             } else {
                 linkedTablePos = null;
             }

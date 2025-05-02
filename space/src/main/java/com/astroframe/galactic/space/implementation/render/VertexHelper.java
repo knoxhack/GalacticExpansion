@@ -6,6 +6,8 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.MultiBufferSource;
 import org.joml.Matrix4f;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
 
 /**
  * Helper class for vertex rendering compatibility across Minecraft versions.
@@ -51,15 +53,25 @@ public class VertexHelper {
      */
     public static void addColoredVertex(VertexConsumer consumer, Matrix4f matrix, float x, float y, float z, 
                                       float red, float green, float blue, float alpha) {
-        // Basic vertex data
-        // NeoForge 1.21.5 compatible approach
-        // Some vertex consumers don't support method chaining, so call each method separately
-        consumer.vertex(matrix, x, y, z);
-        consumer.color(red, green, blue, alpha);
-        consumer.normal(0.0F, 1.0F, 0.0F);
-        consumer.uv(0.0F, 0.0F);
-        consumer.overlayCoords(0, 0);
-        consumer.uv2(15728880); // Full brightness
-        consumer.endVertex();
+        // In NeoForge 1.21.5, we need to use a different approach to add vertices
+        // Create a buffer builder and add the vertex data manually
+        if (consumer instanceof BufferBuilder builder) {
+            // Add position transformed by matrix
+            float transformedX = matrix.m00() * x + matrix.m01() * y + matrix.m02() * z + matrix.m03();
+            float transformedY = matrix.m10() * x + matrix.m11() * y + matrix.m12() * z + matrix.m13();
+            float transformedZ = matrix.m20() * x + matrix.m21() * y + matrix.m22() * z + matrix.m23();
+            
+            builder.vertex(transformedX, transformedY, transformedZ);
+            builder.color(red, green, blue, alpha);
+            builder.normal(0.0F, 1.0F, 0.0F);
+            builder.uv(0.0F, 0.0F);
+            builder.uv2(15728880); // Full brightness
+            builder.endVertex();
+        } else {
+            // Fallback for non-BufferBuilder consumers
+            consumer.vertex(x, y, z);
+            consumer.color(red, green, blue, alpha);
+            consumer.endVertex();
+        }
     }
 }
