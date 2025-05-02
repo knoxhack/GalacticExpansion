@@ -1,0 +1,42 @@
+# This is a configuration file for NeoForge
+modLoader="javafml"
+loaderVersion="[47,)" # Minimum version of the mod loader required to load the mod. For NeoForge 1.21.x - use 47+
+license="All Rights Reserved"
+issueTrackerURL="https://github.com/AstroFrame/GalacticExpansion/issues"
+
+[[mods]]
+modId="galacticspace" # Note: Changed from galactic-space to galacticspace (no hyphens)
+version="0.1.0"
+displayName="Galactic Space"
+displayURL="https://github.com/AstroFrame/GalacticExpansion"
+credits="The AstroFrame Team"
+authors="AstroFrame"
+description='''
+The Space module of the Galactic Framework, providing celestial bodies, space travel, and rocket systems.
+
+Explore distant planets and harness the resources of the cosmos!
+'''
+
+# NeoForge dependency for 1.21.5
+[[dependencies.galacticspace]]
+    modId="neoforge"
+    type="required"
+    versionRange="[21.5,)"  # Requires NeoForge 21.5 or later
+    ordering="NONE"
+    side="BOTH"
+
+# Minecraft dependency for 1.21.5
+[[dependencies.galacticspace]]
+    modId="minecraft"
+    type="required"
+    versionRange="[1.21.5,1.22)"  # Requires Minecraft 1.21.5 but less than 1.22
+    ordering="NONE"
+    side="BOTH"
+    
+# Core module dependency
+[[dependencies.galacticspace]]
+    modId="galacticcore"  # Note: Changed from galactic-core to galacticcore (no hyphens)
+    type="required"
+    versionRange="[0.1.0,)"
+    ordering="AFTER"
+    side="BOTH"

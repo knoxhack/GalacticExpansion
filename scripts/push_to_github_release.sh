@@ -114,22 +114,29 @@ find . -path "*/build/libs/*.jar" -type f
 for module in "${MODULES[@]}"; do
   echo "Looking for JAR files for module: $module"
   
-  # More specific search pattern for module JAR files
-  # Explicitly look for the compiled JAR files that Gradle creates
+  # Pattern 1: module-version.jar (e.g., core-0.1.0.jar)
   module_jar=$(find "./$module/build/libs" -type f -name "$module-*.jar" -not -name "*-dev.jar" -not -name "*-sources.jar" -not -name "*-javadoc.jar" 2>/dev/null)
   
   if [ -n "$module_jar" ]; then
-    echo "Found module JAR: $module_jar"
+    echo "Found module JAR with pattern 1: $module_jar"
     JAR_FILES="$JAR_FILES $module_jar"
   else
-    # Try alternative pattern for modules
-    module_jar=$(find "./$module/build/libs" -type f -name "*.jar" -not -name "*-dev.jar" -not -name "*-sources.jar" -not -name "*-javadoc.jar" 2>/dev/null | head -1)
+    # Pattern 2: prefixed-module-version.jar (e.g., galacticcore-0.1.0.jar)
+    module_jar=$(find "./$module/build/libs" -type f -name "galactic$module-*.jar" -not -name "*-dev.jar" -not -name "*-sources.jar" -not -name "*-javadoc.jar" 2>/dev/null)
     
     if [ -n "$module_jar" ]; then
-      echo "Found alternative module JAR: $module_jar"
+      echo "Found module JAR with pattern 2: $module_jar"
       JAR_FILES="$JAR_FILES $module_jar"
     else
-      echo "Warning: No JAR found for module $module"
+      # Pattern 3: Any JAR in the module's build/libs directory (fallback)
+      module_jar=$(find "./$module/build/libs" -type f -name "*.jar" -not -name "*-dev.jar" -not -name "*-sources.jar" -not -name "*-javadoc.jar" 2>/dev/null | head -1)
+      
+      if [ -n "$module_jar" ]; then
+        echo "Found module JAR with fallback pattern: $module_jar"
+        JAR_FILES="$JAR_FILES $module_jar"
+      else
+        echo "Warning: No JAR found for module $module"
+      fi
     fi
   fi
 done
