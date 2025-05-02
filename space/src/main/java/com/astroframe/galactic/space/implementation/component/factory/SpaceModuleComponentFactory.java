@@ -6,6 +6,7 @@ import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
 import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import com.astroframe.galactic.core.api.space.util.ComponentUtils;
+import com.astroframe.galactic.space.implementation.component.command.BasicCommandModule;
 import com.astroframe.galactic.space.implementation.component.engine.BasicChemicalEngine;
 import com.astroframe.galactic.space.implementation.component.fueltank.StandardFuelTank;
 import net.minecraft.nbt.CompoundTag;
@@ -43,6 +44,8 @@ public class SpaceModuleComponentFactory implements ComponentUtils.ComponentFact
                 return createEngine(id, tag);
             case FUEL_TANK:
                 return createFuelTank(id, tag);
+            case COMMAND_MODULE:
+                return createCommandModule(id, tag);
             default:
                 return Optional.empty();
         }
@@ -123,6 +126,24 @@ public class SpaceModuleComponentFactory implements ComponentUtils.ComponentFact
         fuelTank.load(tag);
         
         return Optional.of(fuelTank);
+    }
+    
+    /**
+     * Creates a command module component from tag data.
+     */
+    private Optional<IRocketComponent> createCommandModule(ResourceLocation id, CompoundTag tag) {
+        // Extract common properties
+        String name = TagHelper.getString(tag, "Name", "Basic Command Module");
+        String description = TagHelper.getString(tag, "Description", "A basic command module.");
+        int tier = TagHelper.getInt(tag, "Tier", 1);
+        
+        // Create basic command module with tier
+        BasicCommandModule commandModule = new BasicCommandModule(id, tier, name, description);
+        
+        // Load saved state
+        commandModule.load(tag);
+        
+        return Optional.of(commandModule);
     }
     
     @Override

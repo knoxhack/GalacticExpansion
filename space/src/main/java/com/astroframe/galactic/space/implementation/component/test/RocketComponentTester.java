@@ -44,6 +44,12 @@ public class RocketComponentTester {
             success = false;
         }
         
+        // Test command module creation and functionality
+        if (!testCommandModuleCreation()) {
+            LOGGER.error("Command module creation test failed");
+            success = false;
+        }
+        
         // Test component serialization and deserialization
         if (!testComponentSerialization()) {
             LOGGER.error("Component serialization test failed");
@@ -173,6 +179,102 @@ public class RocketComponentTester {
     }
     
     /**
+     * Tests the fuel tank creation and functionality.
+     * 
+     * @return true if the test passes
+     */
+    private static boolean testFuelTankCreation() {
+        LOGGER.info("Testing fuel tank creation and functionality...");
+        
+        try {
+            // Create a standard fuel tank
+            ResourceLocation tankId = new ResourceLocation("galactic_space", "test_fuel_tank");
+            String tankName = "Test Chemical Fuel Tank";
+            String tankDesc = "A test fuel tank for verification";
+            int tier = 2;
+            int mass = 75;
+            int maxDurability = 150;
+            int maxFuelCapacity = 2000;
+            float leakResistance = 0.85f;
+            float explosionResistance = 0.75f;
+            
+            IFuelTank fuelTank = new StandardFuelTank(
+                tankId, tankName, tankDesc, tier, mass, maxDurability,
+                maxFuelCapacity, FuelType.CHEMICAL, leakResistance, explosionResistance
+            );
+            
+            // Verify fuel tank properties
+            boolean propertiesValid = 
+                fuelTank.getType() == RocketComponentType.FUEL_TANK &&
+                fuelTank.getFuelType() == FuelType.CHEMICAL &&
+                fuelTank.getName().equals(tankName) &&
+                fuelTank.getDescription().equals(tankDesc) &&
+                fuelTank.getTier() == tier &&
+                fuelTank.getMass() == mass &&
+                fuelTank.getMaxDurability() == maxDurability &&
+                fuelTank.getCurrentDurability() == maxDurability &&
+                fuelTank.getMaxFuelCapacity() == maxFuelCapacity &&
+                fuelTank.getCurrentFuelLevel() == 0 &&
+                fuelTank.getLeakResistance() == leakResistance &&
+                fuelTank.getExplosionResistance() == explosionResistance;
+            
+            if (!propertiesValid) {
+                LOGGER.error("Fuel tank properties validation failed");
+                return false;
+            }
+            
+            // Test fuel functionality
+            int fuelToAdd = 1000;
+            int addedFuel = fuelTank.addFuel(fuelToAdd);
+            if (addedFuel != fuelToAdd || fuelTank.getCurrentFuelLevel() != fuelToAdd) {
+                LOGGER.error("Fuel tank add fuel operation failed");
+                return false;
+            }
+            
+            int fuelToConsume = 400;
+            int consumedFuel = fuelTank.consumeFuel(fuelToConsume);
+            if (consumedFuel != fuelToConsume || fuelTank.getCurrentFuelLevel() != (fuelToAdd - fuelToConsume)) {
+                LOGGER.error("Fuel tank consume fuel operation failed");
+                return false;
+            }
+            
+            // Test durability functionality
+            int damageAmount = 50;
+            fuelTank.damage(damageAmount);
+            if (fuelTank.getCurrentDurability() != (maxDurability - damageAmount)) {
+                LOGGER.error("Fuel tank damage operation failed");
+                return false;
+            }
+            
+            int repairAmount = 20;
+            fuelTank.repair(repairAmount);
+            if (fuelTank.getCurrentDurability() != (maxDurability - damageAmount + repairAmount)) {
+                LOGGER.error("Fuel tank repair operation failed");
+                return false;
+            }
+            
+            // Test serialization and deserialization
+            CompoundTag tag = new CompoundTag();
+            fuelTank.save(tag);
+            
+            if (!tag.contains("Type") || !tag.getString("Type").equals(RocketComponentType.FUEL_TANK.name())) {
+                LOGGER.error("Fuel tank serialization missing or incorrect Type");
+                return false;
+            }
+            
+            if (!tag.contains("FuelType") || !tag.getString("FuelType").equals(FuelType.CHEMICAL.name())) {
+                LOGGER.error("Fuel tank serialization missing or incorrect FuelType");
+                return false;
+            }
+            
+            return true;
+        } catch (Exception e) {
+            LOGGER.error("Error in fuel tank creation test", e);
+            return false;
+        }
+    }
+    
+    /**
      * Tests the component factory system.
      * 
      * @return true if the test passes
@@ -181,7 +283,33 @@ public class RocketComponentTester {
         LOGGER.info("Testing component factory system...");
         
         try {
-            // Create a tag that represents a component
+            // Test 1: Engine creation through factory
+            if (!testFactoryEngineCreation()) {
+                return false;
+            }
+            
+            // Test 2: Fuel tank creation through factory
+            if (!testFactoryFuelTankCreation()) {
+                return false;
+            }
+            
+            return true;
+        } catch (Exception e) {
+            LOGGER.error("Error in component factory system test", e);
+            return false;
+        }
+    }
+    
+    /**
+     * Tests engine creation through the factory system.
+     * 
+     * @return true if the test passes
+     */
+    private static boolean testFactoryEngineCreation() {
+        LOGGER.info("Testing engine creation through factory...");
+        
+        try {
+            // Create a tag that represents an engine component
             ResourceLocation engineId = new ResourceLocation("galactic_space", "test_factory_engine");
             CompoundTag tag = new CompoundTag();
             tag.putString("ID", engineId.toString());
@@ -196,13 +324,13 @@ public class RocketComponentTester {
             
             // Verify the component was created
             if (component == null) {
-                LOGGER.error("Factory failed to create component");
+                LOGGER.error("Factory failed to create engine component");
                 return false;
             }
             
             // Verify it's the right type
             if (!(component instanceof IRocketEngine)) {
-                LOGGER.error("Factory created wrong component type");
+                LOGGER.error("Factory created wrong component type for engine");
                 return false;
             }
             
@@ -222,7 +350,68 @@ public class RocketComponentTester {
             
             return true;
         } catch (Exception e) {
-            LOGGER.error("Error in component factory system test", e);
+            LOGGER.error("Error in factory engine creation test", e);
+            return false;
+        }
+    }
+    
+    /**
+     * Tests fuel tank creation through the factory system.
+     * 
+     * @return true if the test passes
+     */
+    private static boolean testFactoryFuelTankCreation() {
+        LOGGER.info("Testing fuel tank creation through factory...");
+        
+        try {
+            // Create a tag that represents a fuel tank component
+            ResourceLocation tankId = new ResourceLocation("galactic_space", "test_factory_fuel_tank");
+            CompoundTag tag = new CompoundTag();
+            tag.putString("ID", tankId.toString());
+            tag.putString("Type", RocketComponentType.FUEL_TANK.name());
+            tag.putString("FuelType", FuelType.LIQUID.name());
+            tag.putInt("Tier", 2);
+            tag.putString("Name", "Factory Test Fuel Tank");
+            tag.putString("Description", "A fuel tank created through the factory system");
+            tag.putInt("MaxFuelCapacity", 2500);
+            tag.putFloat("LeakResistance", 0.9f);
+            tag.putFloat("ExplosionResistance", 0.8f);
+            
+            // Try to create a component from the tag
+            IRocketComponent component = ComponentUtils.createComponentFromTag(tankId, tag);
+            
+            // Verify the component was created
+            if (component == null) {
+                LOGGER.error("Factory failed to create fuel tank component");
+                return false;
+            }
+            
+            // Verify it's the right type
+            if (!(component instanceof IFuelTank)) {
+                LOGGER.error("Factory created wrong component type for fuel tank");
+                return false;
+            }
+            
+            IFuelTank fuelTank = (IFuelTank) component;
+            
+            // Verify key properties
+            boolean propertiesValid = 
+                fuelTank.getType() == RocketComponentType.FUEL_TANK &&
+                fuelTank.getFuelType() == FuelType.LIQUID &&
+                fuelTank.getTier() == 2 &&
+                fuelTank.getName().equals("Factory Test Fuel Tank") &&
+                fuelTank.getMaxFuelCapacity() == 2500 &&
+                fuelTank.getLeakResistance() == 0.9f &&
+                fuelTank.getExplosionResistance() == 0.8f;
+            
+            if (!propertiesValid) {
+                LOGGER.error("Factory-created fuel tank properties validation failed");
+                return false;
+            }
+            
+            return true;
+        } catch (Exception e) {
+            LOGGER.error("Error in factory fuel tank creation test", e);
             return false;
         }
     }
