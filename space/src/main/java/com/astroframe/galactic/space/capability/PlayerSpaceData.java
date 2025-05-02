@@ -133,12 +133,12 @@ public class PlayerSpaceData {
                 // Use getString method with orElse for Optional
                 String idString = "";
                 if (bodiesTag.getString(i) != null) {
-                    // Since getString returns Optional<String> in 1.21.5
-                    try {
-                        idString = bodiesTag.getString(i).orElse("");
-                    } catch (Exception e) {
-                        // Fallback if the method signature changed or errored
-                        GalacticSpace.LOGGER.warn("Error getting string from tag: " + e.getMessage());
+                    // Direct access to string content in NeoForge 1.21.5
+                    if (bodiesTag.get(i) instanceof StringTag stringTag) {
+                        idString = stringTag.getAsString();
+                    } else {
+                        // Fallback if tag type is unexpected
+                        GalacticSpace.LOGGER.warn("Unexpected tag type in bodiesTag at index " + i);
                     }
                 }
                 
@@ -150,13 +150,23 @@ public class PlayerSpaceData {
         
         // Load last visited body
         if (tag.contains("LastVisitedBody")) {
-            String bodyId = tag.getString("LastVisitedBody").orElse("");
-            lastVisitedBody = bodyId.isEmpty() ? null : ResourceLocation.parse(bodyId);
+            Tag lastVisitedTag = tag.get("LastVisitedBody");
+            if (lastVisitedTag instanceof StringTag stringTag) {
+                String bodyId = stringTag.getAsString();
+                lastVisitedBody = bodyId.isEmpty() ? null : ResourceLocation.parse(bodyId);
+            } else {
+                lastVisitedBody = null;
+                GalacticSpace.LOGGER.warn("LastVisitedBody tag is not a StringTag");
+            }
         } else {
             lastVisitedBody = null;
         }
         
         // Load experience
-        spaceExplorationExperience = tag.getInt("Experience").orElse(0);
+        if (tag.contains("Experience")) {
+            spaceExplorationExperience = tag.getInt("Experience");
+        } else {
+            spaceExplorationExperience = 0;
+        }
     }
 }
