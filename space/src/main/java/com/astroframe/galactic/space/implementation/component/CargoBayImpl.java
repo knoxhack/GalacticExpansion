@@ -262,12 +262,8 @@ public class CargoBayImpl implements ICargoBay {
         // Convert each internal ItemStack to a Minecraft ItemStack
         for (com.astroframe.galactic.core.api.common.ItemStack stack : contents.values()) {
             if (stack != null && !stack.isEmpty()) {
-                // Create a Minecraft ItemStack with the same properties
-                net.minecraft.world.item.ItemStack mcStack = new net.minecraft.world.item.ItemStack(
-                    net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
-                        new net.minecraft.resources.ResourceLocation(stack.getItemId())),
-                    stack.getCount()
-                );
+                // Get the Minecraft ItemStack directly from our wrapper
+                net.minecraft.world.item.ItemStack mcStack = stack.toMinecraft();
                 result.add(mcStack);
             }
         }
@@ -315,7 +311,7 @@ public class CargoBayImpl implements ICargoBay {
         int usedCapacity = 0;
         for (com.astroframe.galactic.core.api.common.ItemStack stack : contents.values()) {
             if (stack != null && !stack.isEmpty()) {
-                usedCapacity += calculateItemWeight(net.minecraft.world.item.ItemStack.EMPTY);
+                usedCapacity += calculateItemWeight(stack.toMinecraft());
             }
         }
         return usedCapacity;
