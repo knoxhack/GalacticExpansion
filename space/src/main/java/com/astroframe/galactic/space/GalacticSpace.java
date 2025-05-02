@@ -175,7 +175,7 @@ public class GalacticSpace {
      * 
      * @param event The living damage event
      */
-    private void onLivingHurt(LivingDamageEvent event) {
+    private void onLivingHurt(LivingDamageEvent.Pre event) {
         if (!(event.getEntity() instanceof Player player)) {
             return;
         }
@@ -191,13 +191,13 @@ public class GalacticSpace {
         if (SpaceSuitItem.hasFullSpaceSuit(player)) {
             if (event.getSource().is(net.minecraft.world.damagesource.DamageTypes.DROWN)) {
                 // Protect from suffocation with any tier
-                event.setCanceled(true);
+                event.setNewDamage(0);
                 return;
             }
             
             if (minTier >= 2 && event.getSource().is(net.minecraft.world.damagesource.DamageTypes.MAGIC)) {
                 // Tier 2+ protects from radiation (magic damage)
-                event.setAmount(event.getAmount() * 0.5f);
+                event.setNewDamage(event.getNewDamage() * 0.5f);
             }
             
             if (minTier >= 3) {
@@ -205,7 +205,7 @@ public class GalacticSpace {
                     event.getSource().is(net.minecraft.world.damagesource.DamageTypes.IN_FIRE) ||
                     event.getSource().is(net.minecraft.world.damagesource.DamageTypes.ON_FIRE)) {
                     // Tier 3 protects from temperature extremes
-                    event.setCanceled(true);
+                    event.setNewDamage(0);
                 }
             }
         }
