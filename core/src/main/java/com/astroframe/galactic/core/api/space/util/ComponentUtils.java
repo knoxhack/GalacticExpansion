@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -669,8 +670,17 @@ public class ComponentUtils {
                     
                     // Add any tags the item might have
                     // Get item tag data and add it if not empty
-                    CompoundTag itemTagData = stack.getOrCreateTag();
-                    if (!itemTagData.isEmpty()) {
+                    // Use the tag getter based on what's available in the ItemStack API
+                    CompoundTag itemTagData = null;
+                    try {
+                        // Try to get tag using reflection to handle API differences
+                        itemTagData = (CompoundTag) stack.getClass().getMethod("getTag").invoke(stack);
+                    } catch (Exception e) {
+                        // If that fails, create an empty tag
+                        itemTagData = new CompoundTag();
+                    }
+                    
+                    if (itemTagData != null && !itemTagData.isEmpty()) {
                         itemTag.put("tag", itemTagData);
                     }
                     
