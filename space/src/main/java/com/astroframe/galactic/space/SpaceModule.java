@@ -61,13 +61,13 @@ public class SpaceModule {
     // Block Entities
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HolographicProjectorBlockEntity>> HOLOGRAPHIC_PROJECTOR_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("holographic_projector", 
-                    () -> BlockEntityType.Builder.of(HolographicProjectorBlockEntity::new, 
-                            HOLOGRAPHIC_PROJECTOR.get()).build(null));
+                    () -> new BlockEntityType<>(HolographicProjectorBlockEntity::new, 
+                            java.util.Set.of(HOLOGRAPHIC_PROJECTOR.get()), null));
     
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RocketAssemblyTableBlockEntity>> ROCKET_ASSEMBLY_TABLE_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("rocket_assembly_table", 
-                    () -> BlockEntityType.Builder.of(RocketAssemblyTableBlockEntity::new, 
-                            ROCKET_ASSEMBLY_TABLE.get()).build(null));
+                    () -> new BlockEntityType<>(RocketAssemblyTableBlockEntity::new, 
+                            java.util.Set.of(ROCKET_ASSEMBLY_TABLE.get()), null));
     
     /**
      * Constructor for the Space module.
@@ -117,8 +117,9 @@ public class SpaceModule {
     private void addItemsToTabs(BuildCreativeModeTabContentsEvent event) {
         // Add space module items to appropriate tabs
         if (event.getTabKey() == net.minecraft.world.item.CreativeModeTabs.TOOLS_AND_UTILITIES) {
-            event.accept(HOLOGRAPHIC_PROJECTOR);
-            event.accept(ROCKET_ASSEMBLY_TABLE);
+            // Get the item forms of the blocks and add them
+            event.accept(HOLOGRAPHIC_PROJECTOR.get().asItem());
+            event.accept(ROCKET_ASSEMBLY_TABLE.get().asItem());
         }
     }
 }

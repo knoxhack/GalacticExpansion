@@ -3,18 +3,22 @@ package com.astroframe.galactic.space.implementation.hologram;
 import com.astroframe.galactic.core.api.space.IRocket;
 import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import java.util.List;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 import org.joml.Matrix4f;
 
 /**
@@ -79,34 +83,30 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         float scale = 0.5F;
         poseStack.scale(scale, scale, scale);
         
-        // Get a vertex builder for the hologram effect
-        VertexConsumer hologramBuffer = bufferSource.getBuffer(getRenderType());
+        // Save the matrix state
+        Matrix4f pose = poseStack.last().pose();
         
-        // Render the base hologram effect
-        renderHologramBase(poseStack, hologramBuffer, packedLight);
+        // Start direct rendering with our own buffer
+        Minecraft.getInstance().getTextureManager().bindForSetup(HOLOGRAM_BASE_TEXTURE);
+        
+        // Draw base platform and parts
+        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+        
+        // Simple lines for the hologram base
+        renderHologramBase(poseStack, buffer, packedLight);
         
         // If we have rocket data, render the rocket components
         if (rocketData != null) {
-            renderRocketComponents(rocketData, poseStack, hologramBuffer, packedLight);
+            renderRocketComponents(rocketData, poseStack, buffer, packedLight);
         } else {
             // Render placeholder if no rocket data available
-            renderPlaceholderRocket(poseStack, hologramBuffer, packedLight);
+            renderPlaceholderRocket(poseStack, buffer, packedLight);
         }
         
         // Add holographic scan lines
-        renderScanLines(poseStack, hologramBuffer, packedLight, angle);
+        renderScanLines(poseStack, buffer, packedLight, angle);
         
         poseStack.popPose();
-    }
-    
-    /**
-     * Gets the render type for the hologram.
-     * Uses translucent rendering with additive blending.
-     *
-     * @return The render type
-     */
-    private RenderType getRenderType() {
-        return RenderType.entityTranslucent(HOLOGRAM_BASE_TEXTURE);
     }
     
     /**
@@ -116,23 +116,25 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      * @param buffer The vertex buffer
      * @param packedLight The packed light
      */
-    private void renderHologramBase(PoseStack poseStack, VertexConsumer buffer, int packedLight) {
+    private void renderHologramBase(PoseStack poseStack, BufferBuilder buffer, int packedLight) {
         poseStack.pushPose();
         
         // Move to base position
         poseStack.translate(0, -0.4, 0);
         poseStack.scale(1.5F, 0.1F, 1.5F);
         
-        // Render a glowing platform disc
-        Matrix4f pose = poseStack.last().pose();
-        
-        // Create a circular platform
-        int segments = 24;
+        // Create a circular platform with lines
+        float centerY = 0.0F;
+        int segments = 16;
         float radius = 0.5F;
         
+        // Render a simple circle of lines at the base
+        buffer.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR);
+        
+        // Draw a circular pattern
         for (int i = 0; i < segments; i++) {
             float angle1 = (float) (2 * Math.PI * i / segments);
-            float angle2 = (float) (2 * Math.PI * (i + 1) / segments);
+            float angle2 = (float) (2 * Math.PI * ((i + 1) % segments) / segments);
             
             float x1 = (float) (radius * Math.cos(angle1));
             float z1 = (float) (radius * Math.sin(angle1));
@@ -140,33 +142,26 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             float x2 = (float) (radius * Math.cos(angle2));
             float z2 = (float) (radius * Math.sin(angle2));
             
-            // Center point
-            buffer.vertex(pose, 0, 0, 0);
-            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
-            buffer.uv(0.5F, 0.5F);
-            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
-            buffer.uv2(packedLight);
-            buffer.normal(0, 1, 0);
-            buffer.endVertex();
+            // Outer circle
+            buffer.vertex(poseStack.last().pose(), x1, centerY, z1)
+                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
+                  .endVertex();
             
-            // First outer point
-            buffer.vertex(pose, x1, 0, z1);
-            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, 0.3F * HOLOGRAM_ALPHA);
-            buffer.uv(0.5F + x1 * 0.5F, 0.5F + z1 * 0.5F);
-            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
-            buffer.uv2(packedLight);
-            buffer.normal(0, 1, 0);
-            buffer.endVertex();
+            buffer.vertex(poseStack.last().pose(), x2, centerY, z2)
+                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
+                  .endVertex();
             
-            // Second outer point
-            buffer.vertex(pose, x2, 0, z2);
-            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, 0.3F * HOLOGRAM_ALPHA);
-            buffer.uv(0.5F + x2 * 0.5F, 0.5F + z2 * 0.5F);
-            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
-            buffer.uv2(packedLight);
-            buffer.normal(0, 1, 0);
-            buffer.endVertex();
+            // Spokes from center
+            buffer.vertex(poseStack.last().pose(), 0, centerY, 0)
+                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
+                  .endVertex();
+            
+            buffer.vertex(poseStack.last().pose(), x1, centerY, z1)
+                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, 0.3F * HOLOGRAM_ALPHA)
+                  .endVertex();
         }
+        
+        Tesselator.getInstance().end();
         
         poseStack.popPose();
     }
@@ -179,7 +174,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      * @param buffer The vertex buffer
      * @param packedLight The packed light
      */
-    private void renderRocketComponents(IRocket rocket, PoseStack poseStack, VertexConsumer buffer, int packedLight) {
+    private void renderRocketComponents(IRocket rocket, PoseStack poseStack, BufferBuilder buffer, int packedLight) {
         poseStack.pushPose();
         
         // Adjust position for rocket components
@@ -188,10 +183,15 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         // Get all components from the rocket
         List<IRocketComponent> components = rocket.getAllComponents();
         
+        // Start batch rendering of lines
+        buffer.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR);
+        
         // Render each component
         for (IRocketComponent component : components) {
             renderRocketComponent(component, poseStack, buffer, packedLight);
         }
+        
+        Tesselator.getInstance().end();
         
         poseStack.popPose();
     }
@@ -204,7 +204,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      * @param buffer The vertex buffer
      * @param packedLight The packed light
      */
-    private void renderRocketComponent(IRocketComponent component, PoseStack poseStack, VertexConsumer buffer, int packedLight) {
+    private void renderRocketComponent(IRocketComponent component, PoseStack poseStack, BufferBuilder buffer, int packedLight) {
         poseStack.pushPose();
         
         // Get component position in the rocket
@@ -219,7 +219,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         
         // Render a holographic representation of the component
         // Here we just render a simple box for each component
-        renderHolographicBox(poseStack, buffer, packedLight);
+        renderHolographicBox(poseStack, buffer);
         
         poseStack.popPose();
     }
@@ -231,24 +231,27 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      * @param buffer The vertex buffer
      * @param packedLight The packed light
      */
-    private void renderPlaceholderRocket(PoseStack poseStack, VertexConsumer buffer, int packedLight) {
+    private void renderPlaceholderRocket(PoseStack poseStack, BufferBuilder buffer, int packedLight) {
         poseStack.pushPose();
         
         // Adjust position for placeholder
         poseStack.translate(0, 0.5, 0);
         
+        // Start line batch
+        buffer.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR);
+        
         // Render a basic rocket shape
         // Body
         poseStack.pushPose();
         poseStack.scale(0.3F, 1.0F, 0.3F);
-        renderHolographicBox(poseStack, buffer, packedLight);
+        renderHolographicBox(poseStack, buffer);
         poseStack.popPose();
         
         // Nose cone
         poseStack.pushPose();
         poseStack.translate(0, 0.75, 0);
         poseStack.scale(0.3F, 0.5F, 0.3F);
-        renderHolographicCone(poseStack, buffer, packedLight);
+        renderHolographicCone(poseStack, buffer);
         poseStack.popPose();
         
         // Fins
@@ -258,9 +261,11 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             poseStack.mulPose(Axis.YP.rotationDegrees(90 * i));
             poseStack.translate(0.31, 0, 0);
             poseStack.scale(0.1F, 0.3F, 0.3F);
-            renderHolographicBox(poseStack, buffer, packedLight);
+            renderHolographicBox(poseStack, buffer);
             poseStack.popPose();
         }
+        
+        Tesselator.getInstance().end();
         
         poseStack.popPose();
     }
@@ -270,9 +275,8 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      *
      * @param poseStack The pose stack
      * @param buffer The vertex buffer
-     * @param packedLight The packed light
      */
-    private void renderHolographicBox(PoseStack poseStack, VertexConsumer buffer, int packedLight) {
+    private void renderHolographicBox(PoseStack poseStack, BufferBuilder buffer) {
         Matrix4f pose = poseStack.last().pose();
         
         // Define vertices of a unit cube centered at the origin
@@ -295,21 +299,13 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         
         // Draw each edge
         for (int[] edge : edges) {
-            buffer.vertex(pose, vertices[edge[0]][0], vertices[edge[0]][1], vertices[edge[0]][2]);
-            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
-            buffer.uv(0, 0);
-            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
-            buffer.uv2(packedLight);
-            buffer.normal(0, 1, 0);
-            buffer.endVertex();
+            buffer.vertex(pose, vertices[edge[0]][0], vertices[edge[0]][1], vertices[edge[0]][2])
+                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
+                  .endVertex();
             
-            buffer.vertex(pose, vertices[edge[1]][0], vertices[edge[1]][1], vertices[edge[1]][2]);
-            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
-            buffer.uv(1, 1);
-            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
-            buffer.uv2(packedLight);
-            buffer.normal(0, 1, 0);
-            buffer.endVertex();
+            buffer.vertex(pose, vertices[edge[1]][0], vertices[edge[1]][1], vertices[edge[1]][2])
+                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
+                  .endVertex();
         }
     }
     
@@ -318,15 +314,13 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      *
      * @param poseStack The pose stack
      * @param buffer The vertex buffer
-     * @param packedLight The packed light
      */
-    private void renderHolographicCone(PoseStack poseStack, VertexConsumer buffer, int packedLight) {
+    private void renderHolographicCone(PoseStack poseStack, BufferBuilder buffer) {
         Matrix4f pose = poseStack.last().pose();
         
         // Number of segments for the cone base
         int segments = 12;
         float radius = 0.5F;
-        float height = 1.0F;
         
         // Apex of the cone
         float apexX = 0.0F;
@@ -345,38 +339,22 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             float z2 = (float) (radius * Math.sin(angle2));
             
             // Base point 1 to apex
-            buffer.vertex(pose, x1, -0.5F, z1);
-            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
-            buffer.uv(0, 0);
-            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
-            buffer.uv2(packedLight);
-            buffer.normal(0, 1, 0);
-            buffer.endVertex();
+            buffer.vertex(pose, x1, -0.5F, z1)
+                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
+                  .endVertex();
             
-            buffer.vertex(pose, apexX, apexY, apexZ);
-            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
-            buffer.uv(0.5F, 1);
-            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
-            buffer.uv2(packedLight);
-            buffer.normal(0, 1, 0);
-            buffer.endVertex();
+            buffer.vertex(pose, apexX, apexY, apexZ)
+                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
+                  .endVertex();
             
             // Base edge
-            buffer.vertex(pose, x1, -0.5F, z1);
-            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
-            buffer.uv(0, 0);
-            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
-            buffer.uv2(packedLight);
-            buffer.normal(0, 1, 0);
-            buffer.endVertex();
+            buffer.vertex(pose, x1, -0.5F, z1)
+                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
+                  .endVertex();
             
-            buffer.vertex(pose, x2, -0.5F, z2);
-            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
-            buffer.uv(1, 0);
-            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
-            buffer.uv2(packedLight);
-            buffer.normal(0, 1, 0);
-            buffer.endVertex();
+            buffer.vertex(pose, x2, -0.5F, z2)
+                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
+                  .endVertex();
         }
     }
     
@@ -388,7 +366,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      * @param packedLight The packed light
      * @param rotationAngle The current rotation angle
      */
-    private void renderScanLines(PoseStack poseStack, VertexConsumer buffer, int packedLight, float rotationAngle) {
+    private void renderScanLines(PoseStack poseStack, BufferBuilder buffer, int packedLight, float rotationAngle) {
         poseStack.pushPose();
         
         // Scan lines move up and down
@@ -400,42 +378,46 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         // Make scan line transparent
         float scanAlpha = 0.3F * HOLOGRAM_ALPHA;
         
-        // Render a horizontal scan plane
+        // Render a horizontal scan plane with a grid
         Matrix4f pose = poseStack.last().pose();
         float size = 1.0F;
         
-        // Scan line is just a horizontal square
-        buffer.vertex(pose, -size, 0, -size)
-              .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha)
-              .uv(0, 0)
-              .overlayCoords(OverlayTexture.NO_OVERLAY)
-              .uv2(packedLight)
-              .normal(0, 1, 0)
-              .endVertex();
+        // Start rendering lines
+        buffer.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR);
         
-        buffer.vertex(pose, size, 0, -size)
-              .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha)
-              .uv(1, 0)
-              .overlayCoords(OverlayTexture.NO_OVERLAY)
-              .uv2(packedLight)
-              .normal(0, 1, 0)
-              .endVertex();
+        // Draw a grid of lines for the scan effect
+        int gridSize = 4;
+        float step = size * 2 / gridSize;
         
-        buffer.vertex(pose, size, 0, size)
-              .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha)
-              .uv(1, 1)
-              .overlayCoords(OverlayTexture.NO_OVERLAY)
-              .uv2(packedLight)
-              .normal(0, 1, 0)
-              .endVertex();
+        // Horizontal lines
+        for (int i = 0; i <= gridSize; i++) {
+            float y = 0;
+            float z = -size + i * step;
+            
+            buffer.vertex(pose, -size, y, z)
+                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha)
+                  .endVertex();
+            
+            buffer.vertex(pose, size, y, z)
+                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha)
+                  .endVertex();
+        }
         
-        buffer.vertex(pose, -size, 0, size)
-              .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha)
-              .uv(0, 1)
-              .overlayCoords(OverlayTexture.NO_OVERLAY)
-              .uv2(packedLight)
-              .normal(0, 1, 0)
-              .endVertex();
+        // Vertical lines
+        for (int i = 0; i <= gridSize; i++) {
+            float y = 0;
+            float x = -size + i * step;
+            
+            buffer.vertex(pose, x, y, -size)
+                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha)
+                  .endVertex();
+            
+            buffer.vertex(pose, x, y, size)
+                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha)
+                  .endVertex();
+        }
+        
+        Tesselator.getInstance().end();
         
         poseStack.popPose();
     }
