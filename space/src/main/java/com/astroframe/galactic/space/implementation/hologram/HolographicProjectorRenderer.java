@@ -97,8 +97,9 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         RenderSystem.setShaderColor(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
         
         // Start building lines - NeoForge 1.21.5 compatible
-        builder.begin(com.mojang.blaze3d.vertex.VertexFormat.Mode.LINES, 
-                      com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR);
+        VertexFormat.Mode mode = VertexFormat.Mode.LINES;
+        DefaultVertexFormat format = DefaultVertexFormat.POSITION_COLOR;
+        builder.begin(mode, format);
         
         // Render base platform with direct BufferBuilder
         renderHologramBase(poseStack, builder);
@@ -115,8 +116,11 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         float scanHeight = Mth.sin(time * (float) Math.PI * 2) * 1.5F;
         renderScanLines(poseStack, builder, scanHeight);
         
-        // Finish rendering
-        RenderSystem.drawWithShader(builder.end()); // In NeoForge 1.21.5, we end the builder and upload it with shader
+        // Finish rendering in NeoForge 1.21.5
+        BufferBuilder.RenderedBuffer renderedBuffer = builder.endOrDiscardIfEmpty();
+        if (renderedBuffer != null) {
+            RenderSystem.drawWithShader(renderedBuffer);
+        }
         
         // Reset render state (NeoForge 1.21.5 doesn't use RenderSystem.disableBlend directly)
         // Instead we rely on the renderer to handle state
@@ -178,8 +182,8 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             // Line from center to edge - NeoForge 1.21.5 compatible method
             Vector4f pos1 = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
             pos1.mul(pose);
-            // Use the proper vertex method for NeoForge 1.21.5
-            builder.vertex(pose, pos1.x(), pos1.y(), pos1.z())
+            // Direct position specification
+            builder.vertex(pos1.x(), pos1.y(), pos1.z())
                    .color(red, green, blue, alpha)
                    .endVertex();
                     
