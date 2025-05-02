@@ -2,11 +2,21 @@ package com.astroframe.galactic.core.api.space.util;
 
 import com.astroframe.galactic.core.api.space.component.*;
 import com.astroframe.galactic.core.api.space.component.properties.*;
+import com.astroframe.galactic.core.api.space.component.enums.CompartmentType;
+import com.astroframe.galactic.core.api.space.component.enums.EngineType;
+import com.astroframe.galactic.core.api.space.component.enums.LifeSupportType;
+import com.astroframe.galactic.core.api.space.component.enums.ShieldType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
 
@@ -348,10 +358,12 @@ public class ComponentUtils {
      */
     private static class DefaultRocketEngine extends AbstractRocketComponent implements IRocketEngine {
         private final int thrust;
+        private final int fuelConsumptionRate;
         private final float efficiency;
         private final boolean atmosphereCapable;
         private final boolean spaceCapable;
         private final EngineType engineType;
+        private final IRocketEngine.FuelType fuelType;
         
         public DefaultRocketEngine(ResourceLocation id, int tier, int mass, int thrust, float efficiency, 
                                  boolean atmosphereCapable, boolean spaceCapable, EngineType engineType) {
@@ -361,6 +373,18 @@ public class ComponentUtils {
             this.atmosphereCapable = atmosphereCapable;
             this.spaceCapable = spaceCapable;
             this.engineType = engineType;
+            this.fuelConsumptionRate = (int)(thrust / (efficiency * 10));
+            
+            // Determine fuel type based on engine type
+            if (engineType == EngineType.PLASMA) {
+                this.fuelType = IRocketEngine.FuelType.PLASMA;
+            } else if (engineType == EngineType.ANTIMATTER) {
+                this.fuelType = IRocketEngine.FuelType.ANTIMATTER;
+            } else if (engineType == EngineType.ELECTRIC) {
+                this.fuelType = IRocketEngine.FuelType.ELECTRICAL;
+            } else {
+                this.fuelType = IRocketEngine.FuelType.CHEMICAL;
+            }
         }
         
         @Override
@@ -369,8 +393,18 @@ public class ComponentUtils {
         }
         
         @Override
+        public int getFuelConsumptionRate() {
+            return fuelConsumptionRate;
+        }
+        
+        @Override
         public float getEfficiency() {
             return efficiency;
+        }
+        
+        @Override
+        public IRocketEngine.FuelType getFuelType() {
+            return fuelType;
         }
         
         @Override
@@ -396,6 +430,7 @@ public class ComponentUtils {
             tag.putBoolean("AtmosphereCapable", atmosphereCapable);
             tag.putBoolean("SpaceCapable", spaceCapable);
             tag.putString("EngineType", engineType.name());
+            tag.putString("FuelType", fuelType.name());
         }
     }
     
@@ -404,10 +439,18 @@ public class ComponentUtils {
      */
     private static class DefaultFuelTank extends AbstractRocketComponent implements IFuelTank {
         private final int capacity;
+        private int currentFuel;
+        private final IRocketEngine.FuelType fuelType;
+        private final float leakResistance;
+        private final float explosionResistance;
         
         public DefaultFuelTank(ResourceLocation id, int tier, int mass, int capacity) {
             super(id, RocketComponentType.FUEL_TANK, tier, mass);
             this.capacity = capacity;
+            this.currentFuel = 0;
+            this.fuelType = IRocketEngine.FuelType.CHEMICAL; // Default fuel type
+            this.leakResistance = 0.8f * tier;
+            this.explosionResistance = 0.7f * tier;
         }
         
         @Override
@@ -416,9 +459,48 @@ public class ComponentUtils {
         }
         
         @Override
+        public int getCurrentFuelLevel() {
+            return currentFuel;
+        }
+        
+        @Override
+        public int addFuel(int amount) {
+            int spaceLeft = capacity - currentFuel;
+            int toAdd = Math.min(amount, spaceLeft);
+            currentFuel += toAdd;
+            return toAdd;
+        }
+        
+        @Override
+        public int consumeFuel(int amount) {
+            int available = Math.min(amount, currentFuel);
+            currentFuel -= available;
+            return available;
+        }
+        
+        @Override
+        public IRocketEngine.FuelType getFuelType() {
+            return fuelType;
+        }
+        
+        @Override
+        public float getLeakResistance() {
+            return leakResistance;
+        }
+        
+        @Override
+        public float getExplosionResistance() {
+            return explosionResistance;
+        }
+        
+        @Override
         public void save(CompoundTag tag) {
             super.save(tag);
             tag.putInt("Capacity", capacity);
+            tag.putInt("CurrentFuel", currentFuel);
+            tag.putString("FuelType", fuelType.name());
+            tag.putFloat("LeakResistance", leakResistance);
+            tag.putFloat("ExplosionResistance", explosionResistance);
         }
     }
     
@@ -428,11 +510,21 @@ public class ComponentUtils {
     private static class DefaultCommandModule extends AbstractRocketComponent implements ICommandModule {
         private final int crewCapacity;
         private final int computerLevel;
+        private final int sensorStrength;
+        private final float navigationAccuracy;
+        private final boolean hasAdvancedLifeSupport;
+        private final boolean hasAutomatedLanding;
+        private final boolean hasEmergencyEvacuation;
         
         public DefaultCommandModule(ResourceLocation id, int tier, int mass, int crewCapacity, int computerLevel) {
             super(id, RocketComponentType.COCKPIT, tier, mass);
             this.crewCapacity = crewCapacity;
             this.computerLevel = computerLevel;
+            this.sensorStrength = tier * 100;
+            this.navigationAccuracy = 0.6f + (tier * 0.1f);
+            this.hasAdvancedLifeSupport = tier >= 2;
+            this.hasAutomatedLanding = tier >= 2;
+            this.hasEmergencyEvacuation = tier >= 3;
         }
         
         @Override
@@ -441,8 +533,33 @@ public class ComponentUtils {
         }
         
         @Override
-        public int getComputerLevel() {
+        public int getComputingPower() {
             return computerLevel;
+        }
+        
+        @Override
+        public int getSensorStrength() {
+            return sensorStrength;
+        }
+        
+        @Override
+        public float getNavigationAccuracy() {
+            return navigationAccuracy;
+        }
+        
+        @Override
+        public boolean hasAdvancedLifeSupport() {
+            return hasAdvancedLifeSupport;
+        }
+        
+        @Override
+        public boolean hasAutomatedLanding() {
+            return hasAutomatedLanding;
+        }
+        
+        @Override
+        public boolean hasEmergencyEvacuation() {
+            return hasEmergencyEvacuation;
         }
         
         @Override
@@ -450,6 +567,11 @@ public class ComponentUtils {
             super.save(tag);
             tag.putInt("CrewCapacity", crewCapacity);
             tag.putInt("ComputerLevel", computerLevel);
+            tag.putInt("SensorStrength", sensorStrength);
+            tag.putFloat("NavigationAccuracy", navigationAccuracy);
+            tag.putBoolean("HasAdvancedLifeSupport", hasAdvancedLifeSupport);
+            tag.putBoolean("HasAutomatedLanding", hasAutomatedLanding);
+            tag.putBoolean("HasEmergencyEvacuation", hasEmergencyEvacuation);
         }
     }
     
@@ -458,10 +580,18 @@ public class ComponentUtils {
      */
     private static class DefaultCargoBay extends AbstractRocketComponent implements ICargoBay {
         private final int storageCapacity;
+        private final Map<Integer, ItemStack> contents;
+        private final boolean hasVacuumSeal;
+        private final boolean hasTemperatureRegulation;
+        private final boolean hasRadiationShielding;
         
         public DefaultCargoBay(ResourceLocation id, int tier, int mass, int storageCapacity) {
             super(id, RocketComponentType.STORAGE, tier, mass);
             this.storageCapacity = storageCapacity;
+            this.contents = new HashMap<>();
+            this.hasVacuumSeal = tier >= 2;
+            this.hasTemperatureRegulation = tier >= 2;
+            this.hasRadiationShielding = tier >= 3;
         }
         
         @Override
@@ -470,9 +600,92 @@ public class ComponentUtils {
         }
         
         @Override
+        public Map<Integer, ItemStack> getContents() {
+            return new HashMap<>(contents);
+        }
+        
+        @Override
+        public ItemStack addItem(ItemStack stack) {
+            if (stack.isEmpty()) {
+                return ItemStack.EMPTY;
+            }
+            
+            ItemStack remaining = stack.copy();
+            
+            for (int i = 0; i < storageCapacity; i++) {
+                if (!contents.containsKey(i)) {
+                    contents.put(i, remaining);
+                    return ItemStack.EMPTY;
+                } else if (contents.get(i).isEmpty()) {
+                    contents.put(i, remaining);
+                    return ItemStack.EMPTY;
+                }
+            }
+            
+            return remaining;
+        }
+        
+        @Override
+        public ItemStack takeItem(int slotIndex, int amount) {
+            if (!contents.containsKey(slotIndex) || contents.get(slotIndex).isEmpty()) {
+                return ItemStack.EMPTY;
+            }
+            
+            ItemStack currentStack = contents.get(slotIndex);
+            int amountToTake = Math.min(amount, currentStack.getCount());
+            
+            ItemStack result = currentStack.copy();
+            result.setCount(amountToTake);
+            
+            currentStack.shrink(amountToTake);
+            if (currentStack.isEmpty()) {
+                contents.remove(slotIndex);
+            }
+            
+            return result;
+        }
+        
+        @Override
+        public boolean hasVacuumSeal() {
+            return hasVacuumSeal;
+        }
+        
+        @Override
+        public boolean hasTemperatureRegulation() {
+            return hasTemperatureRegulation;
+        }
+        
+        @Override
+        public boolean hasRadiationShielding() {
+            return hasRadiationShielding;
+        }
+        
+        @Override
         public void save(CompoundTag tag) {
             super.save(tag);
             tag.putInt("StorageCapacity", storageCapacity);
+            tag.putBoolean("HasVacuumSeal", hasVacuumSeal);
+            tag.putBoolean("HasTemperatureRegulation", hasTemperatureRegulation);
+            tag.putBoolean("HasRadiationShielding", hasRadiationShielding);
+            
+            // Save contents
+            CompoundTag contentsTag = new CompoundTag();
+            contentsTag.putInt("Count", contents.size());
+            
+            int index = 0;
+            for (Map.Entry<Integer, ItemStack> entry : contents.entrySet()) {
+                CompoundTag slotTag = new CompoundTag();
+                slotTag.putInt("Slot", entry.getKey());
+                
+                CompoundTag itemTag = new CompoundTag();
+                entry.getValue().save(itemTag);
+                slotTag.put("Item", itemTag);
+                
+                contentsTag.put("Slot" + index, slotTag);
+                index++;
+            }
+            
+            tag.put("Contents", contentsTag);
         }
     }
     
