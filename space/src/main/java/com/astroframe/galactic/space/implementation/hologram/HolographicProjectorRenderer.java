@@ -142,17 +142,36 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
     private void drawLine(VertexConsumer consumer, Matrix4f pose, 
                          float x1, float y1, float z1, float x2, float y2, float z2,
                          float red, float green, float blue, float alpha) {
-        // NeoForge 1.21.5 method for vertex consumer using MatrixStack.Pose
-        // Transform the vertices using the pose matrix
-        consumer.vertex(pose, x1, y1, z1)
+        // Calculate transformed positions using the matrix multiplication for NeoForge 1.21.5
+        // This way we apply the matrix transformation ourselves before passing to the vertex consumer
+        float[] pos1 = applyMatrix(pose, x1, y1, z1);
+        float[] pos2 = applyMatrix(pose, x2, y2, z2);
+        
+        // Use the standard vertex method without a matrix (the matrix was already applied)
+        consumer.vertex(pos1[0], pos1[1], pos1[2])
                 .color(red, green, blue, alpha)
                 .normal(1, 0, 0)
                 .endVertex();
                 
-        consumer.vertex(pose, x2, y2, z2)
+        consumer.vertex(pos2[0], pos2[1], pos2[2])
                 .color(red, green, blue, alpha)
                 .normal(1, 0, 0)
                 .endVertex();
+    }
+    
+    /**
+     * Applies a matrix transformation to a point
+     * 
+     * @param matrix The transformation matrix
+     * @param x The x coordinate
+     * @param y The y coordinate
+     * @param z The z coordinate
+     * @return The transformed coordinates as a float array [x, y, z]
+     */
+    private float[] applyMatrix(Matrix4f matrix, float x, float y, float z) {
+        Vector4f vec = new Vector4f(x, y, z, 1.0f);
+        vec.mul(matrix);
+        return new float[] { vec.x(), vec.y(), vec.z() };
     }
     
     /**
