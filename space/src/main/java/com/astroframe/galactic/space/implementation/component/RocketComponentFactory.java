@@ -1468,6 +1468,10 @@ public class RocketComponentFactory {
         private int currentDurability;
         private final int storageCapacity;
         private final Map<Integer, ItemStack> contents = new HashMap<>();
+        private final int maxCapacity; // Maximum cargo capacity in kg
+        private final boolean hasSecurityFeatures;
+        private final boolean hasEnvironmentControl;
+        private final boolean hasAutomatedLoading;
         
         public CargoBay(ResourceLocation id, String name, String description, 
                        int tier, int mass, int maxDurability, int storageCapacity) {
@@ -1479,6 +1483,12 @@ public class RocketComponentFactory {
             this.maxDurability = maxDurability;
             this.currentDurability = maxDurability;
             this.storageCapacity = storageCapacity;
+            
+            // Set capacity and features based on tier
+            this.maxCapacity = 100 * tier; // 100kg per tier
+            this.hasSecurityFeatures = tier >= 2; // Mid and high tier have security features
+            this.hasEnvironmentControl = tier >= 2; // Mid and high tier have environment control
+            this.hasAutomatedLoading = tier >= 3; // Only high tier has automated loading
         }
         
         @Override
@@ -1618,6 +1628,75 @@ public class RocketComponentFactory {
             }
             
             return result;
+        }
+        
+        @Override
+        public List<ItemStack> getItems() {
+            List<ItemStack> items = new ArrayList<>();
+            for (ItemStack stack : contents.values()) {
+                items.add(stack.copy());
+            }
+            return items;
+        }
+        
+        @Override
+        public ItemStack removeItem(int index) {
+            if (index < 0 || index >= contents.size()) {
+                return ItemStack.EMPTY;
+            }
+            
+            // Convert map entry index to map key
+            Integer slotKey = null;
+            int currentIndex = 0;
+            for (Integer slotNum : contents.keySet()) {
+                if (currentIndex == index) {
+                    slotKey = slotNum;
+                    break;
+                }
+                currentIndex++;
+            }
+            
+            if (slotKey != null) {
+                ItemStack stack = contents.get(slotKey);
+                contents.remove(slotKey);
+                return stack;
+            }
+            
+            return ItemStack.EMPTY;
+        }
+        
+        @Override
+        public int getMaxSlots() {
+            return storageCapacity;
+        }
+        
+        @Override
+        public int getMaxCapacity() {
+            return maxCapacity;
+        }
+        
+        @Override
+        public int getCurrentUsedCapacity() {
+            int capacity = 0;
+            for (ItemStack stack : contents.values()) {
+                capacity += calculateItemWeight(stack);
+            }
+            return capacity;
+        }
+        
+        @Override
+        public boolean hasSecurityFeatures() {
+            return hasSecurityFeatures;
+        }
+        
+        @Override
+        public boolean hasEnvironmentControl() {
+            return hasEnvironmentControl;
+        }
+        
+        @Override
+        public boolean hasAutomatedLoading() {
+            return hasAutomatedLoading;
         }
     }
     
