@@ -229,19 +229,19 @@ public abstract class MachineBlockEntity extends BlockEntityBase implements Mach
         
         // Load processing state
         if (tag.contains("ProcessingTime")) {
-            processingTime = tag.getInt("ProcessingTime");
+            processingTime = tag.getInt("ProcessingTime").orElse(0);
         } else {
             processingTime = 0;
         }
         
         if (tag.contains("ProcessingTimeTotal")) {
-            processingTimeTotal = tag.getInt("ProcessingTimeTotal");
+            processingTimeTotal = tag.getInt("ProcessingTimeTotal").orElse(getDefaultProcessingTime());
         } else {
             processingTimeTotal = getDefaultProcessingTime();
         }
         
         if (tag.contains("IsActive")) {
-            isActive = tag.getBoolean("IsActive");
+            isActive = tag.getBoolean("IsActive").orElse(false);
         } else {
             isActive = false;
         }

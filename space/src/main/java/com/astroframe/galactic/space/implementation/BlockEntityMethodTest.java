@@ -36,7 +36,7 @@ public class BlockEntityMethodTest extends BlockEntityBase {
     protected void loadData(CompoundTag tag) {
         // Example of loading data
         if (tag.contains("TestValue")) {
-            this.testValue = tag.getInt("TestValue");
+            this.testValue = tag.getInt("TestValue").orElse(0);
         }
     }
     
