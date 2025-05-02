@@ -520,10 +520,7 @@ public class ModularRocket implements IRocket {
             // Direct access to fields in NeoForge 1.21.5
             String idStr = "";
             if (tag.contains("id")) {
-                Tag idTag = tag.get("id");
-                if (idTag instanceof net.minecraft.nbt.StringTag) {
-                    idStr = idTag.getAsString();
-                }
+                idStr = tag.getString("id").orElse("");
             }
             
             if (idStr.isEmpty()) {
@@ -535,36 +532,24 @@ public class ModularRocket implements IRocket {
             // Get numeric values with direct tag access
             int tier = 1;
             if (tag.contains("tier")) {
-                Tag tierTag = tag.get("tier");
-                if (tierTag instanceof net.minecraft.nbt.NumericTag) {
-                    tier = ((net.minecraft.nbt.NumericTag)tierTag).getAsInt();
-                }
+                tier = tag.getInt("tier").orElse(1);
             }
             
             int fuel = 0;
             if (tag.contains("fuel")) {
-                Tag fuelTag = tag.get("fuel");
-                if (fuelTag instanceof net.minecraft.nbt.NumericTag) {
-                    fuel = ((net.minecraft.nbt.NumericTag)fuelTag).getAsInt();
-                }
+                fuel = tag.getInt("fuel").orElse(0);
             }
             
             float health = 100f;
             if (tag.contains("health")) {
-                Tag healthTag = tag.get("health");
-                if (healthTag instanceof net.minecraft.nbt.NumericTag) {
-                    health = ((net.minecraft.nbt.NumericTag)healthTag).getAsFloat();
-                }
+                health = tag.getFloat("health").orElse(100f);
             }
             
             RocketStatus status = RocketStatus.BUILDING;
             if (tag.contains("status")) {
-                Tag statusTag = tag.get("status");
-                if (statusTag instanceof net.minecraft.nbt.NumericTag) {
-                    int statusValue = ((net.minecraft.nbt.NumericTag)statusTag).getAsInt();
-                    if (statusValue >= 0 && statusValue < RocketStatus.values().length) {
-                        status = RocketStatus.values()[statusValue];
-                    }
+                int statusValue = tag.getInt("status").orElse(0);
+                if (statusValue >= 0 && statusValue < RocketStatus.values().length) {
+                    status = RocketStatus.values()[statusValue];
                 }
             }
             
