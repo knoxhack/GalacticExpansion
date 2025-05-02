@@ -136,6 +136,15 @@ public class ItemStack {
     }
     
     /**
+     * Gets or creates the NBT tag for this stack.
+     * This method exists for compatibility with NeoForge 1.21.5 API patterns.
+     * @return The NBT tag
+     */
+    public CompoundTag getOrCreateTag() {
+        return getTag();
+    }
+    
+    /**
      * Sets the NBT tag for this stack.
      * @param tag The NBT tag
      */
