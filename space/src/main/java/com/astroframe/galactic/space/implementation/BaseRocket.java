@@ -54,8 +54,19 @@ public class BaseRocket implements IRocket {
     }
 
     @Override
-    public int getCurrentFuel() {
+    public int getFuelLevel() {
         return currentFuel;
+    }
+    
+    @Override
+    public void setFuelLevel(int fuel) {
+        this.currentFuel = Math.min(fuel, fuelCapacity);
+    }
+    
+    @Override
+    public boolean hasComponent(com.astroframe.galactic.core.api.space.component.RocketComponentType type) {
+        // Simple implementation, in a modular rocket this would check the components list
+        return true;
     }
 
     @Override

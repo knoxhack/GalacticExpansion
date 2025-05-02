@@ -24,7 +24,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
@@ -173,12 +173,10 @@ public class GalacticSpace {
     /**
      * Handles damage events for space suit protection.
      * 
-     * @param event The living hurt event
+     * @param event The player hurt event
      */
-    private void onLivingHurt(LivingHurtEvent event) {
-        if (!(event.getEntity() instanceof Player player)) {
-            return;
-        }
+    private void onLivingHurt(PlayerEvent.PlayerHurtEvent event) {
+        Player player = event.getPlayer();
         
         // Only protect in space environments
         if (!SpaceStationDimension.isSpaceStation(player.level())) {
