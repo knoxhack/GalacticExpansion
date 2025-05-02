@@ -29,6 +29,7 @@ public class BaseRocketEngine implements IRocketEngine {
     private final boolean canOperateInAtmosphere;
     private final boolean canOperateInSpace;
     private final int heatCapacity;
+    private final EngineType engineType;
     
     private BaseRocketEngine(Builder builder) {
         this.id = builder.id;
@@ -45,6 +46,7 @@ public class BaseRocketEngine implements IRocketEngine {
         this.canOperateInAtmosphere = builder.canOperateInAtmosphere;
         this.canOperateInSpace = builder.canOperateInSpace;
         this.heatCapacity = builder.heatCapacity;
+        this.engineType = builder.engineType;
     }
     
     @Override
@@ -134,6 +136,11 @@ public class BaseRocketEngine implements IRocketEngine {
      */
     public int getHeatCapacity() {
         return heatCapacity;
+    }
+    
+    @Override
+    public EngineType getEngineType() {
+        return engineType;
     }
     
     /**

@@ -1,5 +1,7 @@
 package com.astroframe.galactic.core.api.space.component;
 
+import com.astroframe.galactic.core.api.space.component.enums.EngineType;
+
 /**
  * Interface for rocket engines.
  */
@@ -41,6 +43,12 @@ public interface IRocketEngine extends IRocketComponent {
      * @return true if the engine can operate in space
      */
     boolean canOperateInSpace();
+    
+    /**
+     * Gets the type of this engine.
+     * @return The engine type
+     */
+    EngineType getEngineType();
     
     /**
      * Enum representing the types of fuel a rocket engine can use.
