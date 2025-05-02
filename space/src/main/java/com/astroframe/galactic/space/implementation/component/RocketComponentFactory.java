@@ -136,7 +136,7 @@ public class RocketComponentFactory {
                 .fuelType(FuelType.ELECTRIC)
                 .atmosphereCapable(false)
                 .spaceCapable(true)
-                .engineType(com.astroframe.galactic.core.api.space.component.enums.EngineType.ION)
+                .engineType(EngineType.ION)
                 .build()
         );
         
@@ -913,10 +913,10 @@ public class RocketComponentFactory {
                             .thrust(tag.getInt("Thrust").orElse(100))
                             .efficiency(tag.getFloat("Efficiency").orElse(0.75f))
                             .fuelConsumptionRate(tag.getInt("FuelConsumptionRate").orElse(10))
-                            .fuelType(IRocketEngine.FuelType.valueOf(tag.getString("FuelType").orElse("CHEMICAL")))
+                            .fuelType(FuelType.valueOf(tag.getString("FuelType").orElse("CHEMICAL")))
                             .atmosphereCapable(tag.getBoolean("AtmosphereCapable").orElse(true))
                             .spaceCapable(tag.getBoolean("SpaceCapable").orElse(true))
-                            .engineType(com.astroframe.galactic.core.api.space.component.enums.EngineType.valueOf(tag.getString("EngineType").orElse("CHEMICAL")))
+                            .engineType(EngineType.valueOf(tag.getString("EngineType").orElse("CHEMICAL")))
                             .build();
                             
                 case FUEL_TANK:
@@ -926,7 +926,7 @@ public class RocketComponentFactory {
                             .tier(tier)
                             .mass(mass)
                             .maxFuelCapacity(tag.getInt("MaxFuelCapacity").orElse(1000))
-                            .fuelType(IRocketEngine.FuelType.valueOf(tag.getString("FuelType").orElse("CHEMICAL")))
+                            .fuelType(FuelType.valueOf(tag.getString("FuelType").orElse("CHEMICAL")))
                             .leakResistance(tag.contains("LeakResistance") ? tag.getFloat("LeakResistance").orElse(0.0f) : 0.0f)
                             .explosionResistance(tag.contains("ExplosionResistance") ? tag.getFloat("ExplosionResistance").orElse(0.0f) : 0.0f)
                             .build();
@@ -1225,12 +1225,12 @@ public class RocketComponentFactory {
         private final FuelType fuelType;
         private final boolean atmosphereOperable;
         private final boolean spaceOperable;
-        private final com.astroframe.galactic.core.api.space.component.enums.EngineType engineType;
+        private final EngineType engineType;
         
         public RocketEngine(ResourceLocation id, String name, String description, 
                           int tier, int mass, int maxDurability, float efficiency,
                           FuelType fuelType, boolean atmosphereOperable, boolean spaceOperable,
-                          com.astroframe.galactic.core.api.space.component.enums.EngineType engineType) {
+                          EngineType engineType) {
             this.id = id;
             this.name = name;
             this.description = description;
@@ -1326,7 +1326,7 @@ public class RocketComponentFactory {
         }
         
         @Override
-        public com.astroframe.galactic.core.api.space.component.enums.EngineType getEngineType() {
+        public EngineType getEngineType() {
             return engineType;
         }
     }
