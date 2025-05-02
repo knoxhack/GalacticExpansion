@@ -1,8 +1,8 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.IFuelTank;
-import com.astroframe.galactic.core.api.space.component.IRocketEngine;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
+import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -24,7 +24,7 @@ public class FuelTankImpl implements IFuelTank {
     private int currentFuelLevel;
     private final float leakResistance;
     private final float explosionResistance;
-    private final IRocketEngine.FuelType fuelType;
+    private final FuelType fuelType;
     
     /**
      * Creates a new fuel tank.
@@ -39,7 +39,7 @@ public class FuelTankImpl implements IFuelTank {
             int maxFuelCapacity,
             float leakResistance,
             float explosionResistance,
-            IRocketEngine.FuelType fuelType) {
+            FuelType fuelType) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -139,7 +139,7 @@ public class FuelTankImpl implements IFuelTank {
     }
     
     @Override
-    public IRocketEngine.FuelType getFuelType() {
+    public FuelType getFuelType() {
         return fuelType;
     }
     
@@ -190,7 +190,7 @@ public class FuelTankImpl implements IFuelTank {
         private int maxFuelCapacity = 1000;
         private float leakResistance = 0.8f;
         private float explosionResistance = 0.5f;
-        private IRocketEngine.FuelType fuelType = IRocketEngine.FuelType.CHEMICAL;
+        private FuelType fuelType = FuelType.CHEMICAL;
         
         /**
          * Creates a new builder with required parameters.
@@ -285,7 +285,7 @@ public class FuelTankImpl implements IFuelTank {
          * @param fuelType The fuel type
          * @return This builder
          */
-        public Builder fuelType(IRocketEngine.FuelType fuelType) {
+        public Builder fuelType(FuelType fuelType) {
             this.fuelType = fuelType;
             return this;
         }

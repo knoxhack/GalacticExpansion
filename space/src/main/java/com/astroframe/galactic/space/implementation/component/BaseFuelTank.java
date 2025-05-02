@@ -1,8 +1,8 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.IFuelTank;
-import com.astroframe.galactic.core.api.space.component.IRocketEngine;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
+import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 
