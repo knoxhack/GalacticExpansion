@@ -372,8 +372,8 @@ public class RocketAssemblyTable extends BlockEntity {
     
     // Load method for NeoForge 1.21.5
     @Override
-    public void load(CompoundTag tag, HolderLookup.Provider provider) {
-        super.load(tag, provider);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.loadAdditional(tag, provider);
         
         // Load components
         components.clear();
