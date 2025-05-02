@@ -2,6 +2,7 @@ package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.common.ItemStack;
 import com.astroframe.galactic.core.api.space.component.*;
+import com.astroframe.galactic.core.api.space.component.enums.EngineType;
 import com.astroframe.galactic.space.GalacticSpace;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -97,7 +98,7 @@ public class RocketComponentFactory {
                 .fuelType(IRocketEngine.FuelType.CHEMICAL)
                 .atmosphereCapable(true)
                 .spaceCapable(true)
-                .engineType(EngineType.CHEMICAL)
+                .engineType(com.astroframe.galactic.core.api.space.component.enums.EngineType.CHEMICAL)
                 .build()
         );
         
@@ -115,7 +116,7 @@ public class RocketComponentFactory {
                 .fuelType(IRocketEngine.FuelType.CHEMICAL)
                 .atmosphereCapable(true)
                 .spaceCapable(true)
-                .engineType(EngineType.CHEMICAL)
+                .engineType(com.astroframe.galactic.core.api.space.component.enums.EngineType.CHEMICAL_LIQUID)
                 .build()
         );
         
@@ -133,7 +134,7 @@ public class RocketComponentFactory {
                 .fuelType(IRocketEngine.FuelType.ELECTRICAL)
                 .atmosphereCapable(false)
                 .spaceCapable(true)
-                .engineType(EngineType.ION)
+                .engineType(com.astroframe.galactic.core.api.space.component.enums.EngineType.ION)
                 .build()
         );
         
