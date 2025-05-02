@@ -5,6 +5,7 @@ import com.astroframe.galactic.core.api.space.component.*;
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
 import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import com.astroframe.galactic.space.GalacticSpace;
+import com.astroframe.galactic.space.implementation.component.engine.RocketEngineImpl;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -96,7 +97,7 @@ public class RocketComponentFactory {
                 .thrust(500)
                 .efficiency(0.8f)
                 .fuelConsumptionRate(15)
-                .fuelType(IRocketEngine.FuelType.CHEMICAL)
+                .fuelType(FuelType.CHEMICAL)
                 .atmosphereCapable(true)
                 .spaceCapable(true)
                 .engineType(com.astroframe.galactic.core.api.space.component.enums.EngineType.CHEMICAL)
@@ -114,10 +115,10 @@ public class RocketComponentFactory {
                 .thrust(800)
                 .efficiency(0.9f)
                 .fuelConsumptionRate(12)
-                .fuelType(IRocketEngine.FuelType.CHEMICAL)
+                .fuelType(FuelType.CHEMICAL)
                 .atmosphereCapable(true)
                 .spaceCapable(true)
-                .engineType(com.astroframe.galactic.core.api.space.component.enums.EngineType.CHEMICAL_LIQUID)
+                .engineType(EngineType.LIQUID_FUEL)
                 .build()
         );
         
@@ -132,7 +133,7 @@ public class RocketComponentFactory {
                 .thrust(400)
                 .efficiency(0.95f)
                 .fuelConsumptionRate(5)
-                .fuelType(IRocketEngine.FuelType.ELECTRICAL)
+                .fuelType(FuelType.ELECTRIC)
                 .atmosphereCapable(false)
                 .spaceCapable(true)
                 .engineType(com.astroframe.galactic.core.api.space.component.enums.EngineType.ION)
@@ -149,7 +150,7 @@ public class RocketComponentFactory {
                 .tier(1)
                 .mass(100)
                 .maxFuelCapacity(500)
-                .fuelType(IRocketEngine.FuelType.CHEMICAL)
+                .fuelType(FuelType.CHEMICAL)
                 .build()
         );
         
@@ -162,7 +163,7 @@ public class RocketComponentFactory {
                 .tier(2)
                 .mass(200)
                 .maxFuelCapacity(1000)
-                .fuelType(IRocketEngine.FuelType.CHEMICAL)
+                .fuelType(FuelType.CHEMICAL)
                 .leakResistance(0.8f)
                 .build()
         );
@@ -176,7 +177,7 @@ public class RocketComponentFactory {
                 .tier(3)
                 .mass(300)
                 .maxFuelCapacity(2000)
-                .fuelType(IRocketEngine.FuelType.CHEMICAL)
+                .fuelType(FuelType.CHEMICAL)
                 .leakResistance(0.9f)
                 .explosionResistance(0.85f)
                 .build()
