@@ -4,8 +4,10 @@ import com.astroframe.galactic.core.TagHelper;
 import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
+import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import com.astroframe.galactic.core.api.space.util.ComponentUtils;
 import com.astroframe.galactic.space.implementation.component.engine.BasicChemicalEngine;
+import com.astroframe.galactic.space.implementation.component.fueltank.StandardFuelTank;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
@@ -39,6 +41,8 @@ public class SpaceModuleComponentFactory implements ComponentUtils.ComponentFact
         switch (type) {
             case ENGINE:
                 return createEngine(id, tag);
+            case FUEL_TANK:
+                return createFuelTank(id, tag);
             default:
                 return Optional.empty();
         }
@@ -80,6 +84,45 @@ public class SpaceModuleComponentFactory implements ComponentUtils.ComponentFact
         engine.load(tag);
         
         return Optional.of(engine);
+    }
+    
+    /**
+     * Creates a fuel tank component from tag data.
+     */
+    private Optional<IRocketComponent> createFuelTank(ResourceLocation id, CompoundTag tag) {
+        // Get fuel type
+        String fuelTypeStr = TagHelper.getString(tag, "FuelType", "");
+        if (fuelTypeStr.isEmpty()) {
+            return Optional.empty();
+        }
+        
+        FuelType fuelType;
+        try {
+            fuelType = FuelType.valueOf(fuelTypeStr);
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
+        
+        // Extract common properties
+        String name = TagHelper.getString(tag, "Name", "Standard Fuel Tank");
+        String description = TagHelper.getString(tag, "Description", "A standard fuel tank.");
+        int tier = TagHelper.getInt(tag, "Tier", 1);
+        int mass = TagHelper.getInt(tag, "Mass", 50);
+        int maxDurability = TagHelper.getInt(tag, "MaxDurability", 100);
+        int maxFuelCapacity = TagHelper.getInt(tag, "MaxFuelCapacity", 1000);
+        float leakResistance = TagHelper.getFloat(tag, "LeakResistance", 0.8f);
+        float explosionResistance = TagHelper.getFloat(tag, "ExplosionResistance", 0.7f);
+        
+        // Create the fuel tank
+        StandardFuelTank fuelTank = new StandardFuelTank(
+            id, name, description, tier, mass, maxDurability, maxFuelCapacity,
+            fuelType, leakResistance, explosionResistance
+        );
+        
+        // Load saved state
+        fuelTank.load(tag);
+        
+        return Optional.of(fuelTank);
     }
     
     @Override

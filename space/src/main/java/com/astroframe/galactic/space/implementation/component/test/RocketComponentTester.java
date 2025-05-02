@@ -1,5 +1,6 @@
 package com.astroframe.galactic.space.implementation.component.test;
 
+import com.astroframe.galactic.core.api.space.component.IFuelTank;
 import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.astroframe.galactic.core.api.space.component.IRocketEngine;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
@@ -7,6 +8,7 @@ import com.astroframe.galactic.core.api.space.component.enums.EngineType;
 import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import com.astroframe.galactic.core.api.space.util.ComponentUtils;
 import com.astroframe.galactic.space.implementation.component.engine.BasicChemicalEngine;
+import com.astroframe.galactic.space.implementation.component.fueltank.StandardFuelTank;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
@@ -33,6 +35,12 @@ public class RocketComponentTester {
         // Test basic component creation
         if (!testBasicComponentCreation()) {
             LOGGER.error("Basic component creation test failed");
+            success = false;
+        }
+        
+        // Test fuel tank creation and functionality
+        if (!testFuelTankCreation()) {
+            LOGGER.error("Fuel tank creation test failed");
             success = false;
         }
         
