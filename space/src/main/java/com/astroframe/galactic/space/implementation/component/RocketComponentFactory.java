@@ -1334,6 +1334,18 @@ public class RocketComponentFactory {
         public double getHeatGeneration() {
             return 50.0 * tier;
         }
+        
+        @Override
+        public List<FuelType> getCompatibleFuels() {
+            List<FuelType> compatibleFuels = new ArrayList<>();
+            compatibleFuels.add(fuelType);
+            // Add more compatible fuels based on engine type
+            if (engineType == EngineType.HYBRID) {
+                compatibleFuels.add(FuelType.HYDROGEN);
+                compatibleFuels.add(FuelType.KEROSENE);
+            }
+            return compatibleFuels;
+        }
     }
     
     /**
@@ -1705,7 +1717,7 @@ public class RocketComponentFactory {
             float baseWeight = stack.getCount();
             
             // Items with NBT data might be more complex/heavier
-            if (stack.hasTag()) {
+            if (stack.hasData()) {
                 baseWeight += 1; // Add a bit more weight for items with tags
             }
             
