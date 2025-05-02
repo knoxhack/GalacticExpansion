@@ -3,6 +3,7 @@ package com.astroframe.galactic.space.implementation.component;
 import com.astroframe.galactic.core.api.space.component.IRocketEngine;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
+import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 

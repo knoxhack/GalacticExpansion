@@ -2,10 +2,12 @@ package com.astroframe.galactic.space.implementation;
 
 import com.astroframe.galactic.core.api.space.ICelestialBody;
 import com.astroframe.galactic.core.api.space.IRocket;
+import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -186,5 +188,12 @@ public class BaseRocket implements IRocket {
     @Override
     public void repair(float amount) {
         health = Math.min(100, health + amount);
+    }
+    
+    @Override
+    public List<IRocketComponent> getAllComponents() {
+        // Basic implementation - in a real scenario, this would return the actual components
+        // For now, return an empty list to satisfy the interface
+        return Collections.emptyList();
     }
 }

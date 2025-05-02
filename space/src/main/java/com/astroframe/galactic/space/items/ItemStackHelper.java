@@ -2,6 +2,7 @@ package com.astroframe.galactic.space.items;
 
 import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
