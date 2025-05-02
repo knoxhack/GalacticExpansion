@@ -1,6 +1,6 @@
 package com.astroframe.galactic.space.implementation.component;
 
-import com.astroframe.galactic.core.api.common.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import com.astroframe.galactic.core.api.space.component.*;
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
 import com.astroframe.galactic.core.api.space.component.enums.FuelType;
@@ -1628,7 +1628,6 @@ public class RocketComponentFactory {
             return result;
         }
         
-        @Override
         public List<ItemStack> getItems() {
             List<ItemStack> items = new ArrayList<>();
             for (ItemStack stack : contents.values()) {
@@ -1637,7 +1636,6 @@ public class RocketComponentFactory {
             return items;
         }
         
-        @Override
         public ItemStack removeItem(int index) {
             if (index < 0 || index >= contents.size()) {
                 return ItemStack.EMPTY;

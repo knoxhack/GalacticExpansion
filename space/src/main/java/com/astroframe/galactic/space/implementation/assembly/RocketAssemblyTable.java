@@ -170,7 +170,7 @@ public class RocketAssemblyTable extends Block implements EntityBlock {
         }
         
         // Call the parent method
-        // In NeoForge 1.21.5, we need to use the Block superclass directly
-        Block.onRemove(state, level, pos, newState, isMoving);
+        // In NeoForge 1.21.5, use the super implementation
+        super.onRemove(state, level, pos, newState, isMoving);
     }
 }
