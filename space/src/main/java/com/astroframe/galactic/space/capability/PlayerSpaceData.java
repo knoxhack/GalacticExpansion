@@ -120,16 +120,26 @@ public class PlayerSpaceData {
         
         // Load discovered bodies
         if (tag.contains("DiscoveredBodies")) {
-            // Get tag as optional and safely convert to ListTag
+            // Get tag without using ifPresent
             ListTag bodiesTag = new ListTag();
-            tag.get("DiscoveredBodies").ifPresent(tagElement -> {
-                if (tagElement instanceof ListTag listTag) {
-                    bodiesTag.addAll(listTag);
-                }
-            });
+            Tag tagElement = tag.get("DiscoveredBodies");
+            if (tagElement != null && tagElement instanceof ListTag listTag) {
+                bodiesTag.addAll(listTag);
+            }
             
             for (int i = 0; i < bodiesTag.size(); i++) {
-                String idString = bodiesTag.getString(i).orElse("");
+                // Use getString method with orElse for Optional
+                String idString = "";
+                if (bodiesTag.getString(i) != null) {
+                    // Since getString returns Optional<String> in 1.21.5
+                    try {
+                        idString = bodiesTag.getString(i).orElse("");
+                    } catch (Exception e) {
+                        // Fallback if the method signature changed or errored
+                        GalacticSpace.LOGGER.warn("Error getting string from tag: " + e.getMessage());
+                    }
+                }
+                
                 if (!idString.isEmpty()) {
                     discoveredBodies.add(ResourceLocation.parse(idString));
                 }

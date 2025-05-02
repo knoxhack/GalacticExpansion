@@ -112,7 +112,7 @@ public abstract class SpaceSuitItem extends Item {
             player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 0));
             
             // Add effect that slows movement - use a different approach in 1.21.5
-            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1)); // Approximation for slower movement
+            player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 40, 1)); // Use a different mobility effect instead
             
             // Add suffocation if no helmet
             if (!hasHelmet(player)) {
