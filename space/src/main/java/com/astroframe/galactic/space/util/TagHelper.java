@@ -18,7 +18,7 @@ public class TagHelper {
      */
     public static String getStringValue(Tag tag) {
         if (tag instanceof StringTag stringTag) {
-            return stringTag.getString();
+            return stringTag.value();
         }
         GalacticSpace.LOGGER.warn("Attempted to get string value from non-string tag: " + tag);
         return "";
@@ -160,13 +160,12 @@ public class TagHelper {
     }
     
     /**
-     * Check if a compound tag contains a key with a specific type.
+     * Check if a compound tag contains a key.
      * @param tag The compound tag
      * @param key The key
-     * @param type The tag type
-     * @return true if the tag contains the key with the specified type
+     * @return true if the tag contains the key
      */
-    public static boolean contains(CompoundTag tag, String key, int type) {
-        return tag.contains(key, type);
+    public static boolean contains(CompoundTag tag, String key) {
+        return tag.contains(key);
     }
 }

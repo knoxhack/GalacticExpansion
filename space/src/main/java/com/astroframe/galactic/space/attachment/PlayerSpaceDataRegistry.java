@@ -7,7 +7,8 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 /**
@@ -16,16 +17,18 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  */
 public class PlayerSpaceDataRegistry {
     public static final ResourceLocation PLAYER_SPACE_DATA_RL = 
-        new ResourceLocation(GalacticSpace.MOD_ID + ":player_space_data");
+        ResourceLocation.of(GalacticSpace.MOD_ID + ":player_space_data", ':');
     
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = 
         DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, GalacticSpace.MOD_ID);
     
-    public static final RegistryObject<AttachmentType<PlayerSpaceDataAttachment>> PLAYER_SPACE_DATA = 
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<PlayerSpaceDataAttachment>> PLAYER_SPACE_DATA = 
         ATTACHMENT_TYPES.register("player_space_data", 
-            () -> AttachmentType.<CompoundTag, PlayerSpaceDataAttachment>builder(
-                PlayerSpaceDataAttachment::new,
-                (attachment, tag) -> attachment.write(tag),
+            () -> AttachmentType.builder(
+                PlayerSpaceDataAttachment::new
+            ).serialize(
+                (attachment, tag) -> attachment.write(tag)
+            ).deserialize(
                 (tag) -> PlayerSpaceDataAttachment.read(tag)
             ).build());
     
