@@ -280,8 +280,7 @@ public class RocketComponentFactory {
         ResourceLocation basicLifeSupportId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_basic");
         registerLifeSupport(
             basicLifeSupportId,
-            new BaseLifeSupport.Builder(basicLifeSupportId)
-                .name("Basic Life Support System")
+            new BaseLifeSupport.Builder(basicLifeSupportId, Component.literal("Basic Life Support System"))
                 .description("A simple system providing essential life support functions.")
                 .tier(1)
                 .mass(100)
@@ -294,8 +293,7 @@ public class RocketComponentFactory {
         ResourceLocation advancedLifeSupportId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_advanced");
         registerLifeSupport(
             advancedLifeSupportId,
-            new BaseLifeSupport.Builder(advancedLifeSupportId)
-                .name("Advanced Life Support System")
+            new BaseLifeSupport.Builder(advancedLifeSupportId, Component.literal("Advanced Life Support System"))
                 .description("An enhanced life support system for extended missions.")
                 .tier(2)
                 .mass(150)

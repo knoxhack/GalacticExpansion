@@ -167,9 +167,11 @@ public class BaseRocketEngine implements IRocketEngine {
         /**
          * Creates a new builder with required parameters.
          * @param id The component ID
+         * @param displayName The display name component
          */
-        public Builder(ResourceLocation id) {
+        public Builder(ResourceLocation id, Component displayName) {
             this.id = id;
+            this.name = displayName.getString();
         }
         
         /**

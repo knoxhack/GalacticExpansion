@@ -402,6 +402,17 @@ public class BaseLifeSupport implements ILifeSupport {
         }
         
         /**
+         * Sets whether the life support has radiation scrubbers.
+         * @param hasRadiationScrubbers True if the system has radiation scrubbers
+         * @return This builder
+         */
+        public Builder radiationScrubbers(boolean hasRadiationScrubbers) {
+            // This maps to our radiation filtering capability
+            this.hasRadiationFiltering = hasRadiationScrubbers;
+            return this;
+        }
+        
+        /**
          * Builds the life support system.
          * @return A new BaseLifeSupport
          */
