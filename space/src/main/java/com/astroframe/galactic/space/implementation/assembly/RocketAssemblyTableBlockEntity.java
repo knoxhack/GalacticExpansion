@@ -191,20 +191,37 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                                     java.util.Optional<String> idOpt = compoundTag.getString("id");
                                     if (idOpt.isPresent()) {
                                         String itemId = idOpt.get();
-                                        net.minecraft.resources.ResourceLocation itemRL = new net.minecraft.resources.ResourceLocation(itemId);
-                                        net.minecraft.world.item.Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(itemRL);
-                                        
-                                        // Create the stack and set its count
-                                        stack = new ItemStack(item);
-                                        compoundTag.getInt("Count").ifPresent(stack::setCount);
-                                        
-                                        // Handle any tag data
-                                        if (compoundTag.contains("tag")) {
-                                            compoundTag.getCompound("tag").ifPresent(nbtTag -> {
-                                                stack.getOrCreateTag().merge(nbtTag);
-                                            });
+                                        // Parse namespace and path for NeoForge 1.21.5
+                                        String namespace = "minecraft";
+                                        String path = itemId;
+                                        if (itemId.contains(":")) {
+                                            String[] parts = itemId.split(":", 2);
+                                            namespace = parts[0];
+                                            path = parts[1];
                                         }
-                                    }
+                                        net.minecraft.resources.ResourceLocation itemRL = new net.minecraft.resources.ResourceLocation(namespace, path);
+                                        // BuiltInRegistries.ITEM.get returns an Optional in NeoForge 1.21.5
+                                        java.util.Optional<net.minecraft.world.item.Item> itemOpt = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(itemRL);
+                                        if (itemOpt.isPresent()) {
+                                            net.minecraft.world.item.Item item = itemOpt.get();
+                                            
+                                            // Create the stack and set its count
+                                            stack = new ItemStack(item);
+                                            compoundTag.getInt("Count").ifPresent(stack::setCount);
+                                            
+                                            // Handle any tag data
+                                            if (compoundTag.contains("tag")) {
+                                                compoundTag.getCompound("tag").ifPresent(nbtTag -> {
+                                                    // In NeoForge 1.21.5, use different tag handling
+                                                    CompoundTag stackTag = stack.getTag();
+                                                    if (stackTag == null) {
+                                                        stackTag = new CompoundTag();
+                                                        stack.setTag(stackTag);
+                                                    }
+                                                    stackTag.merge(nbtTag);
+                                                });
+                                            }
+                                        }
                                 }
                                 
                                 components.set(slot, stack);

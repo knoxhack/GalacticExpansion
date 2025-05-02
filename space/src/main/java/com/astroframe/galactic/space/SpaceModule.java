@@ -18,8 +18,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
-import net.neoforged.bus.api.IEventBus;
 import java.util.Set;
+import net.neoforged.bus.api.IEventBus;
 import java.util.function.Supplier;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -79,14 +79,14 @@ public class SpaceModule {
                     () -> new BlockEntityType<HolographicProjectorBlockEntity>(
                             HolographicProjectorBlockEntity::new, 
                             Set.of(HOLOGRAPHIC_PROJECTOR.get()),
-                            null));
+                            false)); // Last parameter is 'isClientSideOnly' which should be false
     
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RocketAssemblyTableBlockEntity>> ROCKET_ASSEMBLY_TABLE_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("rocket_assembly_table", 
                     () -> new BlockEntityType<RocketAssemblyTableBlockEntity>(
                             RocketAssemblyTableBlockEntity::new,
                             Set.of(ROCKET_ASSEMBLY_TABLE.get()),
-                            null));
+                            false)); // Last parameter is 'isClientSideOnly' which should be false
                             
     // Menus
     public static final DeferredHolder<MenuType<?>, MenuType<RocketAssemblyMenu>> ROCKET_ASSEMBLY_MENU =
