@@ -22,11 +22,15 @@ public class VertexHelper {
      */
     public static void addColoredVertex(VertexConsumer consumer, float x, float y, float z, 
                                        float red, float green, float blue, float alpha) {
-        // In NeoForge 1.21.5, use individual vertex method calls
-        consumer.vertex(x, y, z);
-        consumer.uv(0, 0);
-        consumer.color(red, green, blue, alpha);
-        consumer.normal(1, 0, 0);
-        consumer.endVertex();
+        // In NeoForge 1.21.5, we need to use a single method compatible with the current vertex format
+        // Build compatible vertex format using pos/color/normal via Pose matrix
+        com.mojang.math.Matrix4f matrix = new com.mojang.math.Matrix4f();
+        matrix.setIdentity();
+        
+        // Add the vertex with all required parameters
+        consumer.vertex(matrix, x, y, z)  // Position
+                .color(red, green, blue, alpha)  // Color
+                .normal(0, 1, 0)  // Normal vector (up direction)
+                .endVertex();  // Finish the vertex
     }
 }

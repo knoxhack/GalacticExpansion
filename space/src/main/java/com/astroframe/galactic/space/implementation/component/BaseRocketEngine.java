@@ -99,18 +99,30 @@ public class BaseRocketEngine implements IRocketEngine {
         currentDurability = Math.min(maxDurability, currentDurability + amount);
     }
     
+    /**
+     * Gets the thrust provided by this engine.
+     * @return The thrust value
+     */
     @Override
-    public int getThrust() {
+    public double getThrust() {
         return thrust;
     }
     
+    /**
+     * Gets the fuel consumption rate of this engine per unit of time.
+     * @return The fuel consumption rate
+     */
     @Override
-    public int getFuelConsumptionRate() {
+    public double getFuelConsumptionRate() {
         return fuelConsumptionRate;
     }
     
+    /**
+     * Gets the efficiency of this engine.
+     * @return The efficiency value between 0 and 1
+     */
     @Override
-    public float getEfficiency() {
+    public double getEfficiency() {
         return efficiency;
     }
     
