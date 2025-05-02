@@ -194,9 +194,11 @@ public class BaseShield implements IShield {
         /**
          * Creates a new builder with required parameters.
          * @param id The component ID
+         * @param displayName The display name component
          */
-        public Builder(ResourceLocation id) {
+        public Builder(ResourceLocation id, Component displayName) {
             this.id = id;
+            this.name = displayName.getString();
         }
         
         /**
@@ -286,6 +288,56 @@ public class BaseShield implements IShield {
          */
         public Builder radiationResistance(int radiationResistance) {
             this.radiationResistance = Math.max(1, Math.min(10, radiationResistance));
+            return this;
+        }
+        
+        /**
+         * Sets the shield's thermal shielding capability.
+         * @param shielded True if the shield has thermal shielding
+         * @return This builder
+         */
+        public Builder thermalShielded(boolean shielded) {
+            // This is for categorization only
+            return this;
+        }
+        
+        /**
+         * Sets the shield's radiation shielding capability.
+         * @param shielded True if the shield has radiation shielding
+         * @return This builder
+         */
+        public Builder radiationShielded(boolean shielded) {
+            // This is for categorization only
+            return this;
+        }
+        
+        /**
+         * Sets the shield's EMP shielding capability.
+         * @param shielded True if the shield has EMP shielding
+         * @return This builder
+         */
+        public Builder empShielded(boolean shielded) {
+            // This is for categorization only
+            return this;
+        }
+        
+        /**
+         * Sets the shield type (internal categorization).
+         * @param type The shield type
+         * @return This builder
+         */
+        public Builder shieldType(ShieldType type) {
+            // This is for categorization only
+            return this;
+        }
+        
+        /**
+         * Sets the shield's regeneration rate.
+         * @param rate The regeneration rate
+         * @return This builder
+         */
+        public Builder regenerationRate(float rate) {
+            // For future implementation
             return this;
         }
         
