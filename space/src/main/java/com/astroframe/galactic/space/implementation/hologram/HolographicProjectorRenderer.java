@@ -107,7 +107,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         RenderSystem.setShaderColor(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
         
         // Start building lines - NeoForge 1.21.5 compatible
-        RenderSystem.setShader(() -> Minecraft.getInstance().gameRenderer.getPositionColorShader());
+        Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.LINES);
         builder.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR);
         
         // Render base platform with direct BufferBuilder

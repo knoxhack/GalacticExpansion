@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.UUID;
 
 /**
@@ -402,6 +403,77 @@ public class ModularRocket implements IRocket {
      */
     public ResourceLocation getId() {
         return id;
+    }
+    
+    /**
+     * Removes a component from the rocket by ID.
+     * @param componentId The ID of the component to remove
+     * @return true if the component was found and removed
+     */
+    public boolean removeComponent(String componentId) {
+        if (componentId == null) return false;
+        
+        // Check if the command module matches the ID
+        if (commandModule != null && componentId.equals(commandModule.getId())) {
+            // Can't remove the command module once set
+            return false;
+        }
+        
+        // Check engines
+        for (Iterator<IRocketEngine> it = engines.iterator(); it.hasNext();) {
+            IRocketEngine engine = it.next();
+            if (componentId.equals(engine.getId())) {
+                it.remove();
+                return true;
+            }
+        }
+        
+        // Check fuel tanks
+        for (Iterator<IFuelTank> it = fuelTanks.iterator(); it.hasNext();) {
+            IFuelTank tank = it.next();
+            if (componentId.equals(tank.getId())) {
+                it.remove();
+                return true;
+            }
+        }
+        
+        // Check cargo bays
+        for (Iterator<ICargoBay> it = cargoBays.iterator(); it.hasNext();) {
+            ICargoBay bay = it.next();
+            if (componentId.equals(bay.getId())) {
+                it.remove();
+                return true;
+            }
+        }
+        
+        // Check passenger compartments
+        for (Iterator<IPassengerCompartment> it = passengerCompartments.iterator(); it.hasNext();) {
+            IPassengerCompartment compartment = it.next();
+            if (componentId.equals(compartment.getId())) {
+                it.remove();
+                return true;
+            }
+        }
+        
+        // Check shields
+        for (Iterator<IShield> it = shields.iterator(); it.hasNext();) {
+            IShield shield = it.next();
+            if (componentId.equals(shield.getId())) {
+                it.remove();
+                return true;
+            }
+        }
+        
+        // Check life support systems
+        for (Iterator<ILifeSupport> it = lifeSupports.iterator(); it.hasNext();) {
+            ILifeSupport lifeSupport = it.next();
+            if (componentId.equals(lifeSupport.getId())) {
+                it.remove();
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     /**
