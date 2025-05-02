@@ -18,7 +18,6 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
  * Note: Full dimension registration is handled through JSON configuration files
  * in resources/data/galactic-space/dimension and resource/data/galactic-space/dimension_type
  */
-@Mod.EventBusSubscriber(bus = net.neoforged.fml.common.Mod.EventBusSubscriber.Bus.MOD, modid = GalacticSpace.MOD_ID)
 public class SpaceStationDimensionRegistration {
 
     /**

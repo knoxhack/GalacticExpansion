@@ -13,9 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.bus.api.Event;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.event.TickEvent;
 
 import java.util.*;
 import net.minecraft.resources.ResourceLocation;
@@ -24,7 +22,6 @@ import net.minecraft.resources.ResourceLocation;
  * Manages travel between celestial bodies.
  * This class coordinates rockets, players, and dimension teleportation.
  */
-@Mod.EventBusSubscriber(bus = net.neoforged.fml.common.Mod.EventBusSubscriber.Bus.FORGE, modid = GalacticSpace.MOD_ID)
 public class SpaceTravelManager implements ISpaceTravelManager {
     private final Map<UUID, Set<ICelestialBody>> discoveredBodies = new HashMap<>();
     private final Map<ResourceLocation, ICelestialBody> registeredBodies = new HashMap<>();
@@ -49,11 +46,9 @@ public class SpaceTravelManager implements ISpaceTravelManager {
     
     /**
      * Server tick event handler to update space travel.
-     *
-     * @param event The tick event
+     * This is registered directly with NeoForge.EVENT_BUS in the GalacticSpace constructor.
      */
-    @SubscribeEvent
-    public static void onServerTick(net.neoforged.neoforge.event.TickEvent.ServerTickEvent event) {
+    public static void updateLaunches() {
         // Update rocket launch sequences on each tick
         RocketLaunchController.updateLaunches();
     }

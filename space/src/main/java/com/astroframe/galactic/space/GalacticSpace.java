@@ -24,6 +24,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
@@ -70,6 +71,9 @@ public class GalacticSpace {
         NeoForge.EVENT_BUS.addListener(this::onServerStopping);
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
         NeoForge.EVENT_BUS.addListener(this::onLivingHurt);
+        
+        // Register tick events
+        NeoForge.EVENT_BUS.addListener(this::onServerTick);
     }
     
     /**
@@ -208,6 +212,20 @@ public class GalacticSpace {
                     event.setNewDamage(0);
                 }
             }
+        }
+    }
+    
+    /**
+     * Server tick event handler.
+     * Updates rocket launches and other time-based space travel features.
+     *
+     * @param event The server tick event
+     */
+    private void onServerTick(TickEvent.ServerTickEvent event) {
+        // Only process on server ticks, not client
+        if (event.phase == TickEvent.Phase.END) {
+            // Update rocket launch sequences
+            SpaceTravelManager.updateLaunches();
         }
     }
 }
