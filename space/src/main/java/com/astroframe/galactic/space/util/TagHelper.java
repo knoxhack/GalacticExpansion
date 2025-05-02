@@ -19,8 +19,8 @@ public class TagHelper {
             return "";
         }
         
-        if (tag instanceof StringTag) {
-            return tag.getAsString();
+        if (tag instanceof StringTag stringTag) {
+            return stringTag.toString();
         }
         
         return tag.toString();
@@ -35,9 +35,11 @@ public class TagHelper {
         }
         
         try {
-            return tag.getString(key);
+            var optionalString = tag.getString(key);
+            // Handle Optional<String> for NeoForge 1.21.5
+            return optionalString.orElse("");
         } catch (Exception e) {
-            // Fallback for NeoForge 1.21.5 which uses Optional<String>
+            // Fallback method if getString doesn't return Optional
             Tag valueTag = tag.get(key);
             return getStringValue(valueTag);
         }
@@ -52,9 +54,11 @@ public class TagHelper {
         }
         
         try {
-            return tag.getInt(key);
+            var optionalInt = tag.getInt(key);
+            // Handle Optional<Integer> for NeoForge 1.21.5
+            return optionalInt.orElse(0);
         } catch (Exception e) {
-            // Fallback for NeoForge 1.21.5 which uses Optional<Integer>
+            // Fallback if getInt doesn't return Optional or other error
             GalacticSpace.LOGGER.warn("Failed to get int value for key " + key + ": " + e.getMessage());
             return 0;
         }
