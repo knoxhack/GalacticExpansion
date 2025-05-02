@@ -5,6 +5,7 @@ import com.astroframe.galactic.core.api.space.IRocket;
 import com.astroframe.galactic.core.api.space.ModularRocket;
 import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.astroframe.galactic.space.SpaceModule;
+import com.astroframe.galactic.space.implementation.assembly.menu.RocketAssemblyMenu;
 import com.astroframe.galactic.space.implementation.hologram.HolographicProjectorBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -279,7 +280,55 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
-        // TODO: Return the container menu for this block entity
-        return null; // Will implement RocketAssemblyMenu later
+        return new RocketAssemblyMenu(containerId, playerInventory, this, 
+                net.minecraft.world.inventory.ContainerLevelAccess.create(level, worldPosition));
+    }
+    
+    /**
+     * Gets all component stacks for the menu.
+     * 
+     * @return The list of component stacks
+     */
+    public List<ItemStack> getComponentStacks() {
+        return components;
+    }
+    
+    /**
+     * Sets the component stacks from the menu.
+     * 
+     * @param stacks The new component stacks
+     */
+    public void setComponentStacks(List<ItemStack> stacks) {
+        for (int i = 0; i < Math.min(stacks.size(), components.size()); i++) {
+            components.set(i, stacks.get(i));
+        }
+        setChanged();
+    }
+    
+    /**
+     * Sets the rocket data.
+     * 
+     * @param rocket The new rocket data
+     */
+    public void setRocket(IRocket rocket) {
+        if (rocket instanceof ModularRocket modularRocket) {
+            this.rocketData = modularRocket;
+            setChanged();
+            updateLinkedProjectors();
+        }
+    }
+    
+    /**
+     * Sets the validation status.
+     * 
+     * @param isValid Whether the rocket is valid
+     * @param errors The validation errors
+     */
+    public void setValidationStatus(boolean isValid, List<String> errors) {
+        // For now, we just log the validation status
+        // In the future, we'll save this to display in the UI
+        if (!isValid && level != null && !level.isClientSide) {
+            System.out.println("Rocket validation failed with errors: " + errors);
+        }
     }
 }

@@ -36,7 +36,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
     
     // Texture for lines
     private static final ResourceLocation HOLOGRAM_TEXTURE = 
-            new ResourceLocation("galactic", "textures/hologram/hologram.png");
+            ResourceLocation.parse("galactic:textures/hologram/hologram.png");
     
     /**
      * Constructor for the renderer.
@@ -146,16 +146,14 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             drawLine(pose, lines, x1, 0.0f, z1, x2, 0.0f, z2);
             
             // Draw line from center
-            int red = (int)(HOLOGRAM_RED * 255.0F);
-            int green = (int)(HOLOGRAM_GREEN * 255.0F);
-            int blue = (int)(HOLOGRAM_BLUE * 255.0F);
-            int alpha = (int)(HOLOGRAM_ALPHA * 255.0F);
-            int packedColor = (alpha << 24) | (red << 16) | (green << 8) | blue;
-            int fadedAlpha = (int)(0.3f * HOLOGRAM_ALPHA * 255.0F);
-            int fadedPackedColor = (fadedAlpha << 24) | (red << 16) | (green << 8) | blue;
+            float red = HOLOGRAM_RED;
+            float green = HOLOGRAM_GREEN;
+            float blue = HOLOGRAM_BLUE;
+            float alpha = HOLOGRAM_ALPHA;
+            float fadedAlpha = 0.3f * HOLOGRAM_ALPHA;
             
-            lines.vertex(pose, 0, 0.0f, 0).color(packedColor).normal(0, 1, 0).endVertex();
-            lines.vertex(pose, x1, 0.0f, z1).color(fadedPackedColor).normal(0, 1, 0).endVertex();
+            lines.vertex(pose, 0, 0.0f, 0).color(red, green, blue, alpha).normal(0, 1, 0).endVertex();
+            lines.vertex(pose, x1, 0.0f, z1).color(red, green, blue, fadedAlpha).normal(0, 1, 0).endVertex();
         }
     }
     
@@ -255,15 +253,15 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      * @param z2 End Z
      */
     private void drawLine(Matrix4f pose, VertexConsumer lines, float x1, float y1, float z1, float x2, float y2, float z2) {
-        int red = (int)(HOLOGRAM_RED * 255.0F);
-        int green = (int)(HOLOGRAM_GREEN * 255.0F);
-        int blue = (int)(HOLOGRAM_BLUE * 255.0F);
-        int alpha = (int)(HOLOGRAM_ALPHA * 255.0F);
-        int packedColor = (alpha << 24) | (red << 16) | (green << 8) | blue;
+        // Use direct color components
+        float red = HOLOGRAM_RED;
+        float green = HOLOGRAM_GREEN;
+        float blue = HOLOGRAM_BLUE;
+        float alpha = HOLOGRAM_ALPHA;
         
-        // Draw the line using the packed color
-        lines.vertex(pose, x1, y1, z1).color(packedColor).normal(0, 1, 0).endVertex();
-        lines.vertex(pose, x2, y2, z2).color(packedColor).normal(0, 1, 0).endVertex();
+        // Draw the line using floats for color
+        lines.vertex(pose, x1, y1, z1).color(red, green, blue, alpha).normal(0, 1, 0).endVertex();
+        lines.vertex(pose, x2, y2, z2).color(red, green, blue, alpha).normal(0, 1, 0).endVertex();
     }
     
     /**
@@ -281,15 +279,14 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      */
     private void drawScanLine(Matrix4f pose, VertexConsumer lines, float x1, float y1, float z1, 
                            float x2, float y2, float z2, float alphaValue) {
-        int red = (int)(HOLOGRAM_RED * 255.0F);
-        int green = (int)(HOLOGRAM_GREEN * 255.0F);
-        int blue = (int)(HOLOGRAM_BLUE * 255.0F);
-        int alpha = (int)(alphaValue * 255.0F);
-        int packedColor = (alpha << 24) | (red << 16) | (green << 8) | blue;
+        // Use direct color components
+        float red = HOLOGRAM_RED;
+        float green = HOLOGRAM_GREEN;
+        float blue = HOLOGRAM_BLUE;
         
-        // Draw the line using the packed color with custom alpha
-        lines.vertex(pose, x1, y1, z1).color(packedColor).normal(0, 1, 0).endVertex();
-        lines.vertex(pose, x2, y2, z2).color(packedColor).normal(0, 1, 0).endVertex();
+        // Draw the line using the custom alpha
+        lines.vertex(pose, x1, y1, z1).color(red, green, blue, alphaValue).normal(0, 1, 0).endVertex();
+        lines.vertex(pose, x2, y2, z2).color(red, green, blue, alphaValue).normal(0, 1, 0).endVertex();
     }
     
     /**
