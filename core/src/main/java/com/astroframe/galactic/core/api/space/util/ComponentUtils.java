@@ -668,8 +668,10 @@ public class ComponentUtils {
                     itemTag.putInt("count", stack.getCount());
                     
                     // Add any tags the item might have
-                    CompoundTag itemTagData = stack.getTag();
-                    if (itemTagData != null) {
+                    // In NeoForge 1.21.5, the method is getOrCreateTag() instead of getTag()
+                    // We'll use getOrCreateTag() and check if it's empty instead
+                    CompoundTag itemTagData = stack.getOrCreateTag();
+                    if (!itemTagData.isEmpty()) {
                         itemTag.put("tag", itemTagData);
                     }
                     

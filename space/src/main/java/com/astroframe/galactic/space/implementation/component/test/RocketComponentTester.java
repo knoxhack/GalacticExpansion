@@ -383,6 +383,11 @@ public class RocketComponentTester {
                 return false;
             }
             
+            // Test 4: Cargo bay creation through factory
+            if (!testFactoryCargoBayCreation()) {
+                return false;
+            }
+            
             return true;
         } catch (Exception e) {
             LOGGER.error("Error in component factory system test", e);
