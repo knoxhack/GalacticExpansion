@@ -38,15 +38,18 @@ public class BlockEntityHelper {
     }
     
     /**
-     * Checks if a CompoundTag contains a specific key and the value is of the expected type.
+     * Checks if a CompoundTag contains a specific key with a specific type.
+     * Note: In NeoForge 1.21.5, CompoundTag.contains() only takes a string parameter,
+     * so we just check for the existence of the key.
      * 
      * @param tag The tag to check
      * @param key The key to look for
-     * @param expectedType The expected NBT type ID
-     * @return true if the tag contains the key with the expected type
+     * @param expectedType The expected NBT type ID (ignored in NeoForge 1.21.5)
+     * @return true if the tag contains the key
      */
     public static boolean hasKey(CompoundTag tag, String key, int expectedType) {
-        return tag.contains(key, expectedType);
+        // In NeoForge 1.21.5, the contains method doesn't take a type parameter
+        return tag.contains(key);
     }
     
     /**

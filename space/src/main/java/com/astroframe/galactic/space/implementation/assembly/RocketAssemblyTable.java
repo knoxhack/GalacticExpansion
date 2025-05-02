@@ -1,5 +1,6 @@
 package com.astroframe.galactic.space.implementation.assembly;
 
+import com.astroframe.galactic.core.api.block.BlockEntityBase;
 import com.astroframe.galactic.core.api.space.IRocket;
 import com.astroframe.galactic.core.api.space.ModularRocket;
 import com.astroframe.galactic.core.api.space.component.*;
@@ -11,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import com.astroframe.galactic.core.TagHelper;
@@ -23,7 +23,7 @@ import java.util.*;
  * Block entity for the Rocket Assembly Table.
  * Allows construction of modular rockets from individual components.
  */
-public class RocketAssemblyTable extends BlockEntity {
+public class RocketAssemblyTable extends BlockEntityBase {
     
     // The components that have been added to the assembly table
     private final List<IRocketComponent> components = new ArrayList<>();
@@ -370,11 +370,12 @@ public class RocketAssemblyTable extends BlockEntity {
         return false;
     }
     
-    // Load method for NeoForge 1.21.5
+    /**
+     * Custom loadData method to implement the abstract method from BlockEntityBase.
+     * This avoids direct override of loadAdditional which can change between versions.
+     */
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-        super.loadAdditional(tag, provider);
-        
+    protected void loadData(CompoundTag tag) {
         // Load components
         components.clear();
         if (tag.contains("Components")) {
@@ -432,11 +433,12 @@ public class RocketAssemblyTable extends BlockEntity {
         }
     }
     
-    // Override to handle saving in NeoForge 1.21.5
+    /**
+     * Custom saveData method to implement the abstract method from BlockEntityBase.
+     * This avoids direct override of saveAdditional which can change between versions.
+     */
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
-        
+    protected void saveData(CompoundTag tag) {
         // Save components
         CompoundTag componentsTag = new CompoundTag();
         componentsTag.putInt("Count", components.size());

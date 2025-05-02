@@ -26,7 +26,7 @@ public abstract class BlockEntityBase extends BlockEntity {
     }
     
     /**
-     * Override to handle loading in NeoForge 1.21.5.
+     * Handle loading in NeoForge 1.21.5.
      * This method properly implements loading with the Provider parameter.
      */
     @Override
@@ -37,7 +37,7 @@ public abstract class BlockEntityBase extends BlockEntity {
     }
     
     /**
-     * Override to handle saving in NeoForge 1.21.5.
+     * Handle saving in NeoForge 1.21.5.
      * This method properly implements saving with the Provider parameter.
      */
     @Override
