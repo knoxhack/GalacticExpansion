@@ -51,19 +51,33 @@ public class ModularRocketItem extends Item {
                 tooltip.add(Component.translatable("item.galactic-space.modular_rocket.components").withStyle(ChatFormatting.GRAY));
                 
                 // Command module
-                String commandModuleId = tag.getString("commandModule");
+                String commandModuleId = tag.getString("commandModule").orElse("");
                 tooltip.add(Component.translatable("item.galactic-space.modular_rocket.command_module",
                         getComponentName(commandModuleId)).withStyle(ChatFormatting.BLUE));
                 
-                // Engines
-                ListTag enginesList = tag.getList("engines", 8); // 8 is the NBT type for String
+                // Engines - get tag from Optional and handle ListTag type
+                ListTag enginesList = new ListTag();
+                if (tag.contains("engines")) {
+                    tag.get("engines").ifPresent(tag -> {
+                        if (tag instanceof ListTag listTag) {
+                            enginesList.addAll(listTag);
+                        }
+                    });
+                }
                 if (!enginesList.isEmpty()) {
                     tooltip.add(Component.translatable("item.galactic-space.modular_rocket.engines", 
                             enginesList.size()).withStyle(ChatFormatting.RED));
                 }
                 
-                // Fuel tanks
-                ListTag fuelTanksList = tag.getList("fuelTanks", 8);
+                // Fuel tanks - get tag from Optional and handle ListTag type
+                ListTag fuelTanksList = new ListTag();
+                if (tag.contains("fuelTanks")) {
+                    tag.get("fuelTanks").ifPresent(tag -> {
+                        if (tag instanceof ListTag listTag) {
+                            fuelTanksList.addAll(listTag);
+                        }
+                    });
+                }
                 if (!fuelTanksList.isEmpty()) {
                     tooltip.add(Component.translatable("item.galactic-space.modular_rocket.fuel_tanks", 
                             fuelTanksList.size()).withStyle(ChatFormatting.GREEN));
@@ -91,7 +105,15 @@ public class ModularRocketItem extends Item {
      */
     private void addComponentCountToTooltip(List<Component> tooltip, CompoundTag tag, 
                                            String tagKey, String translationKey, ChatFormatting color) {
-        ListTag list = tag.getList(tagKey, 8);
+        // Get tag from Optional and handle ListTag type
+        ListTag list = new ListTag();
+        if (tag.contains(tagKey)) {
+            tag.get(tagKey).ifPresent(listTag -> {
+                if (listTag instanceof ListTag) {
+                    list.addAll((ListTag) listTag);
+                }
+            });
+        }
         if (!list.isEmpty()) {
             tooltip.add(Component.translatable("item.galactic-space.modular_rocket." + translationKey, 
                     list.size()).withStyle(color));
@@ -135,17 +157,43 @@ public class ModularRocketItem extends Item {
         CompoundTag tag = getOrCreateTag(stack);
         
         // Must have command module
-        if (!tag.contains("commandModule") || tag.getString("commandModule").isEmpty()) {
+        if (!tag.contains("commandModule") || tag.getString("commandModule").orElse("").isEmpty()) {
             return false;
         }
         
-        // Must have at least one engine
-        if (!tag.contains("engines") || tag.getList("engines", 8).isEmpty()) {
+        // Must have at least one engine - get tag from Optional and handle ListTag type
+        if (!tag.contains("engines")) {
             return false;
         }
         
-        // Must have at least one fuel tank
-        if (!tag.contains("fuelTanks") || tag.getList("fuelTanks", 8).isEmpty()) {
+        boolean hasEngines = false;
+        if (tag.contains("engines")) {
+            // Use ifPresent to safely check the tag
+            tag.get("engines").ifPresent(engineTag -> {
+                if (engineTag instanceof ListTag listTag && !listTag.isEmpty()) {
+                    hasEngines = true;
+                }
+            });
+        }
+        if (!hasEngines) {
+            return false;
+        }
+        
+        // Must have at least one fuel tank - get tag from Optional and handle ListTag type
+        if (!tag.contains("fuelTanks")) {
+            return false;
+        }
+        
+        boolean hasFuelTanks = false;
+        if (tag.contains("fuelTanks")) {
+            // Use ifPresent to safely check the tag
+            tag.get("fuelTanks").ifPresent(fuelTag -> {
+                if (fuelTag instanceof ListTag listTag && !listTag.isEmpty()) {
+                    hasFuelTanks = true;
+                }
+            });
+        }
+        if (!hasFuelTanks) {
             return false;
         }
         

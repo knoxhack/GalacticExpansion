@@ -81,9 +81,9 @@ public abstract class MachineBlock extends Block implements EntityBlock {
                 machine.dropContents(level, pos);
             }
             
-            // Call the block's parent onRemove method with appropriate parameters
-            // In NeoForge 1.21.5, use a method that exists in the parent class
-            super.playerWillDestroy(state, level, pos, null);
+            // In NeoForge 1.21.5, we'll just remove block entities directly
+            // Instead of calling parent methods that may have changed signature
+            level.removeBlockEntity(pos);
         }
     }
     

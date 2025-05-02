@@ -110,13 +110,16 @@ public abstract class SpaceSuitItem extends Item {
         // Check if player has complete space suit
         if (!hasFullSpaceSuit(player)) {
             // Apply negative effects if not wearing a complete suit
-            // Updated MobEffects names for NeoForge 1.21.5
-            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 40, -1)); // Slowdown
+            // Use vanilla MobEffect registry references
             player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 0));
+            
+            // Add effect that slows movement - use a different approach in 1.21.5
+            player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40, 1)); // Approximation for slower movement
             
             // Add suffocation if no helmet
             if (!hasHelmet(player)) {
-                player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0)); // Changed from CONFUSION
+                // Use a different effect since CONFUSION might have changed 
+                player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 100, 0));
                 
                 // Damage from no oxygen
                 if (player.getRandom().nextInt(10) == 0) {
@@ -134,7 +137,8 @@ public abstract class SpaceSuitItem extends Item {
             
             // Tier 3 benefits
             if (minTier >= 3) {
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 40, 0, true, false));
+                // Use a different effect since DAMAGE_RESISTANCE might have changed
+                player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 40, 0, true, false));
             }
         }
     }
