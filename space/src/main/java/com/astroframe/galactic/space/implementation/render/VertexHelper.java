@@ -1,11 +1,11 @@
 package com.astroframe.galactic.space.implementation.render;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import org.joml.Matrix4f;
 
 /**
  * Helper class for vertex rendering compatibility across Minecraft versions.
+ * Simplified for NeoForge 1.21.5
  */
 public class VertexHelper {
     
@@ -24,34 +24,11 @@ public class VertexHelper {
      */
     public static void addColoredVertex(VertexConsumer consumer, float x, float y, float z, 
                                       float red, float green, float blue, float alpha) {
-        // In NeoForge 1.21.5, use the BufferBuilder directly
-        try {
-            if (consumer instanceof BufferBuilder) {
-                BufferBuilder buffer = (BufferBuilder) consumer;
-                
-                // Add vertex information
-                buffer.vertex(x, y, z)
-                      .color(red, green, blue, alpha)
-                      .uv(0, 0)
-                      .uv2(0)
-                      .normal(0, 1, 0)
-                      .endVertex();
-            } else {
-                // Fallback for other VertexConsumer implementations
-                PoseStack poseStack = new PoseStack();
-                poseStack.pushPose();
-                consumer.vertex(poseStack.last().pose(), x, y, z)
-                        .color(red, green, blue, alpha)
-                        .uv(0, 0)
-                        .overlayCoords(0, 0)
-                        .uv2(0)
-                        .normal(poseStack.last().normal(), 0, 1, 0)
-                        .endVertex();
-                poseStack.popPose();
-            }
-        } catch (Exception e) {
-            // Log fallback for error handling
-            System.err.println("Error in vertex rendering: " + e.getMessage());
-        }
+        // Simple implementation for NeoForge 1.21.5
+        // Just add the position, color, and normal
+        consumer.vertex(x, y, z);
+        consumer.color(red, green, blue, alpha);
+        consumer.normal(0.0F, 1.0F, 0.0F);
+        consumer.endVertex();
     }
 }
