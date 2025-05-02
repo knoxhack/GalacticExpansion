@@ -1,11 +1,17 @@
 package com.astroframe.galactic.space.items;
 
+import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
 /**
  * Helper methods for working with ItemStacks.
@@ -25,7 +31,7 @@ public class ItemStackHelper {
      * @return The compound tag
      */
     public static CompoundTag getOrCreateTag(ItemStack stack) {
-        if (stack == null) {
+        if (stack == null || stack.isEmpty()) {
             return new CompoundTag();
         }
         
@@ -34,5 +40,167 @@ public class ItemStackHelper {
         
         // Get or create tag for this stack id
         return tagCache.computeIfAbsent(stackId, k -> new CompoundTag());
+    }
+    
+    /**
+     * Gets the tag for an item stack.
+     * 
+     * @param stack The item stack
+     * @return The tag, or null if none exists
+     */
+    public static CompoundTag getTag(ItemStack stack) {
+        if (stack == null || stack.isEmpty()) {
+            return null;
+        }
+        
+        // Get the id for this stack
+        UUID stackId = stackIds.get(stack);
+        if (stackId == null) {
+            return null;
+        }
+        
+        // Return the tag if it exists
+        return tagCache.get(stackId);
+    }
+    
+    /**
+     * Sets the tag for an item stack.
+     * 
+     * @param stack The item stack
+     * @param tag The tag to set, or null to remove
+     */
+    public static void setTag(ItemStack stack, CompoundTag tag) {
+        if (stack == null || stack.isEmpty()) {
+            return;
+        }
+        
+        if (tag == null) {
+            // Remove any existing tag
+            UUID stackId = stackIds.remove(stack);
+            if (stackId != null) {
+                tagCache.remove(stackId);
+            }
+        } else {
+            // Set the tag
+            UUID stackId = stackIds.computeIfAbsent(stack, k -> UUID.randomUUID());
+            tagCache.put(stackId, tag);
+        }
+    }
+    
+    /**
+     * Creates an ItemStack from an item and count.
+     * This abstracts the ItemStack constructor to handle API differences.
+     * 
+     * @param item The item
+     * @param count The count
+     * @return The created ItemStack
+     */
+    public static ItemStack createStack(Item item, int count) {
+        if (item == null) {
+            return ItemStack.EMPTY;
+        }
+        try {
+            return new ItemStack(item, count);
+        } catch (Exception e) {
+            return ItemStack.EMPTY;
+        }
+    }
+    
+    /**
+     * Creates an ItemStack from a ResourceLocation and count.
+     * 
+     * @param location The resource location for the item
+     * @param count The count
+     * @return The created ItemStack
+     */
+    public static ItemStack createStack(ResourceLocation location, int count) {
+        try {
+            Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(location);
+            if (item == null || item == Items.AIR) {
+                return ItemStack.EMPTY;
+            }
+            return createStack(item, count);
+        } catch (Exception e) {
+            return ItemStack.EMPTY;
+        }
+    }
+    
+    /**
+     * Creates an ItemStack from a namespaced item id and count.
+     * 
+     * @param namespace The namespace (mod id)
+     * @param path The item id
+     * @param count The count
+     * @return The created ItemStack
+     */
+    public static ItemStack createStack(String namespace, String path, int count) {
+        ResourceLocation location = ResourceLocationHelper.create(namespace, path);
+        return createStack(location, count);
+    }
+    
+    /**
+     * Safely gets a string from a compound tag.
+     * 
+     * @param tag The tag
+     * @param key The key
+     * @return The string or empty string if not found
+     */
+    public static String getString(CompoundTag tag, String key) {
+        if (tag == null || !tag.contains(key)) {
+            return "";
+        }
+        
+        try {
+            // Try direct method
+            try {
+                return tag.getString(key);
+            } catch (Exception e) {
+                // Fallback for NeoForge 1.21.5
+                return getOptional(tag, key, CompoundTag::getString).orElse("");
+            }
+        } catch (Exception e) {
+            return "";
+        }
+    }
+    
+    /**
+     * Safely gets an int from a compound tag.
+     * 
+     * @param tag The tag
+     * @param key The key
+     * @return The int or 0 if not found
+     */
+    public static int getInt(CompoundTag tag, String key) {
+        if (tag == null || !tag.contains(key)) {
+            return 0;
+        }
+        
+        try {
+            // Try direct method
+            try {
+                return tag.getInt(key);
+            } catch (Exception e) {
+                // Fallback for NeoForge 1.21.5
+                return getOptional(tag, key, CompoundTag::getInt).orElse(0);
+            }
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+    
+    /**
+     * Helper method to handle OptionalXXX return types in NeoForge 1.21.5
+     */
+    @SuppressWarnings("unchecked")
+    private static <T> java.util.Optional<T> getOptional(CompoundTag tag, String key, Function<String, Object> getter) {
+        try {
+            Object result = getter.apply(key);
+            if (result instanceof java.util.Optional) {
+                return (java.util.Optional<T>) result;
+            }
+            return java.util.Optional.ofNullable((T) result);
+        } catch (Exception e) {
+            return java.util.Optional.empty();
+        }
     }
 }

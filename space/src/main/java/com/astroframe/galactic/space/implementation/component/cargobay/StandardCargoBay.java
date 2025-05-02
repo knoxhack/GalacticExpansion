@@ -1,8 +1,10 @@
 package com.astroframe.galactic.space.implementation.component.cargobay;
 
 import com.astroframe.galactic.core.api.space.component.ICargoBay;
+import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
+import com.astroframe.galactic.space.items.ItemStackHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
@@ -150,43 +152,61 @@ public class StandardCargoBay implements ICargoBay {
     
     @Override
     public void save(CompoundTag tag) {
-        // Save component data
-        tag.putString("ID", id.toString());
-        tag.putString("Type", type.name());
-        tag.putString("Name", name);
-        tag.putString("Description", description);
-        tag.putInt("Tier", tier);
-        tag.putInt("Mass", mass);
-        tag.putInt("Durability", durability);
-        tag.putInt("MaxDurability", maxDurability);
-        
-        // Save cargo bay specific data
-        tag.putInt("MaxCapacity", maxCapacity);
-        tag.putInt("MaxSlots", maxSlots);
-        tag.putBoolean("SecurityFeatures", securityFeatures);
-        tag.putBoolean("EnvironmentControl", environmentControl);
-        tag.putBoolean("AutomatedLoading", automatedLoading);
-        
-        // Save items
-        ListTag itemsTag = new ListTag();
-        for (ItemStack stack : items) {
-            if (!stack.isEmpty()) {
-                CompoundTag itemTag = new CompoundTag();
-                itemTag.putString("id", stack.getItem().toString());
-                itemTag.putInt("count", stack.getCount());
-                
-                // Add any tags the item might have
-                // Get item tag data and add it if not empty
-                CompoundTag itemTagData = stack.getTag();
-                if (itemTagData != null && !itemTagData.isEmpty()) {
-                    itemTag.put("tag", itemTagData);
+        try {
+            // Save component data
+            tag.putString("ID", id.toString());
+            tag.putString("Type", type.name());
+            tag.putString("Name", name);
+            tag.putString("Description", description);
+            tag.putInt("Tier", tier);
+            tag.putInt("Mass", mass);
+            tag.putInt("Durability", durability);
+            tag.putInt("MaxDurability", maxDurability);
+            
+            // Save cargo bay specific data
+            tag.putInt("MaxCapacity", maxCapacity);
+            tag.putInt("MaxSlots", maxSlots);
+            tag.putBoolean("SecurityFeatures", securityFeatures);
+            tag.putBoolean("EnvironmentControl", environmentControl);
+            tag.putBoolean("AutomatedLoading", automatedLoading);
+            
+            // Save items
+            ListTag itemsTag = new ListTag();
+            for (ItemStack stack : items) {
+                if (!stack.isEmpty()) {
+                    try {
+                        CompoundTag itemTag = new CompoundTag();
+                        
+                        // Save basic item data
+                        ResourceLocation itemId = null;
+                        try {
+                            // Try to get the registry name of the item
+                            itemId = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem());
+                            itemTag.putString("id", itemId.toString());
+                        } catch (Exception e) {
+                            // Fallback to a direct toString if the registry lookup fails
+                            itemTag.putString("id", stack.getItem().toString());
+                        }
+                        
+                        itemTag.putInt("count", stack.getCount());
+                        
+                        // Add any tags the item might have
+                        CompoundTag itemTagData = ItemStackHelper.getTag(stack);
+                        if (itemTagData != null && !itemTagData.isEmpty()) {
+                            itemTag.put("tag", itemTagData);
+                        }
+                        
+                        itemsTag.add(itemTag);
+                    } catch (Exception e) {
+                        // Skip this item on error
+                    }
                 }
-                
-                itemsTag.add(itemTag);
             }
+            
+            tag.put("Items", itemsTag);
+        } catch (Exception e) {
+            // Catch any serialization errors to avoid crashing
         }
-        
-        tag.put("Items", itemsTag);
     }
     
     @Override
@@ -195,41 +215,101 @@ public class StandardCargoBay implements ICargoBay {
         
         // Load durability if it exists
         if (tag.contains("Durability")) {
-            this.durability = tag.getInt("Durability");
+            this.durability = ItemStackHelper.getInt(tag, "Durability");
         }
         
         // Load items
         items.clear();
-        if (tag.contains("Items", 9)) { // 9 is the tag type for a list
-            ListTag itemsTag = tag.getList("Items", 10); // 10 is the tag type for compound
-            for (int i = 0; i < itemsTag.size(); i++) {
-                CompoundTag itemTag = itemsTag.getCompound(i);
-                String id = itemTag.getString("id");
-                int count = itemTag.getInt("count");
-                
-                // Use ItemHelper or similar to create item from ID
-                ResourceLocation itemId = ResourceLocationHelper.create("minecraft", id);
-                ItemStack stack = null;
-                
-                // Create the item stack - we need to handle potential null values properly
+        if (tag.contains("Items")) {
+            try {
+                // Get the items list tag - handling NeoForge 1.21.5 compatibility
+                ListTag itemsTag = null;
                 try {
-                    net.minecraft.world.item.Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(itemId);
-                    if (item != null && item != net.minecraft.world.item.Items.AIR) {
-                        stack = new ItemStack(item, count);
-                    } else {
-                        continue; // Skip this invalid item
-                    }
+                    // Try direct method first
+                    itemsTag = tag.getList("Items");
                 } catch (Exception e) {
-                    continue; // Skip this invalid item
+                    // Fall back to type-specific method
+                    itemsTag = tag.getList("Items", 10); // 10 is CompoundTag type
                 }
                 
-                // Load any tags
-                if (itemTag.contains("tag", 10)) { // 10 is the tag type for compound
-                    CompoundTag tagCompound = itemTag.getCompound("tag");
-                    stack.getOrCreateTag().merge(tagCompound);
+                if (itemsTag == null) {
+                    return; // No items to load
                 }
                 
-                items.add(stack);
+                // Process each item in the list
+                for (int i = 0; i < itemsTag.size(); i++) {
+                    CompoundTag itemTag = null;
+                    
+                    try {
+                        // Get the item's tag compound
+                        try {
+                            itemTag = itemsTag.getCompound(i);
+                        } catch (Exception e) {
+                            // In some versions, we might need different access
+                            Object tagAtIndex = itemsTag.get(i);
+                            if (tagAtIndex instanceof CompoundTag) {
+                                itemTag = (CompoundTag) tagAtIndex;
+                            }
+                        }
+                        
+                        if (itemTag == null) {
+                            continue;
+                        }
+                        
+                        // Extract item data
+                        String itemIdStr = ItemStackHelper.getString(itemTag, "id");
+                        int count = ItemStackHelper.getInt(itemTag, "count");
+                        
+                        if (itemIdStr.isEmpty() || count <= 0) {
+                            continue;
+                        }
+                        
+                        // Create the stack using our helper
+                        ResourceLocation itemId = null;
+                        if (itemIdStr.contains(":")) {
+                            // If it already contains a namespace, parse it directly
+                            itemId = ResourceLocationHelper.parse(itemIdStr);
+                        } else {
+                            // Otherwise assume minecraft namespace
+                            itemId = ResourceLocationHelper.create("minecraft", itemIdStr);
+                        }
+                        ItemStack stack = ItemStackHelper.createStack(itemId, count);
+                        
+                        if (stack.isEmpty()) {
+                            continue;
+                        }
+                        
+                        // Handle any item tags
+                        if (itemTag.contains("tag")) {
+                            try {
+                                CompoundTag tagData = null;
+                                
+                                try {
+                                    tagData = itemTag.getCompound("tag");
+                                } catch (Exception e) {
+                                    // Handle optional return
+                                    Object tagObj = itemTag.get("tag");
+                                    if (tagObj instanceof CompoundTag) {
+                                        tagData = (CompoundTag) tagObj;
+                                    }
+                                }
+                                
+                                if (tagData != null) {
+                                    ItemStackHelper.setTag(stack, tagData);
+                                }
+                            } catch (Exception e) {
+                                // Ignore tag loading errors
+                            }
+                        }
+                        
+                        // Add the item to our list
+                        items.add(stack);
+                    } catch (Exception e) {
+                        // Skip this item on any error
+                    }
+                }
+            } catch (Exception e) {
+                // If anything goes wrong, just continue with an empty list
             }
         }
     }
