@@ -386,7 +386,7 @@ public class BaseLifeSupport implements ILifeSupport {
          * @param type The life support type
          * @return This builder
          */
-        public Builder lifeSupportType(LifeSupportType type) {
+        public Builder lifeSupportType(com.astroframe.galactic.core.api.space.component.enums.LifeSupportType type) {
             // This is just for categorization, doesn't affect properties
             return this;
         }

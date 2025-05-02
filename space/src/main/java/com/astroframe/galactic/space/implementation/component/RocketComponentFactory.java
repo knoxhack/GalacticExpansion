@@ -1034,12 +1034,12 @@ public class RocketComponentFactory {
         private final FuelType fuelType;
         private final boolean atmosphereOperable;
         private final boolean spaceOperable;
-        private final EngineType engineType;
+        private final com.astroframe.galactic.core.api.space.component.enums.EngineType engineType;
         
         public RocketEngine(ResourceLocation id, String name, String description, 
                           int tier, int mass, int maxDurability, float efficiency,
                           FuelType fuelType, boolean atmosphereOperable, boolean spaceOperable,
-                          EngineType engineType) {
+                          com.astroframe.galactic.core.api.space.component.enums.EngineType engineType) {
             this.id = id;
             this.name = name;
             this.description = description;
@@ -1135,7 +1135,7 @@ public class RocketComponentFactory {
         }
         
         @Override
-        public EngineType getEngineType() {
+        public com.astroframe.galactic.core.api.space.component.enums.EngineType getEngineType() {
             return engineType;
         }
     }
