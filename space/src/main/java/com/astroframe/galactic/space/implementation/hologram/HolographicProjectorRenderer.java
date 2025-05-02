@@ -4,9 +4,12 @@ import com.astroframe.galactic.core.api.space.IRocket;
 import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -141,12 +144,26 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             float z2 = (float) (radius * Math.sin(angle2));
             
             // Draw line for the circle
-            lines.vertex(pose, x1, 0, z1).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA).normal(0, 1, 0).endVertex();
-            lines.vertex(pose, x2, 0, z2).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA).normal(0, 1, 0).endVertex();
+            drawLine(pose, lines, x1, 0.0f, z1, x2, 0.0f, z2);
             
             // Draw line from center
-            lines.vertex(pose, 0, 0, 0).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA).normal(0, 1, 0).endVertex();
-            lines.vertex(pose, x1, 0, z1).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, 0.3f * HOLOGRAM_ALPHA).normal(0, 1, 0).endVertex();
+            Vector3f normal = new Vector3f(0, 1, 0);
+            
+            Vector4f center = new Vector4f(0, 0.0f, 0, 1.0f);
+            Vector4f edge = new Vector4f(x1, 0.0f, z1, 1.0f);
+            
+            center.mul(pose);
+            edge.mul(pose);
+            
+            lines.vertex(center.x(), center.y(), center.z())
+                 .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
+                 .normal(normal.x(), normal.y(), normal.z())
+                 .endVertex();
+                 
+            lines.vertex(edge.x(), edge.y(), edge.z())
+                 .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, 0.3f * HOLOGRAM_ALPHA)
+                 .normal(normal.x(), normal.y(), normal.z())
+                 .endVertex();
         }
     }
     
@@ -246,8 +263,23 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      * @param z2 End Z
      */
     private void drawLine(Matrix4f pose, VertexConsumer lines, float x1, float y1, float z1, float x2, float y2, float z2) {
-        lines.vertex(pose, x1, y1, z1).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA).normal(0, 1, 0).endVertex();
-        lines.vertex(pose, x2, y2, z2).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA).normal(0, 1, 0).endVertex();
+        Vector3f normal = new Vector3f(0, 1, 0);
+        
+        Vector4f pos1 = new Vector4f(x1, y1, z1, 1.0f);
+        Vector4f pos2 = new Vector4f(x2, y2, z2, 1.0f);
+        
+        pos1.mul(pose);
+        pos2.mul(pose);
+        
+        lines.vertex(pos1.x(), pos1.y(), pos1.z())
+             .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
+             .normal(normal.x(), normal.y(), normal.z())
+             .endVertex();
+             
+        lines.vertex(pos2.x(), pos2.y(), pos2.z())
+             .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
+             .normal(normal.x(), normal.y(), normal.z())
+             .endVertex();
     }
     
     /**
@@ -314,15 +346,45 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         // Horizontal lines
         for (int i = 0; i <= gridSize; i++) {
             float z = -size + i * step;
-            lines.vertex(pose, -size, 0, z).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha).normal(0, 1, 0).endVertex();
-            lines.vertex(pose, size, 0, z).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha).normal(0, 1, 0).endVertex();
+            Vector3f normal = new Vector3f(0, 1, 0);
+            
+            Vector4f start = new Vector4f(-size, 0.0f, z, 1.0f);
+            Vector4f end = new Vector4f(size, 0.0f, z, 1.0f);
+            
+            start.mul(pose);
+            end.mul(pose);
+            
+            lines.vertex(start.x(), start.y(), start.z())
+                 .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha)
+                 .normal(normal.x(), normal.y(), normal.z())
+                 .endVertex();
+                 
+            lines.vertex(end.x(), end.y(), end.z())
+                 .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha)
+                 .normal(normal.x(), normal.y(), normal.z())
+                 .endVertex();
         }
         
         // Vertical lines
         for (int i = 0; i <= gridSize; i++) {
             float x = -size + i * step;
-            lines.vertex(pose, x, 0, -size).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha).normal(0, 1, 0).endVertex();
-            lines.vertex(pose, x, 0, size).color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha).normal(0, 1, 0).endVertex();
+            Vector3f normal = new Vector3f(0, 1, 0);
+            
+            Vector4f start = new Vector4f(x, 0.0f, -size, 1.0f);
+            Vector4f end = new Vector4f(x, 0.0f, size, 1.0f);
+            
+            start.mul(pose);
+            end.mul(pose);
+            
+            lines.vertex(start.x(), start.y(), start.z())
+                 .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha)
+                 .normal(normal.x(), normal.y(), normal.z())
+                 .endVertex();
+                 
+            lines.vertex(end.x(), end.y(), end.z())
+                 .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha)
+                 .normal(normal.x(), normal.y(), normal.z())
+                 .endVertex();
         }
         
         poseStack.popPose();
