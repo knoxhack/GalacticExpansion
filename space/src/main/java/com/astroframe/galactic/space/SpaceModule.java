@@ -3,6 +3,7 @@ package com.astroframe.galactic.space;
 import com.astroframe.galactic.space.implementation.hologram.HolographicProjectorBlock;
 import com.astroframe.galactic.space.implementation.hologram.HolographicProjectorBlockEntity;
 import com.astroframe.galactic.space.implementation.assembly.menu.RocketAssemblyMenu;
+import com.astroframe.galactic.space.registry.SpaceMenus;
 import net.minecraft.world.inventory.MenuType;
 import com.astroframe.galactic.space.implementation.assembly.RocketAssemblyTable;
 import com.astroframe.galactic.space.implementation.assembly.RocketAssemblyTableBlockEntity;
@@ -22,6 +23,7 @@ import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
+import java.util.Set;
 
 /**
  * Main class for the Space module of the Galactic mod.
@@ -67,13 +69,15 @@ public class SpaceModule {
     // Block Entities
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HolographicProjectorBlockEntity>> HOLOGRAPHIC_PROJECTOR_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("holographic_projector", 
-                    () -> BlockEntityType.Builder.of(HolographicProjectorBlockEntity::new, 
-                            HOLOGRAPHIC_PROJECTOR.get()).build(null));
+                    () -> BlockEntityType.create(
+                            (pos, state) -> new HolographicProjectorBlockEntity(pos, state),
+                            Set.of(HOLOGRAPHIC_PROJECTOR.get())));
     
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RocketAssemblyTableBlockEntity>> ROCKET_ASSEMBLY_TABLE_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("rocket_assembly_table", 
-                    () -> BlockEntityType.Builder.of(RocketAssemblyTableBlockEntity::new, 
-                            ROCKET_ASSEMBLY_TABLE.get()).build(null));
+                    () -> BlockEntityType.create(
+                            (pos, state) -> new RocketAssemblyTableBlockEntity(pos, state),
+                            Set.of(ROCKET_ASSEMBLY_TABLE.get())));
                             
     // Menus
     public static final DeferredHolder<MenuType<?>, MenuType<RocketAssemblyMenu>> ROCKET_ASSEMBLY_MENU =
@@ -95,6 +99,9 @@ public class SpaceModule {
         ITEMS.register(eventBus);
         BLOCK_ENTITIES.register(eventBus);
         MENUS.register(eventBus);
+        
+        // Register custom menu registry
+        SpaceMenus.register();
         
         // Register event handlers
         eventBus.addListener(this::registerRenderers);

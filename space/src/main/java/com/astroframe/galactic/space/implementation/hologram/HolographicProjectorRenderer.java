@@ -114,11 +114,10 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         renderScanLines(poseStack, builder, scanHeight);
         
         // Finish rendering
-        tesselator.end();
+        tesselator.getBuilder().build(); // Using build() instead of end() in NeoForge 1.21.5
         
-        // Reset render state
-        RenderSystem.disableBlend();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        // Reset render state (NeoForge 1.21.5 doesn't use RenderSystem.disableBlend directly)
+        // Instead we rely on the renderer to handle state
         
         poseStack.popPose();
     }
