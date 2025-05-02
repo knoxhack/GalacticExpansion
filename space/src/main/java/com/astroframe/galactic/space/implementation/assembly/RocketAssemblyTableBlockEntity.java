@@ -169,26 +169,36 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
      */
     @Override
     protected void loadData(CompoundTag tag) {
-        // Load the component inventory
-        ContainerHelper.loadAllItems(tag, components);
+        // Load the component inventory - use Provider parameter required in NeoForge 1.21.5
+        ContainerHelper.loadAllItems(tag, components, ItemStack::new);
         
         // Load the rocket data
         if (tag.contains("RocketData")) {
-            CompoundTag rocketTag = tag.getCompound("RocketData");
-            rocketData.deserialize(rocketTag);
+            // In NeoForge 1.21.5, getCompound returns an Optional<CompoundTag>
+            CompoundTag rocketTag = tag.getCompound("RocketData").orElse(new CompoundTag());
+            // Handle differently since deserialize method changed in 1.21.5
+            rocketData.load(rocketTag);
         }
         
-        // Load linked projectors
-        if (tag.contains("LinkedProjectors", Tag.TAG_LIST)) {
-            ListTag projectorList = tag.getList("LinkedProjectors", Tag.TAG_COMPOUND);
-            linkedProjectors.clear();
-            
-            for (int i = 0; i < projectorList.size(); i++) {
-                CompoundTag posTag = projectorList.getCompound(i);
-                int x = posTag.getInt("X").orElse(0);
-                int y = posTag.getInt("Y").orElse(0);
-                int z = posTag.getInt("Z").orElse(0);
-                linkedProjectors.add(new BlockPos(x, y, z));
+        // Load linked projectors - in NeoForge 1.21.5, contains() takes only one parameter
+        if (tag.contains("LinkedProjectors")) {
+            // In NeoForge 1.21.5, call getList with the key parameter only
+            java.util.Optional<ListTag> listOpt = tag.getList("LinkedProjectors");
+            if (listOpt.isPresent()) {
+                ListTag projectorList = listOpt.get();
+                linkedProjectors.clear();
+                
+                for (int i = 0; i < projectorList.size(); i++) {
+                    // In NeoForge 1.21.5, getCompound returns an Optional<CompoundTag>
+                    java.util.Optional<CompoundTag> posTagOpt = projectorList.getCompound(i);
+                    if (posTagOpt.isPresent()) {
+                        CompoundTag posTag = posTagOpt.get();
+                        int x = posTag.getInt("X").orElse(0);
+                        int y = posTag.getInt("Y").orElse(0);
+                        int z = posTag.getInt("Z").orElse(0);
+                        linkedProjectors.add(new BlockPos(x, y, z));
+                    }
+                }
             }
         }
     }

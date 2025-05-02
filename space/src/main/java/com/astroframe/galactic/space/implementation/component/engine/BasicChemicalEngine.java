@@ -256,7 +256,8 @@ public class BasicChemicalEngine implements IRocketEngine {
         
         // Load durability
         if (tag.contains("CurrentDurability")) {
-            currentDurability = tag.getInt("CurrentDurability");
+            // In NeoForge 1.21.5, getInt returns an Optional<Integer>
+            currentDurability = tag.getInt("CurrentDurability").orElse(maxDurability);
             // Ensure it's within valid range
             currentDurability = Math.max(0, Math.min(maxDurability, currentDurability));
         }

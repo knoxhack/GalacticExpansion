@@ -22,7 +22,11 @@ public class VertexHelper {
      */
     public static void addColoredVertex(VertexConsumer consumer, float x, float y, float z, 
                                        float red, float green, float blue, float alpha) {
-        // In NeoForge 1.21.5, use individual methods for setting vertex data
-        consumer.addVertex(x, y, z, red, green, blue, alpha, 0, 0, 0, 0, 1, 0, 0);
+        // In NeoForge 1.21.5, use individual vertex method calls
+        consumer.vertex(x, y, z);
+        consumer.uv(0, 0);
+        consumer.color(red, green, blue, alpha);
+        consumer.normal(1, 0, 0);
+        consumer.endVertex();
     }
 }
