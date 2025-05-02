@@ -1543,17 +1543,14 @@ public class RocketComponentFactory {
             currentDurability = Math.min(maxDurability, currentDurability + amount);
         }
         
-        @Override
         public int getStorageCapacity() {
             return storageCapacity;
         }
         
-        @Override
         public boolean hasRadiationShielding() {
             return tier >= 3; // Only top-tier cargo bays have radiation shielding
         }
         
-        @Override
         public boolean hasTemperatureRegulation() {
             return tier >= 2; // Mid and high tier have temperature regulation
         }
@@ -1695,7 +1692,7 @@ public class RocketComponentFactory {
             int baseWeight = stack.getCount();
             
             // Items with NBT data might be more complex/heavier
-            if (stack.hasTag()) {
+            if (stack.hasNbt()) {
                 baseWeight += 1; // Add a bit more weight for items with tags
             }
             
