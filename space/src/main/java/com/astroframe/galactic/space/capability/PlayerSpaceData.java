@@ -134,8 +134,8 @@ public class PlayerSpaceData {
                 String idString = "";
                 if (bodiesTag.getString(i) != null) {
                     // Direct access to string content in NeoForge 1.21.5
-                    if (bodiesTag.get(i) instanceof StringTag stringTag) {
-                        idString = stringTag.getAsString();
+                    if (bodiesTag.get(i) instanceof StringTag) {
+                        idString = ((StringTag)bodiesTag.get(i)).getString();
                     } else {
                         // Fallback if tag type is unexpected
                         GalacticSpace.LOGGER.warn("Unexpected tag type in bodiesTag at index " + i);
