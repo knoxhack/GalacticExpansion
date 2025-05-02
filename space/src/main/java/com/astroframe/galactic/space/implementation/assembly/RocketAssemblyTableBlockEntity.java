@@ -199,9 +199,9 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                                             namespace = parts[0];
                                             path = parts[1];
                                         }
-                                        // In NeoForge 1.21.5, the constructor requires two separate parameters
-                                        // for namespace and path, not a combined string
-                                        net.minecraft.resources.ResourceLocation itemRL = new net.minecraft.resources.ResourceLocation(namespace, path);
+                                        // In NeoForge 1.21.5, the String constructor for ResourceLocation is public,
+                                        // while the String,String constructor is private
+                                        net.minecraft.resources.ResourceLocation itemRL = new net.minecraft.resources.ResourceLocation(namespace + ":" + path);
                                         // BuiltInRegistries.ITEM.get returns an Optional<Reference<Item>> in NeoForge 1.21.5
                                         // We need to map it to get the actual Item
                                         java.util.Optional<net.minecraft.world.item.Item> itemOpt = 
@@ -641,11 +641,15 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
         // Create a temporary tag to hold the complete stack data
         CompoundTag tempTag = new CompoundTag();
         
-        // Use a dummy CompoundTag just to receive the data in the consumer
-        stack.save(tagData -> {
-            // Copy all data from the provider to our temporary tag
-            for (String key : tagData.getAllKeys()) {
-                tempTag.put(key, tagData.get(key).copy());
+        // In NeoForge 1.21.5, the save method doesn't accept a lambda directly
+        // We need to use a proper Consumer implementation
+        stack.save(new net.minecraft.nbt.CompoundTag.Provider() {
+            @Override
+            public void save(CompoundTag tagData) {
+                // Copy all data from the provider to our temporary tag
+                for (String key : tagData.getAllKeys()) {
+                    tempTag.put(key, tagData.get(key).copy());
+                }
             }
         });
         
