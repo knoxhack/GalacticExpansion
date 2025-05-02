@@ -56,7 +56,7 @@ public class SpaceStationChunkGenerator extends ChunkGenerator {
 
     // This method is no longer used in NeoForge 1.21.5, but kept for compatibility with other versions
     // The new method signature is used instead (the one with WorldGenRegion)
-    public void applyCarvers(WorldGenLevel level, RandomState randomState, BiomeManager biomeManager, StructureManager structureManager, ChunkAccess chunkAccess, GenerationStep.Features carvingStage) {
+    public void applyCarvers(WorldGenLevel level, RandomState randomState, BiomeManager biomeManager, StructureManager structureManager, ChunkAccess chunkAccess, GenerationStep.Decoration carvingStage) {
         // No carvers needed in space station
     }
     

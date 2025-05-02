@@ -24,7 +24,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.server.ServerTickEvent;
+import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
@@ -221,9 +221,9 @@ public class GalacticSpace {
      *
      * @param event The server tick event
      */
-    private void onServerTick(ServerTickEvent event) {
+    private void onServerTick(TickEvent.ServerTickEvent event) {
         // Only process on end phase of server ticks
-        if (event.getPhase() == ServerTickEvent.Phase.END) {
+        if (event.phase == TickEvent.Phase.END) {
             // Update rocket launch sequences
             SpaceTravelManager.updateLaunches();
         }
