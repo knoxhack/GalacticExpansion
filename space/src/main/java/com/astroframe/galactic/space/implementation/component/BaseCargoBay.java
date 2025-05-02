@@ -152,6 +152,51 @@ public class BaseCargoBay implements ICargoBay {
         // No-op until we implement durability
     }
     
+    // Implementation of ICargoBay method
+    @Override
+    public java.util.Map<Integer, com.astroframe.galactic.core.api.common.ItemStack> getContents() {
+        return new java.util.HashMap<>(contents);
+    }
+    
+    // Implementation of ICargoBay method
+    @Override
+    public com.astroframe.galactic.core.api.common.ItemStack addItem(com.astroframe.galactic.core.api.common.ItemStack stack) {
+        // Simple implementation - find the first empty slot
+        for (int i = 0; i < storageCapacity; i++) {
+            if (!contents.containsKey(i)) {
+                contents.put(i, stack);
+                return new com.astroframe.galactic.core.api.common.ItemStack(stack.getItem(), 0);
+            }
+        }
+        
+        // No space available, return the original stack
+        return stack;
+    }
+    
+    // Implementation of ICargoBay method
+    @Override
+    public com.astroframe.galactic.core.api.common.ItemStack takeItem(int slotIndex, int amount) {
+        if (slotIndex < 0 || slotIndex >= storageCapacity || !contents.containsKey(slotIndex)) {
+            return new com.astroframe.galactic.core.api.common.ItemStack(null, 0);
+        }
+        
+        com.astroframe.galactic.core.api.common.ItemStack stack = contents.get(slotIndex);
+        int toTake = Math.min(amount, stack.getCount());
+        
+        if (toTake == stack.getCount()) {
+            // Remove the stack entirely
+            contents.remove(slotIndex);
+            return stack;
+        } else {
+            // Take part of the stack
+            com.astroframe.galactic.core.api.common.ItemStack result = 
+                new com.astroframe.galactic.core.api.common.ItemStack(stack.getItem(), toTake);
+            contents.put(slotIndex, new com.astroframe.galactic.core.api.common.ItemStack(
+                stack.getItem(), stack.getCount() - toTake));
+            return result;
+        }
+    }
+    
     /**
      * Builder for BaseCargoBay.
      */

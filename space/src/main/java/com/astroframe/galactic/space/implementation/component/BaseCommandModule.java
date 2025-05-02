@@ -38,37 +38,31 @@ public class BaseCommandModule implements ICommandModule {
         this.commandModuleType = builder.commandModuleType;
     }
     
-    @Override
     public ResourceLocation getId() {
         return id;
     }
     
-    @Override
     public Component getDisplayName() {
         return displayName;
     }
     
-    @Override
     public int getTier() {
         return tier;
     }
     
-    @Override
-    public ComponentType getType() {
-        return ComponentType.COMMAND_MODULE;
+    public com.astroframe.galactic.core.api.space.component.RocketComponentType getType() {
+        return com.astroframe.galactic.core.api.space.component.RocketComponentType.COMMAND;
     }
     
-    @Override
     public int getMass() {
         return mass;
     }
     
-    @Override
     public float getMaxHealth() {
         return maxHealth;
     }
     
-    @Override
+    // This is a non-interfaced method for backward compatibility
     public List<Component> getTooltip(boolean detailed) {
         List<Component> tooltip = new ArrayList<>();
         tooltip.add(displayName);
@@ -87,29 +81,53 @@ public class BaseCommandModule implements ICommandModule {
         return tooltip;
     }
     
-    @Override
     public int getNavigationLevel() {
         return navigationLevel;
     }
     
-    @Override
     public int getCrewCapacity() {
         return crewCapacity;
     }
     
-    @Override
     public int getComputingPower() {
         return computingPower;
     }
     
-    @Override
     public int getCommunicationRange() {
         return communicationRange;
     }
     
-    @Override
     public CommandModuleType getCommandModuleType() {
         return commandModuleType;
+    }
+    
+    // Required implementation of IRocketComponent methods
+    public int getMaxDurability() {
+        return (int)maxHealth;
+    }
+    
+    public int getCurrentDurability() {
+        return (int)maxHealth; // Currently always at max
+    }
+    
+    public void damage(int amount) {
+        // No-op until we implement durability
+    }
+    
+    public boolean isBroken() {
+        return false; // Default implementation always returns false until we implement durability
+    }
+    
+    public void repair(int amount) {
+        // No-op until we implement durability
+    }
+    
+    public String getName() {
+        return displayName.getString();
+    }
+    
+    public String getDescription() {
+        return "Command Module - " + commandModuleType.getDisplayName() + " - Tier " + tier;
     }
     
     /**

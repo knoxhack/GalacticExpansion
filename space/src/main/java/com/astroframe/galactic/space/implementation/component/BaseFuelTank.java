@@ -91,17 +91,22 @@ public class BaseFuelTank implements IFuelTank {
     
     // Implementation of IFuelType method
     public com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType getFuelType() {
-        // Direct mapping based on the name
-        if (fuelType == FuelType.CHEMICAL) {
-            return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.CHEMICAL;
-        } else if (fuelType == FuelType.PLASMA) {
-            return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.PLASMA;
-        } else if (fuelType == FuelType.ANTIMATTER) {
-            return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.ANTIMATTER;
-        } else if (fuelType == FuelType.ELECTRICAL) {
-            return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.ELECTRICAL;
-        } else {
-            return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.CHEMICAL;
+        // Manual mapping from our enum to the interface enum
+        switch (fuelType) {
+            case CHEMICAL:
+                return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.CHEMICAL;
+            case ANTIMATTER:
+                return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.ANTIMATTER;
+            case ION:
+            case HYDROGEN:
+                return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.ELECTRICAL;
+            case NUCLEAR:
+            case FUSION:
+            case EXOTIC:
+                // These would be comparable to PLASMA in the target enum
+                return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.PLASMA;
+            default:
+                return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.CHEMICAL;
         }
     }
     
