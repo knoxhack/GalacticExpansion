@@ -501,9 +501,24 @@ public class ModularRocket implements IRocket {
     }
     
     /**
+     * Clears all components from this rocket.
+     * Used primarily for reassembly in the rocket assembly table.
+     */
+    public void clearComponents() {
+        engines.clear();
+        fuelTanks.clear();
+        cargoBays.clear();
+        passengerCompartments.clear();
+        shields.clear();
+        lifeSupports.clear();
+        // Note: we don't set commandModule to null here to preserve the rocket's identity
+    }
+    
+    /**
      * Adds a component to this rocket.
+     * 
      * @param component The component to add
-     * @return true if the component was added successfully
+     * @return True if the component was added successfully
      */
     public boolean addComponent(IRocketComponent component) {
         if (component == null) {

@@ -1,250 +1,197 @@
 package com.astroframe.galactic.space.implementation.component;
 
-import com.astroframe.galactic.core.api.space.component.IRocketComponent;
-import com.astroframe.galactic.core.api.space.component.RocketComponentType;
+import com.astroframe.galactic.core.api.space.component.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * Validates rocket component configurations.
- * Ensures that a rocket has all required components and that they are properly positioned.
+ * Validates rocket components based on a set of rules.
+ * Ensures that a rocket has the necessary components to function properly.
  */
 public class ComponentValidator {
     
-    // Constants for validation
-    private static final int MIN_COMPONENTS = 3;
-    private static final int MAX_COMPONENTS = 20;
-    
     /**
-     * Validates a list of components to ensure they form a valid rocket.
-     *
+     * Validates a list of rocket components.
+     * 
      * @param components The components to validate
-     * @param errors Output list to store validation errors
-     * @return true if the configuration is valid
+     * @param errors A list to store validation errors
+     * @return True if the components are valid
      */
-    public boolean validate(List<IRocketComponent> components, List<String> errors) {
-        if (errors == null) {
-            errors = new ArrayList<>();
-        }
+    public boolean validateComponents(List<IRocketComponent> components, List<String> errors) {
+        boolean isValid = true;
         
         // Clear any existing errors
         errors.clear();
         
-        // Check if components is null or empty
-        if (components == null || components.isEmpty()) {
-            errors.add("No components provided. A rocket requires at least a command module, engine, and fuel tank.");
+        // Check if the components list is empty
+        if (components.isEmpty()) {
+            errors.add("No components found");
             return false;
         }
         
-        // Check minimum and maximum component count
-        if (components.size() < MIN_COMPONENTS) {
-            errors.add("Too few components. A rocket requires at least " + MIN_COMPONENTS + " components.");
-            return false;
+        // Count components by type
+        Map<RocketComponentType, Integer> componentCounts = countComponentsByType(components);
+        
+        // Validation rule 1: Must have at least one command module
+        if (!validateComponentCount(componentCounts, RocketComponentType.COCKPIT, count -> count == 1, errors,
+                "Exactly one command module is required")) {
+            isValid = false;
         }
         
-        if (components.size() > MAX_COMPONENTS) {
-            errors.add("Too many components. A rocket cannot have more than " + MAX_COMPONENTS + " components.");
-            return false;
+        // Validation rule 2: Must have at least one engine
+        if (!validateComponentCount(componentCounts, RocketComponentType.ENGINE, count -> count >= 1, errors,
+                "At least one engine is required")) {
+            isValid = false;
         }
         
-        // Group components by type
-        Map<RocketComponentType, List<IRocketComponent>> componentsByType = 
-                components.stream().collect(Collectors.groupingBy(IRocketComponent::getType));
-        
-        // Validate required components
-        boolean hasCommandModule = componentsByType.containsKey(RocketComponentType.COCKPIT) && 
-                                  !componentsByType.get(RocketComponentType.COCKPIT).isEmpty();
-        boolean hasEngine = componentsByType.containsKey(RocketComponentType.ENGINE) && 
-                           !componentsByType.get(RocketComponentType.ENGINE).isEmpty();
-        boolean hasFuelTank = componentsByType.containsKey(RocketComponentType.FUEL_TANK) && 
-                             !componentsByType.get(RocketComponentType.FUEL_TANK).isEmpty();
-        
-        if (!hasCommandModule) {
-            errors.add("Missing command module. Every rocket requires at least one command module.");
+        // Validation rule 3: Must have at least one fuel tank
+        if (!validateComponentCount(componentCounts, RocketComponentType.FUEL_TANK, count -> count >= 1, errors,
+                "At least one fuel tank is required")) {
+            isValid = false;
         }
         
-        if (!hasEngine) {
-            errors.add("Missing engine. Every rocket requires at least one engine.");
+        // Validation rule 4: Engine count should match fuel tank count (approx)
+        if (componentCounts.getOrDefault(RocketComponentType.ENGINE, 0) > 
+            componentCounts.getOrDefault(RocketComponentType.FUEL_TANK, 0) * 2) {
+            errors.add("Too many engines for the number of fuel tanks");
+            isValid = false;
         }
         
-        if (!hasFuelTank) {
-            errors.add("Missing fuel tank. Every rocket requires at least one fuel tank.");
+        // Validation rule 5: Check if passenger compartments have life support
+        if (componentCounts.getOrDefault(RocketComponentType.PASSENGER_COMPARTMENT, 0) > 0 && 
+            componentCounts.getOrDefault(RocketComponentType.LIFE_SUPPORT, 0) == 0) {
+            errors.add("Life support system required for passenger compartments");
+            isValid = false;
         }
         
-        // Early exit if missing required components
-        if (!hasCommandModule || !hasEngine || !hasFuelTank) {
-            return false;
+        // Validation rule 6: Check if engines are compatible with each other
+        List<IRocketEngine> engines = components.stream()
+                .filter(c -> c instanceof IRocketEngine)
+                .map(c -> (IRocketEngine) c)
+                .collect(Collectors.toList());
+        
+        if (!validateEngineCompatibility(engines, errors)) {
+            isValid = false;
         }
         
-        // Check for component positions - command module should be at top
-        List<IRocketComponent> commandModules = componentsByType.get(RocketComponentType.COCKPIT);
-        boolean isCommandModuleAtTop = false;
-        
-        for (IRocketComponent commandModule : commandModules) {
-            if (commandModule.getPosition().y > 0) {
-                isCommandModuleAtTop = true;
-                break;
-            }
-        }
-        
-        if (!isCommandModuleAtTop) {
-            errors.add("Command module must be positioned at the top of the rocket.");
-        }
-        
-        // Check for engine positions - engines should be at bottom
-        List<IRocketComponent> engines = componentsByType.get(RocketComponentType.ENGINE);
-        boolean isEngineAtBottom = false;
-        
-        for (IRocketComponent engine : engines) {
-            if (engine.getPosition().y < 0) {
-                isEngineAtBottom = true;
-                break;
-            }
-        }
-        
-        if (!isEngineAtBottom) {
-            errors.add("Engines must be positioned at the bottom of the rocket.");
-        }
-        
-        // Check basic component compatibility
-        boolean hasCompatibilityIssues = checkComponentCompatibility(componentsByType, errors);
-        
-        // Calculate weight and thrust
+        // Validation rule 7: Check total weight against engine power
         double totalWeight = calculateTotalWeight(components);
-        double totalThrust = calculateTotalThrust(componentsByType.getOrDefault(RocketComponentType.ENGINE, new ArrayList<>()));
+        double totalEnginePower = calculateTotalEnginePower(engines);
         
-        // Check if thrust is sufficient for weight
-        if (totalThrust < totalWeight * 1.2) { // Require 20% more thrust than weight for safety
-            errors.add("Insufficient thrust. The engines need to provide at least 20% more thrust than the total weight.");
+        if (totalWeight > totalEnginePower * 2) {
+            errors.add("Rocket is too heavy for the engines (weight: " + 
+                    String.format("%.1f", totalWeight) + ", power: " + 
+                    String.format("%.1f", totalEnginePower) + ")");
+            isValid = false;
         }
         
-        // Check if fuel capacity is adequate for the thrust
-        double totalFuelCapacity = calculateTotalFuelCapacity(componentsByType.getOrDefault(RocketComponentType.FUEL_TANK, new ArrayList<>()));
-        double fuelConsumptionRate = totalThrust * 0.1; // Simplified fuel consumption model
-        
-        // Minimum flight time in seconds
-        double minFlightTime = 60.0;
-        
-        if (fuelConsumptionRate > 0 && totalFuelCapacity / fuelConsumptionRate < minFlightTime) {
-            errors.add("Insufficient fuel capacity. The rocket needs fuel for at least " + minFlightTime + " seconds of flight.");
-        }
-        
-        // Return true if no errors
-        return errors.isEmpty();
+        return isValid;
     }
     
     /**
-     * Checks for compatibility issues between components.
-     *
-     * @param componentsByType Components grouped by type
-     * @param errors Output list for validation errors
-     * @return true if there are compatibility issues
+     * Counts components by type.
+     * 
+     * @param components The components to count
+     * @return A map of component type to count
      */
-    private boolean checkComponentCompatibility(Map<RocketComponentType, List<IRocketComponent>> componentsByType, List<String> errors) {
-        boolean hasIssues = false;
+    private Map<RocketComponentType, Integer> countComponentsByType(List<IRocketComponent> components) {
+        Map<RocketComponentType, Integer> counts = new HashMap<>();
         
-        // Check for advanced engine compatibility
-        List<IRocketComponent> engines = componentsByType.getOrDefault(RocketComponentType.ENGINE, new ArrayList<>());
-        List<IRocketComponent> fuelTanks = componentsByType.getOrDefault(RocketComponentType.FUEL_TANK, new ArrayList<>());
+        for (IRocketComponent component : components) {
+            RocketComponentType type = component.getType();
+            counts.put(type, counts.getOrDefault(type, 0) + 1);
+        }
         
-        boolean hasIonEngine = false;
-        boolean hasChemicalEngine = false;
-        boolean hasIonFuelTank = false;
-        boolean hasChemicalFuelTank = false;
+        return counts;
+    }
+    
+    /**
+     * Validates a component count against a predicate.
+     * 
+     * @param counts The component counts
+     * @param type The component type to check
+     * @param predicate The validation predicate
+     * @param errors The list to add errors to
+     * @param errorMessage The error message to add if validation fails
+     * @return True if the validation passes
+     */
+    private boolean validateComponentCount(Map<RocketComponentType, Integer> counts, 
+                                           RocketComponentType type,
+                                           Predicate<Integer> predicate,
+                                           List<String> errors,
+                                           String errorMessage) {
+        int count = counts.getOrDefault(type, 0);
+        if (!predicate.test(count)) {
+            errors.add(errorMessage);
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Validates that all engines are compatible with each other.
+     * 
+     * @param engines The engines to validate
+     * @param errors The list to add errors to
+     * @return True if all engines are compatible
+     */
+    private boolean validateEngineCompatibility(List<IRocketEngine> engines, List<String> errors) {
+        if (engines.size() <= 1) {
+            return true;
+        }
         
-        // Simplified check for demonstration - in a real implementation, we would use actual engine types
-        for (IRocketComponent engine : engines) {
-            if (engine.getName().contains("ion")) {
-                hasIonEngine = true;
-            } else {
-                hasChemicalEngine = true;
+        // Check for atmospheric vs space engines
+        boolean hasAtmosphericEngines = false;
+        boolean hasSpaceEngines = false;
+        
+        for (IRocketEngine engine : engines) {
+            if (engine.canOperateInAtmosphere()) {
+                hasAtmosphericEngines = true;
+            }
+            if (engine.canOperateInSpace()) {
+                hasSpaceEngines = true;
             }
         }
         
-        for (IRocketComponent fuelTank : fuelTanks) {
-            if (fuelTank.getName().contains("ion")) {
-                hasIonFuelTank = true;
-            } else {
-                hasChemicalFuelTank = true;
-            }
+        // For complete rockets, we want both types
+        if (!hasAtmosphericEngines) {
+            errors.add("No atmospheric engines found");
+            return false;
         }
         
-        // Check for mismatched engine and fuel tank types
-        if (hasIonEngine && !hasIonFuelTank) {
-            errors.add("Ion engines require compatible ion fuel tanks.");
-            hasIssues = true;
+        if (!hasSpaceEngines) {
+            errors.add("No space engines found");
+            return false;
         }
         
-        if (hasChemicalEngine && !hasChemicalFuelTank) {
-            errors.add("Chemical engines require compatible chemical fuel tanks.");
-            hasIssues = true;
-        }
-        
-        // Check for life support requirements (needed for manned rockets)
-        boolean hasCrewModule = componentsByType.containsKey(RocketComponentType.CREW_MODULE) && 
-                               !componentsByType.get(RocketComponentType.CREW_MODULE).isEmpty();
-        boolean hasLifeSupport = componentsByType.containsKey(RocketComponentType.LIFE_SUPPORT) && 
-                                !componentsByType.get(RocketComponentType.LIFE_SUPPORT).isEmpty();
-        
-        if (hasCrewModule && !hasLifeSupport) {
-            errors.add("Crew modules require life support systems.");
-            hasIssues = true;
-        }
-        
-        return hasIssues;
+        return true;
     }
     
     /**
      * Calculates the total weight of all components.
-     *
-     * @param components The list of components
+     * 
+     * @param components The components to calculate weight for
      * @return The total weight
      */
     private double calculateTotalWeight(List<IRocketComponent> components) {
-        double totalWeight = 0.0;
-        
-        for (IRocketComponent component : components) {
-            totalWeight += component.getWeight();
-        }
-        
-        return totalWeight;
+        return components.stream()
+                .mapToDouble(IRocketComponent::getMass)
+                .sum();
     }
     
     /**
-     * Calculates the total thrust from all engines.
-     *
-     * @param engines The list of engine components
-     * @return The total thrust
+     * Calculates the total power of all engines.
+     * 
+     * @param engines The engines to calculate power for
+     * @return The total power
      */
-    private double calculateTotalThrust(List<IRocketComponent> engines) {
-        double totalThrust = 0.0;
-        
-        for (IRocketComponent engine : engines) {
-            // In a real implementation, we would access a specific thrust property
-            totalThrust += engine.getPower(); // Using power as a proxy for thrust
-        }
-        
-        return totalThrust;
-    }
-    
-    /**
-     * Calculates the total fuel capacity from all fuel tanks.
-     *
-     * @param fuelTanks The list of fuel tank components
-     * @return The total fuel capacity
-     */
-    private double calculateTotalFuelCapacity(List<IRocketComponent> fuelTanks) {
-        double totalCapacity = 0.0;
-        
-        for (IRocketComponent fuelTank : fuelTanks) {
-            // In a real implementation, we would access a specific capacity property
-            totalCapacity += fuelTank.getCapacity();
-        }
-        
-        return totalCapacity;
+    private double calculateTotalEnginePower(List<IRocketEngine> engines) {
+        return engines.stream()
+                .mapToDouble(engine -> engine.getThrust() * engine.getEfficiency())
+                .sum();
     }
 }

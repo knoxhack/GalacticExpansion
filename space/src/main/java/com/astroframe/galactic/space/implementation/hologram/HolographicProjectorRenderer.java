@@ -165,7 +165,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             float z2 = (float) (radius * Math.sin(angle2));
             
             // Draw line for the circle
-            drawLine(pose, lines, x1, 0.0f, z1, x2, 0.0f, z2);
+            drawLineBuffered(pose, builder, x1, 0.0f, z1, x2, 0.0f, z2);
             
             // Draw line from center
             float red = HOLOGRAM_RED;
@@ -174,9 +174,35 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             float alpha = HOLOGRAM_ALPHA;
             float fadedAlpha = 0.3f * HOLOGRAM_ALPHA;
             
-            lines.vertex(pose, 0, 0.0f, 0).color(red, green, blue, alpha).normal(0, 1, 0).endVertex();
-            lines.vertex(pose, x1, 0.0f, z1).color(red, green, blue, fadedAlpha).normal(0, 1, 0).endVertex();
+            // Line from center to edge
+            builder.vertex(pose, 0, 0.0f, 0).color(red, green, blue, alpha).normal(0, 1, 0).endVertex();
+            builder.vertex(pose, x1, 0.0f, z1).color(red, green, blue, fadedAlpha).normal(0, 1, 0).endVertex();
         }
+    }
+    
+    /**
+     * Draws a line between two points using BufferBuilder.
+     *
+     * @param pose The matrix pose
+     * @param builder The buffer builder
+     * @param x1 Start X
+     * @param y1 Start Y
+     * @param z1 Start Z
+     * @param x2 End X
+     * @param y2 End Y
+     * @param z2 End Z
+     */
+    private void drawLineBuffered(Matrix4f pose, BufferBuilder builder, float x1, float y1, float z1, 
+                                  float x2, float y2, float z2) {
+        // Use direct color components
+        float red = HOLOGRAM_RED;
+        float green = HOLOGRAM_GREEN;
+        float blue = HOLOGRAM_BLUE;
+        float alpha = HOLOGRAM_ALPHA;
+        
+        // Draw the line using floats for color
+        builder.vertex(pose, x1, y1, z1).color(red, green, blue, alpha).normal(0, 1, 0).endVertex();
+        builder.vertex(pose, x2, y2, z2).color(red, green, blue, alpha).normal(0, 1, 0).endVertex();
     }
     
     /**
@@ -184,9 +210,9 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      *
      * @param rocket The rocket data
      * @param poseStack The pose stack
-     * @param lines The line renderer
+     * @param builder The buffer builder
      */
-    private void renderRocketComponents(IRocket rocket, PoseStack poseStack, VertexConsumer lines) {
+    private void renderRocketComponents(IRocket rocket, PoseStack poseStack, BufferBuilder builder) {
         if (rocket == null) return;
         
         poseStack.pushPose();
@@ -199,7 +225,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         
         // Render each component
         for (IRocketComponent component : components) {
-            renderRocketComponent(component, poseStack, lines);
+            renderRocketComponent(component, poseStack, builder);
         }
         
         poseStack.popPose();
@@ -210,9 +236,9 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      *
      * @param component The rocket component
      * @param poseStack The pose stack
-     * @param lines The line renderer
+     * @param builder The buffer builder
      */
-    private void renderRocketComponent(IRocketComponent component, PoseStack poseStack, VertexConsumer lines) {
+    private void renderRocketComponent(IRocketComponent component, PoseStack poseStack, BufferBuilder builder) {
         if (component == null) return;
         
         poseStack.pushPose();
@@ -228,7 +254,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         poseStack.scale((float)size.x, (float)size.y, (float)size.z);
         
         // Render a box for the component
-        renderBox(poseStack, lines);
+        renderBox(poseStack, builder);
         
         poseStack.popPose();
     }
@@ -237,60 +263,36 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      * Renders a box centered at the origin with size 1x1x1.
      *
      * @param poseStack The pose stack
-     * @param lines The line renderer
+     * @param builder The buffer builder
      */
-    private void renderBox(PoseStack poseStack, VertexConsumer lines) {
+    private void renderBox(PoseStack poseStack, BufferBuilder builder) {
         Matrix4f pose = poseStack.last().pose();
         
         // Draw 12 edges of a 1x1x1 cube centered at the origin
         // Bottom face
-        drawLine(pose, lines, -0.5f, -0.5f, -0.5f, 0.5f, -0.5f, -0.5f);
-        drawLine(pose, lines, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f, 0.5f);
-        drawLine(pose, lines, 0.5f, -0.5f, 0.5f, -0.5f, -0.5f, 0.5f);
-        drawLine(pose, lines, -0.5f, -0.5f, 0.5f, -0.5f, -0.5f, -0.5f);
+        drawLineBuffered(pose, builder, -0.5f, -0.5f, -0.5f, 0.5f, -0.5f, -0.5f);
+        drawLineBuffered(pose, builder, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f, 0.5f);
+        drawLineBuffered(pose, builder, 0.5f, -0.5f, 0.5f, -0.5f, -0.5f, 0.5f);
+        drawLineBuffered(pose, builder, -0.5f, -0.5f, 0.5f, -0.5f, -0.5f, -0.5f);
         
         // Top face
-        drawLine(pose, lines, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f);
-        drawLine(pose, lines, 0.5f, 0.5f, -0.5f, 0.5f, 0.5f, 0.5f);
-        drawLine(pose, lines, 0.5f, 0.5f, 0.5f, -0.5f, 0.5f, 0.5f);
-        drawLine(pose, lines, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f, -0.5f);
+        drawLineBuffered(pose, builder, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f);
+        drawLineBuffered(pose, builder, 0.5f, 0.5f, -0.5f, 0.5f, 0.5f, 0.5f);
+        drawLineBuffered(pose, builder, 0.5f, 0.5f, 0.5f, -0.5f, 0.5f, 0.5f);
+        drawLineBuffered(pose, builder, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f, -0.5f);
         
         // Connecting edges
-        drawLine(pose, lines, -0.5f, -0.5f, -0.5f, -0.5f, 0.5f, -0.5f);
-        drawLine(pose, lines, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, -0.5f);
-        drawLine(pose, lines, 0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f);
-        drawLine(pose, lines, -0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f);
-    }
-    
-    /**
-     * Draws a line between two points.
-     *
-     * @param pose The matrix pose
-     * @param lines The line renderer
-     * @param x1 Start X
-     * @param y1 Start Y
-     * @param z1 Start Z
-     * @param x2 End X
-     * @param y2 End Y
-     * @param z2 End Z
-     */
-    private void drawLine(Matrix4f pose, VertexConsumer lines, float x1, float y1, float z1, float x2, float y2, float z2) {
-        // Use direct color components
-        float red = HOLOGRAM_RED;
-        float green = HOLOGRAM_GREEN;
-        float blue = HOLOGRAM_BLUE;
-        float alpha = HOLOGRAM_ALPHA;
-        
-        // Draw the line using floats for color
-        lines.vertex(pose, x1, y1, z1).color(red, green, blue, alpha).normal(0, 1, 0).endVertex();
-        lines.vertex(pose, x2, y2, z2).color(red, green, blue, alpha).normal(0, 1, 0).endVertex();
+        drawLineBuffered(pose, builder, -0.5f, -0.5f, -0.5f, -0.5f, 0.5f, -0.5f);
+        drawLineBuffered(pose, builder, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, -0.5f);
+        drawLineBuffered(pose, builder, 0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f);
+        drawLineBuffered(pose, builder, -0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f);
     }
     
     /**
      * Draws a scan line with custom alpha.
      *
      * @param pose The matrix pose
-     * @param lines The line renderer
+     * @param builder The buffer builder
      * @param x1 Start X
      * @param y1 Start Y
      * @param z1 Start Z
@@ -299,7 +301,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      * @param z2 End Z
      * @param alphaValue The alpha value to use
      */
-    private void drawScanLine(Matrix4f pose, VertexConsumer lines, float x1, float y1, float z1, 
+    private void drawScanLineBuffered(Matrix4f pose, BufferBuilder builder, float x1, float y1, float z1, 
                            float x2, float y2, float z2, float alphaValue) {
         // Use direct color components
         float red = HOLOGRAM_RED;
@@ -307,17 +309,17 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         float blue = HOLOGRAM_BLUE;
         
         // Draw the line using the custom alpha
-        lines.vertex(pose, x1, y1, z1).color(red, green, blue, alphaValue).normal(0, 1, 0).endVertex();
-        lines.vertex(pose, x2, y2, z2).color(red, green, blue, alphaValue).normal(0, 1, 0).endVertex();
+        builder.vertex(pose, x1, y1, z1).color(red, green, blue, alphaValue).normal(0, 1, 0).endVertex();
+        builder.vertex(pose, x2, y2, z2).color(red, green, blue, alphaValue).normal(0, 1, 0).endVertex();
     }
     
     /**
      * Renders a placeholder rocket when no rocket data is available.
      *
      * @param poseStack The pose stack
-     * @param lines The line renderer
+     * @param builder The buffer builder
      */
-    private void renderPlaceholderRocket(PoseStack poseStack, VertexConsumer lines) {
+    private void renderPlaceholderRocket(PoseStack poseStack, BufferBuilder builder) {
         poseStack.pushPose();
         
         // Adjust position for placeholder
@@ -326,14 +328,14 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         // Body
         poseStack.pushPose();
         poseStack.scale(0.3F, 1.0F, 0.3F);
-        renderBox(poseStack, lines);
+        renderBox(poseStack, builder);
         poseStack.popPose();
         
         // Nose cone
         poseStack.pushPose();
         poseStack.translate(0, 0.75, 0);
         poseStack.scale(0.2F, 0.3F, 0.2F);
-        renderBox(poseStack, lines);
+        renderBox(poseStack, builder);
         poseStack.popPose();
         
         // Fins
@@ -343,7 +345,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             poseStack.mulPose(Axis.YP.rotationDegrees(90 * i));
             poseStack.translate(0.2, 0, 0);
             poseStack.scale(0.1F, 0.3F, 0.2F);
-            renderBox(poseStack, lines);
+            renderBox(poseStack, builder);
             poseStack.popPose();
         }
         
@@ -354,10 +356,10 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      * Renders holographic scan lines for added effect.
      *
      * @param poseStack The pose stack
-     * @param lines The line renderer
+     * @param builder The buffer builder
      * @param scanHeight The height of the scan effect
      */
-    private void renderScanLines(PoseStack poseStack, VertexConsumer lines, float scanHeight) {
+    private void renderScanLines(PoseStack poseStack, BufferBuilder builder, float scanHeight) {
         poseStack.pushPose();
         
         // Position the scan plane
@@ -375,13 +377,13 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         // Horizontal lines
         for (int i = 0; i <= gridSize; i++) {
             float z = -size + i * step;
-            drawScanLine(pose, lines, -size, 0.0f, z, size, 0.0f, z, scanAlpha);
+            drawScanLineBuffered(pose, builder, -size, 0.0f, z, size, 0.0f, z, scanAlpha);
         }
         
         // Vertical lines
         for (int i = 0; i <= gridSize; i++) {
             float x = -size + i * step;
-            drawScanLine(pose, lines, x, 0.0f, -size, x, 0.0f, size, scanAlpha);
+            drawScanLineBuffered(pose, builder, x, 0.0f, -size, x, 0.0f, size, scanAlpha);
         }
         
         poseStack.popPose();
