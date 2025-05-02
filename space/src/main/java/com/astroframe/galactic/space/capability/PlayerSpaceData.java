@@ -120,21 +120,24 @@ public class PlayerSpaceData {
         
         // Load discovered bodies
         if (tag.contains("DiscoveredBodies")) {
-            ListTag bodiesTag = tag.getList("DiscoveredBodies", 8); // 8 is the ID for StringTag
+            ListTag bodiesTag = tag.getList("DiscoveredBodies", 8).orElse(new ListTag()); // 8 is the ID for StringTag
             for (int i = 0; i < bodiesTag.size(); i++) {
-                String idString = bodiesTag.getString(i);
-                discoveredBodies.add(ResourceLocation.parse(idString));
+                String idString = bodiesTag.getString(i).orElse("");
+                if (!idString.isEmpty()) {
+                    discoveredBodies.add(ResourceLocation.parse(idString));
+                }
             }
         }
         
         // Load last visited body
         if (tag.contains("LastVisitedBody")) {
-            lastVisitedBody = ResourceLocation.parse(tag.getString("LastVisitedBody"));
+            String bodyId = tag.getString("LastVisitedBody").orElse("");
+            lastVisitedBody = bodyId.isEmpty() ? null : ResourceLocation.parse(bodyId);
         } else {
             lastVisitedBody = null;
         }
         
         // Load experience
-        spaceExplorationExperience = tag.getInt("Experience");
+        spaceExplorationExperience = tag.getInt("Experience").orElse(0);
     }
 }

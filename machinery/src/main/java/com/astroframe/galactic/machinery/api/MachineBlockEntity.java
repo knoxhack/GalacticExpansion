@@ -252,9 +252,9 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
         // So we just track the values in the NBT for now
         
         // Load processing state
-        processingTime = tag.getInt("ProcessingTime");
-        processingTimeTotal = tag.getInt("ProcessingTimeTotal");
-        isActive = tag.getBoolean("IsActive");
+        processingTime = tag.getInt("ProcessingTime").orElse(0);
+        processingTimeTotal = tag.getInt("ProcessingTimeTotal").orElse(0);
+        isActive = tag.getBoolean("IsActive").orElse(false);
     }
     
     @Override
