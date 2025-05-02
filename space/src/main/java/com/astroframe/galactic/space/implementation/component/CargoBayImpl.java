@@ -202,6 +202,13 @@ public class CargoBayImpl implements ICargoBay {
     public boolean hasRadiationShielding() {
         return hasRadiationShielding;
     }
+    
+    @Override
+    public boolean hasAutomatedLoading() {
+        // Implementation for NeoForge 1.21.5 compatibility
+        // By default, this cargo bay doesn't have automated loading
+        return false;
+    }
 
     /**
      * Gets a list of tooltip lines for this component.

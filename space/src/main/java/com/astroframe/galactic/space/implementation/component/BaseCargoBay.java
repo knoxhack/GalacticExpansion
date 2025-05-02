@@ -220,6 +220,13 @@ public class BaseCargoBay implements ICargoBay {
         return hasRadiationShielding;
     }
     
+    @Override
+    public boolean hasAutomatedLoading() {
+        // In NeoForge 1.21.5, we need to implement this method from ICargoBay
+        // By default, this implementation doesn't support automated loading
+        return false;
+    }
+    
     /**
      * Whether this cargo bay has EMP shielding.
      * @return true if the cargo bay has EMP shielding
