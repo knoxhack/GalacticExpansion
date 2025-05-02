@@ -66,7 +66,6 @@ public abstract class SpaceSuitItem extends Item {
     }
     
     // Adds tooltip information
-    @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, 
                               TooltipFlag flag) {
         tooltip.add(Component.translatable("item.galactic-space.space_suit.tier", getTier())
@@ -87,7 +86,6 @@ public abstract class SpaceSuitItem extends Item {
     }
     
     // Updates the item each tick when in inventory
-    @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         // Call parent method - in this case Item's implementation
         // since we're no longer extending ArmorItem
@@ -114,12 +112,12 @@ public abstract class SpaceSuitItem extends Item {
             player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 0));
             
             // Add effect that slows movement - use a different approach in 1.21.5
-            player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40, 1)); // Approximation for slower movement
+            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1)); // Approximation for slower movement
             
             // Add suffocation if no helmet
             if (!hasHelmet(player)) {
                 // Use a different effect since CONFUSION might have changed 
-                player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 100, 0));
+                player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0));
                 
                 // Damage from no oxygen
                 if (player.getRandom().nextInt(10) == 0) {

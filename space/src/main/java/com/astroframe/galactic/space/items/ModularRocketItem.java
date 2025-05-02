@@ -211,19 +211,30 @@ public class ModularRocketItem extends Item {
         CompoundTag tag = getOrCreateTag(stack);
         
         // Get command module tier
-        String commandModuleId = tag.getString("commandModule");
+        String commandModuleId = tag.getString("commandModule").orElse("");
         ResourceLocation cmdModRes = ResourceLocationHelper.of(commandModuleId);
         Optional<IRocketComponent> commandModule = RocketComponentRegistry.getComponent(cmdModRes);
         int commandModuleTier = commandModule.map(IRocketComponent::getTier).orElse(0);
         
         // Get highest engine tier
-        ListTag enginesList = tag.getList("engines", 8);
         int highestEngineTier = 0;
+        // Get engine list safely from Optional
+        ListTag enginesList = new ListTag();
+        if (tag.contains("engines")) {
+            tag.get("engines").ifPresent(engineTag -> {
+                if (engineTag instanceof ListTag listTag) {
+                    enginesList.addAll(listTag);
+                }
+            });
+        }
+        
         for (int i = 0; i < enginesList.size(); i++) {
-            String engineId = enginesList.getString(i);
-            ResourceLocation engineRes = ResourceLocationHelper.of(engineId);
-            Optional<IRocketComponent> engine = RocketComponentRegistry.getComponent(engineRes);
-            highestEngineTier = Math.max(highestEngineTier, engine.map(IRocketComponent::getTier).orElse(0));
+            String engineId = enginesList.getString(i).orElse("");
+            if (!engineId.isEmpty()) {
+                ResourceLocation engineRes = ResourceLocationHelper.of(engineId);
+                Optional<IRocketComponent> engine = RocketComponentRegistry.getComponent(engineRes);
+                highestEngineTier = Math.max(highestEngineTier, engine.map(IRocketComponent::getTier).orElse(0));
+            }
         }
         
         // Return the minimum of the two (a rocket is limited by its weakest critical component)
@@ -246,7 +257,7 @@ public class ModularRocketItem extends Item {
         );
         
         // Add command module
-        String commandModuleId = tag.getString("commandModule");
+        String commandModuleId = tag.getString("commandModule").orElse("");
         ResourceLocation cmdModRes = ResourceLocationHelper.of(commandModuleId);
         Optional<IRocketComponent> commandModuleOpt = RocketComponentRegistry.getComponent(cmdModRes);
         if (commandModuleOpt.isPresent() && commandModuleOpt.get() instanceof ICommandModule) {
@@ -255,69 +266,129 @@ public class ModularRocketItem extends Item {
             return null;
         }
         
-        // Add engines
-        ListTag enginesList = tag.getList("engines", 8);
+        // Add engines - safely get from Optional
+        ListTag enginesList = new ListTag();
+        if (tag.contains("engines")) {
+            tag.get("engines").ifPresent(engineTag -> {
+                if (engineTag instanceof ListTag listTag) {
+                    enginesList.addAll(listTag);
+                }
+            });
+        }
+        
         for (int i = 0; i < enginesList.size(); i++) {
-            String engineId = enginesList.getString(i);
-            ResourceLocation engineRes = ResourceLocationHelper.of(engineId);
-            Optional<IRocketComponent> engineOpt = RocketComponentRegistry.getComponent(engineRes);
-            if (engineOpt.isPresent() && engineOpt.get() instanceof IRocketEngine) {
-                builder.addEngine((IRocketEngine) engineOpt.get());
+            String engineId = enginesList.getString(i).orElse("");
+            if (!engineId.isEmpty()) {
+                ResourceLocation engineRes = ResourceLocationHelper.of(engineId);
+                Optional<IRocketComponent> engineOpt = RocketComponentRegistry.getComponent(engineRes);
+                if (engineOpt.isPresent() && engineOpt.get() instanceof IRocketEngine) {
+                    builder.addEngine((IRocketEngine) engineOpt.get());
+                }
             }
         }
         
-        // Add fuel tanks
-        ListTag fuelTanksList = tag.getList("fuelTanks", 8);
+        // Add fuel tanks - safely get from Optional
+        ListTag fuelTanksList = new ListTag();
+        if (tag.contains("fuelTanks")) {
+            tag.get("fuelTanks").ifPresent(fuelTag -> {
+                if (fuelTag instanceof ListTag listTag) {
+                    fuelTanksList.addAll(listTag);
+                }
+            });
+        }
+        
         for (int i = 0; i < fuelTanksList.size(); i++) {
-            String fuelTankId = fuelTanksList.getString(i);
-            ResourceLocation fuelTankRes = ResourceLocationHelper.of(fuelTankId);
-            Optional<IRocketComponent> fuelTankOpt = RocketComponentRegistry.getComponent(fuelTankRes);
-            if (fuelTankOpt.isPresent() && fuelTankOpt.get() instanceof IFuelTank) {
-                builder.addFuelTank((IFuelTank) fuelTankOpt.get());
+            String fuelTankId = fuelTanksList.getString(i).orElse("");
+            if (!fuelTankId.isEmpty()) {
+                ResourceLocation fuelTankRes = ResourceLocationHelper.of(fuelTankId);
+                Optional<IRocketComponent> fuelTankOpt = RocketComponentRegistry.getComponent(fuelTankRes);
+                if (fuelTankOpt.isPresent() && fuelTankOpt.get() instanceof IFuelTank) {
+                    builder.addFuelTank((IFuelTank) fuelTankOpt.get());
+                }
             }
         }
         
-        // Add cargo bays
-        ListTag cargoBaysList = tag.getList("cargoBays", 8);
+        // Add cargo bays - safely get from Optional
+        ListTag cargoBaysList = new ListTag();
+        if (tag.contains("cargoBays")) {
+            tag.get("cargoBays").ifPresent(cargoTag -> {
+                if (cargoTag instanceof ListTag listTag) {
+                    cargoBaysList.addAll(listTag);
+                }
+            });
+        }
+        
         for (int i = 0; i < cargoBaysList.size(); i++) {
-            String cargoBayId = cargoBaysList.getString(i);
-            ResourceLocation cargoBayRes = ResourceLocationHelper.of(cargoBayId);
-            Optional<IRocketComponent> cargoBayOpt = RocketComponentRegistry.getComponent(cargoBayRes);
-            if (cargoBayOpt.isPresent() && cargoBayOpt.get() instanceof ICargoBay) {
-                builder.addCargoBay((ICargoBay) cargoBayOpt.get());
+            String cargoBayId = cargoBaysList.getString(i).orElse("");
+            if (!cargoBayId.isEmpty()) {
+                ResourceLocation cargoBayRes = ResourceLocationHelper.of(cargoBayId);
+                Optional<IRocketComponent> cargoBayOpt = RocketComponentRegistry.getComponent(cargoBayRes);
+                if (cargoBayOpt.isPresent() && cargoBayOpt.get() instanceof ICargoBay) {
+                    builder.addCargoBay((ICargoBay) cargoBayOpt.get());
+                }
             }
         }
         
-        // Add passenger compartments
-        ListTag passengerCompartmentsList = tag.getList("passengerCompartments", 8);
+        // Add passenger compartments - safely get from Optional
+        ListTag passengerCompartmentsList = new ListTag();
+        if (tag.contains("passengerCompartments")) {
+            tag.get("passengerCompartments").ifPresent(passengersTag -> {
+                if (passengersTag instanceof ListTag listTag) {
+                    passengerCompartmentsList.addAll(listTag);
+                }
+            });
+        }
+        
         for (int i = 0; i < passengerCompartmentsList.size(); i++) {
-            String compartmentId = passengerCompartmentsList.getString(i);
-            ResourceLocation compartmentRes = ResourceLocationHelper.of(compartmentId);
-            Optional<IRocketComponent> compartmentOpt = RocketComponentRegistry.getComponent(compartmentRes);
-            if (compartmentOpt.isPresent() && compartmentOpt.get() instanceof IPassengerCompartment) {
-                builder.addPassengerCompartment((IPassengerCompartment) compartmentOpt.get());
+            String compartmentId = passengerCompartmentsList.getString(i).orElse("");
+            if (!compartmentId.isEmpty()) {
+                ResourceLocation compartmentRes = ResourceLocationHelper.of(compartmentId);
+                Optional<IRocketComponent> compartmentOpt = RocketComponentRegistry.getComponent(compartmentRes);
+                if (compartmentOpt.isPresent() && compartmentOpt.get() instanceof IPassengerCompartment) {
+                    builder.addPassengerCompartment((IPassengerCompartment) compartmentOpt.get());
+                }
             }
         }
         
-        // Add shields
-        ListTag shieldsList = tag.getList("shields", 8);
+        // Add shields - safely get from Optional
+        ListTag shieldsList = new ListTag();
+        if (tag.contains("shields")) {
+            tag.get("shields").ifPresent(shieldsTag -> {
+                if (shieldsTag instanceof ListTag listTag) {
+                    shieldsList.addAll(listTag);
+                }
+            });
+        }
+        
         for (int i = 0; i < shieldsList.size(); i++) {
-            String shieldId = shieldsList.getString(i);
-            ResourceLocation shieldRes = ResourceLocationHelper.of(shieldId);
-            Optional<IRocketComponent> shieldOpt = RocketComponentRegistry.getComponent(shieldRes);
-            if (shieldOpt.isPresent() && shieldOpt.get() instanceof IShield) {
-                builder.addShield((IShield) shieldOpt.get());
+            String shieldId = shieldsList.getString(i).orElse("");
+            if (!shieldId.isEmpty()) {
+                ResourceLocation shieldRes = ResourceLocationHelper.of(shieldId);
+                Optional<IRocketComponent> shieldOpt = RocketComponentRegistry.getComponent(shieldRes);
+                if (shieldOpt.isPresent() && shieldOpt.get() instanceof IShield) {
+                    builder.addShield((IShield) shieldOpt.get());
+                }
             }
         }
         
-        // Add life support systems
-        ListTag lifeSupportsList = tag.getList("lifeSupports", 8);
+        // Add life support systems - safely get from Optional
+        ListTag lifeSupportsList = new ListTag();
+        if (tag.contains("lifeSupports")) {
+            tag.get("lifeSupports").ifPresent(lifeSupportTag -> {
+                if (lifeSupportTag instanceof ListTag listTag) {
+                    lifeSupportsList.addAll(listTag);
+                }
+            });
+        }
+        
         for (int i = 0; i < lifeSupportsList.size(); i++) {
-            String lifeSupportId = lifeSupportsList.getString(i);
-            ResourceLocation lifeSupportRes = ResourceLocationHelper.of(lifeSupportId);
-            Optional<IRocketComponent> lifeSupportOpt = RocketComponentRegistry.getComponent(lifeSupportRes);
-            if (lifeSupportOpt.isPresent() && lifeSupportOpt.get() instanceof ILifeSupport) {
-                builder.addLifeSupport((ILifeSupport) lifeSupportOpt.get());
+            String lifeSupportId = lifeSupportsList.getString(i).orElse("");
+            if (!lifeSupportId.isEmpty()) {
+                ResourceLocation lifeSupportRes = ResourceLocationHelper.of(lifeSupportId);
+                Optional<IRocketComponent> lifeSupportOpt = RocketComponentRegistry.getComponent(lifeSupportRes);
+                if (lifeSupportOpt.isPresent() && lifeSupportOpt.get() instanceof ILifeSupport) {
+                    builder.addLifeSupport((ILifeSupport) lifeSupportOpt.get());
+                }
             }
         }
         

@@ -120,7 +120,14 @@ public class PlayerSpaceData {
         
         // Load discovered bodies
         if (tag.contains("DiscoveredBodies")) {
-            ListTag bodiesTag = tag.getList("DiscoveredBodies", 8).orElse(new ListTag()); // 8 is the ID for StringTag
+            // Get tag as optional and safely convert to ListTag
+            ListTag bodiesTag = new ListTag();
+            tag.get("DiscoveredBodies").ifPresent(tagElement -> {
+                if (tagElement instanceof ListTag listTag) {
+                    bodiesTag.addAll(listTag);
+                }
+            });
+            
             for (int i = 0; i < bodiesTag.size(); i++) {
                 String idString = bodiesTag.getString(i).orElse("");
                 if (!idString.isEmpty()) {
