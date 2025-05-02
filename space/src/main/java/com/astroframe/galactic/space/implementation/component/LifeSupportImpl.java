@@ -147,6 +147,30 @@ public class LifeSupportImpl implements ILifeSupport {
         // No-op until we implement durability
     }
     
+    // Implementation of IRocketComponent.damage
+    public void damage(int amount) {
+        // No-op until we implement durability
+    }
+    
+    // Implementation of IRocketComponent.getMaxDurability
+    public int getMaxDurability() {
+        return (int)maxHealth;
+    }
+    
+    // Implementation of IRocketComponent.getCurrentDurability
+    public int getCurrentDurability() {
+        return (int)maxHealth; // Currently always at max
+    }
+    
+    // Implementation of missing getName and getDescription methods
+    public String getName() {
+        return displayName.getString();
+    }
+    
+    public String getDescription() {
+        return "Life Support System - " + lifeSupportType.name();
+    }
+    
     // Placeholder implementations for missing ILifeSupport methods
     public int getOxygenGenerationRate() {
         return (int)(oxygenEfficiency * 100);

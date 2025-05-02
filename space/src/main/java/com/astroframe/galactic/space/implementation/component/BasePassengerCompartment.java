@@ -93,8 +93,23 @@ public class BasePassengerCompartment implements IPassengerCompartment {
     }
     
     // Implementation of IPassengerCompartment method
-    public boolean hasArtificialGravity() {
+    public boolean hasGravitySimulation() {
         return hasArtificialGravity;
+    }
+    
+    // Implementation of IRocketComponent method
+    public int getMaxDurability() {
+        return (int)maxHealth;
+    }
+    
+    // Implementation of IRocketComponent method
+    public int getCurrentDurability() {
+        return (int)maxHealth; // Currently always at max
+    }
+    
+    // Implementation of IRocketComponent method
+    public void damage(int amount) {
+        // No-op until we implement durability
     }
     
     // Implementation of IPassengerCompartment method
