@@ -1558,17 +1558,14 @@ public class RocketComponentFactory {
             return tier >= 2; // Mid and high tier have temperature regulation
         }
         
-        @Override
         public boolean hasVacuumSeal() {
             return tier >= 2; // Mid and high tier have vacuum sealing
         }
         
-        @Override
         public Map<Integer, ItemStack> getContents() {
             return new HashMap<>(contents);
         }
         
-        @Override
         public ItemStack addItem(ItemStack stack) {
             // Don't modify the original stack
             ItemStack remaining = stack.copy();
@@ -1612,7 +1609,6 @@ public class RocketComponentFactory {
             return remaining;
         }
         
-        @Override
         public ItemStack takeItem(int slotIndex, int amount) {
             if (slotIndex < 0 || slotIndex >= storageCapacity || !contents.containsKey(slotIndex)) {
                 return ItemStack.EMPTY;
