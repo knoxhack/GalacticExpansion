@@ -521,8 +521,8 @@ public class ModularRocket implements IRocket {
             String idStr = "";
             if (tag.contains("id")) {
                 Tag idTag = tag.get("id");
-                if (idTag instanceof net.minecraft.nbt.StringTag stringTag) {
-                    idStr = stringTag.getAsString();
+                if (idTag instanceof net.minecraft.nbt.StringTag) {
+                    idStr = idTag.getAsString();
                 }
             }
             
@@ -531,12 +531,42 @@ public class ModularRocket implements IRocket {
             }
             
             ResourceLocation id = ResourceLocation.parse(idStr);
-            int tier = tag.contains("tier") ? tag.getInt("tier") : 1;
-            int fuel = tag.contains("fuel") ? tag.getInt("fuel") : 0;
-            float health = tag.contains("health") ? tag.getFloat("health") : 100f;
-            RocketStatus status = tag.contains("status") 
-                ? RocketStatus.values()[tag.getInt("status")] 
-                : RocketStatus.BUILDING;
+            
+            // Get numeric values with direct tag access
+            int tier = 1;
+            if (tag.contains("tier")) {
+                Tag tierTag = tag.get("tier");
+                if (tierTag instanceof net.minecraft.nbt.NumericTag) {
+                    tier = ((net.minecraft.nbt.NumericTag)tierTag).getAsInt();
+                }
+            }
+            
+            int fuel = 0;
+            if (tag.contains("fuel")) {
+                Tag fuelTag = tag.get("fuel");
+                if (fuelTag instanceof net.minecraft.nbt.NumericTag) {
+                    fuel = ((net.minecraft.nbt.NumericTag)fuelTag).getAsInt();
+                }
+            }
+            
+            float health = 100f;
+            if (tag.contains("health")) {
+                Tag healthTag = tag.get("health");
+                if (healthTag instanceof net.minecraft.nbt.NumericTag) {
+                    health = ((net.minecraft.nbt.NumericTag)healthTag).getAsFloat();
+                }
+            }
+            
+            RocketStatus status = RocketStatus.BUILDING;
+            if (tag.contains("status")) {
+                Tag statusTag = tag.get("status");
+                if (statusTag instanceof net.minecraft.nbt.NumericTag) {
+                    int statusValue = ((net.minecraft.nbt.NumericTag)statusTag).getAsInt();
+                    if (statusValue >= 0 && statusValue < RocketStatus.values().length) {
+                        status = RocketStatus.values()[statusValue];
+                    }
+                }
+            }
             
             // Create a new rocket with default components for the tier
             ModularRocket rocket = createDefaultRocket(id, tier);

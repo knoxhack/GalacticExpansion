@@ -293,7 +293,11 @@ public class ModularRocketItem extends Item {
         }
         
         for (int i = 0; i < enginesList.size(); i++) {
-            String engineId = enginesList.getString(i).orElse("");
+            String engineId = "";
+            if (enginesList.get(i) instanceof net.minecraft.nbt.StringTag stringTag) {
+                engineId = stringTag.getAsString();
+            }
+            
             if (!engineId.isEmpty()) {
                 ResourceLocation engineRes = ResourceLocationHelper.of(engineId);
                 Optional<IRocketComponent> engineOpt = RocketComponentRegistry.getComponent(engineRes);
@@ -313,7 +317,11 @@ public class ModularRocketItem extends Item {
         }
         
         for (int i = 0; i < fuelTanksList.size(); i++) {
-            String fuelTankId = fuelTanksList.getString(i).orElse("");
+            String fuelTankId = "";
+            if (fuelTanksList.get(i) instanceof net.minecraft.nbt.StringTag stringTag) {
+                fuelTankId = stringTag.getAsString();
+            }
+            
             if (!fuelTankId.isEmpty()) {
                 ResourceLocation fuelTankRes = ResourceLocationHelper.of(fuelTankId);
                 Optional<IRocketComponent> fuelTankOpt = RocketComponentRegistry.getComponent(fuelTankRes);
@@ -333,7 +341,11 @@ public class ModularRocketItem extends Item {
         }
         
         for (int i = 0; i < cargoBaysList.size(); i++) {
-            String cargoBayId = cargoBaysList.getString(i).orElse("");
+            String cargoBayId = "";
+            if (cargoBaysList.get(i) instanceof net.minecraft.nbt.StringTag stringTag) {
+                cargoBayId = stringTag.getAsString();
+            }
+            
             if (!cargoBayId.isEmpty()) {
                 ResourceLocation cargoBayRes = ResourceLocationHelper.of(cargoBayId);
                 Optional<IRocketComponent> cargoBayOpt = RocketComponentRegistry.getComponent(cargoBayRes);
@@ -353,7 +365,11 @@ public class ModularRocketItem extends Item {
         }
         
         for (int i = 0; i < passengerCompartmentsList.size(); i++) {
-            String compartmentId = passengerCompartmentsList.getString(i).orElse("");
+            String compartmentId = "";
+            if (passengerCompartmentsList.get(i) instanceof net.minecraft.nbt.StringTag stringTag) {
+                compartmentId = stringTag.getAsString();
+            }
+            
             if (!compartmentId.isEmpty()) {
                 ResourceLocation compartmentRes = ResourceLocationHelper.of(compartmentId);
                 Optional<IRocketComponent> compartmentOpt = RocketComponentRegistry.getComponent(compartmentRes);
