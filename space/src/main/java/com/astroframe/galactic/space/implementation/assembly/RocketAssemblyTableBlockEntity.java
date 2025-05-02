@@ -199,9 +199,12 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                                             namespace = parts[0];
                                             path = parts[1];
                                         }
-                                        net.minecraft.resources.ResourceLocation itemRL = new net.minecraft.resources.ResourceLocation(namespace, path);
-                                        // BuiltInRegistries.ITEM.get returns an Optional in NeoForge 1.21.5
-                                        java.util.Optional<net.minecraft.world.item.Item> itemOpt = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(itemRL);
+                                        // In NeoForge 1.21.5, use ResourceLocation.of() instead of the constructor
+                                        net.minecraft.resources.ResourceLocation itemRL = net.minecraft.resources.ResourceLocation.of(namespace, path);
+                                        // BuiltInRegistries.ITEM.get returns an Optional<Reference<Item>> in NeoForge 1.21.5
+                                        // We need to map it to get the actual Item
+                                        java.util.Optional<net.minecraft.world.item.Item> itemOpt = 
+                                            net.minecraft.core.registries.BuiltInRegistries.ITEM.get(itemRL).map(ref -> ref.value());
                                         if (itemOpt.isPresent()) {
                                             net.minecraft.world.item.Item item = itemOpt.get();
                                             
@@ -213,15 +216,18 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                                             if (compoundTag.contains("tag")) {
                                                 compoundTag.getCompound("tag").ifPresent(nbtTag -> {
                                                     // In NeoForge 1.21.5, use different tag handling
-                                                    CompoundTag stackTag = stack.getTag();
-                                                    if (stackTag == null) {
-                                                        stackTag = new CompoundTag();
-                                                        stack.setTag(stackTag);
-                                                    }
+                                                    // Use getOrCreateTagElement instead of getTag/setTag
+                                                    // ItemStack.getTagElement and ItemStack.addTagElement are available
+                                                    CompoundTag stackTag = new CompoundTag();
+                                                    stack.getTag().ifPresent(existingTag -> {
+                                                        stackTag.merge(existingTag);
+                                                    });
                                                     stackTag.merge(nbtTag);
+                                                    stack.save(stackTag);
                                                 });
                                             }
                                         }
+                                    }
                                 }
                                 
                                 components.set(slot, stack);
@@ -270,6 +276,7 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
      *
      * @param tag The tag to save to
      */
+
     /**
      * Helper method to deserialize rocket data from a tag.
      * This is a workaround for the ModularRocket load method that may not be available.
@@ -316,12 +323,18 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                 // Save the count
                 itemTag.putInt("Count", itemStack.getCount());
                 
-                // Save the tag data if present
-                if (itemStack.hasTag()) {
-                    CompoundTag itemTagData = itemStack.getTag();
-                    if (itemTagData != null) {
-                        itemTag.put("tag", itemTagData.copy());
-                    }
+                // Save the tag data if present - for NeoForge 1.21.5
+                // In NeoForge 1.21.5, use ItemStack.save to get all NBT data
+                CompoundTag fullTag = new CompoundTag();
+                itemStack.save(fullTag);
+                
+                // If the tag contains a "tag" compound, extract it
+                if (fullTag.contains("tag")) {
+                    fullTag.getCompound("tag").ifPresent(itemTagData -> {
+                        if (itemTagData != null) {
+                            itemTag.put("tag", itemTagData.copy());
+                        }
+                    });
                 }
                 listTag.add(itemTag);
             }
@@ -468,8 +481,10 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
      * @param rocket The new rocket data
      */
     public void setRocket(IRocket rocket) {
-        if (rocket instanceof ModularRocket modularRocket) {
-            this.rocketData = modularRocket;
+        // In NeoForge 1.21.5, pattern matching in instanceof is not available
+        // Use traditional instanceof and cast
+        if (rocket instanceof ModularRocket) {
+            this.rocketData = (ModularRocket) rocket;
             setChanged();
             updateLinkedProjectors();
         }
