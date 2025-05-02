@@ -2,16 +2,18 @@ package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.ICommandModule;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementation of a rocket command module.
+ * Implementation of the ICommandModule interface.
+ * The command module is the brain of the rocket, controlling navigation and providing crew space.
  */
 public class CommandModuleImpl implements ICommandModule {
+    
     private final ResourceLocation id;
     private final String name;
     private final String description;
@@ -27,9 +29,6 @@ public class CommandModuleImpl implements ICommandModule {
     private final boolean hasAutomatedLanding;
     private final boolean hasEmergencyEvacuation;
     
-    /**
-     * Creates a new command module.
-     */
     private CommandModuleImpl(Builder builder) {
         this.id = builder.id;
         this.name = builder.name;
@@ -37,7 +36,7 @@ public class CommandModuleImpl implements ICommandModule {
         this.tier = builder.tier;
         this.mass = builder.mass;
         this.maxDurability = builder.maxDurability;
-        this.currentDurability = maxDurability;
+        this.currentDurability = this.maxDurability;
         this.computingPower = builder.computingPower;
         this.sensorStrength = builder.sensorStrength;
         this.navigationAccuracy = builder.navigationAccuracy;
@@ -46,12 +45,12 @@ public class CommandModuleImpl implements ICommandModule {
         this.hasAutomatedLanding = builder.hasAutomatedLanding;
         this.hasEmergencyEvacuation = builder.hasEmergencyEvacuation;
     }
-
+    
     @Override
     public ResourceLocation getId() {
         return id;
     }
-
+    
     @Override
     public String getName() {
         return name;
@@ -61,7 +60,7 @@ public class CommandModuleImpl implements ICommandModule {
     public String getDescription() {
         return description;
     }
-
+    
     @Override
     public int getTier() {
         return tier;
@@ -71,7 +70,7 @@ public class CommandModuleImpl implements ICommandModule {
     public RocketComponentType getType() {
         return RocketComponentType.COCKPIT;
     }
-
+    
     @Override
     public int getMass() {
         return mass;
@@ -96,7 +95,7 @@ public class CommandModuleImpl implements ICommandModule {
     public void repair(int amount) {
         currentDurability = Math.min(maxDurability, currentDurability + amount);
     }
-
+    
     @Override
     public int getComputingPower() {
         return computingPower;
@@ -131,7 +130,7 @@ public class CommandModuleImpl implements ICommandModule {
     public boolean hasEmergencyEvacuation() {
         return hasEmergencyEvacuation;
     }
-
+    
     /**
      * Gets a list of tooltip lines for this component.
      * @param detailed Whether to include detailed information
@@ -139,20 +138,19 @@ public class CommandModuleImpl implements ICommandModule {
      */
     public List<Component> getTooltip(boolean detailed) {
         List<Component> tooltip = new ArrayList<>();
-        
         tooltip.add(Component.literal(name));
-        tooltip.add(Component.literal("Crew Capacity: " + crewCapacity));
         tooltip.add(Component.literal("Tier: " + tier));
+        tooltip.add(Component.literal("Crew Capacity: " + crewCapacity));
         
         if (detailed) {
-            tooltip.add(Component.literal("Navigation Accuracy: " + Math.round(navigationAccuracy * 100) + "%"));
             tooltip.add(Component.literal("Computing Power: " + computingPower));
             tooltip.add(Component.literal("Sensor Strength: " + sensorStrength));
+            tooltip.add(Component.literal("Navigation Accuracy: " + String.format("%.2f", navigationAccuracy)));
             tooltip.add(Component.literal("Advanced Life Support: " + (hasAdvancedLifeSupport ? "Yes" : "No")));
             tooltip.add(Component.literal("Automated Landing: " + (hasAutomatedLanding ? "Yes" : "No")));
             tooltip.add(Component.literal("Emergency Evacuation: " + (hasEmergencyEvacuation ? "Yes" : "No")));
             tooltip.add(Component.literal("Mass: " + mass));
-            tooltip.add(Component.literal("Durability: " + currentDurability + " / " + maxDurability));
+            tooltip.add(Component.literal("Durability: " + maxDurability));
         }
         
         return tooltip;
@@ -164,14 +162,14 @@ public class CommandModuleImpl implements ICommandModule {
     public static class Builder {
         private final ResourceLocation id;
         private String name = "Command Module";
-        private String description = "A command module for controlling the rocket.";
+        private String description = "A command module for controlling a rocket.";
         private int tier = 1;
-        private int mass = 400;
+        private int mass = 450;
         private int maxDurability = 100;
-        private int computingPower = 100;
-        private int sensorStrength = 100;
-        private float navigationAccuracy = 0.8f;
-        private int crewCapacity = 2;
+        private int computingPower = 50;
+        private int sensorStrength = 30;
+        private float navigationAccuracy = 0.7f;
+        private int crewCapacity = 1;
         private boolean hasAdvancedLifeSupport = false;
         private boolean hasAutomatedLanding = false;
         private boolean hasEmergencyEvacuation = false;
@@ -275,8 +273,8 @@ public class CommandModuleImpl implements ICommandModule {
         }
         
         /**
-         * Sets whether this module has advanced life support.
-         * @param hasAdvancedLifeSupport True if has advanced life support
+         * Sets whether the module has advanced life support.
+         * @param hasAdvancedLifeSupport True if the module has advanced life support
          * @return This builder
          */
         public Builder advancedLifeSupport(boolean hasAdvancedLifeSupport) {
@@ -285,8 +283,8 @@ public class CommandModuleImpl implements ICommandModule {
         }
         
         /**
-         * Sets whether this module has automated landing.
-         * @param hasAutomatedLanding True if has automated landing
+         * Sets whether the module has automated landing.
+         * @param hasAutomatedLanding True if the module has automated landing
          * @return This builder
          */
         public Builder automatedLanding(boolean hasAutomatedLanding) {
@@ -295,8 +293,8 @@ public class CommandModuleImpl implements ICommandModule {
         }
         
         /**
-         * Sets whether this module has emergency evacuation.
-         * @param hasEmergencyEvacuation True if has emergency evacuation
+         * Sets whether the module has emergency evacuation.
+         * @param hasEmergencyEvacuation True if the module has emergency evacuation
          * @return This builder
          */
         public Builder emergencyEvacuation(boolean hasEmergencyEvacuation) {

@@ -26,6 +26,7 @@ public class BaseRocketEngine implements IRocketEngine {
     private final FuelType fuelType;
     private final boolean canOperateInAtmosphere;
     private final boolean canOperateInSpace;
+    private final int heatCapacity;
     
     private BaseRocketEngine(Builder builder) {
         this.id = builder.id;
@@ -41,6 +42,7 @@ public class BaseRocketEngine implements IRocketEngine {
         this.fuelType = builder.fuelType;
         this.canOperateInAtmosphere = builder.canOperateInAtmosphere;
         this.canOperateInSpace = builder.canOperateInSpace;
+        this.heatCapacity = builder.heatCapacity;
     }
     
     @Override
@@ -124,6 +126,15 @@ public class BaseRocketEngine implements IRocketEngine {
     }
     
     /**
+     * Gets the heat capacity of this engine.
+     * Higher heat capacity allows the engine to operate longer at high temperatures.
+     * @return The heat capacity
+     */
+    public int getHeatCapacity() {
+        return heatCapacity;
+    }
+    
+    /**
      * Gets a list of tooltip lines for this component.
      * @param detailed Whether to include detailed information
      * @return The tooltip lines
@@ -163,6 +174,7 @@ public class BaseRocketEngine implements IRocketEngine {
         private FuelType fuelType = FuelType.CHEMICAL;
         private boolean canOperateInAtmosphere = true;
         private boolean canOperateInSpace = true;
+        private int heatCapacity = 500;
         
         /**
          * Creates a new builder with required parameters.
@@ -281,6 +293,17 @@ public class BaseRocketEngine implements IRocketEngine {
          */
         public Builder operatesInSpace(boolean canOperate) {
             this.canOperateInSpace = canOperate;
+            return this;
+        }
+        
+        /**
+         * Sets the heat capacity of the engine.
+         * Higher heat capacity allows the engine to operate longer at high temperatures.
+         * @param heatCapacity The heat capacity
+         * @return This builder
+         */
+        public Builder heatCapacity(int heatCapacity) {
+            this.heatCapacity = heatCapacity;
             return this;
         }
         
