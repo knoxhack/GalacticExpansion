@@ -5,6 +5,9 @@ import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 import org.joml.Matrix4f;
@@ -57,6 +60,10 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      * @param packedLight The packed light
      * @param packedOverlay The packed overlay
      */
+    /**
+     * Implements the BlockEntityRenderer interface for rendering the holographic projector.
+     */
+    @Override
     public void render(HolographicProjectorBlockEntity blockEntity, float partialTick, PoseStack poseStack, 
                      MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         // Only render if the projector is active
@@ -79,24 +86,39 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         // Apply the rotation for the spinning effect
         poseStack.mulPose(Axis.YP.rotationDegrees(angle));
         
-        // Get a line renderer
-        VertexConsumer lines = bufferSource.getBuffer(RenderType.lines());
+        // Use a direct rendering approach with BufferBuilder for compatibility
+        Tesselator tesselator = Tesselator.getInstance();
+        BufferBuilder builder = tesselator.getBuilder();
         
-        // Render base platform
-        renderHologramBase(poseStack, lines);
+        // Set up render state
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShaderColor(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
         
-        // If we have rocket data, render the rocket components
+        // Start building lines
+        builder.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR);
+        
+        // Render base platform with direct BufferBuilder
+        renderHologramBase(poseStack, builder);
+        
+        // Render rocket data or placeholder
         if (rocketData != null) {
-            renderRocketComponents(rocketData, poseStack, lines);
+            renderRocketComponents(rocketData, poseStack, builder);
         } else {
-            // Render placeholder if no rocket data available
-            renderPlaceholderRocket(poseStack, lines);
+            renderPlaceholderRocket(poseStack, builder);
         }
         
         // Add scan lines
         float time = (Minecraft.getInstance().level.getGameTime() % 80) / 80.0F;
         float scanHeight = Mth.sin(time * (float) Math.PI * 2) * 1.5F;
-        renderScanLines(poseStack, lines, scanHeight);
+        renderScanLines(poseStack, builder, scanHeight);
+        
+        // Finish rendering
+        tesselator.end();
+        
+        // Reset render state
+        RenderSystem.disableBlend();
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         
         poseStack.popPose();
     }
@@ -105,9 +127,9 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      * Renders the base platform of the hologram.
      *
      * @param poseStack The pose stack
-     * @param lines The line renderer
+     * @param builder The buffer builder
      */
-    private void renderHologramBase(PoseStack poseStack, VertexConsumer lines) {
+    private void renderHologramBase(PoseStack poseStack, BufferBuilder builder) {
         poseStack.pushPose();
         
         // Move to base position
@@ -115,7 +137,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         poseStack.scale(1.0F, 0.02F, 1.0F);
         
         // Create a circular platform
-        renderCircle(poseStack, lines, 0.5f, 16);
+        renderCircle(poseStack, builder, 0.5f, 16);
         
         poseStack.popPose();
     }
@@ -124,11 +146,11 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      * Renders a circle in the XZ plane.
      *
      * @param poseStack The pose stack
-     * @param lines The line renderer
+     * @param builder The buffer builder
      * @param radius The radius of the circle
      * @param segments The number of segments to use
      */
-    private void renderCircle(PoseStack poseStack, VertexConsumer lines, float radius, int segments) {
+    private void renderCircle(PoseStack poseStack, BufferBuilder builder, float radius, int segments) {
         Matrix4f pose = poseStack.last().pose();
         
         // Draw a circle with lines
