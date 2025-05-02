@@ -82,4 +82,34 @@ public interface IRocketComponent {
     default boolean isBroken() {
         return getCurrentDurability() <= 0;
     }
+    
+    /**
+     * Saves this component to a tag.
+     * Default implementation saves basic properties.
+     * Component implementations should override this to save additional properties.
+     * 
+     * @param tag The tag to save to
+     */
+    default void save(net.minecraft.nbt.CompoundTag tag) {
+        tag.putString("ID", getId().toString());
+        tag.putString("Type", getType().name());
+        tag.putString("Name", getName());
+        tag.putString("Description", getDescription());
+        tag.putInt("Tier", getTier());
+        tag.putInt("Mass", getMass());
+        tag.putInt("MaxDurability", getMaxDurability());
+        tag.putInt("CurrentDurability", getCurrentDurability());
+    }
+    
+    /**
+     * Loads this component from a tag.
+     * Default implementation does nothing.
+     * Component implementations should override this to load additional properties.
+     * 
+     * @param tag The tag to load from
+     */
+    default void load(net.minecraft.nbt.CompoundTag tag) {
+        // Base properties are loaded during construction
+        // Additional properties should be loaded by implementations
+    }
 }

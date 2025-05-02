@@ -799,6 +799,190 @@ public class RocketComponentFactory {
         return createIonEngine();
     }
     
+    /**
+     * Creates a rocket component from an NBT tag.
+     * This is used when loading components from saved data.
+     * 
+     * @param id The component ID
+     * @param tag The NBT tag containing component data
+     * @return The created component, or null if creation failed
+     */
+    public static IRocketComponent createComponentFromTag(ResourceLocation id, net.minecraft.nbt.CompoundTag tag) {
+        // Check the component type
+        String typeString = tag.getString("Type");
+        RocketComponentType type = null;
+        
+        try {
+            type = RocketComponentType.valueOf(typeString);
+        } catch (IllegalArgumentException e) {
+            GalacticSpace.LOGGER.error("Invalid component type: {}", typeString);
+            return null;
+        }
+        
+        // Try to get the component from the registry first
+        switch (type) {
+            case COCKPIT:
+                ICommandModule cmdModule = getCommandModule(id);
+                if (cmdModule != null) {
+                    return cmdModule;
+                }
+                break;
+                
+            case ENGINE:
+                IRocketEngine engine = getEngine(id);
+                if (engine != null) {
+                    return engine;
+                }
+                break;
+                
+            case FUEL_TANK:
+                IFuelTank fuelTank = getFuelTank(id);
+                if (fuelTank != null) {
+                    return fuelTank;
+                }
+                break;
+                
+            case STORAGE:
+                ICargoBay cargoBay = getCargoBay(id);
+                if (cargoBay != null) {
+                    return cargoBay;
+                }
+                break;
+                
+            case PASSENGER_COMPARTMENT:
+                IPassengerCompartment compartment = getPassengerCompartment(id);
+                if (compartment != null) {
+                    return compartment;
+                }
+                break;
+                
+            case SHIELDING:
+                IShield shield = getShield(id);
+                if (shield != null) {
+                    return shield;
+                }
+                break;
+                
+            case LIFE_SUPPORT:
+                ILifeSupport lifeSupport = getLifeSupport(id);
+                if (lifeSupport != null) {
+                    return lifeSupport;
+                }
+                break;
+                
+            default:
+                GalacticSpace.LOGGER.error("Unsupported component type: {}", type);
+                return null;
+        }
+        
+        // If we couldn't find the component in the registry, try to recreate it from the tag
+        try {
+            // Extract common properties
+            int tier = tag.getInt("Tier");
+            int mass = tag.getInt("Mass");
+            String name = tag.getString("Name");
+            String description = tag.getString("Description");
+            
+            // Create a new component based on type
+            switch (type) {
+                case COCKPIT:
+                    return new CommandModuleImpl.Builder(id)
+                            .name(name)
+                            .description(description)
+                            .tier(tier)
+                            .mass(mass)
+                            .crewCapacity(tag.getInt("CrewCapacity"))
+                            .computingPower(tag.getInt("ComputingPower"))
+                            .sensorStrength(tag.getInt("SensorStrength"))
+                            .navigationAccuracy(tag.getFloat("NavigationAccuracy"))
+                            .build();
+                            
+                case ENGINE:
+                    return new RocketEngineImpl.Builder(id)
+                            .name(name)
+                            .description(description)
+                            .tier(tier)
+                            .mass(mass)
+                            .thrust(tag.getInt("Thrust"))
+                            .efficiency(tag.getFloat("Efficiency"))
+                            .fuelConsumptionRate(tag.getInt("FuelConsumptionRate"))
+                            .fuelType(IRocketEngine.FuelType.valueOf(tag.getString("FuelType")))
+                            .atmosphereCapable(tag.getBoolean("AtmosphereCapable"))
+                            .spaceCapable(tag.getBoolean("SpaceCapable"))
+                            .engineType(com.astroframe.galactic.core.api.space.component.enums.EngineType.valueOf(tag.getString("EngineType")))
+                            .build();
+                            
+                case FUEL_TANK:
+                    return new FuelTankImpl.Builder(id)
+                            .name(name)
+                            .description(description)
+                            .tier(tier)
+                            .mass(mass)
+                            .maxFuelCapacity(tag.getInt("MaxFuelCapacity"))
+                            .fuelType(IRocketEngine.FuelType.valueOf(tag.getString("FuelType")))
+                            .leakResistance(tag.contains("LeakResistance") ? tag.getFloat("LeakResistance") : 0.0f)
+                            .explosionResistance(tag.contains("ExplosionResistance") ? tag.getFloat("ExplosionResistance") : 0.0f)
+                            .build();
+                            
+                case STORAGE:
+                    return new CargoBayImpl.Builder(id)
+                            .name(name)
+                            .description(description)
+                            .tier(tier)
+                            .mass(mass)
+                            .storageCapacity(tag.getInt("StorageCapacity"))
+                            .vacuumSeal(tag.contains("VacuumSeal") && tag.getBoolean("VacuumSeal"))
+                            .temperatureRegulation(tag.contains("TemperatureRegulation") && tag.getBoolean("TemperatureRegulation"))
+                            .radiationShielding(tag.contains("RadiationShielding") && tag.getBoolean("RadiationShielding"))
+                            .build();
+                            
+                case PASSENGER_COMPARTMENT:
+                    return new PassengerCompartmentImpl.Builder(id)
+                            .name(name)
+                            .description(description)
+                            .tier(tier)
+                            .mass(mass)
+                            .passengerCapacity(tag.getInt("PassengerCapacity"))
+                            .comfortLevel(tag.getInt("ComfortLevel"))
+                            .lifeSupport(tag.contains("LifeSupport") && tag.getBoolean("LifeSupport"))
+                            .radiationShielding(tag.contains("RadiationShielding") && tag.getBoolean("RadiationShielding"))
+                            .build();
+                            
+                case SHIELDING:
+                    return new ShieldImpl.Builder(id)
+                            .name(name)
+                            .description(description)
+                            .tier(tier)
+                            .mass(mass)
+                            .maxDurability(tag.getInt("MaxDurability"))
+                            .impactResistance(tag.getInt("ImpactResistance"))
+                            .shieldStrength(tag.getInt("ShieldStrength"))
+                            .meteorResistance(tag.contains("MeteorResistance") && tag.getBoolean("MeteorResistance"))
+                            .build();
+                            
+                case LIFE_SUPPORT:
+                    return new BaseLifeSupport.Builder(id, Component.literal(name))
+                            .description(description)
+                            .tier(tier)
+                            .mass(mass)
+                            .maxCrewCapacity(tag.getInt("MaxCrewCapacity"))
+                            .oxygenGenerationRate(tag.getInt("OxygenGenerationRate"))
+                            .waterRecyclingEfficiency(tag.getFloat("WaterRecyclingEfficiency"))
+                            .foodProductionRate(tag.contains("FoodProductionRate") ? tag.getInt("FoodProductionRate") : 0)
+                            .wasteManagementEfficiency(tag.contains("WasteManagementEfficiency") ? tag.getFloat("WasteManagementEfficiency") : 0.0f)
+                            .backupSystems(tag.contains("BackupSystems") && tag.getBoolean("BackupSystems"))
+                            .build();
+                            
+                default:
+                    GalacticSpace.LOGGER.error("Failed to create component of type: {}", type);
+                    return null;
+            }
+        } catch (Exception e) {
+            GalacticSpace.LOGGER.error("Error creating component from tag", e);
+            return null;
+        }
+    }
+    
     // Component implementation classes
     
     /**
