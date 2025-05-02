@@ -33,9 +33,12 @@ import org.jetbrains.annotations.Nullable;
  */
 public class RocketAssemblyTable extends BaseEntityBlock {
     
+    /**
+     * Implement codec method required by BaseEntityBlock in NeoForge 1.21.5
+     */
     @Override
-    public com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.block.entity.BlockEntityType<?>> codec() {
-        return net.minecraft.core.registries.BuiltInRegistries.BLOCK_ENTITY_TYPE.byNameCodec();
+    public com.mojang.serialization.MapCodec<? extends BaseEntityBlock> codec() {
+        return com.mojang.serialization.MapCodec.unit(this);
     }
     
     // Properties
@@ -90,7 +93,7 @@ public class RocketAssemblyTable extends BaseEntityBlock {
      * @param hit Hit result
      * @return Interaction result
      */
-    // Method for NeoForge 1.21.5
+    @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, 
                                InteractionHand hand, BlockHitResult hit) {
         // Open the rocket assembly UI when right-clicked
@@ -107,11 +110,13 @@ public class RocketAssemblyTable extends BaseEntityBlock {
     }
     
     @Nullable
+    @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new RocketAssemblyTableBlockEntity(pos, state);
     }
     
     @Nullable
+    @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
         return (lvl, pos, blockState, blockEntity) -> {
             if (blockEntity instanceof RocketAssemblyTableBlockEntity assemblyTable) {
@@ -158,13 +163,12 @@ public class RocketAssemblyTable extends BaseEntityBlock {
     /**
      * Called when this block is removed.
      * Unlinks any connected holographic projectors.
-     * Override from BaseEntityBlock for NeoForge 1.21.5
+     * Implements custom behavior for NeoForge 1.21.5
      */
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.is(newState.getBlock())) {
-            // If it's the same block type, normal behavior applies
-            super.onRemove(state, level, pos, newState, isMoving);
+            // If it's the same block type, just do minimal handling
             return;
         }
         
@@ -184,7 +188,10 @@ public class RocketAssemblyTable extends BaseEntityBlock {
             });
         }
         
-        // Must call this from BaseEntityBlock to properly remove the BlockEntity
-        super.onRemove(state, level, pos, newState, isMoving);
+        // Remove the block entity
+        BlockEntity blockentity = level.getBlockEntity(pos);
+        if (blockentity != null) {
+            level.removeBlockEntity(pos);
+        }
     }
 }

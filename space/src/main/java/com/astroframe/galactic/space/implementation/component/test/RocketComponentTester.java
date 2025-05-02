@@ -625,9 +625,8 @@ public class RocketComponentTester {
             }
             
             // Create a test item
-            net.minecraft.world.item.Item ironIngot = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
-                ResourceLocationHelper.create("minecraft", "iron_ingot"));
-            net.minecraft.world.item.ItemStack testItem = new net.minecraft.world.item.ItemStack(ironIngot, 10);
+            net.minecraft.world.item.ItemStack testItem = new net.minecraft.world.item.ItemStack(
+                net.minecraft.world.item.Items.IRON_INGOT, 10);
             
             // Test item addition
             boolean itemAdded = cargoBay.addItem(testItem);

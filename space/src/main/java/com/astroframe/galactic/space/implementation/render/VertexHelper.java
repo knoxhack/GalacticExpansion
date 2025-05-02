@@ -22,10 +22,10 @@ public class VertexHelper {
      */
     public static void addColoredVertex(VertexConsumer consumer, float x, float y, float z, 
                                        float red, float green, float blue, float alpha) {
-        // In NeoForge 1.21.5, use the builder pattern for vertex
-        consumer.vertex(x, y, z)
-                .color(red, green, blue, alpha)
-                .normal(1, 0, 0)
-                .endVertex();
+        // In NeoForge 1.21.5, use the position(), color(), normal(), endVertex() sequence
+        consumer.vertex(x, y, z);
+        consumer.color(red, green, blue, alpha);
+        consumer.normal(1, 0, 0);
+        consumer.endVertex();
     }
 }
