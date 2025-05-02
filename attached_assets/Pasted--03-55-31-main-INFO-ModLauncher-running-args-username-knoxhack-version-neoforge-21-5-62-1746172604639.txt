@@ -1,0 +1,53 @@
+[03:55:31] [main/INFO]: ModLauncher running: args [--username, knoxhack, --version, neoforge-21.5.62-beta, --gameDir, C:\Users\knox\curseforge\minecraft\Instances\1, --assetsDir, C:\Users\knox\curseforge\minecraft\Install\assets, --assetIndex, 24, --uuid, 4fd9157d96e54253b259ec1f6ed42de3, --accessToken, ❄❄❄❄❄❄❄❄, --clientId, YTcwNjJmNmUtZTY4Yi00YjRiLWFlMjUtZDdjYzJiNDk3YTg4, --xuid, 2533274852942985, --userType, msa, --versionType, release, --width, 1024, --height, 768, --quickPlayPath, C:\Users\knox\curseforge\minecraft\Install\quickPlay\java\1746172529225.json, --fml.neoForgeVersion, 21.5.62-beta, --fml.fmlVersion, 7.0.10, --fml.mcVersion, 1.21.5, --fml.neoFormVersion, 20250325.162830, --launchTarget, neoforgeclient]
+[03:55:31] [main/INFO]: JVM identified as Microsoft OpenJDK 64-Bit Server VM 21.0.3+9-LTS
+[03:55:31] [main/INFO]: ModLauncher 11.0.4+main.d2e20e43 starting: java version 21.0.3 by Microsoft; OS Windows 10 arch amd64 version 10.0
+[03:55:31] [main/INFO]: Loading ImmediateWindowProvider fmlearlywindow
+[03:55:31] [main/INFO]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/C:/Users/knox/curseforge/minecraft/Install/libraries/net/fabricmc/sponge-mixin/0.15.2+mixin.0.8.7/sponge-mixin-0.15.2+mixin.0.8.7.jar%23134!/ Service=ModLauncher Env=CLIENT
+[03:55:32] [pool-2-thread-1/INFO]: GL info: NVIDIA GeForce GTX 1650 SUPER/PCIe/SSE2 GL version 3.2.0 NVIDIA 560.94, NVIDIA Corporation
+[03:55:32] [main/INFO]: Found mod file "client-1.21.5-20250325.162830-srg.jar" [locator: production client provider +net.neoforged:neoforge:21.5.62-beta:client]
+[03:55:32] [main/INFO]: Found mod file "neoforge-21.5.62-beta-universal.jar" [locator: PathBasedLocator[name=neoforge, paths=[C:\Users\knox\curseforge\minecraft\Install\libraries\net\neoforged\neoforge\21.5.62-beta\neoforge-21.5.62-beta-universal.jar]], reader: mod manifest]
+[03:55:32] [main/WARN]: Skipping jar. File mods\core_galacticcore-0.1.0.jar is for Minecraft Forge or an older version of NeoForge, and cannot be loaded
+[03:55:32] [main/WARN]: Skipping jar. File mods\energy_galacticenergy-0.1.0.jar is for Minecraft Forge or an older version of NeoForge, and cannot be loaded
+[03:55:32] [main/WARN]: Skipping jar. File mods\machinery_galacticmachinery-0.1.0.jar is for Minecraft Forge or an older version of NeoForge, and cannot be loaded
+[03:55:32] [main/WARN]: Skipping jar. File mods\power_galacticpower-0.1.0.jar is for Minecraft Forge or an older version of NeoForge, and cannot be loaded
+[03:55:32] [main/WARN]: Skipping jar. File mods\space_galacticspace-0.1.0.jar is for Minecraft Forge or an older version of NeoForge, and cannot be loaded
+[03:55:32] [main/INFO]: Found 2 dependencies adding them to mods collection
+[03:55:32] [main/INFO]: Found gamelibrary file "mixinextras-neoforge-0.4.1.jar" [parent: neoforge-21.5.62-beta-universal.jar, locator: jarinjar, reader: mod manifest]
+[03:55:32] [main/INFO]: Found library file "net.neoforged.neoforge-coremods-21.5.62-beta.jar" [parent: neoforge-21.5.62-beta-universal.jar, locator: jarinjar, reader: mod manifest]
+[03:55:32] [main/INFO]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		Minecraft 1.21.5 (minecraft)
+		NeoForge 21.5.62-beta (neoforge)
+[03:55:33] [main/INFO]: Launching target 'neoforgeclient' with arguments [--version, neoforge-21.5.62-beta, --gameDir, C:\Users\knox\curseforge\minecraft\Instances\1, --assetsDir, C:\Users\knox\curseforge\minecraft\Install\assets, --uuid, 4fd9157d96e54253b259ec1f6ed42de3, --username, knoxhack, --assetIndex, 24, --accessToken, ❄❄❄❄❄❄❄❄, --clientId, YTcwNjJmNmUtZTY4Yi00YjRiLWFlMjUtZDdjYzJiNDk3YTg4, --xuid, 2533274852942985, --userType, msa, --versionType, release, --width, 1024, --height, 768, --quickPlayPath, C:\Users\knox\curseforge\minecraft\Install\quickPlay\java\1746172529225.json]
+[02May2025 03:55:34.933] [pool-6-thread-1/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.4.1).
+[02May2025 03:55:35.712] [Datafixer Bootstrap/INFO] [com.mojang.datafixers.DataFixerBuilder/]: 266 Datafixer optimizations took 1373 milliseconds
+[02May2025 03:55:39.279] [modloading-worker-0/INFO] [net.neoforged.neoforge.common.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.5.62-beta, for MC 1.21.5
+[02May2025 03:55:39.740] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/knox/curseforge/minecraft/Install/libraries/net/minecraft/client/1.21.5-20250325.162830/client-1.21.5-20250325.162830-srg.jar%23218!/assets/.mcassetsroot' uses unexpected schema
+[02May2025 03:55:39.742] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/knox/curseforge/minecraft/Install/libraries/net/minecraft/client/1.21.5-20250325.162830/client-1.21.5-20250325.162830-srg.jar%23218!/data/.mcassetsroot' uses unexpected schema
+[02May2025 03:55:39.771] [Render thread/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[02May2025 03:55:39.779] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Setting user: knoxhack
+[02May2025 03:55:39.900] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Backend library: LWJGL version 3.3.3+5
+[02May2025 03:55:39.991] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Using optional rendering extensions: GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access
+[02May2025 03:55:40.594] [Render thread/INFO] [net.minecraft.server.packs.resources.ReloadableResourceManager/]: Reloading ResourceManager: vanilla, mod_resources, mod/neoforge
+[02May2025 03:55:40.653] [Worker-Main-9/INFO] [net.minecraft.client.gui.font.providers.UnihexProvider/]: Found unifont_all_no_pua-16.0.01.hex, loading
+[02May2025 03:55:40.866] [Worker-Main-4/INFO] [net.minecraft.client.gui.font.providers.UnihexProvider/]: Found unifont_jp_patch-16.0.01.hex, loading
+[02May2025 03:55:41.823] [Render thread/WARN] [com.mojang.blaze3d.opengl.GlProgram/]: minecraft:pipeline/entity_translucent_emissive shader program does not use sampler Sampler2 defined in the pipeline. This might be a bug.
+[02May2025 03:55:41.884] [Render thread/INFO] [com.mojang.blaze3d.audio.Library/]: OpenAL initialized on device OpenAL Soft on HP VH240a (NVIDIA High Definition Audio)
+[02May2025 03:55:41.887] [Render thread/INFO] [net.minecraft.client.sounds.SoundEngine/SOUNDS]: Sound engine started
+[02May2025 03:55:42.009] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x512x4 minecraft:textures/atlas/blocks.png-atlas
+[02May2025 03:55:42.017] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/signs.png-atlas
+[02May2025 03:55:42.021] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
+[02May2025 03:55:42.022] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
+[02May2025 03:55:42.022] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 2048x1024x4 minecraft:textures/atlas/armor_trims.png-atlas
+[02May2025 03:55:42.026] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 128x64x4 minecraft:textures/atlas/decorated_pot.png-atlas
+[02May2025 03:55:42.029] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/chest.png-atlas
+[02May2025 03:55:42.029] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
+[02May2025 03:55:42.030] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
+[02May2025 03:55:42.032] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 64x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[02May2025 03:55:42.187] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[02May2025 03:55:42.188] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[02May2025 03:55:42.188] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x128x0 minecraft:textures/atlas/mob_effects.png-atlas
+[02May2025 03:55:42.189] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x512x0 minecraft:textures/atlas/gui.png-atlas
+[02May2025 03:55:42.192] [Render thread/INFO] [net.neoforged.neoforge.client.entity.animation.json.AnimationLoader/]: Loaded 0 entity animations

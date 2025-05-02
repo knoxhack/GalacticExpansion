@@ -1251,7 +1251,7 @@ async function checkBuildSuccess() {
 }
 
 // Start the server
-const PORT = process.env.PORT || 5002;
+const PORT = process.env.PORT || 5003;  // Changed from 5002 to avoid port conflicts
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Build status server running on port ${PORT}`);
   

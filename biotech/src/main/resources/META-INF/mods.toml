@@ -1,5 +1,6 @@
+# This is a configuration file for NeoForge
 modLoader="javafml"
-loaderVersion="[2,)"
+loaderVersion="[47,)" # Minimum version of the mod loader required to load the mod. For NeoForge 1.21.x - use 47+
 license="All Rights Reserved"
 issueTrackerURL="https://github.com/AstroFrame/GalacticExpansion/issues"
 
@@ -15,20 +16,23 @@ Biotech module for the Galactic Expansion mod.
 Adds genetic modification and biological engineering systems.
 '''
 
+# NeoForge dependency for 1.21.5
 [[dependencies.galacticbiotech]]
     modId="neoforge"
     type="required"
-    versionRange="[21,)"
+    versionRange="[21.5,)"  # Requires NeoForge 21.5 or later
     ordering="NONE"
     side="BOTH"
 
+# Minecraft dependency for 1.21.5
 [[dependencies.galacticbiotech]]
     modId="minecraft"
     type="required"
-    versionRange="[1.21.1,1.22)"
+    versionRange="[1.21.5,1.22)"  # Requires Minecraft 1.21.5 but less than 1.22
     ordering="NONE"
     side="BOTH"
     
+# Core module dependency
 [[dependencies.galacticbiotech]]
     modId="galacticcore"
     type="required"
