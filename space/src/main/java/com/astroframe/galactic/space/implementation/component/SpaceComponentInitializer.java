@@ -1,7 +1,11 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.*;
-import com.astroframe.galactic.core.api.space.component.enums.*;
+import com.astroframe.galactic.core.api.space.component.enums.CommandModuleType;
+import com.astroframe.galactic.core.api.space.component.enums.CompartmentType;
+import com.astroframe.galactic.core.api.space.component.enums.EngineType;
+import com.astroframe.galactic.core.api.space.component.enums.LifeSupportType;
+import com.astroframe.galactic.core.api.space.component.enums.ShieldType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 
@@ -90,7 +94,7 @@ public class SpaceComponentInitializer {
              .heatCapacity(800)
              .canOperateInAtmosphere(true)
              .canOperateInSpace(false)
-             .engineType(EngineType.CHEMICAL)
+             .engineType(com.astroframe.galactic.core.api.space.component.enums.EngineType.CHEMICAL)
              .build()
         );
         
@@ -106,7 +110,7 @@ public class SpaceComponentInitializer {
              .heatCapacity(1200)
              .canOperateInAtmosphere(true)
              .canOperateInSpace(true)
-             .engineType(EngineType.CHEMICAL)
+             .engineType(com.astroframe.galactic.core.api.space.component.enums.EngineType.CHEMICAL)
              .build()
         );
         
@@ -122,7 +126,7 @@ public class SpaceComponentInitializer {
              .heatCapacity(600)
              .canOperateInAtmosphere(false)
              .canOperateInSpace(true)
-             .engineType(EngineType.ION)
+             .engineType(com.astroframe.galactic.core.api.space.component.enums.EngineType.ION)
              .build()
         );
         
@@ -138,7 +142,7 @@ public class SpaceComponentInitializer {
              .heatCapacity(2000)
              .canOperateInAtmosphere(true)
              .canOperateInSpace(true)
-             .engineType(EngineType.FUSION)
+             .engineType(com.astroframe.galactic.core.api.space.component.enums.EngineType.FUSION)
              .build()
         );
     }
@@ -156,7 +160,7 @@ public class SpaceComponentInitializer {
              .mass(500)
              .maxFuelCapacity(2000)
              .pressureRating(10.0f)
-             .fuelType(FuelType.CHEMICAL)
+             .fuelType(IRocketEngine.FuelType.CHEMICAL)
              .build()
         );
         
@@ -169,7 +173,7 @@ public class SpaceComponentInitializer {
              .mass(1000)
              .maxFuelCapacity(5000)
              .pressureRating(15.0f)
-             .fuelType(FuelType.CHEMICAL)
+             .fuelType(IRocketEngine.FuelType.CHEMICAL)
              .build()
         );
         
@@ -183,7 +187,7 @@ public class SpaceComponentInitializer {
              .maxFuelCapacity(3000)
              .pressureRating(20.0f)
              .insulated(true)
-             .fuelType(FuelType.ION)
+             .fuelType(IRocketEngine.FuelType.ELECTRICAL)
              .build()
         );
         
@@ -197,7 +201,7 @@ public class SpaceComponentInitializer {
              .maxFuelCapacity(10000)
              .pressureRating(50.0f)
              .insulated(true)
-             .fuelType(FuelType.FUSION)
+             .fuelType(IRocketEngine.FuelType.PLASMA)
              .build()
         );
     }
