@@ -59,8 +59,9 @@ public class HolographicProjectorBlock extends Block implements EntityBlock {
     /**
      * Handles player interaction with the block.
      * Right-clicking will toggle the hologram display.
+     * 
+     * Method updated for NeoForge 1.21.5
      */
-    @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, 
                               InteractionHand hand, BlockHitResult hit) {
         if (level.isClientSide) {
@@ -85,8 +86,9 @@ public class HolographicProjectorBlock extends Block implements EntityBlock {
     /**
      * Called when a neighboring block changes.
      * Updates the powered state based on redstone signal.
+     * 
+     * Method updated for NeoForge 1.21.5
      */
-    @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
         if (!level.isClientSide) {
             boolean powered = level.hasNeighborSignal(pos);
