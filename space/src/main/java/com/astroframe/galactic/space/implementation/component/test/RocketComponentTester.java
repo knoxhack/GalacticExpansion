@@ -522,7 +522,7 @@ public class RocketComponentTester {
         
         try {
             // Create a tag that represents a command module component
-            ResourceLocation moduleId = new ResourceLocation("galactic_space", "test_factory_command_module");
+            ResourceLocation moduleId = ResourceLocationHelper.create("galactic_space", "test_factory_command_module");
             CompoundTag tag = new CompoundTag();
             tag.putString("ID", moduleId.toString());
             tag.putString("Type", RocketComponentType.COMMAND_MODULE.name());
@@ -589,7 +589,7 @@ public class RocketComponentTester {
         
         try {
             // Create a standard cargo bay
-            ResourceLocation bayId = new ResourceLocation("galactic_space", "test_cargo_bay");
+            ResourceLocation bayId = ResourceLocationHelper.create("galactic_space", "test_cargo_bay");
             String bayName = "Test Cargo Bay";
             String bayDesc = "A test cargo bay for verification";
             int tier = 2;
@@ -626,7 +626,7 @@ public class RocketComponentTester {
             
             // Create a test item
             net.minecraft.world.item.ItemStack testItem = new net.minecraft.world.item.ItemStack(
-                net.minecraft.core.registries.BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft:iron_ingot")), 
+                net.minecraft.core.registries.BuiltInRegistries.ITEM.get(ResourceLocationHelper.create("minecraft", "iron_ingot")), 
                 10
             );
             
@@ -681,7 +681,7 @@ public class RocketComponentTester {
         LOGGER.info("Testing cargo bay creation via factory...");
         
         try {
-            ResourceLocation bayId = new ResourceLocation("galactic_space", "factory_test_cargo_bay");
+            ResourceLocation bayId = ResourceLocationHelper.create("galactic_space", "factory_test_cargo_bay");
             
             // Create fresh tag
             CompoundTag tag = new CompoundTag();

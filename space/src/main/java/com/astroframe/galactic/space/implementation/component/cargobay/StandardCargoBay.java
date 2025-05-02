@@ -16,7 +16,16 @@ import java.util.List;
  * Provides storage for items during space travel with configurable features
  * based on tier level.
  */
-public class StandardCargoBay extends AbstractSpaceModuleComponent implements ICargoBay {
+public class StandardCargoBay implements ICargoBay {
+    
+    private final ResourceLocation id;
+    private final RocketComponentType type;
+    private final String name;
+    private final String description;
+    private final int tier;
+    private final int mass;
+    private int durability;
+    private int maxDurability;
     
     private final int maxCapacity;
     private final int maxSlots;
@@ -42,7 +51,14 @@ public class StandardCargoBay extends AbstractSpaceModuleComponent implements IC
                           int tier, int mass, int maxCapacity, 
                           boolean securityFeatures, boolean environmentControl, 
                           boolean automatedLoading) {
-        super(id, RocketComponentType.CARGO_BAY, name, description, tier, mass);
+        this.id = id;
+        this.type = RocketComponentType.CARGO_BAY;
+        this.name = name;
+        this.description = description;
+        this.tier = tier;
+        this.mass = mass;
+        this.maxDurability = 100 + (tier * 50); // Base 100 + 50 per tier
+        this.durability = this.maxDurability;
         this.maxCapacity = maxCapacity;
         this.maxSlots = 9 * tier; // 9 slots per tier (like a chest)
         this.securityFeatures = securityFeatures;
@@ -124,7 +140,17 @@ public class StandardCargoBay extends AbstractSpaceModuleComponent implements IC
     
     @Override
     public void save(CompoundTag tag) {
-        super.save(tag);
+        // Save component data
+        tag.putString("ID", id.toString());
+        tag.putString("Type", type.name());
+        tag.putString("Name", name);
+        tag.putString("Description", description);
+        tag.putInt("Tier", tier);
+        tag.putInt("Mass", mass);
+        tag.putInt("Durability", durability);
+        tag.putInt("MaxDurability", maxDurability);
+        
+        // Save cargo bay specific data
         tag.putInt("MaxCapacity", maxCapacity);
         tag.putInt("MaxSlots", maxSlots);
         tag.putBoolean("SecurityFeatures", securityFeatures);
@@ -155,24 +181,34 @@ public class StandardCargoBay extends AbstractSpaceModuleComponent implements IC
     
     @Override
     public void load(CompoundTag tag) {
-        super.load(tag);
+        // Not loading ID, type, etc. as those are set in constructor
+        
+        // Load durability if it exists
+        if (tag.contains("Durability")) {
+            this.durability = tag.getInt("Durability");
+        }
         
         // Load items
         items.clear();
-        if (tag.contains("Items", 9)) { // 9 is the tag type for a list
-            ListTag itemsTag = tag.getList("Items", 10); // 10 is the tag type for a compound
+        if (tag.contains("Items")) {
+            ListTag itemsTag = tag.getList("Items");
             for (int i = 0; i < itemsTag.size(); i++) {
                 CompoundTag itemTag = itemsTag.getCompound(i);
                 String id = itemTag.getString("id");
                 int count = itemTag.getInt("count");
                 
                 // In a real implementation, we would use the item registry to get the item
-                // Since this is a simplified implementation, we'll just create a basic item stack
-                ItemStack stack = new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(new ResourceLocation(id)), count);
+                ItemStack stack = new ItemStack(
+                    net.minecraft.core.registries.BuiltInRegistries.ITEM.get(ResourceLocationHelper.create("minecraft", id)), 
+                    count
+                );
                 
                 // Load any tags
-                if (itemTag.contains("tag", 10)) { // 10 is the tag type for a compound
-                    stack.setTag(itemTag.getCompound("tag").copy());
+                if (itemTag.contains("tag")) {
+                    CompoundTag tagCompound = itemTag.getCompound("tag");
+                    if (tagCompound != null) {
+                        stack.setTag(tagCompound);
+                    }
                 }
                 
                 items.add(stack);
