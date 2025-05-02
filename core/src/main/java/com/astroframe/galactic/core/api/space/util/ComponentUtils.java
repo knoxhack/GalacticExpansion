@@ -494,7 +494,6 @@ public class ComponentUtils {
             return passengerCapacity;
         }
         
-        @Override
         public CompartmentType getCompartmentType() {
             return compartmentType;
         }
@@ -532,7 +531,6 @@ public class ComponentUtils {
             return impactResistance;
         }
         
-        @Override
         public ShieldType getShieldType() {
             return shieldType;
         }
@@ -571,7 +569,6 @@ public class ComponentUtils {
             return oxygenEfficiency;
         }
         
-        @Override
         public LifeSupportType getLifeSupportType() {
             return lifeSupportType;
         }
@@ -593,12 +590,20 @@ public class ComponentUtils {
         private final RocketComponentType type;
         private final int tier;
         private final int mass;
+        private final String name;
+        private final String description;
+        private final int maxDurability;
+        private int currentDurability;
         
         public AbstractRocketComponent(ResourceLocation id, RocketComponentType type, int tier, int mass) {
             this.id = id;
             this.type = type;
             this.tier = tier;
             this.mass = mass;
+            this.name = "Default " + type.name() + " (Tier " + tier + ")";
+            this.description = "Standard " + type.name().toLowerCase() + " component.";
+            this.maxDurability = 500 * tier;
+            this.currentDurability = this.maxDurability;
         }
         
         @Override
@@ -612,6 +617,16 @@ public class ComponentUtils {
         }
         
         @Override
+        public String getName() {
+            return name;
+        }
+        
+        @Override
+        public String getDescription() {
+            return description;
+        }
+        
+        @Override
         public int getTier() {
             return tier;
         }
@@ -622,11 +637,35 @@ public class ComponentUtils {
         }
         
         @Override
+        public int getMaxDurability() {
+            return maxDurability;
+        }
+        
+        @Override
+        public int getCurrentDurability() {
+            return currentDurability;
+        }
+        
+        @Override
+        public void damage(int amount) {
+            currentDurability = Math.max(0, currentDurability - amount);
+        }
+        
+        @Override
+        public void repair(int amount) {
+            currentDurability = Math.min(maxDurability, currentDurability + amount);
+        }
+        
+        @Override
         public void save(CompoundTag tag) {
             tag.putString("ID", id.toString());
             tag.putString("Type", type.name());
+            tag.putString("Name", name);
+            tag.putString("Description", description);
             tag.putInt("Tier", tier);
             tag.putInt("Mass", mass);
+            tag.putInt("MaxDurability", maxDurability);
+            tag.putInt("CurrentDurability", currentDurability);
         }
     }
 }
