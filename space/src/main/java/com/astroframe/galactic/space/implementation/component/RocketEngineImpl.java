@@ -2,6 +2,7 @@ package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.IRocketEngine;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
+import com.astroframe.galactic.core.api.space.component.enums.EngineType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -25,6 +26,7 @@ public class RocketEngineImpl implements IRocketEngine {
     private final FuelType fuelType;
     private final boolean canOperateInAtmosphere;
     private final boolean canOperateInSpace;
+    private final EngineType engineType;
     
     /**
      * Creates a new rocket engine.
@@ -41,7 +43,8 @@ public class RocketEngineImpl implements IRocketEngine {
             float efficiency,
             FuelType fuelType,
             boolean canOperateInAtmosphere,
-            boolean canOperateInSpace) {
+            boolean canOperateInSpace,
+            EngineType engineType) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -55,6 +58,7 @@ public class RocketEngineImpl implements IRocketEngine {
         this.fuelType = fuelType;
         this.canOperateInAtmosphere = canOperateInAtmosphere;
         this.canOperateInSpace = canOperateInSpace;
+        this.engineType = engineType;
     }
 
     @Override
@@ -136,6 +140,11 @@ public class RocketEngineImpl implements IRocketEngine {
     public boolean canOperateInSpace() {
         return canOperateInSpace;
     }
+    
+    @Override
+    public EngineType getEngineType() {
+        return engineType;
+    }
 
     /**
      * Gets a list of tooltip lines for this component.
@@ -178,6 +187,7 @@ public class RocketEngineImpl implements IRocketEngine {
         private FuelType fuelType = FuelType.CHEMICAL;
         private boolean canOperateInAtmosphere = true;
         private boolean canOperateInSpace = true;
+        private EngineType engineType = EngineType.CHEMICAL;
         
         /**
          * Creates a new builder with required parameters.
@@ -294,6 +304,16 @@ public class RocketEngineImpl implements IRocketEngine {
          */
         public Builder spaceCapable(boolean canOperateInSpace) {
             this.canOperateInSpace = canOperateInSpace;
+            return this;
+        }
+        
+        /**
+         * Sets the engine type.
+         * @param engineType The engine type
+         * @return This builder
+         */
+        public Builder engineType(EngineType engineType) {
+            this.engineType = engineType;
             return this;
         }
         
