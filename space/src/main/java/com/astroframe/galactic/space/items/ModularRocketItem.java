@@ -209,9 +209,9 @@ public class ModularRocketItem extends Item {
         // Get command module tier
         String commandModuleId = "";
         if (tag.contains("commandModule")) {
-            Tag cmdModTag = tag.get("commandModule");
-            if (cmdModTag instanceof net.minecraft.nbt.StringTag) {
-                commandModuleId = ((StringTag)cmdModTag).getString();
+            String value = tag.getString("commandModule");
+            if (!value.isEmpty()) {
+                commandModuleId = value;
             }
         }
         
@@ -265,9 +265,9 @@ public class ModularRocketItem extends Item {
         // Add command module
         String commandModuleId = "";
         if (tag.contains("commandModule")) {
-            Tag cmdModTag = tag.get("commandModule");
-            if (cmdModTag instanceof net.minecraft.nbt.StringTag) {
-                commandModuleId = ((StringTag)cmdModTag).getString();
+            String value = tag.getString("commandModule");
+            if (!value.isEmpty()) {
+                commandModuleId = value;
             }
         }
         

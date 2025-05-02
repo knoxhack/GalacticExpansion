@@ -151,8 +151,8 @@ public class PlayerSpaceData {
         // Load last visited body
         if (tag.contains("LastVisitedBody")) {
             Tag lastVisitedTag = tag.get("LastVisitedBody");
-            if (lastVisitedTag instanceof StringTag stringTag) {
-                String bodyId = stringTag.getAsString();
+            if (lastVisitedTag instanceof StringTag) {
+                String bodyId = ((StringTag)lastVisitedTag).getString();
                 lastVisitedBody = bodyId.isEmpty() ? null : ResourceLocation.parse(bodyId);
             } else {
                 lastVisitedBody = null;
@@ -164,7 +164,14 @@ public class PlayerSpaceData {
         
         // Load experience
         if (tag.contains("Experience")) {
-            spaceExplorationExperience = tag.getInt("Experience");
+            int expValue = 0;
+            try {
+                // Direct integer conversion for NeoForge 1.21.5
+                expValue = tag.getInt("Experience");
+            } catch (Exception e) {
+                GalacticSpace.LOGGER.warn("Failed to get Experience value: " + e.getMessage());
+            }
+            spaceExplorationExperience = expValue;
         } else {
             spaceExplorationExperience = 0;
         }
