@@ -89,20 +89,19 @@ public class BaseFuelTank implements IFuelTank {
         return maxFuelCapacity;
     }
     
-    // Implementation of IFuelTank method
+    // Implementation of IFuelType method
     public com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType getFuelType() {
-        // Convert from our enum to the interface's enum
-        switch(fuelType) {
-            case CHEMICAL:
-                return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.CHEMICAL;
-            case PLASMA:
-                return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.PLASMA;
-            case ANTIMATTER:
-                return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.ANTIMATTER;
-            case ELECTRICAL:
-                return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.ELECTRICAL;
-            default:
-                return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.CHEMICAL;
+        // Direct mapping based on the name
+        if (fuelType == FuelType.CHEMICAL) {
+            return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.CHEMICAL;
+        } else if (fuelType == FuelType.PLASMA) {
+            return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.PLASMA;
+        } else if (fuelType == FuelType.ANTIMATTER) {
+            return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.ANTIMATTER;
+        } else if (fuelType == FuelType.ELECTRICAL) {
+            return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.ELECTRICAL;
+        } else {
+            return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.CHEMICAL;
         }
     }
     

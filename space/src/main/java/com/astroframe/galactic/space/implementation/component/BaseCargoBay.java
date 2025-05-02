@@ -23,6 +23,9 @@ public class BaseCargoBay implements ICargoBay {
     private final boolean isRadiationShielded;
     private final boolean isEMPShielded;
     
+    // Mock inventory implementation, would be filled in later
+    private final java.util.Map<Integer, com.astroframe.galactic.core.api.common.ItemStack> contents = new java.util.HashMap<>();
+    
     private BaseCargoBay(Builder builder) {
         this.id = builder.id;
         this.displayName = builder.displayName;
@@ -101,6 +104,16 @@ public class BaseCargoBay implements ICargoBay {
     // Implementation of ICargoBay method
     public boolean hasRadiationShielding() {
         return isRadiationShielded;
+    }
+    
+    // Implementation of ICargoBay method
+    public boolean hasTemperatureRegulation() {
+        return isClimateControlled;
+    }
+    
+    // Implementation of ICargoBay method
+    public boolean hasVacuumSeal() {
+        return tier >= 2; // Tier 2+ cargo bays have vacuum sealing
     }
     
     // Implementation of IRocketComponent methods
