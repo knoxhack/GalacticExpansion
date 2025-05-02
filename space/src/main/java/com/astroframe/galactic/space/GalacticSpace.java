@@ -24,7 +24,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.level.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
@@ -220,30 +220,22 @@ public class GalacticSpace {
         // We check if it's already scheduled to avoid duplicates
         if (!isTickTaskScheduled) {
             LOGGER.info("Scheduling server tick task for Galactic Space");
-            MinecraftServer mcServer = event.getServer();
             
-            // Set up a tick scheduler using the GameRules update
-            // This creates a repeating task on the server thread 
-            NeoForge.EVENT_BUS.addListener(this::onLevelTick);
+            // Register for both Pre and Post tick events
+            NeoForge.EVENT_BUS.addListener(this::onServerTickPost);
             
             isTickTaskScheduled = true;
         }
     }
     
     /**
-     * Level tick event handler.
-     * This is called every tick by the NeoForge event system.
+     * Server tick event handler - post phase.
+     * This is called after each server tick by the NeoForge event system.
      * 
-     * @param event The level tick event
+     * @param event The server tick event - post phase
      */
-    private void onLevelTick(LevelTickEvent event) {
-        // Only process server-side ticks at the end phase
-        if (event.side == LogicalSide.CLIENT || 
-            event.phase != LevelTickEvent.Phase.END) {
-            return;
-        }
-        
-        // Update rocket launch sequences
+    private void onServerTickPost(ServerTickEvent.Post event) {
+        // Update rocket launch sequences at the end of each tick
         SpaceTravelManager.updateLaunches();
     }
 }
