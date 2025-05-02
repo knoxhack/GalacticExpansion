@@ -75,7 +75,7 @@ public class ModularRocketItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         
         if (level.isClientSide()) {
-            return InteractionResultHolder.success(stack);
+            return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
         }
         
         IRocket rocket = getRocketFromStack(stack);
@@ -86,16 +86,16 @@ public class ModularRocketItem extends Item {
             if (launchController.canLaunch()) {
                 GalacticSpace.LOGGER.info("Player {} starting rocket launch sequence", player.getName().getString());
                 launchController.startLaunchSequence();
-                return InteractionResultHolder.consume(stack);
+                return new InteractionResultHolder<>(InteractionResult.CONSUME, stack);
             } else {
                 // Report why launch failed
                 Component reason = launchController.getCannotLaunchReason();
                 serverPlayer.displayClientMessage(reason, false);
-                return InteractionResultHolder.fail(stack);
+                return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
             }
         }
         
-        return InteractionResultHolder.pass(stack);
+        return new InteractionResultHolder<>(InteractionResult.PASS, stack);
     }
     
     /**

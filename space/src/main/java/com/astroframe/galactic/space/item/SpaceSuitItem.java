@@ -11,7 +11,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -19,7 +19,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingAttackEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -32,7 +32,7 @@ import java.util.Map;
 public abstract class SpaceSuitItem extends ArmorItem {
 
     // Use a literal ArmorMaterial instance for compatibility
-    private static final ArmorMaterial MATERIAL = createSpaceSuitMaterial();
+    private static final net.minecraft.world.item.ArmorMaterials MATERIAL = createSpaceSuitMaterial();
     private final int tier;
 
     /**
@@ -130,8 +130,10 @@ public abstract class SpaceSuitItem extends ArmorItem {
      * 
      * @param event The damage event
      */
-    private void onLivingHurt(PlayerEvent.PlayerHurtEvent event) {
-        Player player = event.getEntity();
+    private void onLivingHurt(LivingDamageEvent event) {
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
         
         // Only protect in space environments
         if (!SpaceStationDimension.isSpaceStation(player.level())) {
@@ -244,9 +246,9 @@ public abstract class SpaceSuitItem extends ArmorItem {
      * 
      * @return The armor material instance
      */
-    private static ArmorMaterial createSpaceSuitMaterial() {
-        // NeoForge-compatible ArmorMaterial creation using anonymous class
-        return new net.minecraft.world.item.ArmorMaterials() {};
+    private static net.minecraft.world.item.ArmorMaterials createSpaceSuitMaterial() {
+        // Use the IRON material as a base
+        return net.minecraft.world.item.ArmorMaterials.IRON;
     }
 
     /**
@@ -268,12 +270,14 @@ public abstract class SpaceSuitItem extends ArmorItem {
             PROTECTION_PER_SLOT.put(EquipmentSlot.FEET, 3);
         }
         
-        public int getDurabilityForType(net.minecraft.world.item.ArmorItem.Type type) {
-            return DURABILITY_PER_SLOT.getOrDefault(type.getSlot(), 0);
+        // In NeoForge 1.21.5, we don't use ArmorItem.Type as it doesn't exist
+        // Instead, we use EquipmentSlot directly
+        public int getDurabilityForSlot(EquipmentSlot slot) {
+            return DURABILITY_PER_SLOT.getOrDefault(slot, 0);
         }
         
-        public int getDefenseForType(net.minecraft.world.item.ArmorItem.Type type) {
-            return PROTECTION_PER_SLOT.getOrDefault(type.getSlot(), 0);
+        public int getDefenseForSlot(EquipmentSlot slot) {
+            return PROTECTION_PER_SLOT.getOrDefault(slot, 0);
         }
         
         public int getEnchantmentValue() {
