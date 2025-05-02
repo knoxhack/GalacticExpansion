@@ -221,6 +221,21 @@ public class CargoBayImpl implements ICargoBay {
         // In NeoForge 1.21.5, security features include radiation shielding
         return hasRadiationShielding;
     }
+    
+    @Override
+    public ItemStack removeItem(int index) {
+        // NeoForge 1.21.5 compatibility implementation
+        // Check if the index is valid and the slot has an item
+        if (index < 0 || index >= storageCapacity || !contents.containsKey(index)) {
+            return ItemStack.EMPTY;
+        }
+        
+        // Get the item and remove it from the contents
+        ItemStack removed = contents.get(index);
+        contents.remove(index);
+        
+        return removed;
+    }
 
     /**
      * Gets a list of tooltip lines for this component.

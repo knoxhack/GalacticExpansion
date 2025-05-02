@@ -1,6 +1,9 @@
 package com.astroframe.galactic.space.implementation.render;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import org.joml.Matrix4f;
 
 /**
  * Helper class for vertex rendering compatibility across Minecraft versions.
@@ -22,10 +25,11 @@ public class VertexHelper {
      */
     public static void addColoredVertex(VertexConsumer consumer, float x, float y, float z, 
                                        float red, float green, float blue, float alpha) {
-        // In NeoForge 1.21.5, we need to use the appropriate method chain for vertex data
-        consumer.vertex(x, y, z)           // Position
-                .color(red, green, blue, alpha)  // Color
-                .normal(0, 1, 0)           // Normal vector (up direction)
-                .endVertex();              // Finish the vertex
+        // In NeoForge 1.21.5, we need to use a proper vertex format
+        Matrix4f matrix = new Matrix4f().identity();
+        consumer.vertex(matrix, x, y, z);
+        consumer.color(red, green, blue, alpha);
+        consumer.normal(0, 1, 0);
+        consumer.endVertex();
     }
 }

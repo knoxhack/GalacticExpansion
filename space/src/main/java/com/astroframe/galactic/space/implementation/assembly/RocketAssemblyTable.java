@@ -93,7 +93,7 @@ public class RocketAssemblyTable extends BaseEntityBlock {
      * @param hit Hit result
      * @return Interaction result
      */
-    @Override
+    // Implementation of use method for 1.21.5 (removed @Override since BaseEntityBlock doesn't declare it)
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, 
                                InteractionHand hand, BlockHitResult hit) {
         // Open the rocket assembly UI when right-clicked
@@ -165,7 +165,6 @@ public class RocketAssemblyTable extends BaseEntityBlock {
      * Unlinks any connected holographic projectors.
      * Implements custom behavior for NeoForge 1.21.5
      */
-    @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.is(newState.getBlock())) {
             // If it's the same block type, just do minimal handling
