@@ -24,7 +24,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.server.ServerTickEvent;
+
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
@@ -45,6 +45,7 @@ public class GalacticSpace {
     private static SpaceTravelManager spaceTravelManager;
     private static MinecraftServer server;
     public static IEventBus MOD_EVENT_BUS;
+    private boolean isTickTaskScheduled = false;
 
     /**
      * Initialize the Galactic Space module.
@@ -71,9 +72,6 @@ public class GalacticSpace {
         NeoForge.EVENT_BUS.addListener(this::onServerStopping);
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
         NeoForge.EVENT_BUS.addListener(this::onLivingHurt);
-        
-        // Register tick events
-        NeoForge.EVENT_BUS.addListener(this::onServerTick);
     }
     
     /**
@@ -86,19 +84,7 @@ public class GalacticSpace {
         SpaceTravelCommands.register(event.getDispatcher(), event.getBuildContext());
     }
     
-    /**
-     * Server started event handler.
-     * Caches the server instance for later use.
-     */
-    public void onServerStarted(ServerStartedEvent event) {
-        server = event.getServer();
-        LOGGER.info("Galactic Space module detected server start");
-        
-        // Initialize the space travel manager if not already done
-        if (spaceTravelManager != null) {
-            spaceTravelManager.initialize();
-        }
-    }
+
     
     /**
      * Server stopping event handler.
@@ -216,16 +202,57 @@ public class GalacticSpace {
     }
     
     /**
-     * Server tick event handler.
-     * Updates rocket launches and other time-based space travel features.
+     * Server tick event handler directly tied to server lifecycle.
+     * This method handles timed updates for space travel and rocket launches.
      *
-     * @param event The server tick event
+     * @param event The server started event
      */
-    private void onServerTick(ServerTickEvent event) {
-        // Only process on end phase of server ticks
-        if (event.getPhase() == ServerTickEvent.Phase.END) {
+    private void onServerStarted(ServerStartedEvent event) {
+        server = event.getServer();
+        LOGGER.info("Galactic Space module detected server start");
+        
+        // Initialize the space travel manager if not already done
+        if (spaceTravelManager != null) {
+            spaceTravelManager.initialize();
+        }
+        
+        // Schedule a repeating task that runs every tick
+        // We check if it's already scheduled to avoid duplicates
+        if (!isTickTaskScheduled) {
+            LOGGER.info("Scheduling server tick task for Galactic Space");
+            MinecraftServer mcServer = event.getServer();
+            
+            // Create a task that runs on the server thread
+            mcServer.tell(new net.minecraft.server.TickTask(0, () -> {
+                // Update rocket launch sequences
+                SpaceTravelManager.updateLaunches();
+                
+                // Schedule the next tick
+                if (mcServer.isRunning()) {
+                    mcServer.tell(new net.minecraft.server.TickTask(0, () -> {
+                        this.onServerTickTask(mcServer);
+                    }));
+                }
+            }));
+            
+            isTickTaskScheduled = true;
+        }
+    }
+    
+    /**
+     * Server tick task method.
+     * This is called every tick as a scheduled task.
+     */
+    private void onServerTickTask(MinecraftServer server) {
+        // Only process if server is still running
+        if (server.isRunning()) {
             // Update rocket launch sequences
             SpaceTravelManager.updateLaunches();
+            
+            // Schedule the next tick
+            server.tell(new net.minecraft.server.TickTask(0, () -> {
+                this.onServerTickTask(server);
+            }));
         }
     }
 }
