@@ -695,11 +695,21 @@ public class ComponentUtils {
     private static class DefaultPassengerCompartment extends AbstractRocketComponent implements IPassengerCompartment {
         private final int passengerCapacity;
         private final CompartmentType compartmentType;
+        private final float comfortLevel;
+        private final boolean hasLifeSupport;
+        private final boolean hasOxygenRecycling;
+        private final boolean hasRadiationShielding;
+        private final List<Player> passengers;
         
         public DefaultPassengerCompartment(ResourceLocation id, int tier, int mass, int passengerCapacity, CompartmentType compartmentType) {
             super(id, RocketComponentType.PASSENGER_COMPARTMENT, tier, mass);
             this.passengerCapacity = passengerCapacity;
             this.compartmentType = compartmentType;
+            this.comfortLevel = 0.5f * tier;
+            this.hasLifeSupport = tier >= 1;
+            this.hasOxygenRecycling = tier >= 2;
+            this.hasRadiationShielding = tier >= 3;
+            this.passengers = new ArrayList<>();
         }
         
         @Override
@@ -707,8 +717,52 @@ public class ComponentUtils {
             return passengerCapacity;
         }
         
+        @Override
         public CompartmentType getCompartmentType() {
             return compartmentType;
+        }
+        
+        @Override
+        public float getComfortLevel() {
+            return comfortLevel;
+        }
+        
+        @Override
+        public boolean hasLifeSupport() {
+            return hasLifeSupport;
+        }
+        
+        @Override
+        public boolean hasOxygenRecycling() {
+            return hasOxygenRecycling;
+        }
+        
+        @Override
+        public boolean hasRadiationShielding() {
+            return hasRadiationShielding;
+        }
+        
+        @Override
+        public List<Player> getPassengers() {
+            return new ArrayList<>(passengers);
+        }
+        
+        @Override
+        public boolean addPassenger(Player player) {
+            if (passengers.size() < passengerCapacity && !passengers.contains(player)) {
+                return passengers.add(player);
+            }
+            return false;
+        }
+        
+        @Override
+        public boolean removePassenger(Player player) {
+            return passengers.remove(player);
+        }
+        
+        @Override
+        public void clearPassengers() {
+            passengers.clear();
         }
         
         @Override
@@ -716,6 +770,13 @@ public class ComponentUtils {
             super.save(tag);
             tag.putInt("PassengerCapacity", passengerCapacity);
             tag.putString("CompartmentType", compartmentType.name());
+            tag.putFloat("ComfortLevel", comfortLevel);
+            tag.putBoolean("HasLifeSupport", hasLifeSupport);
+            tag.putBoolean("HasOxygenRecycling", hasOxygenRecycling);
+            tag.putBoolean("HasRadiationShielding", hasRadiationShielding);
+            
+            // We don't save passengers since they are entity references
+            // and should be managed by the rocket entity itself
         }
     }
     
@@ -726,12 +787,22 @@ public class ComponentUtils {
         private final int shieldStrength;
         private final int impactResistance;
         private final ShieldType shieldType;
+        private int currentShieldStrength;
+        private boolean isActive;
+        private final float energyEfficiency;
+        private final float regenerationRate;
+        private final float temperatureResistance;
         
         public DefaultShield(ResourceLocation id, int tier, int mass, int shieldStrength, int impactResistance, ShieldType shieldType) {
             super(id, RocketComponentType.SHIELDING, tier, mass);
             this.shieldStrength = shieldStrength;
             this.impactResistance = impactResistance;
             this.shieldType = shieldType;
+            this.currentShieldStrength = shieldStrength;
+            this.isActive = false;
+            this.energyEfficiency = 0.6f + (tier * 0.1f);
+            this.regenerationRate = tier * 2.0f;
+            this.temperatureResistance = tier * 100.0f;
         }
         
         @Override
@@ -740,20 +811,73 @@ public class ComponentUtils {
         }
         
         @Override
+        public int getCurrentShieldStrength() {
+            return currentShieldStrength;
+        }
+        
+        @Override
+        public void rechargeShield(int amount) {
+            currentShieldStrength = Math.min(shieldStrength, currentShieldStrength + amount);
+        }
+        
+        @Override
+        public int absorbDamage(int damageAmount) {
+            if (!isActive || currentShieldStrength <= 0) {
+                return damageAmount;
+            }
+            
+            int damageAbsorbed = Math.min(currentShieldStrength, damageAmount);
+            currentShieldStrength -= damageAbsorbed;
+            
+            return damageAmount - damageAbsorbed;
+        }
+        
+        @Override
         public int getImpactResistance() {
             return impactResistance;
         }
         
+        @Override
         public ShieldType getShieldType() {
             return shieldType;
+        }
+        
+        @Override
+        public boolean isActive() {
+            return isActive;
+        }
+        
+        @Override
+        public void setActive(boolean active) {
+            this.isActive = active;
+        }
+        
+        @Override
+        public float getEnergyEfficiency() {
+            return energyEfficiency;
+        }
+        
+        @Override
+        public float getRegenerationRate() {
+            return regenerationRate;
+        }
+        
+        @Override
+        public float getTemperatureResistance() {
+            return temperatureResistance;
         }
         
         @Override
         public void save(CompoundTag tag) {
             super.save(tag);
             tag.putInt("ShieldStrength", shieldStrength);
+            tag.putInt("CurrentShieldStrength", currentShieldStrength);
             tag.putInt("ImpactResistance", impactResistance);
             tag.putString("ShieldType", shieldType.name());
+            tag.putBoolean("IsActive", isActive);
+            tag.putFloat("EnergyEfficiency", energyEfficiency);
+            tag.putFloat("RegenerationRate", regenerationRate);
+            tag.putFloat("TemperatureResistance", temperatureResistance);
         }
     }
     
@@ -764,12 +888,24 @@ public class ComponentUtils {
         private final int maxCrewCapacity;
         private final int oxygenEfficiency;
         private final LifeSupportType lifeSupportType;
+        private final float oxygenProduction;
+        private final float waterRecycling;
+        private final float wasteProcessing;
+        private boolean broken;
+        private int oxygenLevel;
+        private int waterLevel;
         
         public DefaultLifeSupport(ResourceLocation id, int tier, int mass, int maxCrewCapacity, int oxygenEfficiency, LifeSupportType lifeSupportType) {
             super(id, RocketComponentType.LIFE_SUPPORT, tier, mass);
             this.maxCrewCapacity = maxCrewCapacity;
             this.oxygenEfficiency = oxygenEfficiency;
             this.lifeSupportType = lifeSupportType;
+            this.oxygenProduction = tier * 10.0f;
+            this.waterRecycling = 0.6f + (tier * 0.1f);
+            this.wasteProcessing = 0.5f + (tier * 0.1f);
+            this.broken = false;
+            this.oxygenLevel = 100;
+            this.waterLevel = 100;
         }
         
         @Override
@@ -782,8 +918,54 @@ public class ComponentUtils {
             return oxygenEfficiency;
         }
         
+        @Override
         public LifeSupportType getLifeSupportType() {
             return lifeSupportType;
+        }
+        
+        @Override
+        public float getOxygenProduction() {
+            return broken ? 0 : oxygenProduction;
+        }
+        
+        @Override
+        public float getWaterRecycling() {
+            return broken ? 0 : waterRecycling;
+        }
+        
+        @Override
+        public float getWasteProcessing() {
+            return broken ? 0 : wasteProcessing;
+        }
+        
+        @Override
+        public boolean isBroken() {
+            return broken;
+        }
+        
+        @Override
+        public void setIsBroken(boolean broken) {
+            this.broken = broken;
+        }
+        
+        @Override
+        public int getOxygenLevel() {
+            return oxygenLevel;
+        }
+        
+        @Override
+        public void setOxygenLevel(int level) {
+            this.oxygenLevel = Math.max(0, Math.min(100, level));
+        }
+        
+        @Override
+        public int getWaterLevel() {
+            return waterLevel;
+        }
+        
+        @Override
+        public void setWaterLevel(int level) {
+            this.waterLevel = Math.max(0, Math.min(100, level));
         }
         
         @Override
@@ -792,6 +974,12 @@ public class ComponentUtils {
             tag.putInt("MaxCrewCapacity", maxCrewCapacity);
             tag.putInt("OxygenEfficiency", oxygenEfficiency);
             tag.putString("LifeSupportType", lifeSupportType.name());
+            tag.putFloat("OxygenProduction", oxygenProduction);
+            tag.putFloat("WaterRecycling", waterRecycling);
+            tag.putFloat("WasteProcessing", wasteProcessing);
+            tag.putBoolean("Broken", broken);
+            tag.putInt("OxygenLevel", oxygenLevel);
+            tag.putInt("WaterLevel", waterLevel);
         }
     }
     
