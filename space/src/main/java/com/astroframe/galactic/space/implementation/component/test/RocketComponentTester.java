@@ -670,4 +670,66 @@ public class RocketComponentTester {
             return false;
         }
     }
+    
+    /**
+     * Tests cargo bay creation via the factory system.
+     * 
+     * @return true if the test passes
+     */
+    private static boolean testFactoryCargoBayCreation() {
+        LOGGER.info("Testing cargo bay creation via factory...");
+        
+        try {
+            ResourceLocation bayId = new ResourceLocation("galactic_space", "factory_test_cargo_bay");
+            
+            // Create fresh tag
+            CompoundTag tag = new CompoundTag();
+            tag.putString("ID", bayId.toString());
+            tag.putString("Type", RocketComponentType.CARGO_BAY.name());
+            tag.putInt("Tier", 3);
+            tag.putString("Name", "Factory Test Cargo Bay");
+            tag.putString("Description", "A cargo bay created through the factory system");
+            tag.putInt("Mass", 50);
+            tag.putInt("MaxCapacity", 1200);
+            tag.putBoolean("SecurityFeatures", true);
+            tag.putBoolean("EnvironmentControl", true);
+            tag.putBoolean("AutomatedLoading", true);
+            
+            // Try to create the component
+            IRocketComponent component = ComponentUtils.createComponentFromTag(bayId, tag);
+            
+            if (component == null) {
+                LOGGER.error("Factory system returned null for a valid cargo bay request");
+                return false;
+            }
+            
+            if (!(component instanceof ICargoBay)) {
+                LOGGER.error("Factory system returned wrong component type for cargo bay");
+                return false;
+            }
+            
+            ICargoBay cargoBay = (ICargoBay) component;
+            
+            // Verify some properties
+            boolean propertiesValid = 
+                cargoBay.getType() == RocketComponentType.CARGO_BAY &&
+                cargoBay.getTier() == 3 &&
+                cargoBay.getName().equals("Factory Test Cargo Bay") &&
+                cargoBay.getMass() == 50 &&
+                cargoBay.getMaxCapacity() == 1200 &&
+                cargoBay.hasSecurityFeatures() &&
+                cargoBay.hasEnvironmentControl() &&
+                cargoBay.hasAutomatedLoading();
+            
+            if (!propertiesValid) {
+                LOGGER.error("Factory-created cargo bay properties validation failed");
+                return false;
+            }
+            
+            return true;
+        } catch (Exception e) {
+            LOGGER.error("Error in factory cargo bay creation test", e);
+            return false;
+        }
+    }
 }

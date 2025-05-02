@@ -140,8 +140,9 @@ public class StandardCargoBay extends AbstractSpaceModuleComponent implements IC
                 itemTag.putInt("count", stack.getCount());
                 
                 // Add any tags the item might have
-                CompoundTag itemTagData = stack.getTag();
-                if (itemTagData != null) {
+                // In NeoForge 1.21.5, we use getOrCreateTag() and check if it's empty
+                CompoundTag itemTagData = stack.getOrCreateTag();
+                if (!itemTagData.isEmpty()) {
                     itemTag.put("tag", itemTagData);
                 }
                 
