@@ -72,10 +72,15 @@ subprojects {
     neoForge {
         version = '21.5.62-beta'
         
-        parchment {
-            mappingsVersion = '2025.03.23'
-            minecraftVersion = '1.21.5'
-        }
+        // Use official mappings since Parchment may not be available yet for 1.21.5
+        accessTransformers = project.file('src/main/resources/META-INF/accesstransformer.cfg')
+        mappings channel: 'official', version: '1.21.5'
+        
+        // When Parchment becomes available for 1.21.5, we can uncomment this
+        // parchment {
+        //     mappingsVersion = '2025.03.23'
+        //     minecraftVersion = '1.21.5'
+        // }
 
         // Access Transformers
         // accessTransformers = project.file('src/main/resources/META-INF/accesstransformer.cfg')
