@@ -9,6 +9,7 @@ import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
 import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import com.astroframe.galactic.core.api.space.util.ComponentUtils;
+import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
 import com.astroframe.galactic.space.implementation.component.cargobay.StandardCargoBay;
 import com.astroframe.galactic.space.implementation.component.command.BasicCommandModule;
 import com.astroframe.galactic.space.implementation.component.engine.BasicChemicalEngine;
@@ -88,7 +89,7 @@ public class RocketComponentTester {
             // Create a basic chemical engine
             String engineName = "Test Chemical Engine";
             String engineDesc = "A test engine for verification";
-            ResourceLocation engineId = new ResourceLocation("galactic_space", "test_chemical_engine");
+            ResourceLocation engineId = ResourceLocationHelper.create("galactic_space", "test_chemical_engine");
             
             IRocketEngine engine = new BasicChemicalEngine(engineId, 2, engineName, engineDesc);
             
@@ -131,7 +132,7 @@ public class RocketComponentTester {
         
         try {
             // Create a basic chemical engine
-            ResourceLocation engineId = new ResourceLocation("galactic_space", "test_chemical_engine");
+            ResourceLocation engineId = ResourceLocationHelper.create("galactic_space", "test_chemical_engine");
             IRocketEngine engine = new BasicChemicalEngine(engineId, 2, "Test Chemical Engine", "A test engine");
             
             // Serialize the engine
@@ -198,7 +199,7 @@ public class RocketComponentTester {
         
         try {
             // Create a standard fuel tank
-            ResourceLocation tankId = new ResourceLocation("galactic_space", "test_fuel_tank");
+            ResourceLocation tankId = ResourceLocationHelper.create("galactic_space", "test_fuel_tank");
             String tankName = "Test Chemical Fuel Tank";
             String tankDesc = "A test fuel tank for verification";
             int tier = 2;
@@ -294,7 +295,7 @@ public class RocketComponentTester {
         
         try {
             // Create a basic command module
-            ResourceLocation moduleId = new ResourceLocation("galactic_space", "test_command_module");
+            ResourceLocation moduleId = ResourceLocationHelper.create("galactic_space", "test_command_module");
             String moduleName = "Test Command Module";
             String moduleDesc = "A test command module for verification";
             int tier = 2;
@@ -405,7 +406,7 @@ public class RocketComponentTester {
         
         try {
             // Create a tag that represents an engine component
-            ResourceLocation engineId = new ResourceLocation("galactic_space", "test_factory_engine");
+            ResourceLocation engineId = ResourceLocationHelper.create("galactic_space", "test_factory_engine");
             CompoundTag tag = new CompoundTag();
             tag.putString("ID", engineId.toString());
             tag.putString("Type", RocketComponentType.ENGINE.name());
@@ -460,7 +461,7 @@ public class RocketComponentTester {
         
         try {
             // Create a tag that represents a fuel tank component
-            ResourceLocation tankId = new ResourceLocation("galactic_space", "test_factory_fuel_tank");
+            ResourceLocation tankId = ResourceLocationHelper.create("galactic_space", "test_factory_fuel_tank");
             CompoundTag tag = new CompoundTag();
             tag.putString("ID", tankId.toString());
             tag.putString("Type", RocketComponentType.FUEL_TANK.name());
