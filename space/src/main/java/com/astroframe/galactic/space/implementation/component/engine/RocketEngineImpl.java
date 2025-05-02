@@ -62,9 +62,8 @@ public class RocketEngineImpl implements IRocketEngine {
         return id;
     }
 
-    @Override
-    public Component getName() {
-        return Component.literal(name);
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -78,8 +77,8 @@ public class RocketEngineImpl implements IRocketEngine {
     }
 
     @Override
-    public double getMass() {
-        return mass;
+    public int getMass() {
+        return (int) mass;
     }
 
     @Override

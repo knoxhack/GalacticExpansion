@@ -33,6 +33,11 @@ import org.jetbrains.annotations.Nullable;
  */
 public class RocketAssemblyTable extends BaseEntityBlock {
     
+    @Override
+    public com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.block.entity.BlockEntityType<?>> codec() {
+        return net.minecraft.core.registries.BuiltInRegistries.BLOCK_ENTITY_TYPE.byNameCodec();
+    }
+    
     // Properties
     public static final Property<Direction> FACING = HorizontalDirectionalBlock.FACING;
     
