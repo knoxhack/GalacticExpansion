@@ -97,6 +97,7 @@ public class RocketComponentFactory {
                 .fuelType(IRocketEngine.FuelType.CHEMICAL)
                 .atmosphereCapable(true)
                 .spaceCapable(true)
+                .engineType(EngineType.CHEMICAL)
                 .build()
         );
         
@@ -114,6 +115,7 @@ public class RocketComponentFactory {
                 .fuelType(IRocketEngine.FuelType.CHEMICAL)
                 .atmosphereCapable(true)
                 .spaceCapable(true)
+                .engineType(EngineType.CHEMICAL)
                 .build()
         );
         
@@ -131,6 +133,7 @@ public class RocketComponentFactory {
                 .fuelType(IRocketEngine.FuelType.ELECTRICAL)
                 .atmosphereCapable(false)
                 .spaceCapable(true)
+                .engineType(EngineType.ION)
                 .build()
         );
         
