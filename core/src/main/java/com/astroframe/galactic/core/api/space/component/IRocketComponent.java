@@ -45,6 +45,32 @@ public interface IRocketComponent {
     int getMass();
     
     /**
+     * Gets the weight of this component (for validation calculations).
+     * @return The component weight
+     */
+    default double getWeight() {
+        return getMass() * 1.0; // Basic conversion from mass to weight
+    }
+    
+    /**
+     * Gets the power output or consumption of this component.
+     * Positive values indicate power generation, negative values indicate consumption.
+     * @return The power value
+     */
+    default double getPower() {
+        return 0.0; // Default implementation returns 0 (no power generation/consumption)
+    }
+    
+    /**
+     * Gets the capacity of this component.
+     * Used for fuel tanks, cargo bays, etc.
+     * @return The capacity value
+     */
+    default double getCapacity() {
+        return 0.0; // Default implementation returns 0 (no capacity)
+    }
+    
+    /**
      * Gets the maximum durability of this component.
      * @return The maximum durability
      */

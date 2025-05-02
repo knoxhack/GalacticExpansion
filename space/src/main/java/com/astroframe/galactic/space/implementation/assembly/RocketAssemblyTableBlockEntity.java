@@ -48,6 +48,13 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
     // Linked projector positions
     private final List<BlockPos> linkedProjectors = new ArrayList<>();
     
+    // Validation information
+    private boolean rocketValid = false;
+    private final List<String> validationErrors = new ArrayList<>();
+    
+    // Component inventory for menu
+    private final Container componentInventory = new ComponentInventory();
+    
     /**
      * Creates a new rocket assembly table block entity.
      *
@@ -325,10 +332,179 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
      * @param errors The validation errors
      */
     public void setValidationStatus(boolean isValid, List<String> errors) {
-        // For now, we just log the validation status
-        // In the future, we'll save this to display in the UI
+        this.rocketValid = isValid;
+        this.validationErrors.clear();
+        if (errors != null) {
+            this.validationErrors.addAll(errors);
+        }
+        
         if (!isValid && level != null && !level.isClientSide) {
             System.out.println("Rocket validation failed with errors: " + errors);
+        }
+        
+        setChanged();
+    }
+    
+    /**
+     * Sets whether the rocket is valid.
+     * 
+     * @param valid Whether the rocket is valid
+     */
+    public void setRocketValid(boolean valid) {
+        this.rocketValid = valid;
+        setChanged();
+    }
+    
+    /**
+     * Gets whether the rocket is valid.
+     * 
+     * @return Whether the rocket is valid
+     */
+    public boolean isRocketValid() {
+        return this.rocketValid;
+    }
+    
+    /**
+     * Sets the validation errors.
+     * 
+     * @param errors The validation errors
+     */
+    public void setValidationErrors(List<String> errors) {
+        this.validationErrors.clear();
+        if (errors != null) {
+            this.validationErrors.addAll(errors);
+        }
+        setChanged();
+    }
+    
+    /**
+     * Gets the validation errors.
+     * 
+     * @return The validation errors
+     */
+    public List<String> getValidationErrors() {
+        return this.validationErrors;
+    }
+    
+    /**
+     * Updates the rocket components from the list.
+     * 
+     * @param components The list of rocket components
+     */
+    public void updateRocketComponents(List<IRocketComponent> components) {
+        this.rocketData.clearComponents();
+        for (IRocketComponent component : components) {
+            this.rocketData.addComponent(component);
+        }
+        setChanged();
+        updateLinkedProjectors();
+    }
+    
+    /**
+     * Gets the component inventory for the menu.
+     * 
+     * @return The component inventory
+     */
+    public Container getComponentInventory() {
+        return this.componentInventory;
+    }
+    
+    /**
+     * Whether this table has a rocket.
+     * 
+     * @return true if a rocket is present
+     */
+    public boolean hasRocket() {
+        return !rocketData.getAllComponents().isEmpty();
+    }
+    
+    /**
+     * Syncs data to the client.
+     */
+    public void syncToClient() {
+        if (level != null && !level.isClientSide()) {
+            setChanged();
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+        }
+    }
+    
+    /**
+     * Component inventory that wraps the component list and provides custom functionality.
+     */
+    private class ComponentInventory implements Container {
+        private static final int COMPONENT_SLOTS = 9; // 3x3 grid for components
+        
+        @Override
+        public int getContainerSize() {
+            return COMPONENT_SLOTS;
+        }
+        
+        @Override
+        public boolean isEmpty() {
+            for (int i = 0; i < COMPONENT_SLOTS; i++) {
+                if (!getItem(i).isEmpty()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        @Override
+        public ItemStack getItem(int slot) {
+            if (slot >= 0 && slot < COMPONENT_SLOTS) {
+                return components.get(slot);
+            }
+            return ItemStack.EMPTY;
+        }
+        
+        @Override
+        public ItemStack removeItem(int slot, int amount) {
+            if (slot >= 0 && slot < COMPONENT_SLOTS) {
+                ItemStack result = ContainerHelper.removeItem(components, slot, amount);
+                if (!result.isEmpty()) {
+                    setChanged();
+                }
+                return result;
+            }
+            return ItemStack.EMPTY;
+        }
+        
+        @Override
+        public ItemStack removeItemNoUpdate(int slot) {
+            if (slot >= 0 && slot < COMPONENT_SLOTS) {
+                ItemStack result = ContainerHelper.takeItem(components, slot);
+                if (!result.isEmpty()) {
+                    setChanged();
+                }
+                return result;
+            }
+            return ItemStack.EMPTY;
+        }
+        
+        @Override
+        public void setItem(int slot, ItemStack stack) {
+            if (slot >= 0 && slot < COMPONENT_SLOTS) {
+                components.set(slot, stack);
+                setChanged();
+            }
+        }
+        
+        @Override
+        public void setChanged() {
+            RocketAssemblyTableBlockEntity.this.setChanged();
+        }
+        
+        @Override
+        public boolean stillValid(Player player) {
+            return RocketAssemblyTableBlockEntity.this.stillValid(player);
+        }
+        
+        @Override
+        public void clearContent() {
+            for (int i = 0; i < COMPONENT_SLOTS; i++) {
+                components.set(i, ItemStack.EMPTY);
+            }
+            setChanged();
         }
     }
 }

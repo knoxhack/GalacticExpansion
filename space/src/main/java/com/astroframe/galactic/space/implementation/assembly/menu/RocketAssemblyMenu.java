@@ -1,13 +1,13 @@
 package com.astroframe.galactic.space.implementation.assembly.menu;
 
 import com.astroframe.galactic.core.api.space.IRocket;
-import com.astroframe.galactic.core.api.space.ModularRocket;
 import com.astroframe.galactic.core.api.space.component.IRocketComponent;
-import com.astroframe.galactic.core.api.space.component.RocketComponentType;
-import com.astroframe.galactic.space.SpaceModule;
 import com.astroframe.galactic.space.implementation.assembly.RocketAssemblyTableBlockEntity;
 import com.astroframe.galactic.space.implementation.component.ComponentValidator;
+import com.astroframe.galactic.space.registry.SpaceMenus;
+
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -15,464 +15,305 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.core.BlockPos;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
- * Menu for the Rocket Assembly Table.
- * Allows users to configure rocket components.
+ * Menu class for the Rocket Assembly Table.
+ * This handles the inventory and slots for assembling rockets.
  */
 public class RocketAssemblyMenu extends AbstractContainerMenu {
-    // Constants for slot indices
-    public static final int COMMAND_MODULE_SLOT = 0;
-    public static final int ENGINE_SLOT = 1;
-    public static final int FUEL_TANK_SLOT = 2;
-    public static final int SHIELD_SLOT = 3;
-    public static final int LIFE_SUPPORT_SLOT = 4;
-    public static final int COMPONENT_SLOTS_START = 5;
-    public static final int COMPONENT_SLOTS_COUNT = 9;
-    public static final int INVENTORY_SLOT_START = COMPONENT_SLOTS_START + COMPONENT_SLOTS_COUNT;
-    public static final int INVENTORY_SLOT_COUNT = 36; // Player inventory (27) + hotbar (9)
-    public static final int TOTAL_SLOTS = INVENTORY_SLOT_START + INVENTORY_SLOT_COUNT;
-    
-    // The block entity for this menu
+    private final ContainerLevelAccess access;
     private final RocketAssemblyTableBlockEntity blockEntity;
     private final Level level;
-    private final ContainerLevelAccess access;
+    private final Player player;
+
+    // Slot indices
+    private static final int FIRST_COMPONENT_SLOT = 0;
+    private static final int COMPONENT_SLOTS = 9; // 3x3 grid for components
+    private static final int FIRST_PLAYER_SLOT = COMPONENT_SLOTS;
+    private static final int PLAYER_SLOTS = 36; // Player inventory + hotbar
     
-    // Containers for the menu
-    private final Container componentContainer;
+    // Inventory for component slots
+    private final Container componentInventory;
     
-    // Validation status
-    private boolean isValid = false;
-    private List<String> validationErrors = new ArrayList<>();
-    
-    /**
-     * Creates a menu from a packet buffer.
-     * Used on the client side.
-     *
-     * @param id The menu ID
-     * @param inventory The player inventory
-     * @param buf The packet buffer
-     */
-    public RocketAssemblyMenu(int id, @NotNull Inventory inventory, FriendlyByteBuf buf) {
-        this(id, inventory, inventory.player.level().getBlockEntity(buf.readBlockPos()), 
-                ContainerLevelAccess.NULL);
-    }
+    // Component validation
+    private final ComponentValidator validator;
+    private final List<String> validationErrors;
     
     /**
-     * Creates a menu for the rocket assembly table.
-     *
+     * Creates a rocket assembly menu for server side.
+     * 
      * @param id The menu ID
      * @param inventory The player inventory
      * @param blockEntity The block entity
-     * @param access The container access
+     * @param access Access to the level
      */
-    public RocketAssemblyMenu(int id, Inventory inventory, BlockEntity blockEntity, ContainerLevelAccess access) {
-        super(SpaceModule.ROCKET_ASSEMBLY_MENU.get(), id);
-        
-        // Store references
-        this.blockEntity = (RocketAssemblyTableBlockEntity) blockEntity;
-        this.level = inventory.player.level();
+    public RocketAssemblyMenu(int id, Inventory inventory, RocketAssemblyTableBlockEntity blockEntity, ContainerLevelAccess access) {
+        super(SpaceMenus.ROCKET_ASSEMBLY_MENU.get(), id);
         this.access = access;
+        this.blockEntity = blockEntity;
+        this.level = inventory.player.level();
+        this.player = inventory.player;
+        this.componentInventory = blockEntity.getComponentInventory();
+        this.validator = new ComponentValidator();
+        this.validationErrors = new ArrayList<>();
         
-        // Set up the container for components
-        this.componentContainer = new SimpleContainer(COMPONENT_SLOTS_START + COMPONENT_SLOTS_COUNT);
-        
-        // Add component slots
-        // Command module slot
-        addSlot(new ComponentSlot(componentContainer, COMMAND_MODULE_SLOT, 80, 20, this, RocketComponentType.COCKPIT));
-        
-        // Engine slot
-        addSlot(new ComponentSlot(componentContainer, ENGINE_SLOT, 80, 140, this, RocketComponentType.ENGINE));
-        
-        // Fuel tank slot
-        addSlot(new ComponentSlot(componentContainer, FUEL_TANK_SLOT, 80, 100, this, RocketComponentType.FUEL_TANK));
-        
-        // Shield slot
-        addSlot(new ComponentSlot(componentContainer, SHIELD_SLOT, 20, 80, this, RocketComponentType.SHIELDING));
-        
-        // Life support slot
-        addSlot(new ComponentSlot(componentContainer, LIFE_SUPPORT_SLOT, 140, 80, this, RocketComponentType.LIFE_SUPPORT));
-        
-        // Additional component slots in a grid at the bottom
-        int startX = 44;
-        int startY = 180;
-        int slotSize = 18;
-        
-        for (int i = 0; i < COMPONENT_SLOTS_COUNT; i++) {
-            int row = i / 3;
-            int col = i % 3;
-            int x = startX + col * slotSize;
-            int y = startY + row * slotSize;
-            
-            addSlot(new ComponentSlot(componentContainer, COMPONENT_SLOTS_START + i, x, y, this, null));
+        // Add component slots (3x3 grid)
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                int index = row * 3 + col;
+                int x = 30 + col * 30;
+                int y = 20 + row * 30;
+                addSlot(new ComponentSlot(this.componentInventory, index, x, y));
+            }
         }
         
         // Add player inventory slots
-        for (int row = 0; row < 3; ++row) {
-            for (int col = 0; col < 9; ++col) {
-                addSlot(new Slot(inventory, col + row * 9 + 9, 8 + col * 18, 232 + row * 18));
-            }
-        }
+        addPlayerInventory(inventory);
+        addPlayerHotbar(inventory);
         
-        // Add player hotbar slots
-        for (int i = 0; i < 9; ++i) {
-            addSlot(new Slot(inventory, i, 8 + i * 18, 290));
-        }
-        
-        // Load current components from the block entity
-        loadComponentsFromBlockEntity();
-        
-        // Validate the current configuration
-        validateRocket();
-    }
-    
-    /**
-     * Loads components from the block entity.
-     */
-    private void loadComponentsFromBlockEntity() {
-        if (blockEntity != null) {
-            List<ItemStack> components = blockEntity.getComponentStacks();
-            
-            // Load each component into the corresponding slot
-            for (int i = 0; i < components.size() && i < COMPONENT_SLOTS_START + COMPONENT_SLOTS_COUNT; i++) {
-                componentContainer.setItem(i, components.get(i));
-            }
+        // Sync blockEntity data to client
+        if (blockEntity.hasRocket()) {
+            // Initialize with rocket data
+            updateDisplayInfo();
         }
     }
     
     /**
-     * Saves components to the block entity.
+     * Creates a rocket assembly menu for client side.
+     * 
+     * @param id The menu ID
+     * @param inventory The player inventory
+     * @param data The packet buffer
      */
-    private void saveComponentsToBlockEntity() {
-        if (blockEntity != null) {
-            List<ItemStack> components = new ArrayList<>();
-            
-            // Get each component from the slots
-            for (int i = 0; i < COMPONENT_SLOTS_START + COMPONENT_SLOTS_COUNT; i++) {
-                components.add(componentContainer.getItem(i));
-            }
-            
-            // Save to the block entity
-            blockEntity.setComponentStacks(components);
-            
-            // Create a new rocket instance from the components
-            IRocket rocket = createRocketFromComponents();
-            
-            // Set the rocket in the block entity
-            if (rocket != null) {
-                blockEntity.setRocket(rocket);
+    public RocketAssemblyMenu(int id, Inventory inventory, FriendlyByteBuf data) {
+        this(id, inventory, getBlockEntity(inventory, data), ContainerLevelAccess.NULL);
+    }
+    
+    /**
+     * Extracts the block entity from the network buffer.
+     * 
+     * @param inventory The player inventory
+     * @param data The packet buffer 
+     * @return The rocket assembly table block entity
+     */
+    private static RocketAssemblyTableBlockEntity getBlockEntity(Inventory inventory, FriendlyByteBuf data) {
+        BlockPos pos = data.readBlockPos();
+        Level level = inventory.player.level();
+        BlockEntity be = level.getBlockEntity(pos);
+        
+        if (be instanceof RocketAssemblyTableBlockEntity) {
+            return (RocketAssemblyTableBlockEntity) be;
+        }
+        
+        // Create a dummy inventory if something went wrong
+        return null;
+    }
+    
+    /**
+     * Adds the player inventory slots to the menu.
+     * 
+     * @param playerInventory The player inventory
+     */
+    private void addPlayerInventory(Inventory playerInventory) {
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 9; col++) {
+                int x = 8 + col * 18;
+                int y = 86 + row * 18; // Below the component slots
+                int index = col + row * 9 + 9; // Skip hotbar
+                addSlot(new Slot(playerInventory, index, x, y));
             }
         }
     }
     
     /**
-     * Creates a rocket from the components in the menu.
-     *
-     * @return The rocket, or null if invalid
+     * Adds the player hotbar slots to the menu.
+     * 
+     * @param playerInventory The player inventory
      */
-    private IRocket createRocketFromComponents() {
-        // Start with a new modular rocket
-        ModularRocket rocket = new ModularRocket();
+    private void addPlayerHotbar(Inventory playerInventory) {
+        for (int col = 0; col < 9; col++) {
+            int x = 8 + col * 18;
+            int y = 144; // Below player inventory
+            addSlot(new Slot(playerInventory, col, x, y));
+        }
+    }
+    
+    /**
+     * Called to handle item clicks within the container.
+     */
+    @Override
+    public ItemStack quickMoveStack(Player player, int index) {
+        ItemStack stackCopy = ItemStack.EMPTY;
+        Slot slot = slots.get(index);
         
-        // Add components from each slot
-        for (int i = 0; i < COMPONENT_SLOTS_START + COMPONENT_SLOTS_COUNT; i++) {
-            ItemStack stack = componentContainer.getItem(i);
+        if (slot != null && slot.hasItem()) {
+            ItemStack stack = slot.getItem();
+            stackCopy = stack.copy();
             
-            if (!stack.isEmpty()) {
-                // Try to get the component from the registry
-                Optional<IRocketComponent> component = getComponentFromItem(stack.getItem());
-                
-                if (component.isPresent()) {
-                    // Get the slot position for component placement
-                    Vec3 position = getPositionForSlot(i);
-                    
-                    // Set the position on the component
-                    component.get().setPosition(position);
-                    
-                    // Add to the rocket
-                    rocket.addComponent(component.get());
+            if (index < COMPONENT_SLOTS) {
+                // Move from component grid to player inventory
+                if (!moveItemStackTo(stack, FIRST_PLAYER_SLOT, FIRST_PLAYER_SLOT + PLAYER_SLOTS, true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else {
+                // Move from player inventory to component grid if it's a component
+                if (isRocketComponent(stack)) {
+                    if (!moveItemStackTo(stack, FIRST_COMPONENT_SLOT, FIRST_COMPONENT_SLOT + COMPONENT_SLOTS, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else {
+                    // Move between player inventory and hotbar
+                    if (index < FIRST_PLAYER_SLOT + 27) {
+                        // Move from inventory to hotbar
+                        if (!moveItemStackTo(stack, FIRST_PLAYER_SLOT + 27, FIRST_PLAYER_SLOT + PLAYER_SLOTS, false)) {
+                            return ItemStack.EMPTY;
+                        }
+                    } else {
+                        // Move from hotbar to inventory
+                        if (!moveItemStackTo(stack, FIRST_PLAYER_SLOT, FIRST_PLAYER_SLOT + 27, false)) {
+                            return ItemStack.EMPTY;
+                        }
+                    }
                 }
             }
+            
+            if (stack.isEmpty()) {
+                slot.set(ItemStack.EMPTY);
+            } else {
+                slot.setChanged();
+            }
+            
+            if (stack.getCount() == stackCopy.getCount()) {
+                return ItemStack.EMPTY;
+            }
+            
+            slot.onTake(player, stack);
         }
         
-        // Validate the rocket
-        if (validateRocket()) {
-            return rocket;
-        } else {
-            return null;
+        return stackCopy;
+    }
+    
+    /**
+     * Check if the menu is still valid.
+     */
+    @Override
+    public boolean stillValid(Player player) {
+        return stillValid(access, player, blockEntity.getBlockState().getBlock());
+    }
+    
+    /**
+     * Updates rocket preview and validation status.
+     * Called when component inventory changes.
+     */
+    public void updateDisplayInfo() {
+        if (level.isClientSide()) {
+            return;
         }
-    }
-    
-    /**
-     * Gets the position for a component based on slot index.
-     *
-     * @param slotIndex The slot index
-     * @return The position vector
-     */
-    private Vec3 getPositionForSlot(int slotIndex) {
-        // Calculate positions based on slot type
-        switch (slotIndex) {
-            case COMMAND_MODULE_SLOT:
-                return new Vec3(0, 2, 0); // Command module at the top
-            case ENGINE_SLOT:
-                return new Vec3(0, -2, 0); // Engines at the bottom
-            case FUEL_TANK_SLOT:
-                return new Vec3(0, 0, 0); // Fuel tank in the center
-            case SHIELD_SLOT:
-                return new Vec3(-1, 0, 0); // Shield on the left
-            case LIFE_SUPPORT_SLOT:
-                return new Vec3(1, 0, 0); // Life support on the right
-            default:
-                // Additional components in a grid pattern
-                if (slotIndex >= COMPONENT_SLOTS_START) {
-                    int index = slotIndex - COMPONENT_SLOTS_START;
-                    int row = index / 3;
-                    int col = index % 3;
-                    return new Vec3(col - 1, -1, row - 1);
-                }
-                
-                // Default position if none of the above
-                return new Vec3(0, 0, 0);
-        }
-    }
-    
-    /**
-     * Gets a component from an item.
-     *
-     * @param item The item
-     * @return The component, or empty if not a component
-     */
-    public Optional<IRocketComponent> getComponentFromItem(Item item) {
-        // TODO: Implement component lookup from item registry
-        // For now, this is a placeholder that will be replaced with actual
-        // component lookup logic when component items are implemented
-        return Optional.empty();
-    }
-    
-    /**
-     * Validates the current rocket configuration.
-     *
-     * @return true if valid
-     */
-    public boolean validateRocket() {
-        // Clear previous validation
-        validationErrors.clear();
         
-        // Get all components
+        if (blockEntity != null) {
+            List<IRocketComponent> components = getComponentsFromInventory();
+            blockEntity.updateRocketComponents(components);
+            
+            // Validate components
+            boolean valid = validator.validate(components, validationErrors);
+            blockEntity.setRocketValid(valid);
+            
+            // Update the block entity's validation error list
+            blockEntity.setValidationErrors(validationErrors);
+            
+            // Notify client of block entity update
+            blockEntity.setChanged();
+            blockEntity.syncToClient();
+        }
+    }
+    
+    /**
+     * Gets the current rocket components from the inventory.
+     * 
+     * @return List of rocket components
+     */
+    private List<IRocketComponent> getComponentsFromInventory() {
         List<IRocketComponent> components = new ArrayList<>();
         
-        for (int i = 0; i < COMPONENT_SLOTS_START + COMPONENT_SLOTS_COUNT; i++) {
-            ItemStack stack = componentContainer.getItem(i);
-            
-            if (!stack.isEmpty()) {
-                // Try to get the component from the registry
-                Optional<IRocketComponent> component = getComponentFromItem(stack.getItem());
-                
-                if (component.isPresent()) {
-                    components.add(component.get());
-                }
+        for (int i = 0; i < componentInventory.getContainerSize(); i++) {
+            ItemStack stack = componentInventory.getItem(i);
+            if (!stack.isEmpty() && stack.getItem() instanceof IRocketComponent) {
+                components.add((IRocketComponent) stack.getItem());
             }
         }
         
-        // Validate the components
-        ComponentValidator validator = new ComponentValidator();
-        isValid = validator.validate(components, validationErrors);
-        
-        // Update the block entity with validation status
-        if (blockEntity != null) {
-            blockEntity.setValidationStatus(isValid, validationErrors);
-        }
-        
-        return isValid;
+        return components;
     }
     
     /**
-     * Gets whether the current configuration is valid.
-     *
-     * @return true if valid
+     * Checks if an item is a rocket component.
+     * 
+     * @param stack The item stack to check
+     * @return true if the item is a rocket component
      */
-    public boolean isValid() {
-        return isValid;
+    private boolean isRocketComponent(ItemStack stack) {
+        return !stack.isEmpty() && stack.getItem() instanceof IRocketComponent;
     }
     
     /**
-     * Gets the validation errors.
-     *
-     * @return The validation errors
+     * Gets the validation errors from the last validation.
+     * 
+     * @return List of validation error messages
      */
     public List<String> getValidationErrors() {
         return validationErrors;
     }
     
     /**
-     * Called when the container is closed.
-     *
-     * @param player The player
+     * Test if the rocket is valid and can be launched.
+     * 
+     * @return true if the rocket is valid
      */
-    @Override
-    public void removed(Player player) {
-        super.removed(player);
-        
-        // Save components to the block entity
-        saveComponentsToBlockEntity();
+    public boolean isRocketValid() {
+        return blockEntity.isRocketValid();
     }
     
     /**
-     * Gets whether the player can use the container.
-     *
-     * @param player The player
-     * @return true if the player can use
+     * Attempts to launch the rocket.
+     * Called on server side only.
+     * 
+     * @param player The player who is launching
+     * @return true if launch was successful
      */
-    @Override
-    public boolean stillValid(Player player) {
-        return stillValid(access, player, SpaceModule.ROCKET_ASSEMBLY_TABLE.get());
-    }
-    
-    /**
-     * Handles shifting an item between inventory and container.
-     *
-     * @param player The player
-     * @param slotIndex The slot index
-     * @return The result
-     */
-    @Override
-    public @NotNull ItemStack quickMoveStack(Player player, int slotIndex) {
-        ItemStack result = ItemStack.EMPTY;
-        Slot slot = this.slots.get(slotIndex);
-        
-        if (slot != null && slot.hasItem()) {
-            ItemStack stackInSlot = slot.getItem();
-            result = stackInSlot.copy();
-            
-            // If we're moving from component slots to inventory
-            if (slotIndex < INVENTORY_SLOT_START) {
-                if (!moveItemStackTo(stackInSlot, INVENTORY_SLOT_START, TOTAL_SLOTS, true)) {
-                    return ItemStack.EMPTY;
-                }
-            }
-            // If we're moving from inventory to component slots
-            else {
-                // Try to find the appropriate component slot type
-                Optional<IRocketComponent> component = getComponentFromItem(stackInSlot.getItem());
-                
-                if (component.isPresent()) {
-                    RocketComponentType type = component.get().getType();
-                    int targetSlot = getSlotForComponentType(type);
-                    
-                    if (targetSlot >= 0 && !this.slots.get(targetSlot).hasItem()) {
-                        // Move to the specific slot for this component type
-                        if (!moveItemStackTo(stackInSlot, targetSlot, targetSlot + 1, false)) {
-                            return ItemStack.EMPTY;
-                        }
-                    } else {
-                        // Try general component slots
-                        if (!moveItemStackTo(stackInSlot, COMPONENT_SLOTS_START, INVENTORY_SLOT_START, false)) {
-                            return ItemStack.EMPTY;
-                        }
-                    }
-                }
-                
-                // Validate after any change
-                validateRocket();
-            }
-            
-            if (stackInSlot.isEmpty()) {
-                slot.set(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
-            
-            if (stackInSlot.getCount() == result.getCount()) {
-                return ItemStack.EMPTY;
-            }
-            
-            slot.onTake(player, stackInSlot);
-        }
-        
-        return result;
-    }
-    
-    /**
-     * Gets the slot index for a component type.
-     *
-     * @param type The component type
-     * @return The slot index, or -1 if no specific slot
-     */
-    private int getSlotForComponentType(RocketComponentType type) {
-        return switch (type) {
-            case COCKPIT -> COMMAND_MODULE_SLOT;
-            case ENGINE -> ENGINE_SLOT;
-            case FUEL_TANK -> FUEL_TANK_SLOT;
-            case SHIELDING -> SHIELD_SLOT;
-            case LIFE_SUPPORT -> LIFE_SUPPORT_SLOT;
-            default -> -1;
-        };
-    }
-    
-    /**
-     * A specialized slot that only accepts specific component types.
-     */
-    public static class ComponentSlot extends Slot {
-        private final RocketAssemblyMenu menu;
-        private final RocketComponentType allowedType;
-        
-        /**
-         * Creates a component slot.
-         *
-         * @param container The container
-         * @param index The slot index
-         * @param x The X position
-         * @param y The Y position
-         * @param menu The parent menu
-         * @param allowedType The allowed component type, or null for any
-         */
-        public ComponentSlot(Container container, int index, int x, int y, RocketAssemblyMenu menu, RocketComponentType allowedType) {
-            super(container, index, x, y);
-            this.menu = menu;
-            this.allowedType = allowedType;
-        }
-        
-        /**
-         * Checks if an item stack can be placed in this slot.
-         *
-         * @param stack The item stack
-         * @return true if allowed
-         */
-        @Override
-        public boolean mayPlace(@NotNull ItemStack stack) {
-            // If no type restriction, accept any component
-            if (allowedType == null) {
-                return isComponentItem(stack);
-            }
-            
-            // Otherwise, check if the component matches the allowed type
-            Optional<IRocketComponent> component = menu.getComponentFromItem(stack.getItem());
-            
-            if (component.isPresent()) {
-                return component.get().getType() == allowedType;
-            }
-            
+    public boolean launchRocket(Player player) {
+        if (!(player instanceof ServerPlayer) || !isRocketValid()) {
             return false;
         }
         
-        /**
-         * Checks if an item stack is a rocket component.
-         *
-         * @param stack The item stack
-         * @return true if a component
-         */
-        private boolean isComponentItem(ItemStack stack) {
-            return menu.getComponentFromItem(stack.getItem()).isPresent();
+        // Here we would connect to the space travel system
+        // For now, just confirm the rocket is valid
+        return blockEntity.isRocketValid();
+    }
+    
+    /**
+     * Custom slot class for rocket components.
+     */
+    private class ComponentSlot extends Slot {
+        public ComponentSlot(Container container, int index, int x, int y) {
+            super(container, index, x, y);
+        }
+        
+        @Override
+        public boolean mayPlace(ItemStack stack) {
+            return isRocketComponent(stack);
+        }
+        
+        @Override
+        public void setChanged() {
+            super.setChanged();
+            updateDisplayInfo();
         }
     }
 }
