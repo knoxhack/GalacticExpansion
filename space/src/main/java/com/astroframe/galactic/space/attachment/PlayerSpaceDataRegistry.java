@@ -5,10 +5,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 /**
@@ -17,7 +16,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  */
 public class PlayerSpaceDataRegistry {
     public static final ResourceLocation PLAYER_SPACE_DATA_RL = 
-        new ResourceLocation(GalacticSpace.MOD_ID, "player_space_data");
+        new ResourceLocation(GalacticSpace.MOD_ID + ":player_space_data");
     
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = 
         DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, GalacticSpace.MOD_ID);
