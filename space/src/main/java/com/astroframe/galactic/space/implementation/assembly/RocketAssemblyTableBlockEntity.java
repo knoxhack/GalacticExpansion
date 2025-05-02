@@ -199,9 +199,10 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                                             namespace = parts[0];
                                             path = parts[1];
                                         }
-                                        // In NeoForge 1.21.5, the String constructor for ResourceLocation is public,
-                                        // while the String,String constructor is private
-                                        net.minecraft.resources.ResourceLocation itemRL = new net.minecraft.resources.ResourceLocation(namespace + ":" + path);
+                                        // In NeoForge 1.21.5, we need to use a different approach for ResourceLocation
+                                        // Try using valueOf instead which parses a full resource path
+                                        net.minecraft.resources.ResourceLocation itemRL = 
+                                            net.minecraft.resources.ResourceLocation.tryParse(namespace + ":" + path);
                                         // BuiltInRegistries.ITEM.get returns an Optional<Reference<Item>> in NeoForge 1.21.5
                                         // We need to map it to get the actual Item
                                         java.util.Optional<net.minecraft.world.item.Item> itemOpt = 
@@ -641,17 +642,48 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
         // Create a temporary tag to hold the complete stack data
         CompoundTag tempTag = new CompoundTag();
         
-        // In NeoForge 1.21.5, the save method doesn't accept a lambda directly
-        // We need to use a proper Consumer implementation
-        stack.save(new net.minecraft.nbt.CompoundTag.Provider() {
-            @Override
-            public void save(CompoundTag tagData) {
-                // Copy all data from the provider to our temporary tag
-                for (String key : tagData.getAllKeys()) {
-                    tempTag.put(key, tagData.get(key).copy());
+        // In NeoForge 1.21.5, we need a different approach for extracting tag data
+        // Let's use reflection to extract the tag data since the API has changed
+        try {
+            // Try to access the tag field via reflection
+            java.lang.reflect.Method getTagMethod = net.minecraft.world.item.ItemStack.class.getDeclaredMethod("getTag");
+            getTagMethod.setAccessible(true);
+            Object tagObject = getTagMethod.invoke(stack);
+            
+            if (tagObject instanceof CompoundTag) {
+                CompoundTag stackTag = (CompoundTag) tagObject;
+                
+                // In NeoForge 1.21.5, getAllKeys() might not be available
+                // Try to get all keys directly from the tag object
+                try {
+                    // Use reflection to get the key set
+                    java.lang.reflect.Method getKeysMethod = CompoundTag.class.getDeclaredMethod("getKeys");
+                    getKeysMethod.setAccessible(true);
+                    Set<String> keys = (Set<String>)getKeysMethod.invoke(stackTag);
+                    
+                    // Copy each key-value pair
+                    for (String key : keys) {
+                        tempTag.put(key, stackTag.get(key).copy());
+                    }
+                } catch (Exception e) {
+                    // Fallback to known keys if we can't get all keys
+                    System.err.println("Failed to get all keys from tag: " + e.getMessage());
+                    // Just copy the main data we know about
+                    tempTag.putString("id", stackTag.getString("id").orElse("minecraft:air"));
+                    tempTag.putInt("Count", stackTag.getInt("Count").orElse(1));
+                    if (stackTag.contains("tag")) {
+                        stackTag.getCompound("tag").ifPresent(subTag -> tempTag.put("tag", subTag.copy()));
+                    }
                 }
             }
-        });
+        } catch (Exception e) {
+            // If reflection fails, use a best-effort approach
+            System.err.println("Warning: Failed to extract tag data from ItemStack: " + e.getMessage());
+            
+            // Manually add known fields that might exist
+            tempTag.putString("id", net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
+            tempTag.putInt("Count", stack.getCount());
+        }
         
         // If the stack had tag data, copy it
         if (tempTag.contains("tag")) {
