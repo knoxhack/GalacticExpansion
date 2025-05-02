@@ -155,10 +155,7 @@ public class ComponentUtils {
      * Creates a default fuel tank component.
      */
     private static IFuelTank createDefaultFuelTank(ResourceLocation id, int tier, int mass, CompoundTag tag) {
-        int capacity = 5000 * tier;
-        if (tag.contains("Capacity")) {
-            capacity = tag.getInt("Capacity");
-        }
+        int capacity = TagHelper.getInt(tag, "Capacity", 5000 * tier);
         
         return new DefaultFuelTank(id, tier, mass, capacity);
     }
@@ -167,15 +164,8 @@ public class ComponentUtils {
      * Creates a default command module component.
      */
     private static ICommandModule createDefaultCommandModule(ResourceLocation id, int tier, int mass, CompoundTag tag) {
-        int crewCapacity = tier;
-        if (tag.contains("CrewCapacity")) {
-            crewCapacity = tag.getInt("CrewCapacity");
-        }
-        
-        int computerLevel = tier;
-        if (tag.contains("ComputerLevel")) {
-            computerLevel = tag.getInt("ComputerLevel");
-        }
+        int crewCapacity = TagHelper.getInt(tag, "CrewCapacity", tier);
+        int computerLevel = TagHelper.getInt(tag, "ComputerLevel", tier);
         
         return new DefaultCommandModule(id, tier, mass, crewCapacity, computerLevel);
     }
@@ -184,10 +174,7 @@ public class ComponentUtils {
      * Creates a default cargo bay component.
      */
     private static ICargoBay createDefaultCargoBay(ResourceLocation id, int tier, int mass, CompoundTag tag) {
-        int storageCapacity = 9 * tier;
-        if (tag.contains("StorageCapacity")) {
-            storageCapacity = tag.getInt("StorageCapacity");
-        }
+        int storageCapacity = TagHelper.getInt(tag, "StorageCapacity", 9 * tier);
         
         return new DefaultCargoBay(id, tier, mass, storageCapacity);
     }
@@ -196,14 +183,11 @@ public class ComponentUtils {
      * Creates a default passenger compartment component.
      */
     private static IPassengerCompartment createDefaultPassengerCompartment(ResourceLocation id, int tier, int mass, CompoundTag tag) {
-        int passengerCapacity = 2 * tier;
-        if (tag.contains("PassengerCapacity")) {
-            passengerCapacity = tag.getInt("PassengerCapacity").orElse(passengerCapacity);
-        }
+        int passengerCapacity = TagHelper.getInt(tag, "PassengerCapacity", 2 * tier);
         
         CompartmentType compartmentType = CompartmentType.STANDARD;
-        if (tag.contains("CompartmentType")) {
-            String compartmentTypeStr = tag.getString("CompartmentType").orElse("");
+        String compartmentTypeStr = TagHelper.getString(tag, "CompartmentType", "");
+        if (!compartmentTypeStr.isEmpty()) {
             try {
                 compartmentType = CompartmentType.valueOf(compartmentTypeStr);
             } catch (IllegalArgumentException e) {
@@ -218,25 +202,16 @@ public class ComponentUtils {
      * Creates a default shield component.
      */
     private static IShield createDefaultShield(ResourceLocation id, int tier, int mass, CompoundTag tag) {
-        int shieldStrength = 50 * tier;
-        if (tag.contains("ShieldStrength")) {
-            shieldStrength = tag.getInt("ShieldStrength").orElse(shieldStrength);
-        }
-        
-        int impactResistance = 2 * tier;
-        if (tag.contains("ImpactResistance")) {
-            impactResistance = tag.getInt("ImpactResistance").orElse(impactResistance);
-        }
+        int shieldStrength = TagHelper.getInt(tag, "ShieldStrength", 50 * tier);
+        int impactResistance = TagHelper.getInt(tag, "ImpactResistance", 2 * tier);
         
         ShieldType shieldType = ShieldType.BASIC;
-        if (tag.contains("ShieldType")) {
-            String shieldTypeStr = tag.getString("ShieldType");
-            if (shieldTypeStr != null && !shieldTypeStr.isEmpty()) {
-                try {
-                    shieldType = ShieldType.valueOf(shieldTypeStr);
-                } catch (IllegalArgumentException e) {
-                    // Use default
-                }
+        String shieldTypeStr = TagHelper.getString(tag, "ShieldType", "");
+        if (!shieldTypeStr.isEmpty()) {
+            try {
+                shieldType = ShieldType.valueOf(shieldTypeStr);
+            } catch (IllegalArgumentException e) {
+                // Use default
             }
         }
         
@@ -247,19 +222,12 @@ public class ComponentUtils {
      * Creates a default life support component.
      */
     private static ILifeSupport createDefaultLifeSupport(ResourceLocation id, int tier, int mass, CompoundTag tag) {
-        int maxCrewCapacity = 3 * tier;
-        if (tag.contains("MaxCrewCapacity")) {
-            maxCrewCapacity = tag.getInt("MaxCrewCapacity").orElse(maxCrewCapacity);
-        }
-        
-        int oxygenEfficiency = tier;
-        if (tag.contains("OxygenEfficiency")) {
-            oxygenEfficiency = tag.getInt("OxygenEfficiency").orElse(oxygenEfficiency);
-        }
+        int maxCrewCapacity = TagHelper.getInt(tag, "MaxCrewCapacity", 3 * tier);
+        int oxygenEfficiency = TagHelper.getInt(tag, "OxygenEfficiency", tier);
         
         LifeSupportType lifeSupportType = LifeSupportType.STANDARD;
-        if (tag.contains("LifeSupportType")) {
-            String lifeSupportTypeStr = tag.getString("LifeSupportType").orElse("");
+        String lifeSupportTypeStr = TagHelper.getString(tag, "LifeSupportType", "");
+        if (!lifeSupportTypeStr.isEmpty()) {
             try {
                 lifeSupportType = LifeSupportType.valueOf(lifeSupportTypeStr);
             } catch (IllegalArgumentException e) {

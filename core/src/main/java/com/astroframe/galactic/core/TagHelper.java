@@ -23,15 +23,10 @@ public class TagHelper {
         if (tag.contains(key)) {
             try {
                 // In NeoForge 1.21.5, getInt returns Optional<Integer>
-                Optional<Integer> opt = tag.getInt(key);
-                return opt.orElse(defaultValue);
+                return tag.getInt(key).orElse(defaultValue);
             } catch (Exception e) {
-                // Fallback for direct integer access in case API changes again
-                try {
-                    return tag.getInt(key);
-                } catch (Exception ex) {
-                    return defaultValue;
-                }
+                // This is a fallback if the API changes again
+                return defaultValue;
             }
         }
         return defaultValue;
@@ -48,15 +43,10 @@ public class TagHelper {
         if (tag.contains(key)) {
             try {
                 // In NeoForge 1.21.5, getFloat returns Optional<Float>
-                Optional<Float> opt = tag.getFloat(key);
-                return opt.orElse(defaultValue);
+                return tag.getFloat(key).orElse(defaultValue);
             } catch (Exception e) {
-                // Fallback for direct float access in case API changes again
-                try {
-                    return tag.getFloat(key);
-                } catch (Exception ex) {
-                    return defaultValue;
-                }
+                // This is a fallback if the API changes again
+                return defaultValue;
             }
         }
         return defaultValue;
@@ -73,15 +63,10 @@ public class TagHelper {
         if (tag.contains(key)) {
             try {
                 // In NeoForge 1.21.5, getBoolean returns Optional<Boolean>
-                Optional<Boolean> opt = tag.getBoolean(key);
-                return opt.orElse(defaultValue);
+                return tag.getBoolean(key).orElse(defaultValue);
             } catch (Exception e) {
-                // Fallback for direct boolean access in case API changes again
-                try {
-                    return tag.getBoolean(key);
-                } catch (Exception ex) {
-                    return defaultValue;
-                }
+                // This is a fallback if the API changes again
+                return defaultValue;
             }
         }
         return defaultValue;
@@ -98,16 +83,10 @@ public class TagHelper {
         if (tag.contains(key)) {
             try {
                 // In NeoForge 1.21.5, getString returns Optional<String>
-                Optional<String> opt = tag.getString(key);
-                return opt.orElse(defaultValue);
+                return tag.getString(key).orElse(defaultValue);
             } catch (Exception e) {
-                // Fallback for direct string access in case API changes again
-                try {
-                    String value = tag.getString(key);
-                    return value != null ? value : defaultValue;
-                } catch (Exception ex) {
-                    return defaultValue;
-                }
+                // This is a fallback if the API changes again
+                return defaultValue;
             }
         }
         return defaultValue;
@@ -120,16 +99,15 @@ public class TagHelper {
      */
     public static ResourceLocation createResourceLocation(String path) {
         if (path == null || path.isEmpty()) {
-            return new ResourceLocation("galactic", "invalid");
+            return ResourceLocation.parse("galactic:invalid");
         }
         
         // Check if the path already contains a namespace
         if (path.contains(":")) {
-            String[] parts = path.split(":", 2);
-            return new ResourceLocation(parts[0], parts[1]);
+            return ResourceLocation.parse(path);
         } else {
             // Default to the mod namespace
-            return new ResourceLocation("galactic", path);
+            return ResourceLocation.parse("galactic:" + path);
         }
     }
 }
