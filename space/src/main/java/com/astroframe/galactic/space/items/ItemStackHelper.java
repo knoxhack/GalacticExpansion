@@ -318,4 +318,55 @@ public class ItemStackHelper {
             return java.util.Optional.empty();
         }
     }
+    
+    /**
+     * Checks if an ItemStack has a tag.
+     * This is a compatibility method for handling API differences between Minecraft versions.
+     * 
+     * @param stack The ItemStack to check
+     * @return true if the ItemStack has a tag, false otherwise
+     */
+    public static boolean hasTag(ItemStack stack) {
+        if (stack == null || stack.isEmpty()) {
+            return false;
+        }
+        
+        // For NeoForge 1.21.5: use our tag cache system
+        UUID stackId = stackIds.get(stack);
+        if (stackId == null) {
+            return false; 
+        }
+        
+        CompoundTag tag = tagCache.get(stackId);
+        return tag != null && !tag.isEmpty();
+    }
+    
+    /**
+     * Safely gets a float from a compound tag.
+     * Works with NeoForge 1.21.5 where getFloat returns Optional<Float>.
+     * 
+     * @param tag The tag
+     * @param key The key
+     * @return The float or 0.0f if not found
+     */
+    public static float getFloat(CompoundTag tag, String key) {
+        if (tag == null || !tag.contains(key)) {
+            return 0.0f;
+        }
+        
+        try {
+            // In NeoForge 1.21.5, getFloat returns an Optional<Float>
+            Object result = tag.getFloat(key);
+            if (result instanceof java.util.Optional) {
+                @SuppressWarnings("unchecked")
+                java.util.Optional<Float> opt = (java.util.Optional<Float>) result;
+                return opt.orElse(0.0f);
+            } else if (result instanceof Float) {
+                return (Float) result;
+            }
+            return 0.0f;
+        } catch (Exception e) {
+            return 0.0f;
+        }
+    }
 }

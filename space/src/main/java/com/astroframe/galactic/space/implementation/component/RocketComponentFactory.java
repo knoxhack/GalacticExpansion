@@ -1717,7 +1717,7 @@ public class RocketComponentFactory {
             float baseWeight = stack.getCount();
             
             // Items with NBT data might be more complex/heavier
-            if (stack.hasTag()) {
+            if (com.astroframe.galactic.space.items.ItemStackHelper.hasTag(stack)) {
                 baseWeight += 1; // Add a bit more weight for items with tags
             }
             

@@ -243,17 +243,18 @@ public class StandardFuelTank implements IFuelTank {
         // Load fuel type with fallback to default
         if (tag.contains("FuelType")) {
             try {
-                this.fuelType = FuelType.valueOf(tag.getString("FuelType"));
+                String fuelTypeStr = com.astroframe.galactic.space.items.ItemStackHelper.getString(tag, "FuelType");
+                this.fuelType = FuelType.valueOf(fuelTypeStr);
             } catch (IllegalArgumentException e) {
                 this.fuelType = FuelType.CHEMICAL;
             }
         }
         
         if (tag.contains("LeakResistance")) {
-            this.leakResistance = tag.getFloat("LeakResistance");
+            this.leakResistance = com.astroframe.galactic.space.items.ItemStackHelper.getFloat(tag, "LeakResistance");
         }
         if (tag.contains("ExplosionResistance")) {
-            this.explosionResistance = tag.getFloat("ExplosionResistance");
+            this.explosionResistance = com.astroframe.galactic.space.items.ItemStackHelper.getFloat(tag, "ExplosionResistance");
         }
     }
 }
