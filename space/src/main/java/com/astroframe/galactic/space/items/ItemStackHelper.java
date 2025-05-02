@@ -246,15 +246,20 @@ public class ItemStackHelper {
         }
         
         try {
-            // Try direct method first
-            try {
-                return listTag.getCompound(index);
-            } catch (Exception e) {
-                // Try alternate approach
-                Tag tag = listTag.get(index);
-                if (tag instanceof CompoundTag) {
-                    return (CompoundTag) tag;
-                }
+            // In NeoForge 1.21.5, getCompound() returns Optional<CompoundTag>
+            Object result = listTag.getCompound(index);
+            if (result instanceof java.util.Optional) {
+                @SuppressWarnings("unchecked")
+                java.util.Optional<CompoundTag> opt = (java.util.Optional<CompoundTag>) result;
+                return opt.orElse(null);
+            } else if (result instanceof CompoundTag) {
+                return (CompoundTag) result;
+            }
+            
+            // Try alternate approach
+            Tag tag = listTag.get(index);
+            if (tag instanceof CompoundTag) {
+                return (CompoundTag) tag;
             }
         } catch (Exception e) {
             // Ignore and return null
@@ -276,15 +281,20 @@ public class ItemStackHelper {
         }
         
         try {
-            // Try direct method
-            try {
-                return tag.getCompound(key);
-            } catch (Exception e) {
-                // Try to get the raw tag and cast it
-                Tag innerTag = tag.get(key);
-                if (innerTag instanceof CompoundTag) {
-                    return (CompoundTag) innerTag;
-                }
+            // In NeoForge 1.21.5, getCompound() returns Optional<CompoundTag>
+            Object result = tag.getCompound(key);
+            if (result instanceof java.util.Optional) {
+                @SuppressWarnings("unchecked")
+                java.util.Optional<CompoundTag> opt = (java.util.Optional<CompoundTag>) result;
+                return opt.orElse(null);
+            } else if (result instanceof CompoundTag) {
+                return (CompoundTag) result;
+            }
+            
+            // Try to get the raw tag and cast it
+            Tag innerTag = tag.get(key);
+            if (innerTag instanceof CompoundTag) {
+                return (CompoundTag) innerTag;
             }
         } catch (Exception e) {
             // Ignore and return null
