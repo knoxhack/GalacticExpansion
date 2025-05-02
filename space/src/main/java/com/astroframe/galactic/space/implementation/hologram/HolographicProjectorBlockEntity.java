@@ -71,26 +71,29 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
     protected void loadData(CompoundTag tag) {
         // Load active state
         if (tag.contains("Active")) {
-            active = tag.getBoolean("Active");
+            active = Boolean.valueOf(tag.get("Active").getAsString());
         }
         
         // Load rotation angle
         if (tag.contains("RotationAngle")) {
-            rotationAngle = tag.getFloat("RotationAngle");
+            rotationAngle = Float.parseFloat(tag.get("RotationAngle").getAsString());
         }
         
         // Load linked table position if it exists
         if (tag.contains("LinkedTable")) {
-            // Get the compound tag directly for NeoForge 1.21.5 compatibility
-            CompoundTag posTag = tag.getCompound("LinkedTable");
-            if (!posTag.isEmpty()) {
-                // In NeoForge 1.21.5, getInt doesn't return Optional
-                int x = posTag.getInt("X");
-                int y = posTag.getInt("Y");
-                int z = posTag.getInt("Z");
-                linkedTablePos = new BlockPos(x, y, z);
-            } else {
-                linkedTablePos = null;
+            // Get the compound tag
+            Tag linkedTag = tag.get("LinkedTable");
+            if (linkedTag instanceof CompoundTag) {
+                CompoundTag posTag = (CompoundTag)linkedTag;
+                if (!posTag.isEmpty()) {
+                    // Parse coordinates manually for NeoForge 1.21.5 compatibility
+                    int x = Integer.parseInt(posTag.get("X").getAsString());
+                    int y = Integer.parseInt(posTag.get("Y").getAsString());
+                    int z = Integer.parseInt(posTag.get("Z").getAsString());
+                    linkedTablePos = new BlockPos(x, y, z);
+                } else {
+                    linkedTablePos = null;
+                }
             }
         } else {
             linkedTablePos = null;

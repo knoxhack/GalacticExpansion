@@ -215,7 +215,7 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
         
         // Save the rocket data
         CompoundTag rocketTag = new CompoundTag();
-        rocketData.serialize(rocketTag);
+        rocketData.saveToTag(rocketTag);
         tag.put("RocketData", rocketTag);
         
         // Save linked projectors
