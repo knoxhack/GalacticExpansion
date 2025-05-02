@@ -85,6 +85,7 @@ public class RocketAssemblyTable extends Block implements EntityBlock {
      * @return Interaction result
      */
     // Updated method signature for NeoForge 1.21.5
+    @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, 
                                InteractionHand hand, BlockHitResult hit) {
         // Open the rocket assembly UI when right-clicked
