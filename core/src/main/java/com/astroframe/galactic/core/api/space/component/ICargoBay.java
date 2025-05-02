@@ -1,56 +1,103 @@
 package com.astroframe.galactic.core.api.space.component;
 
-import com.astroframe.galactic.core.api.common.ItemStack;
+import java.util.List;
 
-import java.util.Map;
+import net.minecraft.world.item.ItemStack;
 
 /**
- * Interface for rocket cargo bays.
+ * Interface for rocket cargo bay components.
+ * Cargo bays allow for storage of items during space travel.
  */
 public interface ICargoBay extends IRocketComponent {
     
     /**
-     * Gets the number of storage slots this cargo bay provides.
-     * @return The storage capacity
+     * Get the maximum number of item stacks this cargo bay can hold.
+     * 
+     * @return The maximum number of slots
      */
-    int getStorageCapacity();
+    int getMaxSlots();
     
     /**
-     * Gets the cargo contents of this bay.
-     * @return A map of slot index to item stack
+     * Get the maximum weight capacity of this cargo bay in kg.
+     * 
+     * @return The maximum weight capacity
      */
-    Map<Integer, ItemStack> getContents();
+    int getMaxCapacity();
     
     /**
-     * Adds an item to this cargo bay.
+     * Get the currently used weight capacity in kg.
+     * 
+     * @return The used capacity
+     */
+    int getCurrentUsedCapacity();
+    
+    /**
+     * Get the remaining weight capacity in kg.
+     * 
+     * @return The remaining capacity
+     */
+    default int getRemainingCapacity() {
+        return getMaxCapacity() - getCurrentUsedCapacity();
+    }
+    
+    /**
+     * Get all items in the cargo bay.
+     * 
+     * @return A list of all item stacks
+     */
+    List<ItemStack> getItems();
+    
+    /**
+     * Add an item to the cargo bay if there's room.
+     * 
      * @param stack The item stack to add
-     * @return The remaining items that couldn't be added, or empty if all were added
+     * @return True if the item was added successfully
      */
-    ItemStack addItem(ItemStack stack);
+    boolean addItem(ItemStack stack);
     
     /**
-     * Takes an item from this cargo bay.
-     * @param slotIndex The slot to take from
-     * @param amount The number of items to take
-     * @return The items taken
+     * Remove an item from the cargo bay.
+     * 
+     * @param index The slot index to remove from
+     * @return The removed item stack, or empty stack if none
      */
-    ItemStack takeItem(int slotIndex, int amount);
+    ItemStack removeItem(int index);
     
     /**
-     * Whether this cargo bay has vacuum sealing.
-     * @return true if the cargo bay has vacuum sealing
+     * Check if the cargo bay has any security or protection features.
+     * 
+     * @return True if the cargo bay has security features
      */
-    boolean hasVacuumSeal();
+    boolean hasSecurityFeatures();
     
     /**
-     * Whether this cargo bay has temperature regulation.
-     * @return true if the cargo bay has temperature regulation
+     * Check if the cargo bay has environment control for sensitive cargo.
+     * 
+     * @return True if the cargo bay has environment control
      */
-    boolean hasTemperatureRegulation();
+    boolean hasEnvironmentControl();
     
     /**
-     * Whether this cargo bay has radiation shielding.
-     * @return true if the cargo bay has radiation shielding
+     * Check if the cargo bay has automated loading/unloading.
+     * 
+     * @return True if the cargo bay has automated loading
      */
-    boolean hasRadiationShielding();
+    boolean hasAutomatedLoading();
+    
+    /**
+     * Calculate the weight of an item stack in kg.
+     * This is a utility method for cargo bays to determine item weights.
+     * 
+     * @param stack The item stack
+     * @return The weight in kg
+     */
+    default float calculateItemWeight(ItemStack stack) {
+        if (stack.isEmpty()) {
+            return 0.0f;
+        }
+        
+        // A basic formula for item weights
+        // Can be overridden by specific implementations for more complex calculations
+        return stack.getCount() * 0.5f; // Default: 0.5kg per item
+    }
 }

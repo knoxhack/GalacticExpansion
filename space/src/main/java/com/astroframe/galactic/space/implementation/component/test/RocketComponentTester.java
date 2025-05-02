@@ -1,5 +1,6 @@
 package com.astroframe.galactic.space.implementation.component.test;
 
+import com.astroframe.galactic.core.api.space.component.ICommandModule;
 import com.astroframe.galactic.core.api.space.component.IFuelTank;
 import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.astroframe.galactic.core.api.space.component.IRocketEngine;
@@ -7,6 +8,7 @@ import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
 import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import com.astroframe.galactic.core.api.space.util.ComponentUtils;
+import com.astroframe.galactic.space.implementation.component.command.BasicCommandModule;
 import com.astroframe.galactic.space.implementation.component.engine.BasicChemicalEngine;
 import com.astroframe.galactic.space.implementation.component.fueltank.StandardFuelTank;
 import net.minecraft.nbt.CompoundTag;
@@ -275,6 +277,81 @@ public class RocketComponentTester {
     }
     
     /**
+     * Tests the command module creation and functionality.
+     * 
+     * @return true if the test passes
+     */
+    private static boolean testCommandModuleCreation() {
+        LOGGER.info("Testing command module creation and functionality...");
+        
+        try {
+            // Create a basic command module
+            ResourceLocation moduleId = new ResourceLocation("galactic_space", "test_command_module");
+            String moduleName = "Test Command Module";
+            String moduleDesc = "A test command module for verification";
+            int tier = 2;
+            
+            BasicCommandModule commandModule = new BasicCommandModule(moduleId, tier, moduleName, moduleDesc);
+            
+            // Verify command module properties
+            boolean propertiesValid = 
+                commandModule.getType() == RocketComponentType.COMMAND_MODULE &&
+                commandModule.getName().equals(moduleName) &&
+                commandModule.getDescription().equals(moduleDesc) &&
+                commandModule.getTier() == tier &&
+                commandModule.getMass() > 0 &&
+                commandModule.getMaxDurability() > 0 &&
+                commandModule.getCurrentDurability() == commandModule.getMaxDurability() &&
+                commandModule.getComputingPower() > 0 &&
+                commandModule.getSensorStrength() > 0 &&
+                commandModule.getNavigationAccuracy() > 0 &&
+                commandModule.getCrewCapacity() > 0 &&
+                commandModule.hasAdvancedLifeSupport() == (tier >= 2) &&
+                commandModule.hasAutomatedLanding() == (tier >= 2) &&
+                commandModule.hasEmergencyEvacuation() == (tier >= 3);
+            
+            if (!propertiesValid) {
+                LOGGER.error("Command module properties validation failed");
+                return false;
+            }
+            
+            // Test durability functionality
+            int damageAmount = 30;
+            commandModule.damage(damageAmount);
+            if (commandModule.getCurrentDurability() != (commandModule.getMaxDurability() - damageAmount)) {
+                LOGGER.error("Command module damage operation failed");
+                return false;
+            }
+            
+            int repairAmount = 15;
+            commandModule.repair(repairAmount);
+            if (commandModule.getCurrentDurability() != (commandModule.getMaxDurability() - damageAmount + repairAmount)) {
+                LOGGER.error("Command module repair operation failed");
+                return false;
+            }
+            
+            // Test serialization
+            CompoundTag tag = new CompoundTag();
+            commandModule.save(tag);
+            
+            if (!tag.contains("Type") || !tag.getString("Type").equals(RocketComponentType.COMMAND_MODULE.name())) {
+                LOGGER.error("Command module serialization missing or incorrect Type");
+                return false;
+            }
+            
+            if (!tag.contains("ComputingPower") || tag.getInt("ComputingPower") != commandModule.getComputingPower()) {
+                LOGGER.error("Command module serialization missing or incorrect ComputingPower");
+                return false;
+            }
+            
+            return true;
+        } catch (Exception e) {
+            LOGGER.error("Error in command module creation test", e);
+            return false;
+        }
+    }
+    
+    /**
      * Tests the component factory system.
      * 
      * @return true if the test passes
@@ -290,6 +367,11 @@ public class RocketComponentTester {
             
             // Test 2: Fuel tank creation through factory
             if (!testFactoryFuelTankCreation()) {
+                return false;
+            }
+            
+            // Test 3: Command module creation through factory
+            if (!testFactoryCommandModuleCreation()) {
                 return false;
             }
             
@@ -412,6 +494,73 @@ public class RocketComponentTester {
             return true;
         } catch (Exception e) {
             LOGGER.error("Error in factory fuel tank creation test", e);
+            return false;
+        }
+    }
+    
+    /**
+     * Tests command module creation through the factory system.
+     * 
+     * @return true if the test passes
+     */
+    private static boolean testFactoryCommandModuleCreation() {
+        LOGGER.info("Testing command module creation through factory...");
+        
+        try {
+            // Create a tag that represents a command module component
+            ResourceLocation moduleId = new ResourceLocation("galactic_space", "test_factory_command_module");
+            CompoundTag tag = new CompoundTag();
+            tag.putString("ID", moduleId.toString());
+            tag.putString("Type", RocketComponentType.COMMAND_MODULE.name());
+            tag.putInt("Tier", 3);
+            tag.putString("Name", "Factory Test Command Module");
+            tag.putString("Description", "A command module created through the factory system");
+            tag.putInt("ComputingPower", 100);
+            tag.putInt("SensorStrength", 80);
+            tag.putFloat("NavigationAccuracy", 0.95f);
+            tag.putInt("CrewCapacity", 3);
+            tag.putBoolean("AdvancedLifeSupport", true);
+            tag.putBoolean("AutomatedLanding", true);
+            tag.putBoolean("EmergencyEvacuation", true);
+            
+            // Try to create a component from the tag
+            IRocketComponent component = ComponentUtils.createComponentFromTag(moduleId, tag);
+            
+            // Verify the component was created
+            if (component == null) {
+                LOGGER.error("Factory failed to create command module component");
+                return false;
+            }
+            
+            // Verify it's the right type
+            if (!(component instanceof ICommandModule)) {
+                LOGGER.error("Factory created wrong component type for command module");
+                return false;
+            }
+            
+            ICommandModule commandModule = (ICommandModule) component;
+            
+            // Verify key properties
+            boolean propertiesValid = 
+                commandModule.getType() == RocketComponentType.COMMAND_MODULE &&
+                commandModule.getTier() == 3 &&
+                commandModule.getName().equals("Factory Test Command Module") &&
+                commandModule.getComputingPower() == 100 &&
+                commandModule.getSensorStrength() == 80 &&
+                commandModule.getNavigationAccuracy() == 0.95f &&
+                commandModule.getCrewCapacity() == 3 &&
+                commandModule.hasAdvancedLifeSupport() &&
+                commandModule.hasAutomatedLanding() &&
+                commandModule.hasEmergencyEvacuation();
+            
+            if (!propertiesValid) {
+                LOGGER.error("Factory-created command module properties validation failed");
+                return false;
+            }
+            
+            return true;
+        } catch (Exception e) {
+            LOGGER.error("Error in factory command module creation test", e);
             return false;
         }
     }

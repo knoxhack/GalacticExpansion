@@ -235,8 +235,23 @@ public class BasicCommandModule implements ICommandModule {
     
     @Override
     public void save(CompoundTag tag) {
-        // Call parent implementation to save common properties
-        IRocketComponent.super.save(tag);
+        // Save basic properties manually for NeoForge 1.21.5 compatibility
+        tag.putString("ID", getId().toString());
+        tag.putString("Type", getType().name());
+        tag.putString("Name", getName());
+        tag.putString("Description", getDescription());
+        tag.putInt("Tier", getTier());
+        tag.putInt("Mass", getMass());
+        tag.putInt("MaxDurability", getMaxDurability());
+        tag.putInt("CurrentDurability", getCurrentDurability());
+        
+        // Save position if component has a non-default position
+        Vec3 pos = getPosition();
+        if (pos.x != 0 || pos.y != 0 || pos.z != 0) {
+            tag.putDouble("PosX", pos.x);
+            tag.putDouble("PosY", pos.y);
+            tag.putDouble("PosZ", pos.z);
+        }
         
         // Save command module specific properties
         tag.putInt("ComputingPower", computingPower);
@@ -250,30 +265,38 @@ public class BasicCommandModule implements ICommandModule {
     
     @Override
     public void load(CompoundTag tag) {
-        // Call parent implementation to load common properties
-        IRocketComponent.super.load(tag);
+        // In NeoForge 1.21.5, we need to call parent methods through default interfaces
+        super.setPosition(getPosition()); // Update position from parent
+        
+        // Load common properties manually
+        if (tag.contains("PosX") && tag.contains("PosY") && tag.contains("PosZ")) {
+            double x = tag.getDouble("PosX").orElse(0.0);
+            double y = tag.getDouble("PosY").orElse(0.0);
+            double z = tag.getDouble("PosZ").orElse(0.0);
+            setPosition(new Vec3(x, y, z));
+        }
         
         // Load command module specific properties
         if (tag.contains("ComputingPower")) {
-            this.computingPower = tag.getInt("ComputingPower");
+            this.computingPower = tag.getInt("ComputingPower").orElse(DEFAULT_COMPUTING_POWER);
         }
         if (tag.contains("SensorStrength")) {
-            this.sensorStrength = tag.getInt("SensorStrength");
+            this.sensorStrength = tag.getInt("SensorStrength").orElse(DEFAULT_SENSOR_STRENGTH);
         }
         if (tag.contains("NavigationAccuracy")) {
-            this.navigationAccuracy = tag.getFloat("NavigationAccuracy");
+            this.navigationAccuracy = tag.getFloat("NavigationAccuracy").orElse(DEFAULT_NAVIGATION_ACCURACY);
         }
         if (tag.contains("CrewCapacity")) {
-            this.crewCapacity = tag.getInt("CrewCapacity");
+            this.crewCapacity = tag.getInt("CrewCapacity").orElse(DEFAULT_CREW_CAPACITY);
         }
         if (tag.contains("AdvancedLifeSupport")) {
-            this.advancedLifeSupport = tag.getBoolean("AdvancedLifeSupport");
+            this.advancedLifeSupport = tag.getBoolean("AdvancedLifeSupport").orElse(false);
         }
         if (tag.contains("AutomatedLanding")) {
-            this.automatedLanding = tag.getBoolean("AutomatedLanding");
+            this.automatedLanding = tag.getBoolean("AutomatedLanding").orElse(false);
         }
         if (tag.contains("EmergencyEvacuation")) {
-            this.emergencyEvacuation = tag.getBoolean("EmergencyEvacuation");
+            this.emergencyEvacuation = tag.getBoolean("EmergencyEvacuation").orElse(false);
         }
     }
 }
