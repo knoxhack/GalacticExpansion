@@ -106,16 +106,31 @@ MODULES=("core" "power" "machinery" "biotech" "energy" "construction" "space" "u
 # Initialize empty JAR_FILES variable
 JAR_FILES=""
 
+# Debugging - List all JAR files
+echo "DEBUG: Listing all JAR files in the build directories"
+find . -path "*/build/libs/*.jar" -type f
+
 # Add module JARs explicitly
 for module in "${MODULES[@]}"; do
-  # Look for the specific module JAR in the build/libs directory
-  module_jar=$(find "./$module/build/libs" -name "$module*.jar" -not -name "*-dev.jar" -not -name "*-sources.jar" 2>/dev/null)
+  echo "Looking for JAR files for module: $module"
+  
+  # More specific search pattern for module JAR files
+  # Explicitly look for the compiled JAR files that Gradle creates
+  module_jar=$(find "./$module/build/libs" -type f -name "$module-*.jar" -not -name "*-dev.jar" -not -name "*-sources.jar" -not -name "*-javadoc.jar" 2>/dev/null)
   
   if [ -n "$module_jar" ]; then
     echo "Found module JAR: $module_jar"
     JAR_FILES="$JAR_FILES $module_jar"
   else
-    echo "Warning: No JAR found for module $module"
+    # Try alternative pattern for modules
+    module_jar=$(find "./$module/build/libs" -type f -name "*.jar" -not -name "*-dev.jar" -not -name "*-sources.jar" -not -name "*-javadoc.jar" 2>/dev/null | head -1)
+    
+    if [ -n "$module_jar" ]; then
+      echo "Found alternative module JAR: $module_jar"
+      JAR_FILES="$JAR_FILES $module_jar"
+    else
+      echo "Warning: No JAR found for module $module"
+    fi
   fi
 done
 
@@ -168,9 +183,40 @@ done
 # Check if any files were copied
 if [ -z "$(ls -A $RELEASE_DIR 2>/dev/null)" ]; then
   echo "Error: No files were copied to the release directory!"
-  echo "Creating a dummy file for testing..."
-  echo "This is a test release" > "$RELEASE_DIR/README.txt"
+  echo "Attempting to find any JAR files in the project..."
+  
+  # Try to find any compiled JAR files, ignoring source JARs
+  find_result=$(find . -name "*.jar" -type f -not -name "*-sources.jar" -not -name "*-javadoc.jar" | grep -v "/gradle/" | grep -v "/cache/" | grep -v "/node_modules/" | head -3)
+  
+  if [ -n "$find_result" ]; then
+    echo "Found alternative JAR files:"
+    echo "$find_result"
+    
+    # Copy these JAR files to release directory
+    for jar in $find_result; do
+      jar_name=$(basename "$jar")
+      echo "Adding alternative JAR: $jar"
+      cp -v "$jar" "$RELEASE_DIR/alt_$jar_name"
+    done
+  else
+    echo "No JAR files found at all. Creating a dummy README.txt for testing..."
+    echo "This is a test release. No module JAR files were found." > "$RELEASE_DIR/README.txt"
+  fi
 fi
+
+# Verify all files are real binary JAR files, not source JARs or other formats
+echo "Verifying all collected files are binary JARs..."
+for file in $RELEASE_DIR/*; do
+  if [ -f "$file" ]; then
+    # Check if it's a Java archive by looking for the signature
+    if file "$file" | grep -q "Zip archive data" && ! echo "$file" | grep -q "sources.jar"; then
+      echo "$file appears to be a valid archive."
+    else
+      echo "Warning: $file doesn't appear to be a valid JAR file. Removing."
+      rm -f "$file"
+    fi
+  fi
+done
 
 # Create GitHub release using GitHub API
 echo "Creating GitHub release with tag: $RELEASE_TAG"
