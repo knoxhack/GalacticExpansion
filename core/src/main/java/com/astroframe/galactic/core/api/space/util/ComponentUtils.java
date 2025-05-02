@@ -669,8 +669,8 @@ public class ComponentUtils {
                     
                     // Add any tags the item might have
                     // Get item tag data and add it if not empty
-                    CompoundTag itemTagData = stack.getTag();
-                    if (itemTagData != null && !itemTagData.isEmpty()) {
+                    CompoundTag itemTagData = stack.getOrCreateTag();
+                    if (!itemTagData.isEmpty()) {
                         itemTag.put("tag", itemTagData);
                     }
                     
