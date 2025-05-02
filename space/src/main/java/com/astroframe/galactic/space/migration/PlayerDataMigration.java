@@ -3,6 +3,11 @@ package com.astroframe.galactic.space.migration;
 import com.astroframe.galactic.space.GalacticSpace;
 import com.astroframe.galactic.space.attachment.PlayerSpaceDataAttachment;
 import com.astroframe.galactic.space.attachment.PlayerSpaceDataRegistry;
+import com.astroframe.galactic.space.util.TagHelper;
+import com.astroframe.galactic.core.api.space.ICelestialBody;
+import com.astroframe.galactic.core.api.space.ICelestialBody.CelestialBodyType;
+import com.astroframe.galactic.core.api.space.ICelestialBody.TemperatureRange;
+import com.astroframe.galactic.core.api.space.ICelestialBody.RadiationLevel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -13,8 +18,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
  * to the new attachment system.
  */
 public class PlayerDataMigration {
-    private static final ResourceLocation LEGACY_CAPABILITY_ID = 
-        new ResourceLocation(GalacticSpace.MOD_ID, "player_space_data_capability");
+    private static final String LEGACY_CAPABILITY_ID = 
+        GalacticSpace.MOD_ID + ":player_space_data_capability";
     
     private static final String MIGRATION_MARKER = GalacticSpace.MOD_ID + ".data_migrated";
     
@@ -26,8 +31,8 @@ public class PlayerDataMigration {
     public static boolean isPlayerMigrated(Player player) {
         CompoundTag persistedData = player.getPersistentData();
         if (persistedData.contains("PlayerPersisted")) {
-            CompoundTag playerPersisted = persistedData.getCompound("PlayerPersisted");
-            return playerPersisted.getBoolean(MIGRATION_MARKER);
+            CompoundTag playerPersisted = persistedData.getCompound("PlayerPersisted").orElse(new CompoundTag());
+            return TagHelper.getBooleanValue(playerPersisted, MIGRATION_MARKER);
         }
         return false;
     }
@@ -40,7 +45,7 @@ public class PlayerDataMigration {
         CompoundTag persistedData = player.getPersistentData();
         CompoundTag playerPersisted;
         if (persistedData.contains("PlayerPersisted")) {
-            playerPersisted = persistedData.getCompound("PlayerPersisted");
+            playerPersisted = persistedData.getCompound("PlayerPersisted").orElse(new CompoundTag());
         } else {
             playerPersisted = new CompoundTag();
         }
@@ -139,9 +144,9 @@ public class PlayerDataMigration {
         
         CompoundTag persistedData = player.getPersistentData();
         if (persistedData.contains("ForgeCaps")) {
-            CompoundTag forgeCaps = persistedData.getCompound("ForgeCaps");
-            if (forgeCaps.contains(LEGACY_CAPABILITY_ID.toString())) {
-                return forgeCaps.getCompound(LEGACY_CAPABILITY_ID.toString());
+            CompoundTag forgeCaps = persistedData.getCompound("ForgeCaps").orElse(new CompoundTag());
+            if (forgeCaps.contains(LEGACY_CAPABILITY_ID)) {
+                return forgeCaps.getCompound(LEGACY_CAPABILITY_ID).orElse(null);
             }
         }
         
@@ -173,6 +178,7 @@ public class PlayerDataMigration {
      */
     private static class MockCelestialBody implements com.astroframe.galactic.core.api.space.ICelestialBody {
         private final ResourceLocation id;
+        private boolean discovered = true;
         
         public MockCelestialBody(ResourceLocation id) {
             this.id = id;
@@ -189,28 +195,78 @@ public class PlayerDataMigration {
         }
         
         @Override
-        public double getMass() {
-            return 0;
+        public String getDescription() {
+            return "Migrated celestial body";
         }
         
         @Override
-        public double getRadius() {
-            return 0;
+        public CelestialBodyType getType() {
+            return CelestialBodyType.PLANET;
         }
         
         @Override
-        public double getGravity() {
-            return 0;
-        }
-        
-        @Override
-        public int getOrbitTime() {
-            return 0;
-        }
-        
-        @Override
-        public ResourceLocation getDimensionLocation() {
+        public ICelestialBody getParent() {
             return null;
+        }
+        
+        @Override
+        public int getDistanceFromHome() {
+            return 0;
+        }
+        
+        @Override
+        public float getRelativeSize() {
+            return 1.0f;
+        }
+        
+        @Override
+        public float getRelativeGravity() {
+            return 1.0f;
+        }
+        
+        @Override
+        public float getAtmosphereDensity() {
+            return 1.0f;
+        }
+        
+        @Override
+        public TemperatureRange getTemperatureRange() {
+            return TemperatureRange.TEMPERATE;
+        }
+        
+        @Override
+        public RadiationLevel getRadiationLevel() {
+            return RadiationLevel.NONE;
+        }
+        
+        @Override
+        public int getRocketTierRequired() {
+            return 1;
+        }
+        
+        @Override
+        public boolean hasBreathableAtmosphere() {
+            return true;
+        }
+        
+        @Override
+        public boolean hasLiquidWater() {
+            return true;
+        }
+        
+        @Override
+        public boolean hasUniqueResources() {
+            return false;
+        }
+        
+        @Override
+        public boolean isDiscovered() {
+            return discovered;
+        }
+        
+        @Override
+        public void setDiscovered(boolean discovered) {
+            this.discovered = discovered;
         }
     }
 }
