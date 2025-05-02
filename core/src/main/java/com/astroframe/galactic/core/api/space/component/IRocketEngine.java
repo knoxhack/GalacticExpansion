@@ -51,6 +51,13 @@ public interface IRocketEngine extends IRocketComponent {
     List<FuelType> getCompatibleFuels();
     
     /**
+     * Gets the primary fuel type for this engine.
+     * 
+     * @return The primary fuel type
+     */
+    FuelType getFuelType();
+    
+    /**
      * Checks if this engine can operate in atmosphere.
      * 
      * @return true if the engine can operate in atmosphere

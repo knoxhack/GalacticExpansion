@@ -1,6 +1,7 @@
 package com.astroframe.galactic.space.implementation.component.engine;
 
 import com.astroframe.galactic.core.api.space.component.IRocketEngine;
+import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
 import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import net.minecraft.nbt.CompoundTag;
@@ -81,8 +82,18 @@ public class BasicChemicalEngine implements IRocketEngine {
     }
     
     @Override
+    public RocketComponentType getType() {
+        return RocketComponentType.ENGINE;
+    }
+    
+    @Override
     public EngineType getEngineType() {
         return EngineType.CHEMICAL;
+    }
+    
+    @Override
+    public FuelType getFuelType() {
+        return FuelType.CHEMICAL;
     }
     
     @Override
@@ -102,6 +113,15 @@ public class BasicChemicalEngine implements IRocketEngine {
     @Override
     public List<FuelType> getCompatibleFuels() {
         return new ArrayList<>(compatibleFuels);
+    }
+    
+    /**
+     * Checks if this engine is too damaged to operate.
+     * 
+     * @return true if the engine is broken
+     */
+    public boolean isBroken() {
+        return currentDurability <= 0;
     }
     
     @Override
