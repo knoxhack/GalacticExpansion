@@ -207,7 +207,14 @@ public class ModularRocketItem extends Item {
         CompoundTag tag = getOrCreateTag(stack);
         
         // Get command module tier
-        String commandModuleId = tag.getString("commandModule").orElse("");
+        String commandModuleId = "";
+        if (tag.contains("commandModule")) {
+            Tag cmdModTag = tag.get("commandModule");
+            if (cmdModTag instanceof net.minecraft.nbt.StringTag stringTag) {
+                commandModuleId = stringTag.getAsString();
+            }
+        }
+        
         ResourceLocation cmdModRes = ResourceLocationHelper.of(commandModuleId);
         Optional<IRocketComponent> commandModule = RocketComponentRegistry.getComponent(cmdModRes);
         int commandModuleTier = commandModule.map(IRocketComponent::getTier).orElse(0);
@@ -224,7 +231,11 @@ public class ModularRocketItem extends Item {
         }
         
         for (int i = 0; i < enginesList.size(); i++) {
-            String engineId = enginesList.getString(i).orElse("");
+            String engineId = "";
+            if (enginesList.get(i) instanceof net.minecraft.nbt.StringTag stringTag) {
+                engineId = stringTag.getAsString();
+            }
+            
             if (!engineId.isEmpty()) {
                 ResourceLocation engineRes = ResourceLocationHelper.of(engineId);
                 Optional<IRocketComponent> engine = RocketComponentRegistry.getComponent(engineRes);
@@ -252,7 +263,18 @@ public class ModularRocketItem extends Item {
         );
         
         // Add command module
-        String commandModuleId = tag.getString("commandModule").orElse("");
+        String commandModuleId = "";
+        if (tag.contains("commandModule")) {
+            Tag cmdModTag = tag.get("commandModule");
+            if (cmdModTag instanceof net.minecraft.nbt.StringTag stringTag) {
+                commandModuleId = stringTag.getAsString();
+            }
+        }
+        
+        if (commandModuleId.isEmpty()) {
+            return null;
+        }
+        
         ResourceLocation cmdModRes = ResourceLocationHelper.of(commandModuleId);
         Optional<IRocketComponent> commandModuleOpt = RocketComponentRegistry.getComponent(cmdModRes);
         if (commandModuleOpt.isPresent() && commandModuleOpt.get() instanceof ICommandModule) {
@@ -351,7 +373,11 @@ public class ModularRocketItem extends Item {
         }
         
         for (int i = 0; i < shieldsList.size(); i++) {
-            String shieldId = shieldsList.getString(i).orElse("");
+            String shieldId = "";
+            if (shieldsList.get(i) instanceof net.minecraft.nbt.StringTag stringTag) {
+                shieldId = stringTag.getAsString();
+            }
+            
             if (!shieldId.isEmpty()) {
                 ResourceLocation shieldRes = ResourceLocationHelper.of(shieldId);
                 Optional<IRocketComponent> shieldOpt = RocketComponentRegistry.getComponent(shieldRes);
@@ -371,7 +397,11 @@ public class ModularRocketItem extends Item {
         }
         
         for (int i = 0; i < lifeSupportsList.size(); i++) {
-            String lifeSupportId = lifeSupportsList.getString(i).orElse("");
+            String lifeSupportId = "";
+            if (lifeSupportsList.get(i) instanceof net.minecraft.nbt.StringTag stringTag) {
+                lifeSupportId = stringTag.getAsString();
+            }
+            
             if (!lifeSupportId.isEmpty()) {
                 ResourceLocation lifeSupportRes = ResourceLocationHelper.of(lifeSupportId);
                 Optional<IRocketComponent> lifeSupportOpt = RocketComponentRegistry.getComponent(lifeSupportRes);
