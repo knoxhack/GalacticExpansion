@@ -117,10 +117,12 @@ public class ComponentUtils {
             case COCKPIT:
                 return createDefaultCommandModule(id, tier, mass, tag);
             case STORAGE:
+            case CARGO_BAY:
                 return createDefaultCargoBay(id, tier, mass, tag);
             case PASSENGER_COMPARTMENT:
                 return createDefaultPassengerCompartment(id, tier, mass, tag);
             case SHIELDING:
+            case SHIELD:
                 return createDefaultShield(id, tier, mass, tag);
             case LIFE_SUPPORT:
                 return createDefaultLifeSupport(id, tier, mass, tag);
@@ -319,7 +321,7 @@ public class ComponentUtils {
         private final boolean atmosphereCapable;
         private final boolean spaceCapable;
         private final EngineType engineType;
-        private final IRocketEngine.FuelType fuelType;
+        private final FuelType fuelType;
         
         public DefaultRocketEngine(ResourceLocation id, int tier, int mass, int thrust, float efficiency, 
                                  boolean atmosphereCapable, boolean spaceCapable, EngineType engineType) {
@@ -332,14 +334,12 @@ public class ComponentUtils {
             this.fuelConsumptionRate = (int)(thrust / (efficiency * 10));
             
             // Determine fuel type based on engine type
-            if (engineType == EngineType.PLASMA) {
-                this.fuelType = IRocketEngine.FuelType.PLASMA;
-            } else if (engineType == EngineType.ANTIMATTER) {
-                this.fuelType = IRocketEngine.FuelType.ANTIMATTER;
+            if (engineType == EngineType.ANTIMATTER) {
+                this.fuelType = FuelType.ANTIMATTER;
             } else if (engineType == EngineType.ION) {
-                this.fuelType = IRocketEngine.FuelType.ELECTRICAL;
+                this.fuelType = FuelType.ELECTRIC;
             } else {
-                this.fuelType = IRocketEngine.FuelType.CHEMICAL;
+                this.fuelType = FuelType.CHEMICAL;
             }
         }
         
@@ -396,7 +396,7 @@ public class ComponentUtils {
     private static class DefaultFuelTank extends AbstractRocketComponent implements IFuelTank {
         private final int capacity;
         private int currentFuel;
-        private final IRocketEngine.FuelType fuelType;
+        private final FuelType fuelType;
         private final float leakResistance;
         private final float explosionResistance;
         
@@ -404,7 +404,7 @@ public class ComponentUtils {
             super(id, RocketComponentType.FUEL_TANK, tier, mass);
             this.capacity = capacity;
             this.currentFuel = 0;
-            this.fuelType = IRocketEngine.FuelType.CHEMICAL; // Default fuel type
+            this.fuelType = FuelType.CHEMICAL; // Default fuel type
             this.leakResistance = 0.8f * tier;
             this.explosionResistance = 0.7f * tier;
         }
@@ -542,7 +542,7 @@ public class ComponentUtils {
         private final boolean hasRadiationShielding;
         
         public DefaultCargoBay(ResourceLocation id, int tier, int mass, int storageCapacity) {
-            super(id, RocketComponentType.STORAGE, tier, mass);
+            super(id, RocketComponentType.CARGO_BAY, tier, mass);
             this.storageCapacity = storageCapacity;
             this.contents = new HashMap<>();
             this.hasVacuumSeal = tier >= 2;
@@ -752,7 +752,7 @@ public class ComponentUtils {
         private boolean isActive;
         
         public DefaultShield(ResourceLocation id, int tier, int mass, int shieldStrength, int impactResistance, ShieldType shieldType) {
-            super(id, RocketComponentType.SHIELDING, tier, mass);
+            super(id, RocketComponentType.SHIELD, tier, mass);
             this.shieldStrength = shieldStrength;
             this.impactResistance = impactResistance;
             this.shieldType = shieldType;

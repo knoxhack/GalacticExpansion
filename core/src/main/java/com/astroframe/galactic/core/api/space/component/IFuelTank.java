@@ -1,5 +1,7 @@
 package com.astroframe.galactic.core.api.space.component;
 
+import com.astroframe.galactic.core.api.space.component.enums.FuelType;
+
 /**
  * Interface for rocket fuel tanks.
  */
@@ -35,7 +37,7 @@ public interface IFuelTank extends IRocketComponent {
      * Gets the type of fuel this tank can store.
      * @return The fuel type
      */
-    IRocketEngine.FuelType getFuelType();
+    FuelType getFuelType();
     
     /**
      * Gets the leak resistance of this fuel tank.

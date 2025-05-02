@@ -25,6 +25,11 @@ public enum RocketComponentType {
     CARGO_BAY,
     
     /**
+     * Alias for CARGO_BAY for backward compatibility.
+     */
+    STORAGE,
+    
+    /**
      * Passenger compartments provide space for passengers.
      */
     PASSENGER_COMPARTMENT,
@@ -40,6 +45,11 @@ public enum RocketComponentType {
     SHIELD,
     
     /**
+     * Alias for SHIELD for backward compatibility.
+     */
+    SHIELDING,
+    
+    /**
      * Navigation systems help guide the rocket.
      */
     NAVIGATION,
@@ -52,5 +62,10 @@ public enum RocketComponentType {
     /**
      * Structural components provide the framework for the rocket.
      */
-    STRUCTURE
+    STRUCTURE,
+    
+    /**
+     * Fuel resource type (not a physical component but used for validation).
+     */
+    FUEL
 }
