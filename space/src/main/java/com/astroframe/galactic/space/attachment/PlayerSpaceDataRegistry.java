@@ -24,21 +24,17 @@ public class PlayerSpaceDataRegistry {
     
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<PlayerSpaceDataAttachment>> PLAYER_SPACE_DATA = 
         ATTACHMENT_TYPES.register("player_space_data", 
-            () -> AttachmentType.builder(
-                PlayerSpaceDataAttachment::new
-            ).copyFrom(new AttachmentType.Serializer<CompoundTag, PlayerSpaceDataAttachment>() {
-                @Override
-                public PlayerSpaceDataAttachment read(CompoundTag tag) {
-                    return PlayerSpaceDataAttachment.read(tag);
-                }
-
-                @Override
-                public CompoundTag write(PlayerSpaceDataAttachment attachment) {
-                    CompoundTag tag = new CompoundTag();
-                    attachment.write(tag);
-                    return tag;
-                }
-            }).build());
+            () -> {
+                // Create a new basic attachment type with factory method
+                return new AttachmentType<PlayerSpaceDataAttachment>(
+                    // Constructor factory
+                    PlayerSpaceDataAttachment::new, 
+                    // Serialization handler
+                    (attachment, tag) -> attachment.write(tag), 
+                    // Deserialization handler
+                    PlayerSpaceDataAttachment::read
+                );
+            });
     
     /**
      * Register the player space data attachment type.
