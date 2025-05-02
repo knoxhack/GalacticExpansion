@@ -10,8 +10,23 @@ const fs = require('fs');
 // Version constants
 const VERSION_BASE = '0.1.0';
 const BUILD_COUNTER_FILE = '.build_counter';
-const CHANGELOG_HISTORY_FILE = 'buildwidget/changelog_history.json';
-const VERSION_HISTORY_FILE = 'buildwidget/version_history.json';
+const CHANGELOG_HISTORY_FILE = path.join(__dirname, 'changelog_history.json');
+const VERSION_HISTORY_FILE = path.join(__dirname, 'version_history.json');
+
+// Create history files if they don't exist
+try {
+    // Ensure the history files can be created
+    if (!fs.existsSync(VERSION_HISTORY_FILE)) {
+        fs.writeFileSync(VERSION_HISTORY_FILE, '[]', 'utf8');
+        console.log('Created empty version history file');
+    }
+    if (!fs.existsSync(CHANGELOG_HISTORY_FILE)) {
+        fs.writeFileSync(CHANGELOG_HISTORY_FILE, '[]', 'utf8');
+        console.log('Created empty changelog history file');
+    }
+} catch (error) {
+    console.error('Error creating history files:', error);
+}
 
 // Change categories and their priorities for advanced changelog parsing
 const CHANGE_CATEGORIES = {

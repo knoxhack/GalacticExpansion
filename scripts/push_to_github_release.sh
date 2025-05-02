@@ -84,9 +84,25 @@ else
   fi
 fi
 
-# Find JAR files to include in the release
-echo "Finding JAR files to include in release..."
-JAR_FILES=$(find . -name "*.jar" -not -path "*/build/tmp/*" -not -path "*/cache/*" -not -path "*/node_modules/*" -not -path "*/.release_tmp/*")
+# Find only the important module JAR files to include in the release
+echo "Finding module JAR files to include in release..."
+MODULES=("core" "power" "machinery" "biotech" "energy" "construction" "space" "utilities" "vehicles" "weaponry" "robotics")
+
+# Initialize empty JAR_FILES variable
+JAR_FILES=""
+
+# Add module JARs explicitly
+for module in "${MODULES[@]}"; do
+  # Look for the specific module JAR in the build/libs directory
+  module_jar=$(find "./$module/build/libs" -name "$module*.jar" -not -name "*-dev.jar" -not -name "*-sources.jar" 2>/dev/null)
+  
+  if [ -n "$module_jar" ]; then
+    echo "Found module JAR: $module_jar"
+    JAR_FILES="$JAR_FILES $module_jar"
+  else
+    echo "Warning: No JAR found for module $module"
+  fi
+done
 
 # Create temporary directory for release files with absolute path to avoid any path issues
 RELEASE_DIR="$(pwd)/.release_tmp"
