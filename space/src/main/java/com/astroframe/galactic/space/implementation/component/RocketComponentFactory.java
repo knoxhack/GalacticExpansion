@@ -1563,8 +1563,13 @@ public class RocketComponentFactory {
             return new HashMap<>(contents);
         }
         
-        public ItemStack addItem(ItemStack stack) {
-            // Don't modify the original stack
+        @Override
+        public boolean addItem(ItemStack stack) {
+            if (stack.isEmpty()) {
+                return true; // Empty stack is always "added" successfully
+            }
+            
+            // Clone the stack to work with
             ItemStack remaining = stack.copy();
             
             // Try to add to existing stacks first
@@ -1579,7 +1584,7 @@ public class RocketComponentFactory {
                         remaining.shrink(amountToAdd);
                         
                         if (remaining.isEmpty()) {
-                            return ItemStack.EMPTY;
+                            return true; // Successfully added all items
                         }
                     }
                 }
@@ -1597,13 +1602,13 @@ public class RocketComponentFactory {
                     contents.put(i, toStore);
                     
                     if (remaining.isEmpty()) {
-                        return ItemStack.EMPTY;
+                        return true; // Successfully added all items
                     }
                 }
             }
             
-            // Return any remaining items that couldn't be stored
-            return remaining;
+            // If we get here, we couldn't add all items
+            return false;
         }
         
         public ItemStack takeItem(int slotIndex, int amount) {
@@ -1625,6 +1630,7 @@ public class RocketComponentFactory {
             return result;
         }
         
+        @Override
         public List<ItemStack> getItems() {
             List<ItemStack> items = new ArrayList<>();
             for (ItemStack stack : contents.values()) {
@@ -1633,6 +1639,7 @@ public class RocketComponentFactory {
             return items;
         }
         
+        @Override
         public ItemStack removeItem(int index) {
             if (index < 0 || index >= contents.size()) {
                 return ItemStack.EMPTY;
@@ -1683,16 +1690,17 @@ public class RocketComponentFactory {
          * @param stack The ItemStack to calculate weight for
          * @return The weight in arbitrary units
          */
-        private int calculateItemWeight(ItemStack stack) {
+        @Override
+        public float calculateItemWeight(ItemStack stack) {
             if (stack == null || stack.isEmpty()) {
                 return 0;
             }
             
             // Basic weight is 1 unit per item
-            int baseWeight = stack.getCount();
+            float baseWeight = stack.getCount();
             
             // Items with NBT data might be more complex/heavier
-            if (stack.hasNbt()) {
+            if (stack.hasTag()) {
                 baseWeight += 1; // Add a bit more weight for items with tags
             }
             
