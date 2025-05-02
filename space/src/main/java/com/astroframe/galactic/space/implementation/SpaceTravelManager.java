@@ -10,10 +10,12 @@ import com.astroframe.galactic.space.dimension.SpaceStationTeleporter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.bus.api.Event;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.TickEvent;
 
 import java.util.*;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +24,7 @@ import net.minecraft.resources.ResourceLocation;
  * Manages travel between celestial bodies.
  * This class coordinates rockets, players, and dimension teleportation.
  */
-@Mod.EventBusSubscriber(modid = GalacticSpace.MOD_ID)
+@Mod.EventBusSubscriber(bus = net.neoforged.fml.common.Mod.EventBusSubscriber.Bus.FORGE, modid = GalacticSpace.MOD_ID)
 public class SpaceTravelManager implements ISpaceTravelManager {
     private final Map<UUID, Set<ICelestialBody>> discoveredBodies = new HashMap<>();
     private final Map<ResourceLocation, ICelestialBody> registeredBodies = new HashMap<>();
@@ -51,7 +53,7 @@ public class SpaceTravelManager implements ISpaceTravelManager {
      * @param event The tick event
      */
     @SubscribeEvent
-    public static void onServerTick(net.neoforged.bus.api.Event event) {
+    public static void onServerTick(net.neoforged.neoforge.event.TickEvent.ServerTickEvent event) {
         // Update rocket launch sequences on each tick
         RocketLaunchController.updateLaunches();
     }

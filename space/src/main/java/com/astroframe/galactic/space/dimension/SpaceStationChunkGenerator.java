@@ -54,7 +54,7 @@ public class SpaceStationChunkGenerator extends ChunkGenerator {
     }
 
     // Implementation for pre-NeoForge 1.21.5
-    public void applyCarvers(WorldGenLevel level, RandomState randomState, BiomeManager biomeManager, StructureManager structureManager, ChunkAccess chunkAccess, GenerationStep.Carving carvingStage) {
+    public void applyCarvers(WorldGenLevel level, RandomState randomState, BiomeManager biomeManager, StructureManager structureManager, ChunkAccess chunkAccess, net.minecraft.world.level.levelgen.GenerationStep.Carving carvingStage) {
         // No carvers needed in space station
     }
     
