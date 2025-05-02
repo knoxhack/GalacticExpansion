@@ -34,7 +34,7 @@ public class BaseRocketEngine implements IRocketEngine {
         this.tier = builder.tier;
         this.mass = builder.mass;
         this.maxDurability = builder.maxDurability;
-        this.currentDurability = maxDurability;
+        this.currentDurability = this.maxDurability;
         this.thrust = builder.thrust;
         this.fuelConsumptionRate = builder.fuelConsumptionRate;
         this.efficiency = builder.efficiency;
@@ -131,15 +131,15 @@ public class BaseRocketEngine implements IRocketEngine {
     public List<Component> getTooltip(boolean detailed) {
         List<Component> tooltip = new ArrayList<>();
         tooltip.add(Component.literal(name));
-        tooltip.add(Component.literal("Fuel Type: " + fuelType.name()));
         tooltip.add(Component.literal("Tier: " + tier));
+        tooltip.add(Component.literal("Thrust: " + thrust + " N"));
         
         if (detailed) {
-            tooltip.add(Component.literal("Thrust: " + thrust));
-            tooltip.add(Component.literal("Fuel Consumption: " + fuelConsumptionRate));
-            tooltip.add(Component.literal("Efficiency: " + efficiency));
-            tooltip.add(Component.literal("Operates in Atmosphere: " + (canOperateInAtmosphere ? "Yes" : "No")));
-            tooltip.add(Component.literal("Operates in Space: " + (canOperateInSpace ? "Yes" : "No")));
+            tooltip.add(Component.literal("Fuel Type: " + fuelType.name()));
+            tooltip.add(Component.literal("Fuel Consumption: " + fuelConsumptionRate + " units/s"));
+            tooltip.add(Component.literal("Efficiency: " + String.format("%.2f", efficiency)));
+            tooltip.add(Component.literal("Atmosphere Operation: " + (canOperateInAtmosphere ? "Yes" : "No")));
+            tooltip.add(Component.literal("Space Operation: " + (canOperateInSpace ? "Yes" : "No")));
             tooltip.add(Component.literal("Mass: " + mass));
             tooltip.add(Component.literal("Durability: " + maxDurability));
         }
@@ -153,16 +153,16 @@ public class BaseRocketEngine implements IRocketEngine {
     public static class Builder {
         private final ResourceLocation id;
         private String name = "Rocket Engine";
-        private String description = "An engine component for a rocket.";
+        private String description = "A rocket engine that provides thrust.";
         private int tier = 1;
-        private int mass = 1000;
+        private int mass = 500;
         private int maxDurability = 100;
-        private int thrust = 100;
+        private int thrust = 1000;
         private int fuelConsumptionRate = 10;
         private float efficiency = 1.0f;
         private FuelType fuelType = FuelType.CHEMICAL;
         private boolean canOperateInAtmosphere = true;
-        private boolean canOperateInSpace = false;
+        private boolean canOperateInSpace = true;
         
         /**
          * Creates a new builder with required parameters.
@@ -226,7 +226,7 @@ public class BaseRocketEngine implements IRocketEngine {
         
         /**
          * Sets the thrust.
-         * @param thrust The thrust power
+         * @param thrust The thrust
          * @return This builder
          */
         public Builder thrust(int thrust) {
@@ -246,11 +246,11 @@ public class BaseRocketEngine implements IRocketEngine {
         
         /**
          * Sets the efficiency.
-         * @param efficiency The fuel efficiency
+         * @param efficiency The efficiency
          * @return This builder
          */
         public Builder efficiency(float efficiency) {
-            this.efficiency = efficiency;
+            this.efficiency = Math.max(0.1f, Math.min(2.0f, efficiency));
             return this;
         }
         
@@ -266,41 +266,21 @@ public class BaseRocketEngine implements IRocketEngine {
         
         /**
          * Sets whether the engine can operate in atmosphere.
-         * @param canOperateInAtmosphere True if can operate in atmosphere
+         * @param canOperate True if the engine can operate in atmosphere
          * @return This builder
          */
-        public Builder canOperateInAtmosphere(boolean canOperateInAtmosphere) {
-            this.canOperateInAtmosphere = canOperateInAtmosphere;
+        public Builder operatesInAtmosphere(boolean canOperate) {
+            this.canOperateInAtmosphere = canOperate;
             return this;
         }
         
         /**
          * Sets whether the engine can operate in space.
-         * @param canOperateInSpace True if can operate in space
+         * @param canOperate True if the engine can operate in space
          * @return This builder
          */
-        public Builder canOperateInSpace(boolean canOperateInSpace) {
-            this.canOperateInSpace = canOperateInSpace;
-            return this;
-        }
-        
-        /**
-         * Sets the engine type for categorization.
-         * @param type The engine type
-         * @return This builder
-         */
-        public Builder engineType(EngineType type) {
-            // This is for categorization only
-            return this;
-        }
-        
-        /**
-         * Sets the heat capacity of the engine.
-         * @param capacity The heat capacity
-         * @return This builder
-         */
-        public Builder heatCapacity(int capacity) {
-            // This is for future heat management features
+        public Builder operatesInSpace(boolean canOperate) {
+            this.canOperateInSpace = canOperate;
             return this;
         }
         
