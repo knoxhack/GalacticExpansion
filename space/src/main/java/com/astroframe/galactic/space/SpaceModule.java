@@ -73,16 +73,17 @@ public class SpaceModule {
                     .lightLevel(state -> state.getValue(HolographicProjectorBlock.ACTIVE) ? 10 : 0)));
     
     // Block Entities - direct registration for NeoForge 1.21.5 compatibility
+    // Explicitly specify the generic parameter types to avoid inference errors
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HolographicProjectorBlockEntity>> HOLOGRAPHIC_PROJECTOR_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("holographic_projector", 
-                    () -> new BlockEntityType<>(
+                    () -> new BlockEntityType<HolographicProjectorBlockEntity>(
                             HolographicProjectorBlockEntity::new, 
                             Set.of(HOLOGRAPHIC_PROJECTOR.get()),
                             null));
     
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RocketAssemblyTableBlockEntity>> ROCKET_ASSEMBLY_TABLE_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("rocket_assembly_table", 
-                    () -> new BlockEntityType<>(
+                    () -> new BlockEntityType<RocketAssemblyTableBlockEntity>(
                             RocketAssemblyTableBlockEntity::new,
                             Set.of(ROCKET_ASSEMBLY_TABLE.get()),
                             null));

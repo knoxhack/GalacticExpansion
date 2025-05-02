@@ -22,6 +22,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -180,10 +181,32 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                         // In NeoForge 1.21.5, getInt returns an Optional<Integer>
                         compoundTag.getInt("Slot").ifPresent(slot -> {
                             if (slot >= 0 && slot < components.size()) {
-                                // Create ItemStack from CompoundTag
-                                // In NeoForge 1.21.5, we need to use ItemStack.load() method
-                                ItemStack stack = new ItemStack(net.minecraft.world.item.Items.AIR);
-                                stack.load(compoundTag);
+                                // Create ItemStack from CompoundTag for NeoForge 1.21.5
+                                // Use a different approach as ItemStack.of() may not be available
+                                ItemStack stack = ItemStack.EMPTY;
+                                
+                                // Get the item identifier
+                                if (compoundTag.contains("id")) {
+                                    // Get the item from the registry using the ID
+                                    java.util.Optional<String> idOpt = compoundTag.getString("id");
+                                    if (idOpt.isPresent()) {
+                                        String itemId = idOpt.get();
+                                        net.minecraft.resources.ResourceLocation itemRL = new net.minecraft.resources.ResourceLocation(itemId);
+                                        net.minecraft.world.item.Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(itemRL);
+                                        
+                                        // Create the stack and set its count
+                                        stack = new ItemStack(item);
+                                        compoundTag.getInt("Count").ifPresent(stack::setCount);
+                                        
+                                        // Handle any tag data
+                                        if (compoundTag.contains("tag")) {
+                                            compoundTag.getCompound("tag").ifPresent(nbtTag -> {
+                                                stack.getOrCreateTag().merge(nbtTag);
+                                            });
+                                        }
+                                    }
+                                }
+                                
                                 components.set(slot, stack);
                             }
                         });
@@ -266,13 +289,22 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
             if (!itemStack.isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
-                // In NeoForge 1.21.5, we need to use the save method properly
-                // Create a CompoundTag for the item and save it
-                CompoundTag savedTag = new CompoundTag();
-                itemStack.save(savedTag);
-                // Copy all tags from savedTag to itemTag using getTags() method
-                for (String key : savedTag.getAllKeys()) {
-                    itemTag.put(key, savedTag.get(key));
+                // In NeoForge 1.21.5, manually save the ItemStack data to the tag
+                // Since save() requires a Provider in NeoForge 1.21.5
+                
+                // Save the item ID
+                ResourceLocation itemId = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(itemStack.getItem());
+                itemTag.putString("id", itemId.toString());
+                
+                // Save the count
+                itemTag.putInt("Count", itemStack.getCount());
+                
+                // Save the tag data if present
+                if (itemStack.hasTag()) {
+                    CompoundTag itemTagData = itemStack.getTag();
+                    if (itemTagData != null) {
+                        itemTag.put("tag", itemTagData.copy());
+                    }
                 }
                 listTag.add(itemTag);
             }
