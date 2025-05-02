@@ -13,6 +13,7 @@ import com.astroframe.galactic.space.item.SpaceSuitItem;
 import com.astroframe.galactic.space.migration.PlayerDataMigration;
 import com.astroframe.galactic.space.registry.SpaceRegistry;
 import com.astroframe.galactic.space.resource.SpaceResourceGenerator;
+import com.astroframe.galactic.space.test.AttachmentSystemTester;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -121,6 +122,10 @@ public class GalacticSpace {
             // Register player data migration
             PlayerDataMigration.registerEvents();
             LOGGER.info("Registered player data migration events");
+            
+            // Register the attachment system tester
+            AttachmentSystemTester.register();
+            LOGGER.info("Registered attachment system tester");
             
             LOGGER.info("Galactic Space module setup complete");
         });
