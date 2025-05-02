@@ -3,6 +3,7 @@ package com.astroframe.galactic.space.items;
 import com.astroframe.galactic.core.api.space.ModularRocket;
 import com.astroframe.galactic.core.api.space.component.*;
 import com.astroframe.galactic.space.GalacticSpace;
+import com.astroframe.galactic.space.implementation.RocketEntitySpawner;
 import com.astroframe.galactic.space.implementation.component.RocketComponentFactory;
 import com.astroframe.galactic.space.implementation.component.ShieldFactory;
 import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
