@@ -114,7 +114,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         renderScanLines(poseStack, builder, scanHeight);
         
         // Finish rendering
-        tesselator.getBuilder().build(); // Using build() instead of end() in NeoForge 1.21.5
+        tesselator.end(); // In NeoForge, Tesselator.end() should be used to complete rendering
         
         // Reset render state (NeoForge 1.21.5 doesn't use RenderSystem.disableBlend directly)
         // Instead we rely on the renderer to handle state
@@ -173,9 +173,15 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             float alpha = HOLOGRAM_ALPHA;
             float fadedAlpha = 0.3f * HOLOGRAM_ALPHA;
             
-            // Line from center to edge
-            builder.vertex(pose, 0, 0.0f, 0).color(red, green, blue, alpha).normal(0, 1, 0).endVertex();
-            builder.vertex(pose, x1, 0.0f, z1).color(red, green, blue, fadedAlpha).normal(0, 1, 0).endVertex();
+            // Line from center to edge - in 1.21.5, we need to convert ints to floats
+            builder.vertex(pose.m00, pose.m01, pose.m02, pose.m03, 
+                    0.0f, 0.0f, 0.0f, 1.0f, 
+                    red, green, blue, alpha, 
+                    0, 1, 0, 1);
+            builder.vertex(pose.m00, pose.m01, pose.m02, pose.m03, 
+                    x1, 0.0f, z1, 1.0f, 
+                    red, green, blue, fadedAlpha, 
+                    0, 1, 0, 1);
         }
     }
     
@@ -199,9 +205,15 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         float blue = HOLOGRAM_BLUE;
         float alpha = HOLOGRAM_ALPHA;
         
-        // Draw the line using floats for color
-        builder.vertex(pose, x1, y1, z1).color(red, green, blue, alpha).normal(0, 1, 0).endVertex();
-        builder.vertex(pose, x2, y2, z2).color(red, green, blue, alpha).normal(0, 1, 0).endVertex();
+        // Draw the line using the direct matrix method for NeoForge 1.21.5
+        builder.vertex(pose.m00, pose.m01, pose.m02, pose.m03, 
+                x1, y1, z1, 1.0f, 
+                red, green, blue, alpha, 
+                0, 1, 0, 1);
+        builder.vertex(pose.m00, pose.m01, pose.m02, pose.m03, 
+                x2, y2, z2, 1.0f, 
+                red, green, blue, alpha, 
+                0, 1, 0, 1);
     }
     
     /**
@@ -307,9 +319,15 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         float green = HOLOGRAM_GREEN;
         float blue = HOLOGRAM_BLUE;
         
-        // Draw the line using the custom alpha
-        builder.vertex(pose, x1, y1, z1).color(red, green, blue, alphaValue).normal(0, 1, 0).endVertex();
-        builder.vertex(pose, x2, y2, z2).color(red, green, blue, alphaValue).normal(0, 1, 0).endVertex();
+        // Draw the line using the direct matrix method for NeoForge 1.21.5
+        builder.vertex(pose.m00, pose.m01, pose.m02, pose.m03, 
+                x1, y1, z1, 1.0f, 
+                red, green, blue, alphaValue, 
+                0, 1, 0, 1);
+        builder.vertex(pose.m00, pose.m01, pose.m02, pose.m03, 
+                x2, y2, z2, 1.0f, 
+                red, green, blue, alphaValue, 
+                0, 1, 0, 1);
     }
     
     /**

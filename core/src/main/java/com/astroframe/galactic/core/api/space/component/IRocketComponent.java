@@ -177,10 +177,10 @@ public interface IRocketComponent {
     default void load(net.minecraft.nbt.CompoundTag tag) {
         // Load position if saved
         if (tag.contains("PosX") && tag.contains("PosY") && tag.contains("PosZ")) {
-            // In NeoForge 1.21.5, tag methods return Optional values
-            double x = tag.getDouble("PosX").orElse(0.0);
-            double y = tag.getDouble("PosY").orElse(0.0);
-            double z = tag.getDouble("PosZ").orElse(0.0);
+            // In NeoForge 1.21.5, we need to use the tag methods directly
+            double x = tag.getDouble("PosX");
+            double y = tag.getDouble("PosY");
+            double z = tag.getDouble("PosZ");
             setPosition(new Vec3(x, y, z));
         }
     }

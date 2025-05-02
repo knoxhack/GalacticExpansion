@@ -1,56 +1,56 @@
 package com.astroframe.galactic.core.api.space.component;
 
 /**
- * Enum representing the types of rocket components.
+ * Enum for the different types of rocket components.
  */
 public enum RocketComponentType {
     /**
-     * Engine component - provides thrust for the rocket.
+     * Rocket engines provide thrust for the rocket.
      */
     ENGINE,
     
     /**
-     * Fuel tank component - stores fuel for the rocket.
+     * Fuel tanks store fuel for the rocket engines.
      */
     FUEL_TANK,
     
     /**
-     * Cockpit/command module component - houses the pilot and controls.
+     * The cockpit is the control center for the rocket.
      */
     COCKPIT,
     
     /**
-     * Structural component - provides overall integrity to the rocket.
+     * Cargo bays provide storage for items.
      */
-    STRUCTURE,
+    CARGO_BAY,
     
     /**
-     * Navigation component - provides guidance and navigation systems.
+     * Passenger compartments provide space for passengers.
      */
-    NAVIGATION,
+    PASSENGER_COMPARTMENT,
     
     /**
-     * Shielding component - provides protection from heat and radiation.
-     */
-    SHIELDING,
-    
-    /**
-     * Life support component - provides oxygen and environmental control.
+     * Life support systems provide oxygen and other essentials for passengers.
      */
     LIFE_SUPPORT,
     
     /**
-     * Cargo bay component - provides storage space for items.
+     * Shield systems protect the rocket from damage.
      */
-    STORAGE,
+    SHIELD,
     
     /**
-     * Fuel component - represents fuel itself.
+     * Navigation systems help guide the rocket.
      */
-    FUEL,
+    NAVIGATION,
     
     /**
-     * Passenger compartment - provides space for passengers.
+     * Communication systems allow for communication with ground control.
      */
-    PASSENGER_COMPARTMENT
+    COMMUNICATION,
+    
+    /**
+     * Structural components provide the framework for the rocket.
+     */
+    STRUCTURE
 }
