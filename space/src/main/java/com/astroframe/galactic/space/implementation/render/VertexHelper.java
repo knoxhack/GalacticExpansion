@@ -2,16 +2,17 @@ package com.astroframe.galactic.space.implementation.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.GameRenderer;
 import org.joml.Matrix4f;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 /**
  * Helper class for vertex rendering compatibility across Minecraft versions.
- * Updated for NeoForge 1.21.5
+ * Completely rewritten for NeoForge 1.21.5
  */
 public class VertexHelper {
     
@@ -40,6 +41,7 @@ public class VertexHelper {
     
     /**
      * Creates a vertex with position, color, and using a transform matrix.
+     * This is a compatibility layer for NeoForge 1.21.5
      * 
      * @param consumer The vertex consumer
      * @param matrix The transform matrix
@@ -53,25 +55,67 @@ public class VertexHelper {
      */
     public static void addColoredVertex(VertexConsumer consumer, Matrix4f matrix, float x, float y, float z, 
                                       float red, float green, float blue, float alpha) {
-        // In NeoForge 1.21.5, we need to use a different approach to add vertices
-        // Create a buffer builder and add the vertex data manually
-        if (consumer instanceof BufferBuilder builder) {
-            // Add position transformed by matrix
-            float transformedX = matrix.m00() * x + matrix.m01() * y + matrix.m02() * z + matrix.m03();
-            float transformedY = matrix.m10() * x + matrix.m11() * y + matrix.m12() * z + matrix.m13();
-            float transformedZ = matrix.m20() * x + matrix.m21() * y + matrix.m22() * z + matrix.m23();
-            
-            builder.vertex(transformedX, transformedY, transformedZ);
-            builder.color(red, green, blue, alpha);
-            builder.normal(0.0F, 1.0F, 0.0F);
-            builder.uv(0.0F, 0.0F);
-            builder.uv2(15728880); // Full brightness
-            builder.endVertex();
-        } else {
-            // Fallback for non-BufferBuilder consumers
-            consumer.vertex(x, y, z);
-            consumer.color(red, green, blue, alpha);
-            consumer.endVertex();
-        }
+        // Transform the vertex by the matrix
+        Vector4f pos = new Vector4f(x, y, z, 1.0F);
+        pos.mul(matrix);
+        
+        // Use the compatibility approach for NeoForge 1.21.5
+        consumer.defaultColor((int)(red * 255.0F), (int)(green * 255.0F), 
+                         (int)(blue * 255.0F), (int)(alpha * 255.0F));
+        consumer.putBulkData(new PoseStack().last(), pos.x(), pos.y(), pos.z(),
+                    1.0F, 1.0F, // UV
+                    0, 0, // Overlay
+                    1, 1, 1, // Normal
+                    15728880); // Light level - full brightness
+    }
+    
+    /**
+     * Draw a colored line between two points
+     * 
+     * @param builder The vertex consumer
+     * @param matrix The transform matrix
+     * @param x1 First point X
+     * @param y1 First point Y 
+     * @param z1 First point Z
+     * @param x2 Second point X
+     * @param y2 Second point Y
+     * @param z2 Second point Z
+     * @param red The red component (0.0-1.0)
+     * @param green The green component (0.0-1.0)
+     * @param blue The blue component (0.0-1.0)
+     * @param alpha The alpha component (0.0-1.0)
+     */
+    public static void drawLine(VertexConsumer builder, Matrix4f matrix, 
+                              float x1, float y1, float z1, 
+                              float x2, float y2, float z2,
+                              float red, float green, float blue, float alpha) {
+        // Draw a line from point 1 to point 2
+        addColoredVertex(builder, matrix, x1, y1, z1, red, green, blue, alpha);
+        addColoredVertex(builder, matrix, x2, y2, z2, red, green, blue, alpha);
+    }
+    
+    /**
+     * Draw a colored rectangle at the specified position
+     * 
+     * @param consumer The vertex consumer
+     * @param matrix The transform matrix
+     * @param x The x position
+     * @param y The y position
+     * @param z The z position
+     * @param width The width
+     * @param height The height
+     * @param red The red component (0.0-1.0)
+     * @param green The green component (0.0-1.0)
+     * @param blue The blue component (0.0-1.0)
+     * @param alpha The alpha component (0.0-1.0)
+     */
+    public static void drawRect(VertexConsumer consumer, Matrix4f matrix, 
+                             float x, float y, float z, float width, float height,
+                             float red, float green, float blue, float alpha) {
+        // Draw a rectangle from the bottom left
+        addColoredVertex(consumer, matrix, x, y, z, red, green, blue, alpha);
+        addColoredVertex(consumer, matrix, x + width, y, z, red, green, blue, alpha);
+        addColoredVertex(consumer, matrix, x + width, y + height, z, red, green, blue, alpha);
+        addColoredVertex(consumer, matrix, x, y + height, z, red, green, blue, alpha);
     }
 }

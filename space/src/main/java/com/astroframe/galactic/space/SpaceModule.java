@@ -15,6 +15,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
@@ -72,19 +73,21 @@ public class SpaceModule {
                     .lightLevel(state -> state.getValue(HolographicProjectorBlock.ACTIVE) ? 10 : 0)));
     
     // Block Entities
+    @SuppressWarnings("unchecked")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HolographicProjectorBlockEntity>> HOLOGRAPHIC_PROJECTOR_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("holographic_projector", 
-                    () -> new BlockEntityType<>(
-                            HolographicProjectorBlockEntity::new,
-                            Set.of(HOLOGRAPHIC_PROJECTOR.get()),
-                            null));
+                    () -> BlockEntityType.Builder.<HolographicProjectorBlockEntity>of(
+                            (pos, state) -> new HolographicProjectorBlockEntity(pos, state),
+                            HOLOGRAPHIC_PROJECTOR.get())
+                            .build(null));
     
+    @SuppressWarnings("unchecked")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RocketAssemblyTableBlockEntity>> ROCKET_ASSEMBLY_TABLE_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("rocket_assembly_table", 
-                    () -> new BlockEntityType<>(
-                            RocketAssemblyTableBlockEntity::new,
-                            Set.of(ROCKET_ASSEMBLY_TABLE.get()),
-                            null));
+                    () -> BlockEntityType.Builder.<RocketAssemblyTableBlockEntity>of(
+                            (pos, state) -> new RocketAssemblyTableBlockEntity(pos, state),
+                            ROCKET_ASSEMBLY_TABLE.get())
+                            .build(null));
                             
     // Menus
     public static final DeferredHolder<MenuType<?>, MenuType<RocketAssemblyMenu>> ROCKET_ASSEMBLY_MENU =
