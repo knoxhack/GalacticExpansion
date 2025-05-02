@@ -141,31 +141,31 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             float z2 = (float) (radius * Math.sin(angle2));
             
             // Center point
-            buffer.vertex(pose, 0, 0, 0)
-                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
-                  .uv(0.5F, 0.5F)
-                  .overlayCoords(OverlayTexture.NO_OVERLAY)
-                  .uv2(packedLight)
-                  .normal(0, 1, 0)
-                  .endVertex();
+            buffer.vertex(pose, 0, 0, 0);
+            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
+            buffer.uv(0.5F, 0.5F);
+            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
+            buffer.uv2(packedLight);
+            buffer.normal(0, 1, 0);
+            buffer.endVertex();
             
             // First outer point
-            buffer.vertex(pose, x1, 0, z1)
-                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, 0.3F * HOLOGRAM_ALPHA)
-                  .uv(0.5F + x1 * 0.5F, 0.5F + z1 * 0.5F)
-                  .overlayCoords(OverlayTexture.NO_OVERLAY)
-                  .uv2(packedLight)
-                  .normal(0, 1, 0)
-                  .endVertex();
+            buffer.vertex(pose, x1, 0, z1);
+            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, 0.3F * HOLOGRAM_ALPHA);
+            buffer.uv(0.5F + x1 * 0.5F, 0.5F + z1 * 0.5F);
+            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
+            buffer.uv2(packedLight);
+            buffer.normal(0, 1, 0);
+            buffer.endVertex();
             
             // Second outer point
-            buffer.vertex(pose, x2, 0, z2)
-                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, 0.3F * HOLOGRAM_ALPHA)
-                  .uv(0.5F + x2 * 0.5F, 0.5F + z2 * 0.5F)
-                  .overlayCoords(OverlayTexture.NO_OVERLAY)
-                  .uv2(packedLight)
-                  .normal(0, 1, 0)
-                  .endVertex();
+            buffer.vertex(pose, x2, 0, z2);
+            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, 0.3F * HOLOGRAM_ALPHA);
+            buffer.uv(0.5F + x2 * 0.5F, 0.5F + z2 * 0.5F);
+            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
+            buffer.uv2(packedLight);
+            buffer.normal(0, 1, 0);
+            buffer.endVertex();
         }
         
         poseStack.popPose();
@@ -295,21 +295,21 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         
         // Draw each edge
         for (int[] edge : edges) {
-            buffer.vertex(pose, vertices[edge[0]][0], vertices[edge[0]][1], vertices[edge[0]][2])
-                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
-                  .uv(0, 0)
-                  .overlayCoords(OverlayTexture.NO_OVERLAY)
-                  .uv2(packedLight)
-                  .normal(0, 1, 0)
-                  .endVertex();
+            buffer.vertex(pose, vertices[edge[0]][0], vertices[edge[0]][1], vertices[edge[0]][2]);
+            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
+            buffer.uv(0, 0);
+            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
+            buffer.uv2(packedLight);
+            buffer.normal(0, 1, 0);
+            buffer.endVertex();
             
-            buffer.vertex(pose, vertices[edge[1]][0], vertices[edge[1]][1], vertices[edge[1]][2])
-                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
-                  .uv(1, 1)
-                  .overlayCoords(OverlayTexture.NO_OVERLAY)
-                  .uv2(packedLight)
-                  .normal(0, 1, 0)
-                  .endVertex();
+            buffer.vertex(pose, vertices[edge[1]][0], vertices[edge[1]][1], vertices[edge[1]][2]);
+            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
+            buffer.uv(1, 1);
+            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
+            buffer.uv2(packedLight);
+            buffer.normal(0, 1, 0);
+            buffer.endVertex();
         }
     }
     
@@ -345,38 +345,38 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             float z2 = (float) (radius * Math.sin(angle2));
             
             // Base point 1 to apex
-            buffer.vertex(pose, x1, -0.5F, z1)
-                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
-                  .uv(0, 0)
-                  .overlayCoords(OverlayTexture.NO_OVERLAY)
-                  .uv2(packedLight)
-                  .normal(0, 1, 0)
-                  .endVertex();
+            buffer.vertex(pose, x1, -0.5F, z1);
+            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
+            buffer.uv(0, 0);
+            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
+            buffer.uv2(packedLight);
+            buffer.normal(0, 1, 0);
+            buffer.endVertex();
             
-            buffer.vertex(pose, apexX, apexY, apexZ)
-                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
-                  .uv(0.5F, 1)
-                  .overlayCoords(OverlayTexture.NO_OVERLAY)
-                  .uv2(packedLight)
-                  .normal(0, 1, 0)
-                  .endVertex();
+            buffer.vertex(pose, apexX, apexY, apexZ);
+            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
+            buffer.uv(0.5F, 1);
+            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
+            buffer.uv2(packedLight);
+            buffer.normal(0, 1, 0);
+            buffer.endVertex();
             
             // Base edge
-            buffer.vertex(pose, x1, -0.5F, z1)
-                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
-                  .uv(0, 0)
-                  .overlayCoords(OverlayTexture.NO_OVERLAY)
-                  .uv2(packedLight)
-                  .normal(0, 1, 0)
-                  .endVertex();
+            buffer.vertex(pose, x1, -0.5F, z1);
+            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
+            buffer.uv(0, 0);
+            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
+            buffer.uv2(packedLight);
+            buffer.normal(0, 1, 0);
+            buffer.endVertex();
             
-            buffer.vertex(pose, x2, -0.5F, z2)
-                  .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
-                  .uv(1, 0)
-                  .overlayCoords(OverlayTexture.NO_OVERLAY)
-                  .uv2(packedLight)
-                  .normal(0, 1, 0)
-                  .endVertex();
+            buffer.vertex(pose, x2, -0.5F, z2);
+            buffer.color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
+            buffer.uv(1, 0);
+            buffer.overlayCoords(OverlayTexture.NO_OVERLAY);
+            buffer.uv2(packedLight);
+            buffer.normal(0, 1, 0);
+            buffer.endVertex();
         }
     }
     

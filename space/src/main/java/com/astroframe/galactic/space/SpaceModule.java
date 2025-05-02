@@ -1,11 +1,11 @@
 package com.astroframe.galactic.space;
 
-import com.astroframe.galactic.core.api.registry.Registry;
-import com.astroframe.galactic.core.api.registry.RegistryEntry;
 import com.astroframe.galactic.space.implementation.hologram.HolographicProjectorBlock;
 import com.astroframe.galactic.space.implementation.hologram.HolographicProjectorBlockEntity;
 import com.astroframe.galactic.space.implementation.assembly.RocketAssemblyTable;
+import com.astroframe.galactic.space.implementation.assembly.RocketAssemblyTableBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -17,6 +17,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
@@ -42,14 +43,14 @@ public class SpaceModule {
             DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, MODID);
     
     // Blocks
-    public static final RegistryEntry<Block> ROCKET_ASSEMBLY_TABLE = registerBlock("rocket_assembly_table",
+    public static final DeferredHolder<Block, Block> ROCKET_ASSEMBLY_TABLE = registerBlock("rocket_assembly_table",
             () -> new RocketAssemblyTable(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .strength(5.0F, 6.0F)
                     .sound(SoundType.METAL)
                     .requiresCorrectToolForDrops()));
     
-    public static final RegistryEntry<Block> HOLOGRAPHIC_PROJECTOR = registerBlock("holographic_projector",
+    public static final DeferredHolder<Block, Block> HOLOGRAPHIC_PROJECTOR = registerBlock("holographic_projector",
             () -> new HolographicProjectorBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .strength(3.5F)
@@ -58,10 +59,15 @@ public class SpaceModule {
                     .lightLevel(state -> state.getValue(HolographicProjectorBlock.ACTIVE) ? 10 : 0)));
     
     // Block Entities
-    public static final RegistryEntry<BlockEntityType<HolographicProjectorBlockEntity>> HOLOGRAPHIC_PROJECTOR_BLOCK_ENTITY = 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HolographicProjectorBlockEntity>> HOLOGRAPHIC_PROJECTOR_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("holographic_projector", 
                     () -> BlockEntityType.Builder.of(HolographicProjectorBlockEntity::new, 
                             HOLOGRAPHIC_PROJECTOR.get()).build(null));
+    
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RocketAssemblyTableBlockEntity>> ROCKET_ASSEMBLY_TABLE_BLOCK_ENTITY = 
+            BLOCK_ENTITIES.register("rocket_assembly_table", 
+                    () -> BlockEntityType.Builder.of(RocketAssemblyTableBlockEntity::new, 
+                            ROCKET_ASSEMBLY_TABLE.get()).build(null));
     
     /**
      * Constructor for the Space module.
@@ -87,8 +93,8 @@ public class SpaceModule {
      * @param blockSupplier The block supplier
      * @return The registry entry
      */
-    private static <T extends Block> RegistryEntry<T> registerBlock(String name, Supplier<T> blockSupplier) {
-        RegistryEntry<T> block = BLOCKS.register(name, blockSupplier);
+    private static <T extends Block> DeferredHolder<Block, T> registerBlock(String name, Supplier<T> blockSupplier) {
+        DeferredHolder<Block, T> block = BLOCKS.register(name, blockSupplier);
         ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
         return block;
     }
