@@ -71,22 +71,22 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
     protected void loadData(CompoundTag tag) {
         // Load active state
         if (tag.contains("Active")) {
-            active = tag.getBoolean("Active").orElse(false);
+            active = tag.getBoolean("Active");
         }
         
         // Load rotation angle
         if (tag.contains("RotationAngle")) {
-            rotationAngle = tag.getFloat("RotationAngle").orElse(0.0F);
+            rotationAngle = tag.getFloat("RotationAngle");
         }
         
         // Load linked table position if it exists
         if (tag.contains("LinkedTable")) {
-            // In NeoForge 1.21.5, getCompound returns an Optional<CompoundTag>
-            CompoundTag posTag = tag.getCompound("LinkedTable").orElse(new CompoundTag());
+            // Get the compound tag directly for NeoForge 1.21.5 compatibility
+            CompoundTag posTag = tag.getCompound("LinkedTable");
             if (!posTag.isEmpty()) {
-                int x = posTag.getInt("X").orElse(0);
-                int y = posTag.getInt("Y").orElse(0);
-                int z = posTag.getInt("Z").orElse(0);
+                int x = posTag.getInt("X");
+                int y = posTag.getInt("Y");
+                int z = posTag.getInt("Z");
                 linkedTablePos = new BlockPos(x, y, z);
             } else {
                 linkedTablePos = null;

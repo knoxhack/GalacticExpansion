@@ -205,17 +205,14 @@ public class BaseCargoBay implements ICargoBay {
         return result;
     }
     
-    @Override
     public boolean hasVacuumSeal() {
         return hasVacuumSeal;
     }
     
-    @Override
     public boolean hasTemperatureRegulation() {
         return hasTemperatureRegulation;
     }
     
-    @Override
     public boolean hasRadiationShielding() {
         return hasRadiationShielding;
     }

@@ -5,7 +5,7 @@ import org.joml.Matrix4f;
 
 /**
  * Helper class for vertex rendering compatibility across Minecraft versions.
- * Simplified for NeoForge 1.21.5
+ * Updated for NeoForge 1.21.5
  */
 public class VertexHelper {
     
@@ -24,11 +24,13 @@ public class VertexHelper {
      */
     public static void addColoredVertex(VertexConsumer consumer, float x, float y, float z, 
                                       float red, float green, float blue, float alpha) {
-        // Simple implementation for NeoForge 1.21.5
-        // Just add the position, color, and normal
-        consumer.vertex(x, y, z);
+        // Implementation for NeoForge 1.21.5
+        // Need to use a matrix for position
+        Matrix4f matrix = new Matrix4f();
+        matrix.setIdentity();
+        consumer.vertex(matrix, x, y, z);
         consumer.color(red, green, blue, alpha);
-        consumer.normal(0.0F, 1.0F, 0.0F);
+        consumer.normal(0, 1, 0);
         consumer.endVertex();
     }
 }
