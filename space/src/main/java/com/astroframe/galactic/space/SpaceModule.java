@@ -72,39 +72,20 @@ public class SpaceModule {
                     .requiresCorrectToolForDrops()
                     .lightLevel(state -> state.getValue(HolographicProjectorBlock.ACTIVE) ? 10 : 0)));
     
-    // Block Entities - simplified stubs
-    // These may not be fully functional but will allow compilation
-    @SuppressWarnings("unchecked")
+    // Block Entities - using the Builder pattern directly
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HolographicProjectorBlockEntity>> HOLOGRAPHIC_PROJECTOR_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("holographic_projector", 
-                    () -> {
-                        // Create a simple constructor reference
-                        BlockEntityType.BlockEntitySupplier<HolographicProjectorBlockEntity> supplier = 
-                            HolographicProjectorBlockEntity::new;
-                            
-                        // Create a set of valid blocks
-                        Set<Block> validBlocks = Set.of(HOLOGRAPHIC_PROJECTOR.get());
-                        
-                        // Create the type directly
-                        return (BlockEntityType<HolographicProjectorBlockEntity>) 
-                            BlockEntityType.REGISTRATION_FACTORIES.createType(supplier, validBlocks);
-                    });
+                    () -> BlockEntityType.Builder.<HolographicProjectorBlockEntity>of(
+                            HolographicProjectorBlockEntity::new, 
+                            HOLOGRAPHIC_PROJECTOR.get())
+                        .build(null));
     
-    @SuppressWarnings("unchecked")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RocketAssemblyTableBlockEntity>> ROCKET_ASSEMBLY_TABLE_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("rocket_assembly_table", 
-                    () -> {
-                        // Create a simple constructor reference
-                        BlockEntityType.BlockEntitySupplier<RocketAssemblyTableBlockEntity> supplier = 
-                            RocketAssemblyTableBlockEntity::new;
-                            
-                        // Create a set of valid blocks
-                        Set<Block> validBlocks = Set.of(ROCKET_ASSEMBLY_TABLE.get());
-                        
-                        // Create the type directly
-                        return (BlockEntityType<RocketAssemblyTableBlockEntity>) 
-                            BlockEntityType.REGISTRATION_FACTORIES.createType(supplier, validBlocks);
-                    });
+                    () -> BlockEntityType.Builder.<RocketAssemblyTableBlockEntity>of(
+                            RocketAssemblyTableBlockEntity::new, 
+                            ROCKET_ASSEMBLY_TABLE.get())
+                        .build(null));
                             
     // Menus
     public static final DeferredHolder<MenuType<?>, MenuType<RocketAssemblyMenu>> ROCKET_ASSEMBLY_MENU =
