@@ -97,7 +97,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         
         // Start building lines - NeoForge 1.21.5 compatible
         builder.begin(com.mojang.blaze3d.vertex.VertexFormat.Mode.LINES, 
-                      com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR_TEX_NORMAL);
+                      com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR_TEX_NORMAL_PADDING);
         
         // Render base platform with direct BufferBuilder
         renderHologramBase(poseStack, builder);
@@ -115,7 +115,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         renderScanLines(poseStack, builder, scanHeight);
         
         // Finish rendering
-        tesselator.end(); // In NeoForge, Tesselator.end() should be used to complete rendering
+        tesselator.getBuilder().end(); // In NeoForge 1.21.5, we end the builder and draw it
         
         // Reset render state (NeoForge 1.21.5 doesn't use RenderSystem.disableBlend directly)
         // Instead we rely on the renderer to handle state
@@ -216,19 +216,19 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         // Draw the line using Vector4f transformation for NeoForge 1.21.5
         Vector4f pos1 = new Vector4f(x1, y1, z1, 1.0f);
         pos1.mul(pose);
-        builder.vertex(pos1.x, pos1.y, pos1.z, 
-                red, green, blue, alpha, 
-                0.0f, 1.0f, 
-                0, 0, 1, 
-                0);
+        builder.vertex(pos1.x, pos1.y, pos1.z)
+               .color(red, green, blue, alpha)
+               .uv(0.0f, 1.0f)
+               .normal(0, 0, 1)
+               .endVertex();
                 
         Vector4f pos2 = new Vector4f(x2, y2, z2, 1.0f);
         pos2.mul(pose);
-        builder.vertex(pos2.x, pos2.y, pos2.z, 
-                red, green, blue, alpha, 
-                0.0f, 1.0f, 
-                0, 0, 1, 
-                0);
+        builder.vertex(pos2.x, pos2.y, pos2.z)
+               .color(red, green, blue, alpha)
+               .uv(0.0f, 1.0f)
+               .normal(0, 0, 1)
+               .endVertex();
     }
     
     /**
@@ -337,19 +337,19 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         // Draw the line using Vector4f transformation for NeoForge 1.21.5
         Vector4f pos1 = new Vector4f(x1, y1, z1, 1.0f);
         pos1.mul(pose);
-        builder.vertex(pos1.x, pos1.y, pos1.z, 
-                red, green, blue, alphaValue, 
-                0.0f, 1.0f, 
-                0, 0, 1, 
-                0);
+        builder.vertex(pos1.x, pos1.y, pos1.z)
+               .color(red, green, blue, alphaValue)
+               .uv(0.0f, 1.0f)
+               .normal(0, 0, 1)
+               .endVertex();
                 
         Vector4f pos2 = new Vector4f(x2, y2, z2, 1.0f);
         pos2.mul(pose);
-        builder.vertex(pos2.x, pos2.y, pos2.z, 
-                red, green, blue, alphaValue, 
-                0.0f, 1.0f, 
-                0, 0, 1, 
-                0);
+        builder.vertex(pos2.x, pos2.y, pos2.z)
+               .color(red, green, blue, alphaValue)
+               .uv(0.0f, 1.0f)
+               .normal(0, 0, 1)
+               .endVertex();
     }
     
     /**

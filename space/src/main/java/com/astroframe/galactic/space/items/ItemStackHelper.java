@@ -154,16 +154,16 @@ public class ItemStackHelper {
         }
         
         try {
-            // Handle Optional return type in NeoForge 1.21.5
-            java.util.Optional<String> stringOpt = tag.getStringOptional(key);
-            return stringOpt.orElse("");
-        } catch (NoSuchMethodError e) {
-            try {
-                // Fallback to direct method for older versions
-                return tag.getString(key);
-            } catch (Exception e2) {
-                return "";
+            // In NeoForge 1.21.5, getString returns an Optional<String>
+            Object result = tag.getString(key);
+            if (result instanceof java.util.Optional) {
+                @SuppressWarnings("unchecked")
+                java.util.Optional<String> opt = (java.util.Optional<String>) result;
+                return opt.orElse("");
+            } else if (result instanceof String) {
+                return (String) result;
             }
+            return "";
         } catch (Exception e) {
             return "";
         }
@@ -182,16 +182,16 @@ public class ItemStackHelper {
         }
         
         try {
-            // Handle Optional return type in NeoForge 1.21.5
-            java.util.Optional<Integer> intOpt = tag.getIntOptional(key);
-            return intOpt.orElse(0);
-        } catch (NoSuchMethodError e) {
-            try {
-                // Fallback to direct method for older versions
-                return tag.getInt(key);
-            } catch (Exception e2) {
-                return 0;
+            // In NeoForge 1.21.5, getInt returns an Optional<Integer>
+            Object result = tag.getInt(key);
+            if (result instanceof java.util.Optional) {
+                @SuppressWarnings("unchecked")
+                java.util.Optional<Integer> opt = (java.util.Optional<Integer>) result;
+                return opt.orElse(0);
+            } else if (result instanceof Integer) {
+                return (Integer) result;
             }
+            return 0;
         } catch (Exception e) {
             return 0;
         }
