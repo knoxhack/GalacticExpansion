@@ -144,6 +144,15 @@ public class BaseRocketEngine implements IRocketEngine {
     }
     
     @Override
+    public List<FuelType> getCompatibleFuels() {
+        // Return a list of compatible fuels
+        // By default, only return the primary fuel type
+        List<FuelType> compatibleFuels = new ArrayList<>();
+        compatibleFuels.add(fuelType);
+        return compatibleFuels;
+    }
+    
+    @Override
     public boolean canOperateInAtmosphere() {
         return canOperateInAtmosphere;
     }

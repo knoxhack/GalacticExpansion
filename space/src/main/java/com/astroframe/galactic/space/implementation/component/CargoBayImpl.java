@@ -212,18 +212,31 @@ public class CargoBayImpl implements ICargoBay {
         return hasRadiationShielding;
     }
     
-    public ItemStack removeItem(int index) {
+    @Override
+    public net.minecraft.world.item.ItemStack removeItem(int index) {
         // NeoForge 1.21.5 compatibility implementation
         // Check if the index is valid and the slot has an item
         if (index < 0 || index >= storageCapacity || !contents.containsKey(index)) {
-            return ItemStack.EMPTY;
+            return net.minecraft.world.item.ItemStack.EMPTY;
         }
         
         // Get the item and remove it from the contents
-        ItemStack removed = contents.get(index);
+        com.astroframe.galactic.core.api.common.ItemStack removed = contents.get(index);
         contents.remove(index);
         
-        return removed;
+        // Convert our custom ItemStack to Minecraft's ItemStack
+        if (removed == null || removed.isEmpty()) {
+            return net.minecraft.world.item.ItemStack.EMPTY;
+        }
+        
+        // Create a Minecraft ItemStack with the same properties
+        net.minecraft.world.item.ItemStack mcStack = new net.minecraft.world.item.ItemStack(
+            net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
+                new net.minecraft.resources.ResourceLocation(removed.getItemId())),
+            removed.getCount()
+        );
+        
+        return mcStack;
     }
 
     /**

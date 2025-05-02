@@ -1,5 +1,6 @@
 package com.astroframe.galactic.space.implementation.render;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import org.joml.Matrix4f;
 
@@ -25,12 +26,19 @@ public class VertexHelper {
     public static void addColoredVertex(VertexConsumer consumer, float x, float y, float z, 
                                       float red, float green, float blue, float alpha) {
         // Implementation for NeoForge 1.21.5
-        // Need to use a matrix for position
-        Matrix4f matrix = new Matrix4f();
-        matrix.setIdentity();
-        consumer.vertex(matrix, x, y, z);
-        consumer.color(red, green, blue, alpha);
-        consumer.normal(0, 1, 0);
-        consumer.endVertex();
+        // Use a PoseStack for matrix generation
+        PoseStack poseStack = new PoseStack();
+        poseStack.pushPose();
+        
+        // Get the transform matrix from the pose stack
+        Matrix4f matrix = poseStack.last().pose();
+        
+        // Add vertex data
+        consumer.vertex(matrix, x, y, z)
+                .color(red, green, blue, alpha)
+                .normal(0.0F, 1.0F, 0.0F)
+                .endVertex();
+                
+        poseStack.popPose();
     }
 }
