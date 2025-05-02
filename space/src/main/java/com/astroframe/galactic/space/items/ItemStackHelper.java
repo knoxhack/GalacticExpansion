@@ -189,6 +189,103 @@ public class ItemStackHelper {
     }
     
     /**
+     * Gets a list tag from a compound tag.
+     * 
+     * @param tag The compound tag
+     * @param key The key
+     * @param type The tag type (optional)
+     * @return The list tag or null if not found
+     */
+    public static ListTag getList(CompoundTag tag, String key, int type) {
+        if (tag == null || !tag.contains(key)) {
+            return null;
+        }
+        
+        try {
+            // Try both methods to get a list
+            try {
+                // Try with type parameter first (older versions)
+                return tag.getList(key, type);
+            } catch (NoSuchMethodError | Exception e) {
+                try {
+                    // Try without type parameter (newer versions)
+                    return tag.getList(key);
+                } catch (NoSuchMethodError | Exception e2) {
+                    // Last resort: get raw and cast
+                    Tag rawTag = tag.get(key);
+                    if (rawTag instanceof ListTag) {
+                        return (ListTag) rawTag;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // Fallback to null on any error
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Gets a compound tag from a list tag at the specified index.
+     * 
+     * @param listTag The list tag
+     * @param index The index
+     * @return The compound tag or null if not found
+     */
+    public static CompoundTag getCompound(ListTag listTag, int index) {
+        if (listTag == null || index < 0 || index >= listTag.size()) {
+            return null;
+        }
+        
+        try {
+            // Try direct method first
+            try {
+                return listTag.getCompound(index);
+            } catch (Exception e) {
+                // Try alternate approach
+                Tag tag = listTag.get(index);
+                if (tag instanceof CompoundTag) {
+                    return (CompoundTag) tag;
+                }
+            }
+        } catch (Exception e) {
+            // Ignore and return null
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Gets a compound tag from another compound tag.
+     * 
+     * @param tag The compound tag
+     * @param key The key
+     * @return The compound tag or null if not found
+     */
+    public static CompoundTag getCompound(CompoundTag tag, String key) {
+        if (tag == null || !tag.contains(key)) {
+            return null;
+        }
+        
+        try {
+            // Try direct method
+            try {
+                return tag.getCompound(key);
+            } catch (Exception e) {
+                // Try to get the raw tag and cast it
+                Tag innerTag = tag.get(key);
+                if (innerTag instanceof CompoundTag) {
+                    return (CompoundTag) innerTag;
+                }
+            }
+        } catch (Exception e) {
+            // Ignore and return null
+        }
+        
+        return null;
+    }
+    
+    /**
      * Helper method to handle OptionalXXX return types in NeoForge 1.21.5
      */
     @SuppressWarnings("unchecked")

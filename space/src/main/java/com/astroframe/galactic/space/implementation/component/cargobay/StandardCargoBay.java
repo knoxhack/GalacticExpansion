@@ -222,15 +222,8 @@ public class StandardCargoBay implements ICargoBay {
         items.clear();
         if (tag.contains("Items")) {
             try {
-                // Get the items list tag - handling NeoForge 1.21.5 compatibility
-                ListTag itemsTag = null;
-                try {
-                    // Try direct method first
-                    itemsTag = tag.getList("Items");
-                } catch (Exception e) {
-                    // Fall back to type-specific method
-                    itemsTag = tag.getList("Items", 10); // 10 is CompoundTag type
-                }
+                // Get the items list tag using our helper
+                ListTag itemsTag = ItemStackHelper.getList(tag, "Items", 10); // 10 is CompoundTag type
                 
                 if (itemsTag == null) {
                     return; // No items to load
@@ -238,20 +231,9 @@ public class StandardCargoBay implements ICargoBay {
                 
                 // Process each item in the list
                 for (int i = 0; i < itemsTag.size(); i++) {
-                    CompoundTag itemTag = null;
+                    CompoundTag itemTag = ItemStackHelper.getCompound(itemsTag, i);
                     
                     try {
-                        // Get the item's tag compound
-                        try {
-                            itemTag = itemsTag.getCompound(i);
-                        } catch (Exception e) {
-                            // In some versions, we might need different access
-                            Object tagAtIndex = itemsTag.get(i);
-                            if (tagAtIndex instanceof CompoundTag) {
-                                itemTag = (CompoundTag) tagAtIndex;
-                            }
-                        }
-                        
                         if (itemTag == null) {
                             continue;
                         }
@@ -281,24 +263,9 @@ public class StandardCargoBay implements ICargoBay {
                         
                         // Handle any item tags
                         if (itemTag.contains("tag")) {
-                            try {
-                                CompoundTag tagData = null;
-                                
-                                try {
-                                    tagData = itemTag.getCompound("tag");
-                                } catch (Exception e) {
-                                    // Handle optional return
-                                    Object tagObj = itemTag.get("tag");
-                                    if (tagObj instanceof CompoundTag) {
-                                        tagData = (CompoundTag) tagObj;
-                                    }
-                                }
-                                
-                                if (tagData != null) {
-                                    ItemStackHelper.setTag(stack, tagData);
-                                }
-                            } catch (Exception e) {
-                                // Ignore tag loading errors
+                            CompoundTag tagData = ItemStackHelper.getCompound(itemTag, "tag");
+                            if (tagData != null) {
+                                ItemStackHelper.setTag(stack, tagData);
                             }
                         }
                         
@@ -314,7 +281,12 @@ public class StandardCargoBay implements ICargoBay {
         }
     }
     
-    @Override
+    /**
+     * Get a detailed string representation of this component.
+     * This is not an override as it's not in the component interface.
+     * 
+     * @return A detailed string describing this component
+     */
     public String getDetailsString() {
         StringBuilder sb = new StringBuilder();
         sb.append("ID: ").append(id).append("\n");
@@ -364,8 +336,12 @@ public class StandardCargoBay implements ICargoBay {
         return mass;
     }
     
+    /**
+     * Gets the current durability of this component.
+     * @return The current durability
+     */
     @Override
-    public int getDurability() {
+    public int getCurrentDurability() {
         return durability;
     }
     
@@ -374,24 +350,36 @@ public class StandardCargoBay implements ICargoBay {
         return maxDurability;
     }
     
-    @Override
+    /**
+     * Sets the current durability to a specific value.
+     * This is a utility method not in the interface.
+     * 
+     * @param durability The new durability value
+     */
     public void setDurability(int durability) {
         this.durability = Math.max(0, Math.min(durability, maxDurability));
     }
     
+    /**
+     * Damages this component by the given amount.
+     * 
+     * @param amount The amount of damage to apply
+     */
     @Override
-    public boolean damage(int amount) {
+    public void damage(int amount) {
         this.durability = Math.max(0, this.durability - amount);
-        return this.durability > 0;
     }
     
+    /**
+     * Repairs this component by the given amount.
+     * 
+     * @param amount The amount to repair
+     */
     @Override
-    public boolean repair(int amount) {
+    public void repair(int amount) {
         if (this.durability < this.maxDurability) {
             this.durability = Math.min(this.maxDurability, this.durability + amount);
-            return true;
         }
-        return false;
     }
     
     @Override
@@ -421,15 +409,21 @@ public class StandardCargoBay implements ICargoBay {
         float baseWeight = stack.getCount() * 0.5f;
         
         // Adjust weight based on item properties - this could be expanded with a full item weight system
-        String itemId = stack.getItem().toString();
-        
-        // Heavier items
-        if (itemId.contains("block") || itemId.contains("ore")) {
-            baseWeight *= 2.0f; // Blocks and ores are heavier
-        }
-        // Lighter items
-        else if (itemId.contains("sapling") || itemId.contains("seed") || itemId.contains("flower")) {
-            baseWeight *= 0.2f; // Natural items are lighter
+        try {
+            // Try to get the registry name of the item
+            ResourceLocation itemId = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem());
+            String itemPath = itemId != null ? itemId.getPath() : "";
+            
+            // Heavier items
+            if (itemPath.contains("block") || itemPath.contains("ore")) {
+                baseWeight *= 2.0f; // Blocks and ores are heavier
+            }
+            // Lighter items
+            else if (itemPath.contains("sapling") || itemPath.contains("seed") || itemPath.contains("flower")) {
+                baseWeight *= 0.2f; // Natural items are lighter
+            }
+        } catch (Exception e) {
+            // If we can't get the registry name, just use the base weight
         }
         
         return baseWeight;
