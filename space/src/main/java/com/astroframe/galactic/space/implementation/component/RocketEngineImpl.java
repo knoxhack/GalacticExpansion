@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -145,6 +146,19 @@ public class RocketEngineImpl implements IRocketEngine {
     @Override
     public EngineType getEngineType() {
         return engineType;
+    }
+    
+    @Override
+    public double getHeatGeneration() {
+        // Base heat generation is proportional to thrust and inversely related to efficiency
+        return thrust * (1.5 - efficiency * 0.5) * 0.5;
+    }
+    
+    @Override
+    public List<FuelType> getCompatibleFuels() {
+        // For simplicity, we're returning a list with just the primary fuel type
+        // In a more advanced implementation, this could depend on engine type
+        return Collections.singletonList(fuelType);
     }
 
     /**
