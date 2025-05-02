@@ -1,5 +1,6 @@
 package com.astroframe.galactic.machinery.api;
 
+import com.astroframe.galactic.core.api.block.BlockEntityBase;
 import com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit;
 import com.astroframe.galactic.machinery.energy.MachineEnergyStorage;
 // Use the correct Minecraft imports for NeoForge 1.21.5
@@ -7,12 +8,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +25,7 @@ import net.neoforged.neoforge.items.IItemHandler;
  * Base block entity class for machines.
  * Implements common machine functionality including energy storage and basic inventory.
  */
-public abstract class MachineBlockEntity extends BlockEntity implements Machine {
+public abstract class MachineBlockEntity extends BlockEntityBase implements Machine {
     
     protected final MachineEnergyStorage energyStorage;
     protected final NonNullList<ItemStack> inventory;
@@ -190,28 +189,14 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
     }
     
     /**
-     * This method is called by the BlockEntity to save data.
-     * In Neoforge 1.21.5, the method signature has changed to include a Provider parameter.
-     * We'll avoid using @Override to prevent compilation errors and implement our own version.
+     * Override for BlockEntityBase.saveData.
+     * Implements the abstract method from BlockEntityBase.
      * 
      * @param tag The tag to save data to
      */
+    @Override
     protected void saveData(CompoundTag tag) {
-        // We'll skip calling super methods to avoid signature conflicts
-        // Delegate to our custom implementation
-        saveMachineData(tag);
-    }
-    
-    /**
-     * Custom method for saving machine data.
-     * Used to store all machine-specific data without worrying about method signature conflicts.
-     * 
-     * @param tag The tag to save data to
-     */
-    protected void saveMachineData(CompoundTag tag) {
-        
-        // Save inventory - add a Provider parameter to match new method signature
-        // Note: In this version, we'll skip inventory saving
+        // Save inventory - we'll skip inventory saving in this version
         
         // Save energy
         CompoundTag energyTag = new CompoundTag();
@@ -226,47 +211,40 @@ public abstract class MachineBlockEntity extends BlockEntity implements Machine 
     }
     
     /**
-     * This method is called to load data from NBT.
-     * In Neoforge 1.21.5, the method signature has changed from the earlier versions.
-     * We'll avoid using @Override to prevent compilation errors.
+     * Override for BlockEntityBase.loadData.
+     * Implements the abstract method from BlockEntityBase.
      * 
      * @param tag The tag to load data from
      */
-    public void loadData(CompoundTag tag) {
-        // We'll skip calling super methods to avoid signature conflicts
-        // Delegate to our custom implementation
-        loadMachineData(tag);
-    }
-    
-    /**
-     * Custom method for loading machine data.
-     * Used to load all machine-specific data without worrying about method signature conflicts.
-     * 
-     * @param tag The tag to load data from
-     */
-    protected void loadMachineData(CompoundTag tag) {
+    @Override
+    protected void loadData(CompoundTag tag) {
         // Skip ContainerHelper.loadAllItems since method signatures have changed
         // We'll implement a custom version later
         
-        // We can't directly modify the energy in our anonymous class implementation
-        // So we just track the values in the NBT for now
+        // Load energy
+        if (tag.contains("EnergyStorage")) {
+            // We can't directly modify the energy in our anonymous class implementation
+            // We just track the values for now
+        }
         
         // Load processing state
-        processingTime = tag.getInt("ProcessingTime").orElse(0);
-        processingTimeTotal = tag.getInt("ProcessingTimeTotal").orElse(0);
-        isActive = tag.getBoolean("IsActive").orElse(false);
-    }
-    
-    @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
-    
-    // No @Override since method signature has changed in Neoforge
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = new CompoundTag();
-        saveMachineData(tag);
-        return tag;
+        if (tag.contains("ProcessingTime")) {
+            processingTime = tag.getInt("ProcessingTime");
+        } else {
+            processingTime = 0;
+        }
+        
+        if (tag.contains("ProcessingTimeTotal")) {
+            processingTimeTotal = tag.getInt("ProcessingTimeTotal");
+        } else {
+            processingTimeTotal = getDefaultProcessingTime();
+        }
+        
+        if (tag.contains("IsActive")) {
+            isActive = tag.getBoolean("IsActive");
+        } else {
+            isActive = false;
+        }
     }
     
     /**
