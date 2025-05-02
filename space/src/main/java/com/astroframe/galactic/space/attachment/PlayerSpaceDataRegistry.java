@@ -1,6 +1,7 @@
 package com.astroframe.galactic.space.attachment;
 
 import com.astroframe.galactic.space.GalacticSpace;
+import com.mojang.serialization.Codec;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
