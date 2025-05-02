@@ -245,8 +245,8 @@ public class ModularRocket implements IRocket {
     
     @Override
     public boolean launch(ICelestialBody destination) {
-        if (canReach(destination) && status == RocketStatus.READY_FOR_LAUNCH) {
-            status = RocketStatus.LAUNCHING;
+        if (canReach(destination) && status == IRocket.RocketStatus.READY_FOR_LAUNCH) {
+            status = IRocket.RocketStatus.LAUNCHING;
             
             // Consume fuel
             int fuelRequired = calculateFuelRequired(destination);
@@ -268,7 +268,7 @@ public class ModularRocket implements IRocket {
      * @param status The new status
      */
     @Override
-    public void setStatus(RocketStatus status) {
+    public void setStatus(IRocket.RocketStatus status) {
         this.status = status;
     }
     
@@ -296,8 +296,8 @@ public class ModularRocket implements IRocket {
         }
         
         health = Math.max(0, health - amount);
-        if (health == 0 && status != RocketStatus.CRASHED) {
-            status = RocketStatus.CRASHED;
+        if (health == 0 && status != IRocket.RocketStatus.CRASHED) {
+            status = IRocket.RocketStatus.CRASHED;
         }
     }
     
@@ -487,7 +487,8 @@ public class ModularRocket implements IRocket {
             CompoundTag itemTag = new CompoundTag();
             itemTag.putInt("Slot", entry.getKey());
             ItemStack stack = entry.getValue();
-            stack.save(itemTag); // This method now takes a direct CompoundTag in 1.21.5
+            // In NeoForge 1.21.5, we need to use of(ItemStack) instead of save()
+            itemTag.put("Item", stack.saveToTag(new CompoundTag()));
             cargoTag.put("Item" + i, itemTag);
             i++;
         }
@@ -631,11 +632,11 @@ public class ModularRocket implements IRocket {
                 health = tag.getFloat("health").orElse(100f);
             }
             
-            RocketStatus status = RocketStatus.BUILDING;
+            IRocket.RocketStatus status = IRocket.RocketStatus.BUILDING;
             if (tag.contains("status")) {
                 int statusValue = tag.getInt("status").orElse(0);
-                if (statusValue >= 0 && statusValue < RocketStatus.values().length) {
-                    status = RocketStatus.values()[statusValue];
+                if (statusValue >= 0 && statusValue < IRocket.RocketStatus.values().length) {
+                    status = IRocket.RocketStatus.values()[statusValue];
                 }
             }
             
