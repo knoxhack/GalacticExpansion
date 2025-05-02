@@ -69,7 +69,7 @@ public class BaseCargoBay implements ICargoBay {
     
     @Override
     public RocketComponentType getType() {
-        return RocketComponentType.CARGO;
+        return RocketComponentType.STORAGE;
     }
     
     @Override

@@ -2,6 +2,8 @@ package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.IRocketEngine;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
+import com.astroframe.galactic.core.api.space.component.enums.EngineType;
+import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 
@@ -175,6 +177,7 @@ public class BaseRocketEngine implements IRocketEngine {
         private boolean canOperateInAtmosphere = true;
         private boolean canOperateInSpace = true;
         private int heatCapacity = 500;
+        private EngineType engineType = EngineType.CHEMICAL;
         
         /**
          * Creates a new builder with required parameters.
@@ -304,6 +307,16 @@ public class BaseRocketEngine implements IRocketEngine {
          */
         public Builder heatCapacity(int heatCapacity) {
             this.heatCapacity = heatCapacity;
+            return this;
+        }
+        
+        /**
+         * Sets the engine type.
+         * @param engineType The engine type
+         * @return This builder
+         */
+        public Builder engineType(EngineType engineType) {
+            this.engineType = engineType;
             return this;
         }
         
