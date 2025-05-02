@@ -150,7 +150,7 @@ public class RocketComponentTester {
                 return false;
             }
             
-            if (!tag.contains("Tier") || tag.getInt("Tier") != 2) {
+            if (!tag.contains("Tier") || com.astroframe.galactic.space.items.ItemStackHelper.getInt(tag, "Tier") != 2) {
                 LOGGER.error("Serialized tag missing or incorrect Tier");
                 return false;
             }
@@ -348,7 +348,7 @@ public class RocketComponentTester {
                 return false;
             }
             
-            if (!tag.contains("ComputingPower") || tag.getInt("ComputingPower") != commandModule.getComputingPower()) {
+            if (!tag.contains("ComputingPower") || com.astroframe.galactic.space.items.ItemStackHelper.getInt(tag, "ComputingPower") != commandModule.getComputingPower()) {
                 LOGGER.error("Command module serialization missing or incorrect ComputingPower");
                 return false;
             }
@@ -625,10 +625,9 @@ public class RocketComponentTester {
             }
             
             // Create a test item
-            net.minecraft.world.item.ItemStack testItem = new net.minecraft.world.item.ItemStack(
-                net.minecraft.core.registries.BuiltInRegistries.ITEM.get(ResourceLocationHelper.create("minecraft", "iron_ingot")), 
-                10
-            );
+            net.minecraft.world.item.Item ironIngot = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
+                ResourceLocationHelper.create("minecraft", "iron_ingot"));
+            net.minecraft.world.item.ItemStack testItem = new net.minecraft.world.item.ItemStack(ironIngot, 10);
             
             // Test item addition
             boolean itemAdded = cargoBay.addItem(testItem);
@@ -660,7 +659,7 @@ public class RocketComponentTester {
                 return false;
             }
             
-            if (!tag.contains("MaxCapacity") || tag.getInt("MaxCapacity") != maxCapacity) {
+            if (!tag.contains("MaxCapacity") || com.astroframe.galactic.space.items.ItemStackHelper.getInt(tag, "MaxCapacity") != maxCapacity) {
                 LOGGER.error("Cargo bay serialization missing or incorrect MaxCapacity");
                 return false;
             }

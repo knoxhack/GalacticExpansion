@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
  * Provides an interface for adding/removing rocket components and
  * connects to holographic projectors to display the rocket design.
  */
-public class RocketAssemblyTable extends Block implements EntityBlock {
+public class RocketAssemblyTable extends BaseEntityBlock {
     
     // Properties
     public static final Property<Direction> FACING = HorizontalDirectionalBlock.FACING;
@@ -102,19 +102,22 @@ public class RocketAssemblyTable extends Block implements EntityBlock {
     }
     
     @Nullable
-    @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new RocketAssemblyTableBlockEntity(pos, state);
     }
     
     @Nullable
-    @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
         return (lvl, pos, blockState, blockEntity) -> {
             if (blockEntity instanceof RocketAssemblyTableBlockEntity assemblyTable) {
                 assemblyTable.tick(lvl, pos, blockState);
             }
         };
+    }
+    
+    @Override
+    public RenderShape getRenderShape(BlockState pState) {
+        return RenderShape.MODEL;
     }
     
     /**
@@ -150,11 +153,17 @@ public class RocketAssemblyTable extends Block implements EntityBlock {
     /**
      * Called when this block is removed.
      * Unlinks any connected holographic projectors.
-     * 
-     * Method for NeoForge 1.21.5
+     * Override from BaseEntityBlock for NeoForge 1.21.5
      */
+    @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!level.isClientSide && newState.getBlock() != this) {
+        if (state.is(newState.getBlock())) {
+            // If it's the same block type, normal behavior applies
+            super.onRemove(state, level, pos, newState, isMoving);
+            return;
+        }
+        
+        if (!level.isClientSide) {
             // Look for holographic projectors in a 5x5x5 area that might be linked to this
             BlockPos.betweenClosedStream(pos.offset(-2, -2, -2), pos.offset(2, 2, 2)).forEach(projectorPos -> {
                 BlockEntity blockEntity = level.getBlockEntity(projectorPos);
@@ -170,8 +179,7 @@ public class RocketAssemblyTable extends Block implements EntityBlock {
             });
         }
         
-        // Call the parent method
-        // In NeoForge 1.21.5, use the super implementation
+        // Must call this from BaseEntityBlock to properly remove the BlockEntity
         super.onRemove(state, level, pos, newState, isMoving);
     }
 }
