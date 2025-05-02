@@ -335,14 +335,26 @@ public class ComponentUtils {
     public static List<IRocketComponent> loadComponentsFromTag(ListTag listTag) {
         List<IRocketComponent> components = new ArrayList<>();
         for (int i = 0; i < listTag.size(); i++) {
-            CompoundTag componentTag = listTag.getCompound(i);
-            
-            String idStr = componentTag.getString("ID").orElse("");
-            if (!idStr.isEmpty()) {
-                ResourceLocation id = ResourceLocation.parse(idStr);
-                IRocketComponent component = createComponentFromTag(id, componentTag);
-                if (component != null) {
-                    components.add(component);
+            // In NeoForge 1.21.5, we need to check the tag type and cast
+            if (listTag.get(i) instanceof CompoundTag) {
+                CompoundTag componentTag = (CompoundTag) listTag.get(i);
+                
+                // In NeoForge 1.21.5, getString no longer returns Optional
+                if (componentTag.contains("ID")) {
+                    String idStr = componentTag.getString("ID");
+                    if (!idStr.isEmpty()) {
+                        try {
+                            // Use the constructor to avoid ResourceLocation.parse deprecation
+                            ResourceLocation id = new ResourceLocation(idStr);
+                            IRocketComponent component = createComponentFromTag(id, componentTag);
+                            if (component != null) {
+                                components.add(component);
+                            }
+                        } catch (Exception e) {
+                            // Log error and continue with next component
+                            System.err.println("Error loading component: " + e.getMessage());
+                        }
+                    }
                 }
             }
         }
