@@ -152,6 +152,7 @@ public class RocketAssemblyTable extends Block implements EntityBlock {
      * 
      * Method updated for NeoForge 1.21.5
      */
+    @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (!level.isClientSide && newState.getBlock() != this) {
             // Look for holographic projectors in a 5x5x5 area that might be linked to this
