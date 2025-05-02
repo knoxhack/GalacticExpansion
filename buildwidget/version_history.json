@@ -1,60 +1,60 @@
 [
   {
     "version": "0.1.0.b1-20250502",
-    "date": "2025-05-02T07:20:45.695Z",
+    "date": "2025-05-02T07:25:57.973Z",
     "buildNumber": 1,
     "buildMetrics": {
       "result": "success",
-      "duration": 8947,
+      "duration": 8653,
       "moduleStatuses": {
         "core": {
           "status": "building",
-          "lastUpdate": "2025-05-02T07:20:44.971Z",
+          "lastUpdate": "2025-05-02T07:25:57.273Z",
           "currentTask": "jar"
         },
         "power": {
           "status": "building",
-          "lastUpdate": "2025-05-02T07:20:44.671Z",
-          "currentTask": "jarJar"
+          "lastUpdate": "2025-05-02T07:25:57.075Z",
+          "currentTask": "jar"
         },
         "machinery": {
           "status": "building",
-          "lastUpdate": "2025-05-02T07:20:25.487Z",
+          "lastUpdate": "2025-05-02T07:25:34.632Z",
           "currentTask": "jar"
         },
         "biotech": {
           "status": "building",
-          "lastUpdate": "2025-05-02T07:19:28.306Z",
+          "lastUpdate": "2025-05-02T07:24:27.724Z",
           "currentTask": "build"
         },
         "construction": {
           "status": "building",
-          "lastUpdate": "2025-05-02T07:19:50.320Z",
+          "lastUpdate": "2025-05-02T07:24:58.959Z",
           "currentTask": "build"
         },
         "robotics": {
           "status": "building",
-          "lastUpdate": "2025-05-02T07:20:45.470Z",
+          "lastUpdate": "2025-05-02T07:25:57.774Z",
           "currentTask": "build"
         },
         "space": {
           "status": "building",
-          "lastUpdate": "2025-05-02T07:20:00.085Z",
-          "currentTask": "compileTestJava"
+          "lastUpdate": "2025-05-02T07:25:12.342Z",
+          "currentTask": "testClasses"
         },
         "utilities": {
           "status": "building",
-          "lastUpdate": "2025-05-02T07:20:14.767Z",
-          "currentTask": "testClasses"
+          "lastUpdate": "2025-05-02T07:25:24.629Z",
+          "currentTask": "test"
         },
         "vehicles": {
           "status": "building",
-          "lastUpdate": "2025-05-02T07:20:26.187Z",
+          "lastUpdate": "2025-05-02T07:25:35.333Z",
           "currentTask": "build"
         },
         "weaponry": {
           "status": "building",
-          "lastUpdate": "2025-05-02T07:20:35.740Z",
+          "lastUpdate": "2025-05-02T07:25:47.331Z",
           "currentTask": "build"
         }
       }

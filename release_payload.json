@@ -1,7 +1,8 @@
 {
-  "tag_name": "v0.1.0.b2-20250502",
-  "name": "Galactic Expansion 0.1.0.b2-20250502",
-  "body": "## Changes in this release\\n\\n- Improve release process by including only necessary mod files (f879405)
+  "tag_name": "v0.1.0.b3-20250502",
+  "name": "Galactic Expansion 0.1.0.b3-20250502",
+  "body": "## Changes in this release\\n\\n- Ensure new versions are created when publishing updates to GitHub (58b944d)
+- Improve release process by including only necessary mod files (f879405)
 - Clean up Gradle-related files to resolve build and release issues (3d3a387)
 - Improve the GitHub release process to handle file collisions (76c496d)
 - Fix problem publishing releases to GitHub with improved data formatting (0145461)
@@ -9,8 +10,7 @@
 - Add functionality to create and store detailed release information (ba09ece)
 - Update the background processes that run during each server game tick (568bf5c)
 - Update Gradle files to maintain project build consistency (dac1f5d)
-- Update Gradle build cache to improve build performance and reliability (1a53e66)
-- Update how the game manages the timing of critical space travel events (d70791c)",
+- Update Gradle build cache to improve build performance and reliability (1a53e66)",
   "draft": false,
   "prerelease": true
 }
