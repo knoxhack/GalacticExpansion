@@ -70,36 +70,44 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
     
     @Override
     protected void loadData(CompoundTag tag) {
-        // Load active state
+        // Load active state - simplified for NeoForge 1.21.5 compatibility
         if (tag.contains("Active")) {
-            active = tag.getBoolean("Active");
+            // Get boolean value directly from the tag
+            if (tag.getTagType("Active") == 1) { // TAG_BYTE type is 1
+                active = tag.getByte("Active") != 0;
+            }
         }
         
-        // Load rotation angle
+        // Load rotation angle - simplified for NeoForge 1.21.5 compatibility
         if (tag.contains("RotationAngle")) {
-            // Handle Optional return type in NeoForge 1.21.5
-            tag.getFloat("RotationAngle").ifPresent(value -> rotationAngle = value);
+            // Get float value directly from the tag
+            if (tag.getTagType("RotationAngle") == 5) { // TAG_FLOAT type is 5
+                rotationAngle = tag.getFloat("RotationAngle").orElse(0.0F);
+            }
         }
         
-        // Load linked table position if it exists
+        // Load linked table position if it exists - simplified approach
         if (tag.contains("LinkedTable")) {
-            // Handle Optional return type in NeoForge 1.21.5
-            tag.getCompound("LinkedTable").ifPresent(posTag -> {
-                if (!posTag.isEmpty()) {
-                    // Read coordinates directly - check if all coordinates exist
-                    if (posTag.contains("X") && posTag.contains("Y") && posTag.contains("Z")) {
-                        // Get coordinates safely handling Optional values
-                        Integer x = posTag.getInt("X").orElse(0);
-                        Integer y = posTag.getInt("Y").orElse(0);
-                        Integer z = posTag.getInt("Z").orElse(0);
+            if (tag.getTagType("LinkedTable") == 10) { // TAG_COMPOUND type is 10
+                CompoundTag linkedTag = null;
+                try {
+                    linkedTag = (CompoundTag) tag.get("LinkedTable");
+                    if (linkedTag != null && !linkedTag.isEmpty() &&
+                        linkedTag.contains("X") && linkedTag.contains("Y") && linkedTag.contains("Z")) {
+                        // Extract coordinates manually
+                        int x = linkedTag.getInt("X").orElse(0);
+                        int y = linkedTag.getInt("Y").orElse(0);
+                        int z = linkedTag.getInt("Z").orElse(0);
                         linkedTablePos = new BlockPos(x, y, z);
                     } else {
                         linkedTablePos = null;
                     }
-                } else {
+                } catch (Exception e) {
                     linkedTablePos = null;
                 }
-            });
+            } else {
+                linkedTablePos = null;
+            }
         } else {
             linkedTablePos = null;
         }
