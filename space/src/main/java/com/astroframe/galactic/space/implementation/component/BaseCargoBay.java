@@ -227,6 +227,18 @@ public class BaseCargoBay implements ICargoBay {
         return false;
     }
     
+    @Override
+    public boolean hasEnvironmentControl() {
+        // In NeoForge 1.21.5, environment control corresponds to temperature regulation
+        return hasTemperatureRegulation;
+    }
+    
+    @Override 
+    public boolean hasSecurityFeatures() {
+        // In NeoForge 1.21.5, security features include EMP shielding
+        return hasEmpShielding;
+    }
+    
     /**
      * Whether this cargo bay has EMP shielding.
      * @return true if the cargo bay has EMP shielding

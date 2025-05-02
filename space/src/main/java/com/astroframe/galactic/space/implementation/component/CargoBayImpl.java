@@ -209,6 +209,18 @@ public class CargoBayImpl implements ICargoBay {
         // By default, this cargo bay doesn't have automated loading
         return false;
     }
+    
+    @Override
+    public boolean hasEnvironmentControl() {
+        // In NeoForge 1.21.5, environment control corresponds to temperature regulation
+        return hasTemperatureRegulation;
+    }
+    
+    @Override
+    public boolean hasSecurityFeatures() {
+        // In NeoForge 1.21.5, security features include radiation shielding
+        return hasRadiationShielding;
+    }
 
     /**
      * Gets a list of tooltip lines for this component.
