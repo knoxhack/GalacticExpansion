@@ -259,11 +259,11 @@ public abstract class SpaceSuitItem extends ArmorItem {
             PROTECTION_PER_SLOT.put(EquipmentSlot.FEET, 3);
         }
         
-        public int getDurabilityForType(Type type) {
+        public int getDurabilityForType(net.minecraft.world.item.ArmorItem.Type type) {
             return DURABILITY_PER_SLOT.getOrDefault(type.getSlot(), 0);
         }
         
-        public int getDefenseForType(Type type) {
+        public int getDefenseForType(net.minecraft.world.item.ArmorItem.Type type) {
             return PROTECTION_PER_SLOT.getOrDefault(type.getSlot(), 0);
         }
         
