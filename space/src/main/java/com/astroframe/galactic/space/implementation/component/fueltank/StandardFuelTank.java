@@ -216,8 +216,14 @@ public class StandardFuelTank implements IFuelTank {
     
     @Override
     public void save(CompoundTag tag) {
-        // Call parent implementation to save common properties
-        IRocketComponent.super.save(tag);
+        // Save common properties manually since this is an interface
+        tag.putString("Id", getId().toString());
+        tag.putString("Name", getName());
+        tag.putString("Description", getDescription());
+        tag.putInt("Tier", getTier());
+        tag.putInt("Mass", getMass());
+        tag.putInt("MaxDurability", getMaxDurability());
+        tag.putInt("CurrentDurability", getCurrentDurability());
         
         // Save fuel tank specific properties
         tag.putInt("MaxFuelCapacity", maxFuelCapacity);
@@ -229,15 +235,15 @@ public class StandardFuelTank implements IFuelTank {
     
     @Override
     public void load(CompoundTag tag) {
-        // Call parent implementation to load common properties
-        IRocketComponent.super.load(tag);
+        // Load common properties manually since this is an interface
+        // ID is immutable so we don't load it
         
         // Load fuel tank specific properties
         if (tag.contains("MaxFuelCapacity")) {
-            this.maxFuelCapacity = tag.getInt("MaxFuelCapacity");
+            this.maxFuelCapacity = com.astroframe.galactic.space.items.ItemStackHelper.getInt(tag, "MaxFuelCapacity");
         }
         if (tag.contains("CurrentFuelLevel")) {
-            this.currentFuelLevel = tag.getInt("CurrentFuelLevel");
+            this.currentFuelLevel = com.astroframe.galactic.space.items.ItemStackHelper.getInt(tag, "CurrentFuelLevel");
         }
         
         // Load fuel type with fallback to default
