@@ -1,17 +1,16 @@
 package com.astroframe.galactic.core.api.space.util;
 
 import com.astroframe.galactic.core.api.space.component.*;
-import com.astroframe.galactic.core.api.space.component.properties.*;
 import com.astroframe.galactic.core.api.space.component.enums.CompartmentType;
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
 import com.astroframe.galactic.core.api.space.component.enums.LifeSupportType;
 import com.astroframe.galactic.core.api.space.component.enums.ShieldType;
+import com.astroframe.galactic.core.api.common.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -107,12 +106,12 @@ public class ComponentUtils {
         // Extract common properties
         int tier = 1;
         if (tag.contains("Tier")) {
-            tier = tag.getInt("Tier").orElse(1);
+            tier = tag.getInt("Tier");
         }
         
         int mass = 100;
         if (tag.contains("Mass")) {
-            mass = tag.getInt("Mass").orElse(100);
+            mass = tag.getInt("Mass");
         }
         
         // Create appropriate component based on type
@@ -142,31 +141,33 @@ public class ComponentUtils {
     private static IRocketEngine createDefaultEngine(ResourceLocation id, int tier, int mass, CompoundTag tag) {
         int thrust = 1000 * tier;
         if (tag.contains("Thrust")) {
-            thrust = tag.getInt("Thrust").orElse(thrust);
+            thrust = tag.getInt("Thrust");
         }
         
         float efficiency = 0.5f * tier;
         if (tag.contains("Efficiency")) {
-            efficiency = tag.getFloat("Efficiency").orElse(efficiency);
+            efficiency = tag.getFloat("Efficiency");
         }
         
         boolean atmosphereCapable = false;
         if (tag.contains("AtmosphereCapable")) {
-            atmosphereCapable = tag.getBoolean("AtmosphereCapable").orElse(false);
+            atmosphereCapable = tag.getBoolean("AtmosphereCapable");
         }
         
         boolean spaceCapable = true;
         if (tag.contains("SpaceCapable")) {
-            spaceCapable = tag.getBoolean("SpaceCapable").orElse(true);
+            spaceCapable = tag.getBoolean("SpaceCapable");
         }
         
         EngineType engineType = EngineType.CHEMICAL;
         if (tag.contains("EngineType")) {
-            String engineTypeStr = tag.getString("EngineType").orElse("");
-            try {
-                engineType = EngineType.valueOf(engineTypeStr);
-            } catch (IllegalArgumentException e) {
-                // Use default
+            String engineTypeStr = tag.getString("EngineType");
+            if (engineTypeStr != null && !engineTypeStr.isEmpty()) {
+                try {
+                    engineType = EngineType.valueOf(engineTypeStr);
+                } catch (IllegalArgumentException e) {
+                    // Use default
+                }
             }
         }
         
@@ -179,7 +180,7 @@ public class ComponentUtils {
     private static IFuelTank createDefaultFuelTank(ResourceLocation id, int tier, int mass, CompoundTag tag) {
         int capacity = 5000 * tier;
         if (tag.contains("Capacity")) {
-            capacity = tag.getInt("Capacity").orElse(capacity);
+            capacity = tag.getInt("Capacity");
         }
         
         return new DefaultFuelTank(id, tier, mass, capacity);
@@ -191,12 +192,12 @@ public class ComponentUtils {
     private static ICommandModule createDefaultCommandModule(ResourceLocation id, int tier, int mass, CompoundTag tag) {
         int crewCapacity = tier;
         if (tag.contains("CrewCapacity")) {
-            crewCapacity = tag.getInt("CrewCapacity").orElse(crewCapacity);
+            crewCapacity = tag.getInt("CrewCapacity");
         }
         
         int computerLevel = tier;
         if (tag.contains("ComputerLevel")) {
-            computerLevel = tag.getInt("ComputerLevel").orElse(computerLevel);
+            computerLevel = tag.getInt("ComputerLevel");
         }
         
         return new DefaultCommandModule(id, tier, mass, crewCapacity, computerLevel);
@@ -250,13 +251,15 @@ public class ComponentUtils {
             impactResistance = tag.getInt("ImpactResistance").orElse(impactResistance);
         }
         
-        ShieldType shieldType = ShieldType.STANDARD;
+        ShieldType shieldType = ShieldType.BASIC;
         if (tag.contains("ShieldType")) {
-            String shieldTypeStr = tag.getString("ShieldType").orElse("");
-            try {
-                shieldType = ShieldType.valueOf(shieldTypeStr);
-            } catch (IllegalArgumentException e) {
-                // Use default
+            String shieldTypeStr = tag.getString("ShieldType");
+            if (shieldTypeStr != null && !shieldTypeStr.isEmpty()) {
+                try {
+                    shieldType = ShieldType.valueOf(shieldTypeStr);
+                } catch (IllegalArgumentException e) {
+                    // Use default
+                }
             }
         }
         
@@ -298,8 +301,8 @@ public class ComponentUtils {
      */
     public static RocketComponentType getComponentTypeFromTag(CompoundTag tag) {
         if (tag.contains("Type")) {
-            String typeStr = tag.getString("Type").orElse("");
-            if (!typeStr.isEmpty()) {
+            String typeStr = tag.getString("Type");
+            if (typeStr != null && !typeStr.isEmpty()) {
                 try {
                     return RocketComponentType.valueOf(typeStr);
                 } catch (IllegalArgumentException e) {
@@ -392,7 +395,7 @@ public class ComponentUtils {
                 this.fuelType = IRocketEngine.FuelType.PLASMA;
             } else if (engineType == EngineType.ANTIMATTER) {
                 this.fuelType = IRocketEngine.FuelType.ANTIMATTER;
-            } else if (engineType == EngineType.ELECTRIC) {
+            } else if (engineType == EngineType.ION) {
                 this.fuelType = IRocketEngine.FuelType.ELECTRICAL;
             } else {
                 this.fuelType = IRocketEngine.FuelType.CHEMICAL;
