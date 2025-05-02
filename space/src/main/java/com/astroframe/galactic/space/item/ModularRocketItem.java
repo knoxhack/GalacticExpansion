@@ -12,7 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
+
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -71,11 +71,11 @@ public class ModularRocketItem extends Item {
     
     // Handles right-click usage of the rocket
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         
         if (level.isClientSide()) {
-            return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+            return InteractionResult.SUCCESS;
         }
         
         IRocket rocket = getRocketFromStack(stack);
@@ -86,16 +86,16 @@ public class ModularRocketItem extends Item {
             if (launchController.canLaunch()) {
                 GalacticSpace.LOGGER.info("Player {} starting rocket launch sequence", player.getName().getString());
                 launchController.startLaunchSequence();
-                return new InteractionResultHolder<>(InteractionResult.CONSUME, stack);
+                return InteractionResult.CONSUME;
             } else {
                 // Report why launch failed
                 Component reason = launchController.getCannotLaunchReason();
                 serverPlayer.displayClientMessage(reason, false);
-                return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
+                return InteractionResult.FAIL;
             }
         }
         
-        return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+        return InteractionResult.PASS;
     }
     
     /**

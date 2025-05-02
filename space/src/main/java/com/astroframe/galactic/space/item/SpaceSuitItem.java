@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.equipment.ArmorMaterials;
+import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -40,11 +41,11 @@ public abstract class SpaceSuitItem extends ArmorItem {
     /**
      * Create a new space suit item.
      * 
-     * @param slot The equipment slot
+     * @param armorType The armor type
      * @param tier The tier/level of the space suit (1-3)
      */
-    public SpaceSuitItem(EquipmentSlot slot, int tier) {
-        super(MATERIAL, slot, new Properties().stacksTo(1).fireResistant().durability(800));
+    public SpaceSuitItem(ArmorType armorType, int tier) {
+        super(MATERIAL, armorType, new Properties().stacksTo(1).fireResistant().durability(800));
         this.tier = Math.max(1, Math.min(3, tier)); // Clamp between 1-3
     }
     
@@ -302,7 +303,7 @@ public abstract class SpaceSuitItem extends ArmorItem {
      */
     public static class Helmet extends SpaceSuitItem {
         public Helmet() {
-            super(EquipmentSlot.HEAD, 1);
+            super(ArmorType.HELMET, 1);
         }
     }
     
@@ -311,7 +312,7 @@ public abstract class SpaceSuitItem extends ArmorItem {
      */
     public static class Chestplate extends SpaceSuitItem {
         public Chestplate() {
-            super(EquipmentSlot.CHEST, 1);
+            super(ArmorType.CHESTPLATE, 1);
         }
     }
     
@@ -320,7 +321,7 @@ public abstract class SpaceSuitItem extends ArmorItem {
      */
     public static class Leggings extends SpaceSuitItem {
         public Leggings() {
-            super(EquipmentSlot.LEGS, 1);
+            super(ArmorType.LEGGINGS, 1);
         }
     }
     
@@ -329,7 +330,7 @@ public abstract class SpaceSuitItem extends ArmorItem {
      */
     public static class Boots extends SpaceSuitItem {
         public Boots() {
-            super(EquipmentSlot.FEET, 1);
+            super(ArmorType.BOOTS, 1);
         }
     }
 }
