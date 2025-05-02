@@ -75,10 +75,10 @@ public abstract class BlockEntityBase extends BlockEntity {
     
     /**
      * Helper method for getting the update tag for this block entity.
+     * This method may not be an override in NeoForge 1.21.5, so we're removing the annotation.
      * 
      * @return The update tag
      */
-    @Override
     public CompoundTag getUpdateTag() {
         CompoundTag tag = new CompoundTag();
         this.saveData(tag);
