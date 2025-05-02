@@ -6,13 +6,28 @@
 
 set -e
 
+# Increment the build counter to ensure a new version
+if [ -f .build_counter ]; then
+  # Read current build number
+  BUILD_NUM=$(cat .build_counter)
+  # Increment it
+  NEXT_BUILD=$((BUILD_NUM + 1))
+  # Update the file
+  echo $NEXT_BUILD > .build_counter
+  echo "Incremented build counter to $NEXT_BUILD"
+  BUILD_NUM=$NEXT_BUILD
+else
+  # Create file with initial build number if it doesn't exist
+  BUILD_NUM=1
+  echo "$BUILD_NUM" > .build_counter
+  echo "Created build counter file with initial value $BUILD_NUM"
+fi
+
 # Get current version if not provided through env var
 if [ -z "$GALACTIC_VERSION" ]; then
-  # Read the current build number
-  BUILD_NUM=$(cat .build_counter 2>/dev/null || echo "1")
   # Format date
   DATE_STR=$(date +"%Y%m%d")
-  # Set version
+  # Set version using the new build number
   GALACTIC_VERSION="0.1.0.b${BUILD_NUM}-${DATE_STR}"
 fi
 
@@ -134,6 +149,24 @@ echo "Creating GitHub release with tag: $RELEASE_TAG"
 
 # Properly escape the changelog for JSON
 CHANGELOG_ESCAPED=$(echo "$CHANGELOG" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/\n/\\n/g')
+
+# Check if a release with this tag already exists
+echo "Checking if release with tag $RELEASE_TAG already exists..."
+CHECK_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+  -H "Authorization: token $GITHUB_TOKEN" \
+  -H "Accept: application/vnd.github.v3+json" \
+  "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases/tags/$RELEASE_TAG")
+
+if [ "$CHECK_RESPONSE" = "200" ]; then
+  echo "A release with tag $RELEASE_TAG already exists."
+  echo "Creating a new unique tag instead..."
+  
+  # Append timestamp to make unique tag
+  TIMESTAMP=$(date +%H%M%S)
+  RELEASE_TAG="${RELEASE_TAG}-${TIMESTAMP}"
+  RELEASE_TITLE="${RELEASE_TITLE} (${TIMESTAMP})"
+  echo "New release tag: $RELEASE_TAG"
+fi
 
 # Create properly formatted JSON data
 RELEASE_JSON="{
