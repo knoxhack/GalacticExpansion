@@ -1296,7 +1296,7 @@ public class RocketComponentFactory {
         }
         
         @Override
-        public float getEfficiency() {
+        public double getEfficiency() {
             return efficiency;
         }
         
@@ -1316,18 +1316,23 @@ public class RocketComponentFactory {
         }
         
         @Override
-        public int getFuelConsumptionRate() {
-            return (int)(100 / efficiency);
+        public double getFuelConsumptionRate() {
+            return 100 / efficiency;
         }
         
         @Override
-        public int getThrust() {
+        public double getThrust() {
             return tier * 100;
         }
         
         @Override
         public EngineType getEngineType() {
             return engineType;
+        }
+        
+        @Override
+        public double getHeatGeneration() {
+            return 50.0 * tier;
         }
     }
     
