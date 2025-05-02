@@ -112,18 +112,18 @@ public class RocketEngineImpl implements IRocketEngine {
         currentDurability = Math.min(maxDurability, currentDurability + amount);
     }
 
-    @Override
-    public int getThrust() {
+    // NeoForge 1.21.5 update: Changed return type to match IRocketEngine interface
+    public double getThrust() {
         return thrust;
     }
     
-    @Override
-    public int getFuelConsumptionRate() {
+    // Method for fuel consumption rate
+    public double getFuelConsumptionRate() {
         return fuelConsumptionRate;
     }
 
-    @Override
-    public float getEfficiency() {
+    // NeoForge 1.21.5 update: Changed return type to match IRocketEngine interface
+    public double getEfficiency() {
         return efficiency;
     }
     
