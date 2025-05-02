@@ -572,4 +572,97 @@ public class RocketComponentTester {
             return false;
         }
     }
+    
+    /**
+     * Tests the cargo bay creation and functionality.
+     * 
+     * @return true if the test passes
+     */
+    private static boolean testCargoBayCreation() {
+        LOGGER.info("Testing cargo bay creation and functionality...");
+        
+        try {
+            // Create a standard cargo bay
+            ResourceLocation bayId = new ResourceLocation("galactic_space", "test_cargo_bay");
+            String bayName = "Test Cargo Bay";
+            String bayDesc = "A test cargo bay for verification";
+            int tier = 2;
+            int mass = 60;
+            int maxCapacity = 1000; // in kg
+            boolean securityFeatures = true;
+            boolean environmentControl = true;
+            boolean automatedLoading = false;
+            
+            ICargoBay cargoBay = new StandardCargoBay(
+                bayId, bayName, bayDesc, tier, mass, maxCapacity,
+                securityFeatures, environmentControl, automatedLoading
+            );
+            
+            // Verify cargo bay properties
+            boolean propertiesValid = 
+                cargoBay.getType() == RocketComponentType.CARGO_BAY &&
+                cargoBay.getName().equals(bayName) &&
+                cargoBay.getDescription().equals(bayDesc) &&
+                cargoBay.getTier() == tier &&
+                cargoBay.getMass() == mass &&
+                cargoBay.getMaxCapacity() == maxCapacity &&
+                cargoBay.getCurrentUsedCapacity() == 0 &&
+                cargoBay.getMaxSlots() == 9 * tier &&
+                cargoBay.getItems().isEmpty() &&
+                cargoBay.hasSecurityFeatures() == securityFeatures &&
+                cargoBay.hasEnvironmentControl() == environmentControl &&
+                cargoBay.hasAutomatedLoading() == automatedLoading;
+            
+            if (!propertiesValid) {
+                LOGGER.error("Cargo bay properties validation failed");
+                return false;
+            }
+            
+            // Create a test item
+            net.minecraft.world.item.ItemStack testItem = new net.minecraft.world.item.ItemStack(
+                net.minecraft.core.registries.BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft:iron_ingot")), 
+                10
+            );
+            
+            // Test item addition
+            boolean itemAdded = cargoBay.addItem(testItem);
+            if (!itemAdded || cargoBay.getItems().isEmpty()) {
+                LOGGER.error("Cargo bay add item operation failed");
+                return false;
+            }
+            
+            // Check capacity calculations
+            float expectedWeight = cargoBay.calculateItemWeight(testItem);
+            if (Math.abs(cargoBay.getCurrentUsedCapacity() - expectedWeight) > 0.01f) {
+                LOGGER.error("Cargo bay weight calculation incorrect");
+                return false;
+            }
+            
+            // Test item removal
+            net.minecraft.world.item.ItemStack removedItem = cargoBay.removeItem(0);
+            if (removedItem.isEmpty() || !cargoBay.getItems().isEmpty()) {
+                LOGGER.error("Cargo bay remove item operation failed");
+                return false;
+            }
+            
+            // Test serialization and deserialization
+            CompoundTag tag = new CompoundTag();
+            cargoBay.save(tag);
+            
+            if (!tag.contains("Type") || !tag.getString("Type").equals(RocketComponentType.CARGO_BAY.name())) {
+                LOGGER.error("Cargo bay serialization missing or incorrect Type");
+                return false;
+            }
+            
+            if (!tag.contains("MaxCapacity") || tag.getInt("MaxCapacity") != maxCapacity) {
+                LOGGER.error("Cargo bay serialization missing or incorrect MaxCapacity");
+                return false;
+            }
+            
+            return true;
+        } catch (Exception e) {
+            LOGGER.error("Error in cargo bay creation test", e);
+            return false;
+        }
+    }
 }

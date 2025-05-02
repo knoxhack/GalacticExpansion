@@ -668,11 +668,9 @@ public class ComponentUtils {
                     itemTag.putInt("count", stack.getCount());
                     
                     // Add any tags the item might have
-                    if (stack.hasTag()) {
-                        CompoundTag itemTagData = stack.getTag();
-                        if (itemTagData != null) {
-                            itemTag.put("tag", itemTagData);
-                        }
+                    CompoundTag itemTagData = stack.getTag();
+                    if (itemTagData != null) {
+                        itemTag.put("tag", itemTagData);
                     }
                     
                     itemsTag.add(itemTag);
