@@ -5,6 +5,7 @@ import com.astroframe.galactic.core.api.space.IRocket;
 import com.astroframe.galactic.space.SpaceModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -71,29 +72,25 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
     protected void loadData(CompoundTag tag) {
         // Load active state
         if (tag.contains("Active")) {
-            active = Boolean.valueOf(tag.get("Active").getAsString());
+            active = tag.getBoolean("Active");
         }
         
         // Load rotation angle
         if (tag.contains("RotationAngle")) {
-            rotationAngle = Float.parseFloat(tag.get("RotationAngle").getAsString());
+            rotationAngle = tag.getFloat("RotationAngle");
         }
         
         // Load linked table position if it exists
         if (tag.contains("LinkedTable")) {
-            // Get the compound tag
-            Tag linkedTag = tag.get("LinkedTable");
-            if (linkedTag instanceof CompoundTag) {
-                CompoundTag posTag = (CompoundTag)linkedTag;
-                if (!posTag.isEmpty()) {
-                    // Parse coordinates manually for NeoForge 1.21.5 compatibility
-                    int x = Integer.parseInt(posTag.get("X").getAsString());
-                    int y = Integer.parseInt(posTag.get("Y").getAsString());
-                    int z = Integer.parseInt(posTag.get("Z").getAsString());
-                    linkedTablePos = new BlockPos(x, y, z);
-                } else {
-                    linkedTablePos = null;
-                }
+            CompoundTag posTag = tag.getCompound("LinkedTable");
+            if (posTag != null && !posTag.isEmpty()) {
+                // Read coordinates directly
+                int x = posTag.getInt("X");
+                int y = posTag.getInt("Y");
+                int z = posTag.getInt("Z");
+                linkedTablePos = new BlockPos(x, y, z);
+            } else {
+                linkedTablePos = null;
             }
         } else {
             linkedTablePos = null;

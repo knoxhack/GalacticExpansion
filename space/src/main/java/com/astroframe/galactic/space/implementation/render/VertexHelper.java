@@ -52,13 +52,14 @@ public class VertexHelper {
     public static void addColoredVertex(VertexConsumer consumer, Matrix4f matrix, float x, float y, float z, 
                                       float red, float green, float blue, float alpha) {
         // Basic vertex data
-        // Each of these calls returns the consumer to allow chaining
-        consumer.vertex(matrix, x, y, z)
-            .color(red, green, blue, alpha)
-            .normal(0.0F, 1.0F, 0.0F)
-            .uv(0.0F, 0.0F)
-            .overlayCoords(0, 0)
-            .uv2(15728880) // Full brightness
-            .endVertex();
+        // NeoForge 1.21.5 compatible approach
+        // Some vertex consumers don't support method chaining, so call each method separately
+        consumer.vertex(matrix, x, y, z);
+        consumer.color(red, green, blue, alpha);
+        consumer.normal(0.0F, 1.0F, 0.0F);
+        consumer.uv(0.0F, 0.0F);
+        consumer.overlayCoords(0, 0);
+        consumer.uv2(15728880); // Full brightness
+        consumer.endVertex();
     }
 }
