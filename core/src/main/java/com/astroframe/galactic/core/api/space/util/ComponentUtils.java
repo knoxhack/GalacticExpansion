@@ -564,7 +564,7 @@ public class ComponentUtils {
     private static class DefaultCargoBay extends AbstractRocketComponent implements ICargoBay {
         private final int maxCapacity;
         private final int maxSlots;
-        private final List<ItemStack> items;
+        private final List<net.minecraft.world.item.ItemStack> items;
         private final boolean securityFeatures;
         private final boolean environmentControl;
         private final boolean automatedLoading;
@@ -592,7 +592,7 @@ public class ComponentUtils {
         @Override
         public int getCurrentUsedCapacity() {
             int usedCapacity = 0;
-            for (ItemStack stack : items) {
+            for (net.minecraft.world.item.ItemStack stack : items) {
                 if (!stack.isEmpty()) {
                     usedCapacity += calculateItemWeight(stack);
                 }
@@ -601,12 +601,12 @@ public class ComponentUtils {
         }
         
         @Override
-        public List<ItemStack> getItems() {
+        public List<net.minecraft.world.item.ItemStack> getItems() {
             return new ArrayList<>(items);
         }
         
         @Override
-        public boolean addItem(ItemStack stack) {
+        public boolean addItem(net.minecraft.world.item.ItemStack stack) {
             if (stack.isEmpty()) {
                 return false;
             }
@@ -627,9 +627,9 @@ public class ComponentUtils {
         }
         
         @Override
-        public ItemStack removeItem(int index) {
+        public net.minecraft.world.item.ItemStack removeItem(int index) {
             if (index < 0 || index >= items.size()) {
-                return ItemStack.EMPTY;
+                return net.minecraft.world.item.ItemStack.EMPTY;
             }
             
             return items.remove(index);
@@ -661,7 +661,7 @@ public class ComponentUtils {
             
             // Save items
             ListTag itemsTag = new ListTag();
-            for (ItemStack stack : items) {
+            for (net.minecraft.world.item.ItemStack stack : items) {
                 if (!stack.isEmpty()) {
                     CompoundTag itemTag = new CompoundTag();
                     itemTag.putString("id", stack.getItem().toString());
@@ -669,9 +669,9 @@ public class ComponentUtils {
                     
                     // Add any tags the item might have
                     if (stack.hasTag()) {
-                        CompoundTag tag = stack.getTag();
-                        if (tag != null) {
-                            itemTag.put("tag", tag);
+                        CompoundTag itemTagData = stack.getTag();
+                        if (itemTagData != null) {
+                            itemTag.put("tag", itemTagData);
                         }
                     }
                     

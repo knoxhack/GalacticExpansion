@@ -1,5 +1,6 @@
 package com.astroframe.galactic.space.implementation.component.test;
 
+import com.astroframe.galactic.core.api.space.component.ICargoBay;
 import com.astroframe.galactic.core.api.space.component.ICommandModule;
 import com.astroframe.galactic.core.api.space.component.IFuelTank;
 import com.astroframe.galactic.core.api.space.component.IRocketComponent;
@@ -8,6 +9,7 @@ import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
 import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import com.astroframe.galactic.core.api.space.util.ComponentUtils;
+import com.astroframe.galactic.space.implementation.component.cargobay.StandardCargoBay;
 import com.astroframe.galactic.space.implementation.component.command.BasicCommandModule;
 import com.astroframe.galactic.space.implementation.component.engine.BasicChemicalEngine;
 import com.astroframe.galactic.space.implementation.component.fueltank.StandardFuelTank;
@@ -49,6 +51,12 @@ public class RocketComponentTester {
         // Test command module creation and functionality
         if (!testCommandModuleCreation()) {
             LOGGER.error("Command module creation test failed");
+            success = false;
+        }
+        
+        // Test cargo bay creation and functionality
+        if (!testCargoBayCreation()) {
+            LOGGER.error("Cargo bay creation test failed");
             success = false;
         }
         

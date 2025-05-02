@@ -1,11 +1,13 @@
 package com.astroframe.galactic.space.implementation.component.factory;
 
 import com.astroframe.galactic.core.TagHelper;
+import com.astroframe.galactic.core.api.space.component.ICargoBay;
 import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
 import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import com.astroframe.galactic.core.api.space.util.ComponentUtils;
+import com.astroframe.galactic.space.implementation.component.cargobay.StandardCargoBay;
 import com.astroframe.galactic.space.implementation.component.command.BasicCommandModule;
 import com.astroframe.galactic.space.implementation.component.engine.BasicChemicalEngine;
 import com.astroframe.galactic.space.implementation.component.fueltank.StandardFuelTank;
@@ -46,6 +48,9 @@ public class SpaceModuleComponentFactory implements ComponentUtils.ComponentFact
                 return createFuelTank(id, tag);
             case COMMAND_MODULE:
                 return createCommandModule(id, tag);
+            case CARGO_BAY:
+            case STORAGE: // Handle alias for backward compatibility
+                return createCargoBay(id, tag);
             default:
                 return Optional.empty();
         }
@@ -144,6 +149,32 @@ public class SpaceModuleComponentFactory implements ComponentUtils.ComponentFact
         commandModule.load(tag);
         
         return Optional.of(commandModule);
+    }
+    
+    /**
+     * Creates a cargo bay component from tag data.
+     */
+    private Optional<IRocketComponent> createCargoBay(ResourceLocation id, CompoundTag tag) {
+        // Extract common properties
+        String name = TagHelper.getString(tag, "Name", "Standard Cargo Bay");
+        String description = TagHelper.getString(tag, "Description", "A standard cargo bay.");
+        int tier = TagHelper.getInt(tag, "Tier", 1);
+        int mass = TagHelper.getInt(tag, "Mass", 40);
+        int maxCapacity = TagHelper.getInt(tag, "MaxCapacity", 800);
+        boolean securityFeatures = TagHelper.getBoolean(tag, "SecurityFeatures", tier >= 2);
+        boolean environmentControl = TagHelper.getBoolean(tag, "EnvironmentControl", tier >= 2);
+        boolean automatedLoading = TagHelper.getBoolean(tag, "AutomatedLoading", tier >= 3);
+        
+        // Create standard cargo bay
+        StandardCargoBay cargoBay = new StandardCargoBay(
+            id, name, description, tier, mass, maxCapacity,
+            securityFeatures, environmentControl, automatedLoading
+        );
+        
+        // Load saved state
+        cargoBay.load(tag);
+        
+        return Optional.of(cargoBay);
     }
     
     @Override
