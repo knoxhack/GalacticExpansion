@@ -517,13 +517,13 @@ public class ModularRocket implements IRocket {
         }
         
         try {
-            String idStr = tag.getString("id");
+            String idStr = tag.getString("id").orElse("");
             ResourceLocation id = ResourceLocation.parse(idStr);
-            int tier = tag.getInt("tier");
-            int fuel = tag.getInt("fuel");
-            float health = tag.contains("health") ? tag.getFloat("health") : 100f;
+            int tier = tag.getInt("tier").orElse(1);
+            int fuel = tag.getInt("fuel").orElse(0);
+            float health = tag.contains("health") ? tag.getFloat("health").orElse(100f) : 100f;
             RocketStatus status = tag.contains("status") 
-                ? RocketStatus.values()[tag.getInt("status")] 
+                ? RocketStatus.values()[tag.getInt("status").orElse(0)] 
                 : RocketStatus.BUILDING;
             
             // Create a new rocket with default components for the tier
