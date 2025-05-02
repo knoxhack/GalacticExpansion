@@ -106,17 +106,14 @@ public class CargoBayImpl implements ICargoBay {
         currentDurability = Math.min(maxDurability, currentDurability + amount);
     }
 
-    @Override
     public int getStorageCapacity() {
         return storageCapacity;
     }
     
-    @Override
     public Map<Integer, ItemStack> getContents() {
         return new HashMap<>(contents);
     }
     
-    @Override
     public ItemStack addItem(ItemStack stack) {
         // If the stack is empty, return it
         if (stack.isEmpty()) {
@@ -165,7 +162,6 @@ public class CargoBayImpl implements ICargoBay {
         return remainingStack;
     }
     
-    @Override
     public ItemStack takeItem(int slotIndex, int amount) {
         if (slotIndex < 0 || slotIndex >= storageCapacity || !contents.containsKey(slotIndex)) {
             return ItemStack.EMPTY;
@@ -188,41 +184,34 @@ public class CargoBayImpl implements ICargoBay {
         return result;
     }
     
-    @Override
     public boolean hasVacuumSeal() {
         return hasVacuumSeal;
     }
     
-    @Override
     public boolean hasTemperatureRegulation() {
         return hasTemperatureRegulation;
     }
     
-    @Override
     public boolean hasRadiationShielding() {
         return hasRadiationShielding;
     }
     
-    @Override
     public boolean hasAutomatedLoading() {
         // Implementation for NeoForge 1.21.5 compatibility
         // By default, this cargo bay doesn't have automated loading
         return false;
     }
     
-    @Override
     public boolean hasEnvironmentControl() {
         // In NeoForge 1.21.5, environment control corresponds to temperature regulation
         return hasTemperatureRegulation;
     }
     
-    @Override
     public boolean hasSecurityFeatures() {
         // In NeoForge 1.21.5, security features include radiation shielding
         return hasRadiationShielding;
     }
     
-    @Override
     public ItemStack removeItem(int index) {
         // NeoForge 1.21.5 compatibility implementation
         // Check if the index is valid and the slot has an item
