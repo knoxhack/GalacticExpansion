@@ -368,10 +368,10 @@ public class RocketAssemblyTable extends BlockEntity {
         return false;
     }
     
-    // Override the BlockEntity's load method
+    // Override the BlockEntity's load method to handle NeoForge 1.21.5 changes
     @Override
-    protected void loadAdditional(CompoundTag tag, BlockEntity.LoadMode loadMode) {
-        super.loadAdditional(tag, loadMode);
+    public void load(CompoundTag tag) {
+        super.load(tag);
         
         // Load components
         components.clear();
@@ -431,8 +431,8 @@ public class RocketAssemblyTable extends BlockEntity {
     }
     
     @Override
-    protected void saveAdditional(CompoundTag tag, net.minecraft.world.level.block.entity.BlockEntity.Provider provider) {
-        super.saveAdditional(tag, provider);
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
         
         // Save components
         CompoundTag componentsTag = new CompoundTag();

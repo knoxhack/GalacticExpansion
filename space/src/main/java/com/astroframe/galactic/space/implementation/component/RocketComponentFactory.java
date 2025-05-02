@@ -809,7 +809,12 @@ public class RocketComponentFactory {
      */
     public static IRocketComponent createComponentFromTag(ResourceLocation id, net.minecraft.nbt.CompoundTag tag) {
         // Check the component type
-        String typeString = tag.getString("Type");
+        String typeString = tag.getString("Type").orElse("");
+        if (typeString.isEmpty()) {
+            GalacticSpace.LOGGER.error("Missing component type for component: {}", id);
+            return null;
+        }
+        
         RocketComponentType type = null;
         
         try {
