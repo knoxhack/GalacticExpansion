@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 public class RocketAssemblyTable extends Block implements EntityBlock {
     
     // Properties
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final Property<Direction> FACING = HorizontalDirectionalBlock.FACING;
     
     // Block shapes based on facing direction
     private static final VoxelShape SHAPE_NORTH = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);

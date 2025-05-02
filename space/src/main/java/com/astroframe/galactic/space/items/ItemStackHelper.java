@@ -202,7 +202,7 @@ public class ItemStackHelper {
      * 
      * @param tag The compound tag
      * @param key The key
-     * @param type The tag type (optional)
+     * @param type The tag type (not used in NeoForge 1.21.5)
      * @return The list tag or null if not found
      */
     public static ListTag getList(CompoundTag tag, String key, int type) {
@@ -211,21 +211,20 @@ public class ItemStackHelper {
         }
         
         try {
-            // Try both methods to get a list
-            try {
-                // Try with type parameter first (older versions)
-                return tag.getList(key, type);
-            } catch (NoSuchMethodError | Exception e) {
-                try {
-                    // Try without type parameter (newer versions)
-                    return tag.getList(key);
-                } catch (NoSuchMethodError | Exception e2) {
-                    // Last resort: get raw and cast
-                    Tag rawTag = tag.get(key);
-                    if (rawTag instanceof ListTag) {
-                        return (ListTag) rawTag;
-                    }
-                }
+            // In NeoForge 1.21.5, getList() returns Optional<ListTag>
+            Object result = tag.getList(key);
+            if (result instanceof java.util.Optional) {
+                @SuppressWarnings("unchecked")
+                java.util.Optional<ListTag> opt = (java.util.Optional<ListTag>) result;
+                return opt.orElse(null);
+            } else if (result instanceof ListTag) {
+                return (ListTag) result;
+            }
+            
+            // Last resort: get raw and cast
+            Tag rawTag = tag.get(key);
+            if (rawTag instanceof ListTag) {
+                return (ListTag) rawTag;
             }
         } catch (Exception e) {
             // Fallback to null on any error
