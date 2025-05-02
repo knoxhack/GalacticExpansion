@@ -61,13 +61,13 @@ public class SpaceModule {
     // Block Entities
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HolographicProjectorBlockEntity>> HOLOGRAPHIC_PROJECTOR_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("holographic_projector", 
-                    () -> new BlockEntityType<>(HolographicProjectorBlockEntity::new, 
-                            java.util.Set.of(HOLOGRAPHIC_PROJECTOR.get()), null));
+                    () -> BlockEntityType.Builder.of(HolographicProjectorBlockEntity::new, 
+                            HOLOGRAPHIC_PROJECTOR.get()).build());
     
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RocketAssemblyTableBlockEntity>> ROCKET_ASSEMBLY_TABLE_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("rocket_assembly_table", 
-                    () -> new BlockEntityType<>(RocketAssemblyTableBlockEntity::new, 
-                            java.util.Set.of(ROCKET_ASSEMBLY_TABLE.get()), null));
+                    () -> BlockEntityType.Builder.of(RocketAssemblyTableBlockEntity::new, 
+                            ROCKET_ASSEMBLY_TABLE.get()).build());
     
     /**
      * Constructor for the Space module.
