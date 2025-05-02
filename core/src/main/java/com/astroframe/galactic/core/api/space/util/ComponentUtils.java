@@ -245,14 +245,12 @@ public class ComponentUtils {
      * @return The component type, or null if not found
      */
     public static RocketComponentType getComponentTypeFromTag(CompoundTag tag) {
-        if (tag.contains("Type")) {
-            String typeStr = tag.getString("Type");
-            if (typeStr != null && !typeStr.isEmpty()) {
-                try {
-                    return RocketComponentType.valueOf(typeStr);
-                } catch (IllegalArgumentException e) {
-                    return null;
-                }
+        String typeStr = TagHelper.getString(tag, "Type", "");
+        if (!typeStr.isEmpty()) {
+            try {
+                return RocketComponentType.valueOf(typeStr);
+            } catch (IllegalArgumentException e) {
+                return null;
             }
         }
         return null;
@@ -287,21 +285,19 @@ public class ComponentUtils {
             if (listTag.get(i) instanceof CompoundTag) {
                 CompoundTag componentTag = (CompoundTag) listTag.get(i);
                 
-                // In NeoForge 1.21.5, getString no longer returns Optional
-                if (componentTag.contains("ID")) {
-                    String idStr = componentTag.getString("ID");
-                    if (!idStr.isEmpty()) {
-                        try {
-                            // Use the constructor to avoid ResourceLocation.parse deprecation
-                            ResourceLocation id = new ResourceLocation(idStr);
-                            IRocketComponent component = createComponentFromTag(id, componentTag);
-                            if (component != null) {
-                                components.add(component);
-                            }
-                        } catch (Exception e) {
-                            // Log error and continue with next component
-                            System.err.println("Error loading component: " + e.getMessage());
+                // Use TagHelper to get the ID string
+                String idStr = TagHelper.getString(componentTag, "ID", "");
+                if (!idStr.isEmpty()) {
+                    try {
+                        // Use ResourceLocation.parse which is the preferred method in NeoForge 1.21.5
+                        ResourceLocation id = ResourceLocation.parse(idStr);
+                        IRocketComponent component = createComponentFromTag(id, componentTag);
+                        if (component != null) {
+                            components.add(component);
                         }
+                    } catch (Exception e) {
+                        // Log error and continue with next component
+                        System.err.println("Error loading component: " + e.getMessage());
                     }
                 }
             }
