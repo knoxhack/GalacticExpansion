@@ -2,6 +2,7 @@ package com.astroframe.galactic.space;
 
 import com.astroframe.galactic.core.api.space.ISpaceTravelManager;
 import com.astroframe.galactic.core.api.space.SpaceAPI;
+import com.astroframe.galactic.space.attachment.PlayerSpaceDataRegistry;
 import com.astroframe.galactic.space.command.SpaceTravelCommands;
 import com.astroframe.galactic.space.dimension.SpaceStationDimension;
 import com.astroframe.galactic.space.implementation.SpaceBodies;
@@ -24,6 +25,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.RegisterEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
@@ -72,6 +74,10 @@ public class GalacticSpace {
         NeoForge.EVENT_BUS.addListener(this::onServerStopping);
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
         NeoForge.EVENT_BUS.addListener(this::onLivingHurt);
+        
+        // Register attachment types
+        NeoForge.EVENT_BUS.addListener(PlayerSpaceDataRegistry::register);
+        LOGGER.info("Registered player space data attachment");
     }
     
     /**
