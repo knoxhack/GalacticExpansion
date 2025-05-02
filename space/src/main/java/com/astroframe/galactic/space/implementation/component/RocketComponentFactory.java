@@ -1686,6 +1686,28 @@ public class RocketComponentFactory {
             return capacity;
         }
         
+        /**
+         * Calculates the weight of an item stack based on item count and properties.
+         * 
+         * @param stack The ItemStack to calculate weight for
+         * @return The weight in arbitrary units
+         */
+        private int calculateItemWeight(ItemStack stack) {
+            if (stack == null || stack.isEmpty()) {
+                return 0;
+            }
+            
+            // Basic weight is 1 unit per item
+            int baseWeight = stack.getCount();
+            
+            // Items with NBT data might be more complex/heavier
+            if (stack.hasTag()) {
+                baseWeight += 1; // Add a bit more weight for items with tags
+            }
+            
+            return baseWeight;
+        }
+        
         @Override
         public boolean hasSecurityFeatures() {
             return hasSecurityFeatures;
