@@ -167,6 +167,16 @@ public class BasePassengerCompartment implements IPassengerCompartment {
         // No-op until we implement durability
     }
     
+    // Implementation of IRocketComponent.getName
+    public String getName() {
+        return displayName.getString();
+    }
+    
+    // Implementation of IRocketComponent.getDescription
+    public String getDescription() {
+        return "Passenger Compartment - " + compartmentType.name() + " - Capacity: " + passengerCapacity;
+    }
+    
     /**
      * Builder for BasePassengerCompartment.
      */

@@ -117,8 +117,9 @@ public class SpaceStationChunkGenerator extends ChunkGenerator {
     }
     
     // Required codec implementation for NeoForge 1.21.5
+    // The signature changed in NeoForge 1.21.5 to return MapCodec instead of Codec
     @Override
-    public com.mojang.serialization.Codec<? extends ChunkGenerator> codec() {
-        return com.mojang.serialization.Codec.unit(this);
+    public com.mojang.serialization.MapCodec<? extends ChunkGenerator> codec() {
+        return com.mojang.serialization.MapCodec.unit(this);
     }
 }

@@ -90,8 +90,20 @@ public class BaseFuelTank implements IFuelTank {
     }
     
     // Implementation of IFuelTank method
-    public FuelType getFuelType() {
-        return fuelType;
+    public com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType getFuelType() {
+        // Convert from our enum to the interface's enum
+        switch(fuelType) {
+            case CHEMICAL:
+                return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.CHEMICAL;
+            case PLASMA:
+                return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.PLASMA;
+            case ANTIMATTER:
+                return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.ANTIMATTER;
+            case ELECTRICAL:
+                return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.ELECTRICAL;
+            default:
+                return com.astroframe.galactic.core.api.space.component.IRocketEngine.FuelType.CHEMICAL;
+        }
     }
     
     // Implementation of IFuelTank method
@@ -102,6 +114,31 @@ public class BaseFuelTank implements IFuelTank {
     // Implementation of IFuelTank method
     public boolean isInsulated() {
         return isInsulated;
+    }
+    
+    // Implementation of IFuelTank method
+    public float getExplosionResistance() {
+        return 0.7f + (tier * 0.1f); // Increases with tier
+    }
+    
+    // Implementation of IFuelTank method
+    public float getLeakResistance() {
+        return 0.8f + (tier * 0.1f); // Increases with tier
+    }
+    
+    // Implementation of IFuelTank method
+    public int getCurrentFuelLevel() {
+        return maxFuelCapacity; // Mock implementation - always full for now
+    }
+    
+    // Implementation of IFuelTank method
+    public int addFuel(int amount) {
+        return amount; // Mock implementation - pretend we added all fuel
+    }
+    
+    // Implementation of IFuelTank method
+    public int consumeFuel(int amount) {
+        return amount; // Mock implementation - pretend we consumed all requested fuel
     }
     
     // Implementation of IRocketComponent methods
