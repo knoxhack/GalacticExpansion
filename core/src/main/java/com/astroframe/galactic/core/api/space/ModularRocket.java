@@ -50,7 +50,7 @@ public class ModularRocket implements IRocket {
         
         this.passengers = new ArrayList<>();
         this.cargo = new HashMap<>();
-        this.status = RocketStatus.BUILDING;
+        this.status = IRocket.RocketStatus.BUILDING;
         this.health = 100.0f;
         this.currentFuel = 0;
     }
@@ -72,7 +72,7 @@ public class ModularRocket implements IRocket {
         
         this.passengers = new ArrayList<>();
         this.cargo = new HashMap<>();
-        this.status = RocketStatus.BUILDING;
+        this.status = IRocket.RocketStatus.BUILDING;
         this.health = 100.0f;
         this.currentFuel = 0;
     }
@@ -487,9 +487,11 @@ public class ModularRocket implements IRocket {
             CompoundTag itemTag = new CompoundTag();
             itemTag.putInt("Slot", entry.getKey());
             ItemStack stack = entry.getValue();
-            // In NeoForge 1.21.5, we need to use save(CompoundTag) correctly
+            // In NeoForge 1.21.5, handle ItemStack serialization directly
             CompoundTag itemData = new CompoundTag();
-            stack.save(itemData);
+            // Just store the item registry ID and count for now
+            itemData.putString("id", stack.getItem().toString());
+            itemData.putInt("count", stack.getCount());
             itemTag.put("Item", itemData);
             cargoTag.put("Item" + i, itemTag);
             i++;
