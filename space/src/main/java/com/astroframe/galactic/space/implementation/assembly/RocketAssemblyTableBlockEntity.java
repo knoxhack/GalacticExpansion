@@ -180,9 +180,11 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                         // In NeoForge 1.21.5, getInt returns an Optional<Integer>
                         compoundTag.getInt("Slot").ifPresent(slot -> {
                             if (slot >= 0 && slot < components.size()) {
-                                // Create ItemStack from CompoundTag - use ItemStack constructor directly
-                                // In NeoForge 1.21.5, ItemStack.of() doesn't exist 
-                                components.set(slot, new net.minecraft.world.item.ItemStack(compoundTag));
+                                // Create ItemStack from CompoundTag
+                                // In NeoForge 1.21.5, we need to use ItemStack.load() method
+                                ItemStack stack = new ItemStack(net.minecraft.world.item.Items.AIR);
+                                stack.load(compoundTag);
+                                components.set(slot, stack);
                             }
                         });
                     });
@@ -264,10 +266,11 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
             if (!itemStack.isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
-                // In NeoForge 1.21.5, the save method requires a Provider
-                // Use the saveWithoutMetadata method which doesn't require a Provider
-                CompoundTag savedTag = itemStack.saveWithoutMetadata();
-                // Copy all tags from savedTag to itemTag
+                // In NeoForge 1.21.5, we need to use the save method properly
+                // Create a CompoundTag for the item and save it
+                CompoundTag savedTag = new CompoundTag();
+                itemStack.save(savedTag);
+                // Copy all tags from savedTag to itemTag using getTags() method
                 for (String key : savedTag.getAllKeys()) {
                     itemTag.put(key, savedTag.get(key));
                 }
