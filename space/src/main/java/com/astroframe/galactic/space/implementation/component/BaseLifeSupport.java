@@ -214,9 +214,11 @@ public class BaseLifeSupport implements ILifeSupport {
         /**
          * Creates a new builder with required parameters.
          * @param id The component ID
+         * @param displayName The display name component
          */
-        public Builder(ResourceLocation id) {
+        public Builder(ResourceLocation id, Component displayName) {
             this.id = id;
+            this.name = displayName.getString();
         }
         
         /**
@@ -290,6 +292,16 @@ public class BaseLifeSupport implements ILifeSupport {
         }
         
         /**
+         * Sets the oxygen efficiency (alias for atmospheric quality).
+         * @param efficiency The oxygen efficiency (0.0-1.0)
+         * @return This builder
+         */
+        public Builder oxygenEfficiency(float efficiency) {
+            this.atmosphericQuality = Math.max(0.0f, Math.min(1.0f, efficiency));
+            return this;
+        }
+        
+        /**
          * Sets the water recycling efficiency.
          * @param waterRecyclingEfficiency The water recycling efficiency (0.0-1.0)
          * @return This builder
@@ -356,6 +368,36 @@ public class BaseLifeSupport implements ILifeSupport {
          */
         public Builder emergencyMode(boolean hasEmergencyMode) {
             this.hasEmergencyMode = hasEmergencyMode;
+            return this;
+        }
+        
+        /**
+         * Sets the water recycling rate (alias for water recycling efficiency).
+         * @param rate The water recycling rate (0.0-1.0)
+         * @return This builder
+         */
+        public Builder waterRecyclingRate(float rate) {
+            this.waterRecyclingEfficiency = Math.max(0.0f, Math.min(1.0f, rate));
+            return this;
+        }
+        
+        /**
+         * Sets the life support type (internal categorization).
+         * @param type The life support type
+         * @return This builder
+         */
+        public Builder lifeSupportType(LifeSupportType type) {
+            // This is just for categorization, doesn't affect properties
+            return this;
+        }
+        
+        /**
+         * Sets whether the life support has advanced medical capabilities.
+         * @param hasAdvancedMedical True if the system has advanced medical
+         * @return This builder
+         */
+        public Builder advancedMedical(boolean hasAdvancedMedical) {
+            // This is a placeholder for future functionality
             return this;
         }
         

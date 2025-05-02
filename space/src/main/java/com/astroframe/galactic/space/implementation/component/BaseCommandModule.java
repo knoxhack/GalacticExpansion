@@ -51,7 +51,7 @@ public class BaseCommandModule implements ICommandModule {
     }
     
     public com.astroframe.galactic.core.api.space.component.RocketComponentType getType() {
-        return com.astroframe.galactic.core.api.space.component.RocketComponentType.COMMAND;
+        return com.astroframe.galactic.core.api.space.component.RocketComponentType.COCKPIT;
     }
     
     public int getMass() {
@@ -99,6 +99,27 @@ public class BaseCommandModule implements ICommandModule {
     
     public CommandModuleType getCommandModuleType() {
         return commandModuleType;
+    }
+    
+    // Additional method implementations for ICommandModule
+    public int getSensorStrength() {
+        return (tier * 3) + navigationLevel; // Derived from tier and navigation level
+    }
+    
+    public float getNavigationAccuracy() {
+        return 0.7f + (tier * 0.1f); // Tier-based navigation accuracy
+    }
+    
+    public boolean hasAdvancedLifeSupport() {
+        return tier >= 2; // Only tier 2+ has advanced life support
+    }
+    
+    public boolean hasAutomatedLanding() {
+        return tier >= 2; // Only tier 2+ has automated landing
+    }
+    
+    public boolean hasEmergencyEvacuation() {
+        return tier >= 3; // Only tier 3 has emergency evacuation
     }
     
     // Required implementation of IRocketComponent methods
