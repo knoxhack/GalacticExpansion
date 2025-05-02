@@ -11,7 +11,9 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -31,8 +33,8 @@ import java.util.Map;
  */
 public abstract class SpaceSuitItem extends ArmorItem {
 
-    // Use a literal ArmorMaterial instance for compatibility
-    private static final net.minecraft.world.item.ArmorMaterials MATERIAL = createSpaceSuitMaterial();
+    // Use a vanilla ArmorMaterial implementation for compatibility
+    private static final ArmorMaterial MATERIAL = ArmorMaterials.IRON;
     private final int tier;
 
     /**
@@ -241,16 +243,6 @@ public abstract class SpaceSuitItem extends ArmorItem {
         return minTier == Integer.MAX_VALUE ? 0 : minTier;
     }
     
-    /**
-     * Creates a space suit material instance.
-     * 
-     * @return The armor material instance
-     */
-    private static net.minecraft.world.item.ArmorMaterials createSpaceSuitMaterial() {
-        // Use the IRON material as a base
-        return net.minecraft.world.item.ArmorMaterials.IRON;
-    }
-
     /**
      * Space suit material definition (legacy, for reference only).
      */
