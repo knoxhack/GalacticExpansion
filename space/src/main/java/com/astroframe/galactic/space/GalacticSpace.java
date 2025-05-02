@@ -10,6 +10,7 @@ import com.astroframe.galactic.space.implementation.SpaceTravelManager;
 import com.astroframe.galactic.space.implementation.component.RocketComponentFactory;
 import com.astroframe.galactic.space.item.SpaceItems;
 import com.astroframe.galactic.space.item.SpaceSuitItem;
+import com.astroframe.galactic.space.migration.PlayerDataMigration;
 import com.astroframe.galactic.space.registry.SpaceRegistry;
 import com.astroframe.galactic.space.resource.SpaceResourceGenerator;
 import net.minecraft.commands.CommandBuildContext;
@@ -66,6 +67,9 @@ public class GalacticSpace {
         // Register all content with the registry system
         SpaceRegistry.initialize(modEventBus);
         
+        // Register attachment types
+        PlayerSpaceDataRegistry.register();
+        
         // Register event listeners
         modEventBus.register(this);
         
@@ -74,10 +78,6 @@ public class GalacticSpace {
         NeoForge.EVENT_BUS.addListener(this::onServerStopping);
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
         NeoForge.EVENT_BUS.addListener(this::onLivingHurt);
-        
-        // Register attachment types
-        NeoForge.EVENT_BUS.addListener(PlayerSpaceDataRegistry::register);
-        LOGGER.info("Registered player space data attachment");
     }
     
     /**
@@ -118,6 +118,10 @@ public class GalacticSpace {
             
             // Initialize space resource generator
             SpaceResourceGenerator.init();
+            
+            // Register player data migration
+            PlayerDataMigration.registerEvents();
+            LOGGER.info("Registered player data migration events");
             
             LOGGER.info("Galactic Space module setup complete");
         });

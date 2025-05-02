@@ -255,12 +255,12 @@ public class PlayerSpaceDataAttachment {
         }
         
         // Load space state
-        data.inSpace = tag.getBoolean("InSpace");
+        data.inSpace = TagHelper.getBooleanValue(tag, "InSpace");
         
         // Load current rocket
-        if (tag.contains("CurrentRocket", Tag.TAG_STRING)) {
+        if (tag.contains("CurrentRocket")) {
             try {
-                String rocketIdStr = tag.getString("CurrentRocket");
+                String rocketIdStr = TagHelper.getStringValue(tag, "CurrentRocket");
                 if (!rocketIdStr.isEmpty()) {
                     data.currentRocketId = UUID.fromString(rocketIdStr);
                 }
@@ -270,15 +270,15 @@ public class PlayerSpaceDataAttachment {
         }
         
         // Load current dimension
-        if (tag.contains("CurrentDimension", Tag.TAG_STRING)) {
-            String dimString = tag.getString("CurrentDimension");
+        if (tag.contains("CurrentDimension")) {
+            String dimString = TagHelper.getStringValue(tag, "CurrentDimension");
             if (!dimString.isEmpty()) {
                 data.currentDimension = ResourceLocation.parse(dimString);
             }
         }
         
         // Load dimension change state
-        data.changingDimension = tag.getBoolean("ChangingDimension");
+        data.changingDimension = TagHelper.getBooleanValue(tag, "ChangingDimension");
         
         return data;
     }

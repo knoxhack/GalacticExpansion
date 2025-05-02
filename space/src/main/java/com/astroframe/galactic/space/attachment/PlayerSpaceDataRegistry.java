@@ -1,12 +1,15 @@
 package com.astroframe.galactic.space.attachment;
 
 import com.astroframe.galactic.space.GalacticSpace;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.RegisterEvent;
-import net.neoforged.neoforge.registries.NeoForgeAttachmentTypes;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 /**
  * Registry for player space data attachment.
@@ -14,26 +17,26 @@ import net.neoforged.neoforge.attachment.IAttachmentHolder;
  */
 public class PlayerSpaceDataRegistry {
     public static final ResourceLocation PLAYER_SPACE_DATA_RL = 
-        new ResourceLocation(GalacticSpace.MODID, "player_space_data");
+        new ResourceLocation(GalacticSpace.MOD_ID, "player_space_data");
     
-    private static AttachmentType<PlayerSpaceDataAttachment> PLAYER_SPACE_DATA;
+    private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = 
+        DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, GalacticSpace.MOD_ID);
+    
+    public static final RegistryObject<AttachmentType<PlayerSpaceDataAttachment>> PLAYER_SPACE_DATA = 
+        ATTACHMENT_TYPES.register("player_space_data", 
+            () -> AttachmentType.<CompoundTag, PlayerSpaceDataAttachment>builder(
+                PlayerSpaceDataAttachment::new,
+                (attachment, tag) -> attachment.write(tag),
+                (tag) -> PlayerSpaceDataAttachment.read(tag)
+            ).build());
     
     /**
      * Register the player space data attachment type.
-     * This should be called during the RegisterEvent for AttachmentTypes.
+     * This should be called during mod initialization.
      */
-    public static void register(RegisterEvent event) {
-        if (event.getRegistryKey().equals(NeoForgeAttachmentTypes.ATTACHMENT_TYPES.getRegistryKey())) {
-            PLAYER_SPACE_DATA = AttachmentType.serializable(PlayerSpaceDataAttachment::read)
-                .factory(() -> new PlayerSpaceDataAttachment())
-                .build();
-                
-            event.register(NeoForgeAttachmentTypes.ATTACHMENT_TYPES.getRegistryKey(), 
-                           PLAYER_SPACE_DATA_RL, 
-                           () -> PLAYER_SPACE_DATA);
-            
-            GalacticSpace.LOGGER.info("Registered player space data attachment type");
-        }
+    public static void register() {
+        ATTACHMENT_TYPES.register(GalacticSpace.MOD_EVENT_BUS);
+        GalacticSpace.LOGGER.info("Registered player space data attachment type");
     }
     
     /**
