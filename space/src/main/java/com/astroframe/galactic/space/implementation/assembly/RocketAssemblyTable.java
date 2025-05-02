@@ -12,7 +12,8 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -150,9 +151,8 @@ public class RocketAssemblyTable extends Block implements EntityBlock {
      * Called when this block is removed.
      * Unlinks any connected holographic projectors.
      * 
-     * Method updated for NeoForge 1.21.5
+     * Method for NeoForge 1.21.5
      */
-    @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (!level.isClientSide && newState.getBlock() != this) {
             // Look for holographic projectors in a 5x5x5 area that might be linked to this
