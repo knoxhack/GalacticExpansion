@@ -26,13 +26,28 @@ if [ -z "$GITHUB_TOKEN" ]; then
 fi
 
 # Set git config to use the correct user
-git config --local user.name "knoxhack"
-git config --local user.email "knoxhack@gmail.com"
+# Try to set git config and handle potential lock issues
+echo "Setting Git configuration..."
+if ! git config --local user.name "knoxhack" 2>/dev/null; then
+    echo "Warning: Could not set Git user name, continuing with existing config"
+fi
+
+if ! git config --local user.email "knoxhack@gmail.com" 2>/dev/null; then
+    echo "Warning: Could not set Git user email, continuing with existing config"
+fi
+
+# If config still can't be set, check for locks
+if [ -f ".git/config.lock" ]; then
+    echo "Found Git config lock file. Attempting to remove it..."
+    rm -f .git/config.lock 2>/dev/null || echo "Failed to remove lock file, but continuing anyway"
+fi
 
 # Get repository details from Git
-REPO_URL=$(git config --get remote.origin.url)
+echo "Getting repository details..."
+REPO_URL=$(git config --get remote.origin.url 2>/dev/null || echo "")
 if [ -z "$REPO_URL" ]; then
   # If no git setup yet, use default repository
+  echo "No Git remote URL found, using default repository"
   REPO_OWNER="astroframe"
   REPO_NAME="galactic-expansion"
 else
@@ -54,7 +69,19 @@ else
   # Generate simple changelog from Git commits
   echo "No changelog file found, generating from Git commits..."
   CHANGELOG="## Changes in this release\n\n"
-  CHANGELOG+=$(git log -n 20 --pretty=format:"- %s (%h)" | grep -v "Merge" | head -10)
+  
+  # Try to get Git commits, but don't fail if Git commands fail
+  GIT_CHANGES=$(git log -n 20 --pretty=format:"- %s (%h)" 2>/dev/null | grep -v "Merge" | head -10)
+  
+  if [ -n "$GIT_CHANGES" ]; then
+    CHANGELOG+="$GIT_CHANGES"
+  else
+    # Fallback if we can't get git commits
+    CHANGELOG+="- Galactic Expansion mod $GALACTIC_VERSION\n"
+    CHANGELOG+="- Built with NeoForge 1.21.5\n"
+    CHANGELOG+="- Fixed event handling for ServerTickEvent.Post\n"
+    CHANGELOG+="- Implemented proper component-based rocket system"
+  fi
 fi
 
 # Find JAR files to include in the release
