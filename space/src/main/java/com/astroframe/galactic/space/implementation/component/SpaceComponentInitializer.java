@@ -307,7 +307,7 @@ public class SpaceComponentInitializer {
              .maxShieldStrength(100)
              .regenerationRate(0.5f)
              .impactResistance(3)
-             .shieldType(com.astroframe.galactic.core.api.space.component.enums.ShieldType.BASIC)
+             .shieldType(ShieldType.BASIC)
              .build()
         );
         

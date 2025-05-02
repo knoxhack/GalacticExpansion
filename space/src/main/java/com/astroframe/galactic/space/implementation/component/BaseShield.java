@@ -326,7 +326,7 @@ public class BaseShield implements IShield {
          * @param type The shield type
          * @return This builder
          */
-        public Builder shieldType(ShieldType type) {
+        public Builder shieldType(com.astroframe.galactic.core.api.space.component.enums.ShieldType type) {
             // This is for categorization only
             return this;
         }
