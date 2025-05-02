@@ -199,8 +199,9 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                                             namespace = parts[0];
                                             path = parts[1];
                                         }
-                                        // In NeoForge 1.21.5, use ResourceLocation.of() instead of the constructor
-                                        net.minecraft.resources.ResourceLocation itemRL = net.minecraft.resources.ResourceLocation.of(namespace, path);
+                                        // In NeoForge 1.21.5, parse the string format directly
+                                        // ResourceLocation has no static 'of' method
+                                        net.minecraft.resources.ResourceLocation itemRL = new net.minecraft.resources.ResourceLocation(namespace + ":" + path);
                                         // BuiltInRegistries.ITEM.get returns an Optional<Reference<Item>> in NeoForge 1.21.5
                                         // We need to map it to get the actual Item
                                         java.util.Optional<net.minecraft.world.item.Item> itemOpt = 
@@ -215,22 +216,35 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                                             // Handle any tag data
                                             if (compoundTag.contains("tag")) {
                                                 compoundTag.getCompound("tag").ifPresent(nbtTag -> {
-                                                    // In NeoForge 1.21.5, use different tag handling
-                                                    // Use getOrCreateTagElement instead of getTag/setTag
-                                                    // ItemStack.getTagElement and ItemStack.addTagElement are available
-                                                    CompoundTag stackTag = new CompoundTag();
-                                                    stack.getTag().ifPresent(existingTag -> {
-                                                        stackTag.merge(existingTag);
-                                                    });
-                                                    stackTag.merge(nbtTag);
-                                                    stack.save(stackTag);
+                                                    // In NeoForge 1.21.5, we need to use a different approach
+                                                    // Since we can't access tags directly, use copy and modify approach
+                                                    CompoundTag tempTag = new CompoundTag();
+                                                    // Using a consumer to save the itemstack to the tag
+                                                    stack.save(tagConsumer -> tempTag.merge(tagConsumer));
+                                                    
+                                                    // Now merge the new tag data
+                                                    if (tempTag.contains("tag")) {
+                                                        tempTag.getCompound("tag").ifPresent(currentTag -> {
+                                                            currentTag.merge(nbtTag);
+                                                        });
+                                                    } else {
+                                                        tempTag.put("tag", nbtTag.copy());
+                                                    }
+                                                    
+                                                    // Create a new stack with this data
+                                                    ItemStack newStack = ItemStack.of(tempTag);
+                                                    if (!newStack.isEmpty()) {
+                                                        // Replace the stack with our modified version
+                                                        components.set(slot, newStack);
+                                                    }
                                                 });
+                                            } else {
+                                                // If there's no tag data, just set the stack directly
+                                                components.set(slot, stack);
                                             }
                                         }
                                     }
                                 }
-                                
-                                components.set(slot, stack);
                             }
                         });
                     });
@@ -324,9 +338,9 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                 itemTag.putInt("Count", itemStack.getCount());
                 
                 // Save the tag data if present - for NeoForge 1.21.5
-                // In NeoForge 1.21.5, use ItemStack.save to get all NBT data
+                // In NeoForge 1.21.5, use a tag consumer for save()
                 CompoundTag fullTag = new CompoundTag();
-                itemStack.save(fullTag);
+                itemStack.save(tagConsumer -> fullTag.merge(tagConsumer));
                 
                 // If the tag contains a "tag" compound, extract it
                 if (fullTag.contains("tag")) {
