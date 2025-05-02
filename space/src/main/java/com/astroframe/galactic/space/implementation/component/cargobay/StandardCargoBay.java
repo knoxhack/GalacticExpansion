@@ -2,11 +2,12 @@ package com.astroframe.galactic.space.implementation.component.cargobay;
 
 import com.astroframe.galactic.core.api.space.component.ICargoBay;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
-import com.astroframe.galactic.space.implementation.component.base.AbstractSpaceModuleComponent;
+import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +87,15 @@ public class StandardCargoBay implements ICargoBay {
             }
         }
         return usedCapacity;
+    }
+    
+    /**
+     * Gets the remaining cargo capacity in kg
+     * 
+     * @return The remaining capacity
+     */
+    public int getRemainingCapacity() {
+        return maxCapacity - getCurrentUsedCapacity();
     }
     
     @Override
@@ -190,25 +200,33 @@ public class StandardCargoBay implements ICargoBay {
         
         // Load items
         items.clear();
-        if (tag.contains("Items")) {
-            ListTag itemsTag = tag.getList("Items");
+        if (tag.contains("Items", 9)) { // 9 is the tag type for a list
+            ListTag itemsTag = tag.getList("Items", 10); // 10 is the tag type for compound
             for (int i = 0; i < itemsTag.size(); i++) {
                 CompoundTag itemTag = itemsTag.getCompound(i);
                 String id = itemTag.getString("id");
                 int count = itemTag.getInt("count");
                 
-                // In a real implementation, we would use the item registry to get the item
-                ItemStack stack = new ItemStack(
-                    net.minecraft.core.registries.BuiltInRegistries.ITEM.get(ResourceLocationHelper.create("minecraft", id)), 
-                    count
-                );
+                // Use ItemHelper or similar to create item from ID
+                ResourceLocation itemId = ResourceLocationHelper.create("minecraft", id);
+                ItemStack stack = null;
+                
+                // Create the item stack - we need to handle potential null values properly
+                try {
+                    net.minecraft.world.item.Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(itemId);
+                    if (item != null && item != net.minecraft.world.item.Items.AIR) {
+                        stack = new ItemStack(item, count);
+                    } else {
+                        continue; // Skip this invalid item
+                    }
+                } catch (Exception e) {
+                    continue; // Skip this invalid item
+                }
                 
                 // Load any tags
-                if (itemTag.contains("tag")) {
+                if (itemTag.contains("tag", 10)) { // 10 is the tag type for compound
                     CompoundTag tagCompound = itemTag.getCompound("tag");
-                    if (tagCompound != null) {
-                        stack.setTag(tagCompound);
-                    }
+                    stack.getOrCreateTag().merge(tagCompound);
                 }
                 
                 items.add(stack);
@@ -219,7 +237,13 @@ public class StandardCargoBay implements ICargoBay {
     @Override
     public String getDetailsString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(super.getDetailsString()).append("\n");
+        sb.append("ID: ").append(id).append("\n");
+        sb.append("Type: ").append(type).append("\n");
+        sb.append("Name: ").append(name).append("\n");
+        sb.append("Description: ").append(description).append("\n");
+        sb.append("Tier: ").append(tier).append("\n");
+        sb.append("Mass: ").append(mass).append(" kg\n");
+        sb.append("Durability: ").append(durability).append("/").append(maxDurability).append("\n");
         sb.append("Storage Capacity: ").append(maxCapacity).append(" kg\n");
         sb.append("Slot Count: ").append(maxSlots).append("\n");
         sb.append("Used Capacity: ").append(getCurrentUsedCapacity()).append(" kg\n");
@@ -228,6 +252,79 @@ public class StandardCargoBay implements ICargoBay {
         sb.append("Environment Control: ").append(environmentControl ? "Yes" : "No").append("\n");
         sb.append("Automated Loading: ").append(automatedLoading ? "Yes" : "No");
         return sb.toString();
+    }
+    
+    @Override
+    public ResourceLocation getId() {
+        return id;
+    }
+    
+    @Override
+    public RocketComponentType getType() {
+        return type;
+    }
+    
+    @Override
+    public String getName() {
+        return name;
+    }
+    
+    @Override
+    public String getDescription() {
+        return description;
+    }
+    
+    @Override
+    public int getTier() {
+        return tier;
+    }
+    
+    @Override
+    public int getMass() {
+        return mass;
+    }
+    
+    @Override
+    public int getDurability() {
+        return durability;
+    }
+    
+    @Override
+    public int getMaxDurability() {
+        return maxDurability;
+    }
+    
+    @Override
+    public void setDurability(int durability) {
+        this.durability = Math.max(0, Math.min(durability, maxDurability));
+    }
+    
+    @Override
+    public boolean damage(int amount) {
+        this.durability = Math.max(0, this.durability - amount);
+        return this.durability > 0;
+    }
+    
+    @Override
+    public boolean repair(int amount) {
+        if (this.durability < this.maxDurability) {
+            this.durability = Math.min(this.maxDurability, this.durability + amount);
+            return true;
+        }
+        return false;
+    }
+    
+    @Override
+    public Vec3 getPosition() {
+        // Default implementation - for a full implementation,
+        // we would store and return a proper position
+        return new Vec3(0, 0, 0);
+    }
+    
+    @Override
+    public void setPosition(Vec3 position) {
+        // Default implementation for a fixed component
+        // Would normally store the position
     }
     
     /**
