@@ -4,6 +4,7 @@ import com.astroframe.galactic.core.TagHelper;
 import com.astroframe.galactic.core.api.space.component.*;
 import com.astroframe.galactic.core.api.space.component.enums.CompartmentType;
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
+import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import com.astroframe.galactic.core.api.space.component.enums.LifeSupportType;
 import com.astroframe.galactic.core.api.space.component.enums.ShieldType;
 import com.astroframe.galactic.core.api.common.ItemStack;
@@ -315,15 +316,17 @@ public class ComponentUtils {
      * Simple implementation of IRocketEngine.
      */
     private static class DefaultRocketEngine extends AbstractRocketComponent implements IRocketEngine {
-        private final int thrust;
-        private final int fuelConsumptionRate;
-        private final float efficiency;
+        private final double thrust;
+        private final double fuelConsumptionRate;
+        private final double efficiency;
+        private final double heatGeneration;
         private final boolean atmosphereCapable;
         private final boolean spaceCapable;
         private final EngineType engineType;
         private final FuelType fuelType;
+        private final List<FuelType> compatibleFuels = new ArrayList<>();
         
-        public DefaultRocketEngine(ResourceLocation id, int tier, int mass, int thrust, float efficiency, 
+        public DefaultRocketEngine(ResourceLocation id, int tier, int mass, double thrust, double efficiency, 
                                  boolean atmosphereCapable, boolean spaceCapable, EngineType engineType) {
             super(id, RocketComponentType.ENGINE, tier, mass);
             this.thrust = thrust;
@@ -331,35 +334,40 @@ public class ComponentUtils {
             this.atmosphereCapable = atmosphereCapable;
             this.spaceCapable = spaceCapable;
             this.engineType = engineType;
-            this.fuelConsumptionRate = (int)(thrust / (efficiency * 10));
+            this.fuelConsumptionRate = thrust / (efficiency * 10);
+            this.heatGeneration = thrust / 100;
             
             // Determine fuel type based on engine type
             if (engineType == EngineType.ANTIMATTER) {
                 this.fuelType = FuelType.ANTIMATTER;
+                this.compatibleFuels.add(FuelType.ANTIMATTER);
             } else if (engineType == EngineType.ION) {
                 this.fuelType = FuelType.ELECTRIC;
+                this.compatibleFuels.add(FuelType.ELECTRIC);
             } else {
                 this.fuelType = FuelType.CHEMICAL;
+                this.compatibleFuels.add(FuelType.CHEMICAL);
+                this.compatibleFuels.add(FuelType.LIQUID);
             }
         }
         
         @Override
-        public int getThrust() {
+        public double getThrust() {
             return thrust;
         }
         
         @Override
-        public int getFuelConsumptionRate() {
+        public double getFuelConsumptionRate() {
             return fuelConsumptionRate;
         }
         
         @Override
-        public float getEfficiency() {
+        public double getEfficiency() {
             return efficiency;
         }
         
         @Override
-        public IRocketEngine.FuelType getFuelType() {
+        public FuelType getFuelType() {
             return fuelType;
         }
         
@@ -374,6 +382,16 @@ public class ComponentUtils {
         }
         
         @Override
+        public double getHeatGeneration() {
+            return heatGeneration;
+        }
+        
+        @Override
+        public List<FuelType> getCompatibleFuels() {
+            return new ArrayList<>(compatibleFuels);
+        }
+        
+        @Override
         public EngineType getEngineType() {
             return engineType;
         }
@@ -381,12 +399,21 @@ public class ComponentUtils {
         @Override
         public void save(CompoundTag tag) {
             super.save(tag);
-            tag.putInt("Thrust", thrust);
-            tag.putFloat("Efficiency", efficiency);
+            tag.putDouble("Thrust", thrust);
+            tag.putDouble("Efficiency", efficiency);
             tag.putBoolean("AtmosphereCapable", atmosphereCapable);
             tag.putBoolean("SpaceCapable", spaceCapable);
             tag.putString("EngineType", engineType.name());
             tag.putString("FuelType", fuelType.name());
+            tag.putDouble("HeatGeneration", heatGeneration);
+            
+            // Save compatible fuels
+            CompoundTag fuelsTag = new CompoundTag();
+            fuelsTag.putInt("Count", compatibleFuels.size());
+            for (int i = 0; i < compatibleFuels.size(); i++) {
+                fuelsTag.putString("Fuel" + i, compatibleFuels.get(i).name());
+            }
+            tag.put("CompatibleFuels", fuelsTag);
         }
     }
     
@@ -435,7 +462,7 @@ public class ComponentUtils {
         }
         
         @Override
-        public IRocketEngine.FuelType getFuelType() {
+        public FuelType getFuelType() {
             return fuelType;
         }
         
