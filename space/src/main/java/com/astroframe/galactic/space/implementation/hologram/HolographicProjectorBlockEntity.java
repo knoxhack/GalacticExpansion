@@ -10,6 +10,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
+import java.util.Optional;
+
 /**
  * BlockEntity for the holographic projector.
  * Manages the state and rendering of holographic rocket projections.
