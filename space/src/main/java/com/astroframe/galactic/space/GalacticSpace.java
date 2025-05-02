@@ -24,7 +24,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-
+import net.neoforged.neoforge.event.level.LevelTickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
@@ -222,37 +222,28 @@ public class GalacticSpace {
             LOGGER.info("Scheduling server tick task for Galactic Space");
             MinecraftServer mcServer = event.getServer();
             
-            // Create a task that runs on the server thread
-            mcServer.tell(new net.minecraft.server.TickTask(0, () -> {
-                // Update rocket launch sequences
-                SpaceTravelManager.updateLaunches();
-                
-                // Schedule the next tick
-                if (mcServer.isRunning()) {
-                    mcServer.tell(new net.minecraft.server.TickTask(0, () -> {
-                        this.onServerTickTask(mcServer);
-                    }));
-                }
-            }));
+            // Set up a tick scheduler using the GameRules update
+            // This creates a repeating task on the server thread 
+            NeoForge.EVENT_BUS.addListener(this::onLevelTick);
             
             isTickTaskScheduled = true;
         }
     }
     
     /**
-     * Server tick task method.
-     * This is called every tick as a scheduled task.
+     * Level tick event handler.
+     * This is called every tick by the NeoForge event system.
+     * 
+     * @param event The level tick event
      */
-    private void onServerTickTask(MinecraftServer server) {
-        // Only process if server is still running
-        if (server.isRunning()) {
-            // Update rocket launch sequences
-            SpaceTravelManager.updateLaunches();
-            
-            // Schedule the next tick
-            server.tell(new net.minecraft.server.TickTask(0, () -> {
-                this.onServerTickTask(server);
-            }));
+    private void onLevelTick(LevelTickEvent event) {
+        // Only process server-side ticks at the end phase
+        if (event.side == LogicalSide.CLIENT || 
+            event.phase != LevelTickEvent.Phase.END) {
+            return;
         }
+        
+        // Update rocket launch sequences
+        SpaceTravelManager.updateLaunches();
     }
 }
