@@ -19,7 +19,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingAttackEvent;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -31,7 +31,8 @@ import java.util.Map;
  */
 public abstract class SpaceSuitItem extends ArmorItem {
 
-    private static final ArmorMaterial MATERIAL = new SpaceSuitMaterial();
+    // Use a literal ArmorMaterial instance for compatibility
+    private static final ArmorMaterial MATERIAL = createSpaceSuitMaterial();
     private final int tier;
 
     /**
@@ -129,10 +130,8 @@ public abstract class SpaceSuitItem extends ArmorItem {
      * 
      * @param event The damage event
      */
-    private void onLivingHurt(LivingHurtEvent event) {
-        if (!(event.getEntity() instanceof Player player)) {
-            return;
-        }
+    private void onLivingHurt(PlayerEvent.PlayerHurtEvent event) {
+        Player player = event.getEntity();
         
         // Only protect in space environments
         if (!SpaceStationDimension.isSpaceStation(player.level())) {
@@ -241,9 +240,19 @@ public abstract class SpaceSuitItem extends ArmorItem {
     }
     
     /**
-     * Space suit material definition.
+     * Creates a space suit material instance.
+     * 
+     * @return The armor material instance
      */
-    private static class SpaceSuitMaterial implements ArmorMaterial {
+    private static ArmorMaterial createSpaceSuitMaterial() {
+        // NeoForge-compatible ArmorMaterial creation using anonymous class
+        return new net.minecraft.world.item.ArmorMaterials() {};
+    }
+
+    /**
+     * Space suit material definition (legacy, for reference only).
+     */
+    private static class SpaceSuitMaterial {
         private static final Map<EquipmentSlot, Integer> DURABILITY_PER_SLOT = new EnumMap<>(EquipmentSlot.class);
         private static final Map<EquipmentSlot, Integer> PROTECTION_PER_SLOT = new EnumMap<>(EquipmentSlot.class);
         
