@@ -517,13 +517,25 @@ public class ModularRocket implements IRocket {
         }
         
         try {
-            String idStr = tag.getString("id").orElse("");
+            // Direct access to fields in NeoForge 1.21.5
+            String idStr = "";
+            if (tag.contains("id")) {
+                Tag idTag = tag.get("id");
+                if (idTag instanceof net.minecraft.nbt.StringTag stringTag) {
+                    idStr = stringTag.getAsString();
+                }
+            }
+            
+            if (idStr.isEmpty()) {
+                return null;
+            }
+            
             ResourceLocation id = ResourceLocation.parse(idStr);
-            int tier = tag.getInt("tier").orElse(1);
-            int fuel = tag.getInt("fuel").orElse(0);
-            float health = tag.contains("health") ? tag.getFloat("health").orElse(100f) : 100f;
+            int tier = tag.contains("tier") ? tag.getInt("tier") : 1;
+            int fuel = tag.contains("fuel") ? tag.getInt("fuel") : 0;
+            float health = tag.contains("health") ? tag.getFloat("health") : 100f;
             RocketStatus status = tag.contains("status") 
-                ? RocketStatus.values()[tag.getInt("status").orElse(0)] 
+                ? RocketStatus.values()[tag.getInt("status")] 
                 : RocketStatus.BUILDING;
             
             // Create a new rocket with default components for the tier
