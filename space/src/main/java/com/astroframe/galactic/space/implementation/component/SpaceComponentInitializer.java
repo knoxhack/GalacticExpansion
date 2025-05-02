@@ -322,7 +322,7 @@ public class SpaceComponentInitializer {
              .regenerationRate(1.0f)
              .impactResistance(5)
              .thermalShielded(true)
-             .shieldType(com.astroframe.galactic.core.api.space.component.enums.ShieldType.THERMAL)
+             .shieldType(ShieldType.THERMAL)
              .build()
         );
         
@@ -339,7 +339,7 @@ public class SpaceComponentInitializer {
              .radiationShielded(true)
              .empShielded(true)
              .thermalShielded(true)
-             .shieldType(com.astroframe.galactic.core.api.space.component.enums.ShieldType.ADVANCED)
+             .shieldType(ShieldType.ADVANCED)
              .build()
         );
     }

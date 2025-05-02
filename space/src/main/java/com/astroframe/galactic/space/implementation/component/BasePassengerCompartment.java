@@ -278,7 +278,7 @@ public class BasePassengerCompartment implements IPassengerCompartment {
          * @param compartmentType The compartment type
          * @return This builder
          */
-        public Builder compartmentType(CompartmentType compartmentType) {
+        public Builder compartmentType(com.astroframe.galactic.core.api.space.component.enums.CompartmentType compartmentType) {
             this.compartmentType = compartmentType;
             return this;
         }
