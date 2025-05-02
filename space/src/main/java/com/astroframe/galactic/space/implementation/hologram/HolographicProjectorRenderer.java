@@ -9,8 +9,10 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
+import net.minecraft.client.renderer.GameRenderer;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -41,6 +43,9 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
     // Texture for lines
     private static final ResourceLocation HOLOGRAM_TEXTURE = 
             ResourceLocation.parse("galactic:textures/hologram/hologram.png");
+    
+    // Projection matrix for NeoForge 1.21.5 rendering
+    private Matrix4f projectionMatrix;
     
     /**
      * Constructor for the renderer.
@@ -97,9 +102,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         RenderSystem.setShaderColor(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
         
         // Start building lines - NeoForge 1.21.5 compatible
-        VertexFormat.Mode mode = VertexFormat.Mode.LINES;
-        DefaultVertexFormat format = DefaultVertexFormat.POSITION_COLOR;
-        builder.begin(mode, format);
+        builder.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR);
         
         // Render base platform with direct BufferBuilder
         renderHologramBase(poseStack, builder);
@@ -117,10 +120,14 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         renderScanLines(poseStack, builder, scanHeight);
         
         // Finish rendering in NeoForge 1.21.5
-        BufferBuilder.RenderedBuffer renderedBuffer = builder.endOrDiscardIfEmpty();
-        if (renderedBuffer != null) {
-            RenderSystem.drawWithShader(renderedBuffer);
-        }
+        VertexBuffer vertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
+        vertexBuffer.bind();
+        vertexBuffer.upload(builder.end());
+        
+        // Set up the shader
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        vertexBuffer.drawWithShader(poseStack.last().pose(), projectionMatrix, RenderSystem.getShader());
+        vertexBuffer.close();
         
         // Reset render state (NeoForge 1.21.5 doesn't use RenderSystem.disableBlend directly)
         // Instead we rely on the renderer to handle state
@@ -189,7 +196,8 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
                     
             Vector4f pos2 = new Vector4f(x1, 0.0f, z1, 1.0f);
             pos2.mul(pose);
-            builder.vertex(pose, pos2.x(), pos2.y(), pos2.z())
+            // Direct position specification
+            builder.vertex(pos2.x(), pos2.y(), pos2.z())
                    .color(red, green, blue, fadedAlpha)
                    .endVertex();
         }
@@ -218,14 +226,14 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         // Draw the line using Vector4f transformation for NeoForge 1.21.5
         Vector4f pos1 = new Vector4f(x1, y1, z1, 1.0f);
         pos1.mul(pose);
-        // Use the proper vertex method for NeoForge 1.21.5
-        builder.vertex(pose, pos1.x(), pos1.y(), pos1.z())
+        // Direct position specification for NeoForge 1.21.5
+        builder.vertex(pos1.x(), pos1.y(), pos1.z())
                .color(red, green, blue, alpha)
                .endVertex();
                 
         Vector4f pos2 = new Vector4f(x2, y2, z2, 1.0f);
         pos2.mul(pose);
-        builder.vertex(pose, pos2.x(), pos2.y(), pos2.z())
+        builder.vertex(pos2.x(), pos2.y(), pos2.z())
                .color(red, green, blue, alpha)
                .endVertex();
     }
@@ -336,14 +344,14 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         // Draw the line using Vector4f transformation for NeoForge 1.21.5
         Vector4f pos1 = new Vector4f(x1, y1, z1, 1.0f);
         pos1.mul(pose);
-        // Use the proper vertex method for NeoForge 1.21.5
-        builder.vertex(pose, pos1.x(), pos1.y(), pos1.z())
+        // Direct position specification for NeoForge 1.21.5
+        builder.vertex(pos1.x(), pos1.y(), pos1.z())
                .color(red, green, blue, alphaValue)
                .endVertex();
                 
         Vector4f pos2 = new Vector4f(x2, y2, z2, 1.0f);
         pos2.mul(pose);
-        builder.vertex(pose, pos2.x(), pos2.y(), pos2.z())
+        builder.vertex(pos2.x(), pos2.y(), pos2.z())
                .color(red, green, blue, alphaValue)
                .endVertex();
     }
