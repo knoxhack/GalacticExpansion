@@ -132,6 +132,31 @@ public class BasePassengerCompartment implements IPassengerCompartment {
         return tier >= 2; // Tier 2 and above have radiation shielding
     }
     
+    // Implementation of IPassengerCompartment method
+    public boolean hasLifeSupport() {
+        return true; // All passenger compartments have life support
+    }
+    
+    // Implementation of IPassengerCompartment method
+    public int getComfortLevel() {
+        return Math.min(10, tier * 3); // Tier 1: 3, Tier 2: 6, Tier 3: 9
+    }
+    
+    // Implementation of IPassengerCompartment method
+    public List<Player> getPassengers() {
+        return new ArrayList<>(); // Return empty list until we implement actual passenger tracking
+    }
+    
+    // Implementation of IPassengerCompartment method
+    public boolean addPassenger(Player player) {
+        return true; // Mock implementation
+    }
+    
+    // Implementation of IPassengerCompartment method
+    public void removePassenger(Player player) {
+        // Mock implementation
+    }
+    
     // Implementation for IRocketComponent method
     public boolean isBroken() {
         return false; // Default implementation always returns false until we implement durability

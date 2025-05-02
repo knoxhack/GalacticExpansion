@@ -52,7 +52,7 @@ public class BaseCargoBay implements ICargoBay {
     
     // Implementation of IRocketComponent method
     public RocketComponentType getType() {
-        return RocketComponentType.CARGO_BAY;
+        return RocketComponentType.STORAGE;
     }
     
     // Implementation of IRocketComponent method
@@ -96,6 +96,32 @@ public class BaseCargoBay implements ICargoBay {
     // Implementation of ICargoBay method
     public boolean isRadiationShielded() {
         return isRadiationShielded;
+    }
+    
+    // Implementation of ICargoBay method
+    public boolean hasRadiationShielding() {
+        return isRadiationShielded;
+    }
+    
+    // Implementation of IRocketComponent methods
+    public int getMaxDurability() {
+        return (int)maxHealth;
+    }
+    
+    public int getCurrentDurability() {
+        return (int)maxHealth; // Currently always at max
+    }
+    
+    public void damage(int amount) {
+        // No-op until we implement durability
+    }
+    
+    public String getName() {
+        return displayName.getString();
+    }
+    
+    public String getDescription() {
+        return "Cargo Storage - " + storageCapacity + " slots";
     }
     
     // Implementation of ICargoBay method

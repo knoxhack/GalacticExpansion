@@ -115,4 +115,10 @@ public class SpaceStationChunkGenerator extends ChunkGenerator {
         }
         return SpaceStationHelper.PLATFORM_Y - 1; // Below platform for void areas
     }
+    
+    // Required codec implementation for NeoForge 1.21.5
+    @Override
+    public com.mojang.serialization.Codec<? extends ChunkGenerator> codec() {
+        return com.mojang.serialization.Codec.unit(this);
+    }
 }

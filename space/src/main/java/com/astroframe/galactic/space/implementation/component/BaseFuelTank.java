@@ -36,37 +36,37 @@ public class BaseFuelTank implements IFuelTank {
         this.isInsulated = builder.isInsulated;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public ResourceLocation getId() {
         return id;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public Component getDisplayName() {
         return displayName;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public int getTier() {
         return tier;
     }
     
-    @Override
-    public ComponentType getType() {
-        return ComponentType.FUEL_TANK;
+    // Implementation of IRocketComponent method
+    public com.astroframe.galactic.core.api.space.component.RocketComponentType getType() {
+        return com.astroframe.galactic.core.api.space.component.RocketComponentType.FUEL_TANK;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public int getMass() {
         return mass;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public float getMaxHealth() {
         return maxHealth;
     }
     
-    @Override
+    // Implementation of IRocketComponent method
     public List<Component> getTooltip(boolean detailed) {
         List<Component> tooltip = new ArrayList<>();
         tooltip.add(displayName);
@@ -84,24 +84,53 @@ public class BaseFuelTank implements IFuelTank {
         return tooltip;
     }
     
-    @Override
+    // Implementation of IFuelTank method
     public int getMaxFuelCapacity() {
         return maxFuelCapacity;
     }
     
-    @Override
+    // Implementation of IFuelTank method
     public FuelType getFuelType() {
         return fuelType;
     }
     
-    @Override
+    // Implementation of IFuelTank method
     public float getPressureRating() {
         return pressureRating;
     }
     
-    @Override
+    // Implementation of IFuelTank method
     public boolean isInsulated() {
         return isInsulated;
+    }
+    
+    // Implementation of IRocketComponent methods
+    public int getMaxDurability() {
+        return (int)maxHealth;
+    }
+    
+    public int getCurrentDurability() {
+        return (int)maxHealth; // Currently always at max
+    }
+    
+    public void damage(int amount) {
+        // No-op until we implement durability
+    }
+    
+    public boolean isBroken() {
+        return false; // Default implementation always returns false until we implement durability
+    }
+    
+    public void repair(int amount) {
+        // No-op until we implement durability
+    }
+    
+    public String getName() {
+        return displayName.getString();
+    }
+    
+    public String getDescription() {
+        return "Fuel Tank - " + fuelType.getDisplayName() + " - " + maxFuelCapacity + " units";
     }
     
     /**
