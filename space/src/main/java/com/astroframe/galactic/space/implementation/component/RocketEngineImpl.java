@@ -325,7 +325,7 @@ public class RocketEngineImpl implements IRocketEngine {
             return new RocketEngineImpl(
                     id, name, description, tier, mass, maxDurability,
                     thrust, fuelConsumptionRate, efficiency, fuelType,
-                    canOperateInAtmosphere, canOperateInSpace
+                    canOperateInAtmosphere, canOperateInSpace, engineType
             );
         }
     }

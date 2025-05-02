@@ -1030,10 +1030,12 @@ public class RocketComponentFactory {
         private final FuelType fuelType;
         private final boolean atmosphereOperable;
         private final boolean spaceOperable;
+        private final EngineType engineType;
         
         public RocketEngine(ResourceLocation id, String name, String description, 
                           int tier, int mass, int maxDurability, float efficiency,
-                          FuelType fuelType, boolean atmosphereOperable, boolean spaceOperable) {
+                          FuelType fuelType, boolean atmosphereOperable, boolean spaceOperable,
+                          EngineType engineType) {
             this.id = id;
             this.name = name;
             this.description = description;
@@ -1045,6 +1047,7 @@ public class RocketComponentFactory {
             this.fuelType = fuelType;
             this.atmosphereOperable = atmosphereOperable;
             this.spaceOperable = spaceOperable;
+            this.engineType = engineType;
         }
         
         @Override
@@ -1125,6 +1128,11 @@ public class RocketComponentFactory {
         @Override
         public int getThrust() {
             return tier * 100;
+        }
+        
+        @Override
+        public EngineType getEngineType() {
+            return engineType;
         }
     }
     
