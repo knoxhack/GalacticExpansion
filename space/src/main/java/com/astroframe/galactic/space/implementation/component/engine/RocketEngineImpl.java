@@ -32,6 +32,10 @@ public class RocketEngineImpl implements IRocketEngine {
     private final double heatGeneration;
     private final List<FuelType> compatibleFuels;
     private MountingPosition requiredMountingPosition;
+    
+    // Durability fields required by IRocketComponent
+    private final int maxDurability;
+    private int currentDurability;
 
     private RocketEngineImpl(ResourceLocation id, String name, String description, int tier, 
                            double mass, double thrust, double efficiency, 
@@ -55,6 +59,46 @@ public class RocketEngineImpl implements IRocketEngine {
         this.heatGeneration = heatGeneration;
         this.compatibleFuels = compatibleFuels;
         this.requiredMountingPosition = requiredMountingPosition;
+        
+        // Set durability based on tier
+        this.maxDurability = 500 * tier;
+        this.currentDurability = this.maxDurability;
+    }
+    
+    /**
+     * Gets the maximum durability of this engine.
+     * @return The maximum durability
+     */
+    @Override
+    public int getMaxDurability() {
+        return maxDurability;
+    }
+    
+    /**
+     * Gets the current durability of this engine.
+     * @return The current durability
+     */
+    @Override
+    public int getCurrentDurability() {
+        return currentDurability;
+    }
+    
+    /**
+     * Damages this engine.
+     * @param amount The amount of damage to apply
+     */
+    @Override
+    public void damage(int amount) {
+        this.currentDurability = Math.max(0, this.currentDurability - amount);
+    }
+    
+    /**
+     * Repairs this engine.
+     * @param amount The amount to repair
+     */
+    @Override
+    public void repair(int amount) {
+        this.currentDurability = Math.min(this.maxDurability, this.currentDurability + amount);
     }
 
     @Override
