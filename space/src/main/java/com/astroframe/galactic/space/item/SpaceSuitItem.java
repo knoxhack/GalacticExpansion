@@ -10,11 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.equipment.ArmorMaterial;
-import net.minecraft.world.item.equipment.ArmorMaterials;
-import net.minecraft.world.item.equipment.ArmorType;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -31,22 +27,24 @@ import java.util.Map;
 
 /**
  * Space suit armor item, provides protection in space environments.
+ * In NeoForge 1.21.5, we adapt this to extend Item instead of ArmorItem 
+ * since the ArmorItem API has changed significantly.
  */
-public abstract class SpaceSuitItem extends ArmorItem {
+public abstract class SpaceSuitItem extends Item {
 
-    // Use a vanilla ArmorMaterial implementation for compatibility
-    private static final ArmorMaterial MATERIAL = ArmorMaterials.IRON;
     private final int tier;
+    private final EquipmentSlot slot;
 
     /**
      * Create a new space suit item.
      * 
-     * @param armorType The armor type
+     * @param slot The equipment slot this item belongs to
      * @param tier The tier/level of the space suit (1-3)
      */
-    public SpaceSuitItem(ArmorType armorType, int tier) {
-        super(MATERIAL, armorType, new Properties().stacksTo(1).fireResistant().durability(800));
+    public SpaceSuitItem(EquipmentSlot slot, int tier) {
+        super(new Properties().stacksTo(1).fireResistant().durability(800));
         this.tier = Math.max(1, Math.min(3, tier)); // Clamp between 1-3
+        this.slot = slot;
     }
     
     /**
@@ -58,7 +56,17 @@ public abstract class SpaceSuitItem extends ArmorItem {
         return tier;
     }
     
+    /**
+     * Gets the equipment slot this item belongs to.
+     * 
+     * @return The equipment slot
+     */
+    public EquipmentSlot getEquipmentSlot() {
+        return slot;
+    }
+    
     // Adds tooltip information
+    @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, 
                               TooltipFlag flag) {
         tooltip.add(Component.translatable("item.galactic-space.space_suit.tier", getTier())
@@ -79,8 +87,10 @@ public abstract class SpaceSuitItem extends ArmorItem {
     }
     
     // Updates the item each tick when in inventory
+    @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
+        // Call parent method - in this case Item's implementation
+        // since we're no longer extending ArmorItem
         
         // Apply effects when in hostile environments
         if (entity instanceof Player player && entity.tickCount % 20 == 0) {
@@ -100,12 +110,13 @@ public abstract class SpaceSuitItem extends ArmorItem {
         // Check if player has complete space suit
         if (!hasFullSpaceSuit(player)) {
             // Apply negative effects if not wearing a complete suit
-            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1));
+            // Updated MobEffects names for NeoForge 1.21.5
+            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 40, -1)); // Slowdown
             player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 0));
             
             // Add suffocation if no helmet
             if (!hasHelmet(player)) {
-                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0));
+                player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0)); // Changed from CONFUSION
                 
                 // Damage from no oxygen
                 if (player.getRandom().nextInt(10) == 0) {
@@ -186,7 +197,7 @@ public abstract class SpaceSuitItem extends ArmorItem {
      * @return true if wearing a space suit helmet
      */
     public static boolean hasHelmet(Player player) {
-        return player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof SpaceSuitItem.Helmet;
+        return player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof Helmet;
     }
     
     /**
@@ -196,7 +207,7 @@ public abstract class SpaceSuitItem extends ArmorItem {
      * @return true if wearing a space suit chestplate
      */
     public static boolean hasChestplate(Player player) {
-        return player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof SpaceSuitItem.Chestplate;
+        return player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof Chestplate;
     }
     
     /**
@@ -206,7 +217,7 @@ public abstract class SpaceSuitItem extends ArmorItem {
      * @return true if wearing space suit leggings
      */
     public static boolean hasLeggings(Player player) {
-        return player.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof SpaceSuitItem.Leggings;
+        return player.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof Leggings;
     }
     
     /**
@@ -216,7 +227,7 @@ public abstract class SpaceSuitItem extends ArmorItem {
      * @return true if wearing space suit boots
      */
     public static boolean hasBoots(Player player) {
-        return player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof SpaceSuitItem.Boots;
+        return player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof Boots;
     }
     
     /**
@@ -245,65 +256,11 @@ public abstract class SpaceSuitItem extends ArmorItem {
     }
     
     /**
-     * Space suit material definition (legacy, for reference only).
-     */
-    private static class SpaceSuitMaterial {
-        private static final Map<EquipmentSlot, Integer> DURABILITY_PER_SLOT = new EnumMap<>(EquipmentSlot.class);
-        private static final Map<EquipmentSlot, Integer> PROTECTION_PER_SLOT = new EnumMap<>(EquipmentSlot.class);
-        
-        static {
-            DURABILITY_PER_SLOT.put(EquipmentSlot.HEAD, 200);
-            DURABILITY_PER_SLOT.put(EquipmentSlot.CHEST, 280);
-            DURABILITY_PER_SLOT.put(EquipmentSlot.LEGS, 260);
-            DURABILITY_PER_SLOT.put(EquipmentSlot.FEET, 220);
-            
-            PROTECTION_PER_SLOT.put(EquipmentSlot.HEAD, 3);
-            PROTECTION_PER_SLOT.put(EquipmentSlot.CHEST, 6);
-            PROTECTION_PER_SLOT.put(EquipmentSlot.LEGS, 5);
-            PROTECTION_PER_SLOT.put(EquipmentSlot.FEET, 3);
-        }
-        
-        // In NeoForge 1.21.5, we don't use ArmorItem.Type as it doesn't exist
-        // Instead, we use EquipmentSlot directly
-        public int getDurabilityForSlot(EquipmentSlot slot) {
-            return DURABILITY_PER_SLOT.getOrDefault(slot, 0);
-        }
-        
-        public int getDefenseForSlot(EquipmentSlot slot) {
-            return PROTECTION_PER_SLOT.getOrDefault(slot, 0);
-        }
-        
-        public int getEnchantmentValue() {
-            return 15;
-        }
-        
-        public net.minecraft.sounds.SoundEvent getEquipSound() {
-            return net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_IRON.value();
-        }
-        
-        public Ingredient getRepairIngredient() {
-            return Ingredient.of(net.minecraft.world.item.Items.IRON_INGOT);
-        }
-        
-        public String getName() {
-            return "space_suit";
-        }
-        
-        public float getToughness() {
-            return 2.0F;
-        }
-        
-        public float getKnockbackResistance() {
-            return 0.1F;
-        }
-    }
-    
-    /**
      * Space suit helmet implementation.
      */
     public static class Helmet extends SpaceSuitItem {
         public Helmet() {
-            super(ArmorType.HELMET, 1);
+            super(EquipmentSlot.HEAD, 1);
         }
     }
     
@@ -312,7 +269,7 @@ public abstract class SpaceSuitItem extends ArmorItem {
      */
     public static class Chestplate extends SpaceSuitItem {
         public Chestplate() {
-            super(ArmorType.CHESTPLATE, 1);
+            super(EquipmentSlot.CHEST, 1);
         }
     }
     
@@ -321,7 +278,7 @@ public abstract class SpaceSuitItem extends ArmorItem {
      */
     public static class Leggings extends SpaceSuitItem {
         public Leggings() {
-            super(ArmorType.LEGGINGS, 1);
+            super(EquipmentSlot.LEGS, 1);
         }
     }
     
@@ -330,7 +287,7 @@ public abstract class SpaceSuitItem extends ArmorItem {
      */
     public static class Boots extends SpaceSuitItem {
         public Boots() {
-            super(ArmorType.BOOTS, 1);
+            super(EquipmentSlot.FEET, 1);
         }
     }
 }

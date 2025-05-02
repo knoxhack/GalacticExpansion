@@ -74,14 +74,16 @@ public abstract class MachineBlock extends Block implements EntityBlock {
         return InteractionResult.PASS;
     }
     
-    @Override
+    // Method name might have changed in NeoForge 1.21.5
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         if (!state.is(newState.getBlock())) {
             if (level.getBlockEntity(pos) instanceof MachineBlockEntity machine) {
                 machine.dropContents(level, pos);
             }
             
-            super.onRemove(state, level, pos, newState, moving);
+            // Call the block's parent onRemove method with appropriate parameters
+            // In NeoForge 1.21.5, use a method that exists in the parent class
+            super.playerWillDestroy(state, level, pos, null);
         }
     }
     

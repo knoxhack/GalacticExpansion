@@ -178,7 +178,7 @@ public class ModularRocketItem extends Item {
             }
             
             if (tag.contains("rocket")) {
-                CompoundTag rocketTag = tag.getCompound("rocket");
+                CompoundTag rocketTag = tag.getCompound("rocket").orElse(new CompoundTag());
                 return ModularRocket.fromTag(rocketTag);
             }
         }
