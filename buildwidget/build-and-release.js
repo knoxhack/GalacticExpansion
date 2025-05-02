@@ -706,5 +706,7 @@ module.exports = {
     getVersionHistory,
     getChangelogHistory,
     getModuleDependencies,
-    formatChangelogMarkdown
+    formatChangelogMarkdown,
+    saveVersionHistory,
+    saveChangelogHistory
 };
