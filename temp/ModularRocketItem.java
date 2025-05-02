@@ -156,7 +156,7 @@ public class ModularRocketItem extends Item {
         CompoundTag tag = getOrCreateTag(stack);
         
         // Must have command module
-        if (!tag.contains("commandModule") || tag.getString("commandModule").isEmpty()) {
+        if (!tag.contains("commandModule") || TagHelper.getStringValue(tag, "commandModule").isEmpty()) {
             return false;
         }
         

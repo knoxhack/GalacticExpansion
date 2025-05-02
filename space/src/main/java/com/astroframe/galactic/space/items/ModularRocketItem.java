@@ -53,7 +53,7 @@ public class ModularRocketItem extends Item {
                 tooltip.add(Component.translatable("item.galactic-space.modular_rocket.components").withStyle(ChatFormatting.GRAY));
                 
                 // Command module
-                String commandModuleId = tag.contains("commandModule") ? tag.getString("commandModule") : "";
+                String commandModuleId = TagHelper.getStringValue(tag, "commandModule");
                 tooltip.add(Component.translatable("item.galactic-space.modular_rocket.command_module",
                         getComponentName(commandModuleId)).withStyle(ChatFormatting.BLUE));
                 
@@ -156,7 +156,7 @@ public class ModularRocketItem extends Item {
         CompoundTag tag = getOrCreateTag(stack);
         
         // Must have command module
-        if (!tag.contains("commandModule") || tag.getString("commandModule").isEmpty()) {
+        if (!tag.contains("commandModule") || TagHelper.getStringValue(tag, "commandModule").isEmpty()) {
             return false;
         }
         
@@ -210,7 +210,7 @@ public class ModularRocketItem extends Item {
         // Get command module tier
         String commandModuleId = "";
         if (tag.contains("commandModule")) {
-            String value = tag.getString("commandModule");
+            String value = TagHelper.getStringValue(tag, "commandModule");
             if (!value.isEmpty()) {
                 commandModuleId = value;
             }
@@ -233,8 +233,8 @@ public class ModularRocketItem extends Item {
         
         for (int i = 0; i < enginesList.size(); i++) {
             String engineId = "";
-            if (enginesList.get(i) instanceof net.minecraft.nbt.StringTag) {
-                engineId = ((StringTag)enginesList.get(i)).getString();
+            // Using TagHelper instead of direct StringTag access
+                engineId = TagHelper.getStringValue(enginesList.get(i));
             }
             
             if (!engineId.isEmpty()) {
@@ -266,7 +266,7 @@ public class ModularRocketItem extends Item {
         // Add command module
         String commandModuleId = "";
         if (tag.contains("commandModule")) {
-            String value = tag.getString("commandModule");
+            String value = TagHelper.getStringValue(tag, "commandModule");
             if (!value.isEmpty()) {
                 commandModuleId = value;
             }
@@ -295,8 +295,8 @@ public class ModularRocketItem extends Item {
         
         for (int i = 0; i < enginesList.size(); i++) {
             String engineId = "";
-            if (enginesList.get(i) instanceof net.minecraft.nbt.StringTag) {
-                engineId = ((StringTag)enginesList.get(i)).getString();
+            // Using TagHelper instead of direct StringTag access
+                engineId = TagHelper.getStringValue(enginesList.get(i));
             }
             
             if (!engineId.isEmpty()) {
@@ -319,8 +319,8 @@ public class ModularRocketItem extends Item {
         
         for (int i = 0; i < fuelTanksList.size(); i++) {
             String fuelTankId = "";
-            if (fuelTanksList.get(i) instanceof net.minecraft.nbt.StringTag) {
-                fuelTankId = ((StringTag)fuelTanksList.get(i)).getString();
+            // Using TagHelper instead of direct StringTag access
+                fuelTankId = TagHelper.getStringValue(fuelTanksList.get(i));
             }
             
             if (!fuelTankId.isEmpty()) {
@@ -343,8 +343,8 @@ public class ModularRocketItem extends Item {
         
         for (int i = 0; i < cargoBaysList.size(); i++) {
             String cargoBayId = "";
-            if (cargoBaysList.get(i) instanceof net.minecraft.nbt.StringTag) {
-                cargoBayId = ((StringTag)cargoBaysList.get(i)).getString();
+            // Using TagHelper instead of direct StringTag access
+                cargoBayId = TagHelper.getStringValue(cargoBaysList.get(i));
             }
             
             if (!cargoBayId.isEmpty()) {
@@ -367,8 +367,8 @@ public class ModularRocketItem extends Item {
         
         for (int i = 0; i < passengerCompartmentsList.size(); i++) {
             String compartmentId = "";
-            if (passengerCompartmentsList.get(i) instanceof net.minecraft.nbt.StringTag) {
-                compartmentId = ((StringTag)passengerCompartmentsList.get(i)).getString();
+            // Using TagHelper instead of direct StringTag access
+                compartmentId = TagHelper.getStringValue(passengerCompartmentsList.get(i));
             }
             
             if (!compartmentId.isEmpty()) {
@@ -391,8 +391,8 @@ public class ModularRocketItem extends Item {
         
         for (int i = 0; i < shieldsList.size(); i++) {
             String shieldId = "";
-            if (shieldsList.get(i) instanceof net.minecraft.nbt.StringTag) {
-                shieldId = ((StringTag)shieldsList.get(i)).getString();
+            // Using TagHelper instead of direct StringTag access
+                shieldId = TagHelper.getStringValue(shieldsList.get(i));
             }
             
             if (!shieldId.isEmpty()) {
@@ -415,8 +415,8 @@ public class ModularRocketItem extends Item {
         
         for (int i = 0; i < lifeSupportsList.size(); i++) {
             String lifeSupportId = "";
-            if (lifeSupportsList.get(i) instanceof net.minecraft.nbt.StringTag) {
-                lifeSupportId = ((StringTag)lifeSupportsList.get(i)).getString();
+            // Using TagHelper instead of direct StringTag access
+                lifeSupportId = TagHelper.getStringValue(lifeSupportsList.get(i));
             }
             
             if (!lifeSupportId.isEmpty()) {

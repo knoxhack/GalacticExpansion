@@ -2,6 +2,7 @@ package com.astroframe.galactic.space.capability;
 
 import com.astroframe.galactic.core.api.space.ICelestialBody;
 import com.astroframe.galactic.space.GalacticSpace;
+import com.astroframe.galactic.space.util.TagHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -135,7 +136,7 @@ public class PlayerSpaceData {
                 if (bodiesTag.getString(i) != null) {
                     // Direct access to string content in NeoForge 1.21.5
                     if (bodiesTag.get(i) instanceof StringTag) {
-                        idString = ((StringTag)bodiesTag.get(i)).getString();
+                        idString = TagHelper.getStringValue(bodiesTag.get(i));
                     } else {
                         // Fallback if tag type is unexpected
                         GalacticSpace.LOGGER.warn("Unexpected tag type in bodiesTag at index " + i);
@@ -152,7 +153,7 @@ public class PlayerSpaceData {
         if (tag.contains("LastVisitedBody")) {
             Tag lastVisitedTag = tag.get("LastVisitedBody");
             if (lastVisitedTag instanceof StringTag) {
-                String bodyId = ((StringTag)lastVisitedTag).getString();
+                String bodyId = TagHelper.getStringValue(lastVisitedTag);
                 lastVisitedBody = bodyId.isEmpty() ? null : ResourceLocation.parse(bodyId);
             } else {
                 lastVisitedBody = null;
@@ -167,7 +168,7 @@ public class PlayerSpaceData {
             int expValue = 0;
             try {
                 // Direct integer conversion for NeoForge 1.21.5
-                expValue = tag.getInt("Experience");
+                expValue = TagHelper.getIntValue(tag, "Experience");
             } catch (Exception e) {
                 GalacticSpace.LOGGER.warn("Failed to get Experience value: " + e.getMessage());
             }
