@@ -37,7 +37,7 @@ import org.apache.logging.log4j.Logger;
  * Handles rocket systems and space station orbital mechanics.
  * Note: Planetary exploration is handled by the Exploration module.
  */
-@Mod("galacticspace") // Update to match the modId in mods.toml
+@Mod(GalacticSpace.MOD_ID) // Using constant for consistency
 public class GalacticSpace {
     public static final String MOD_ID = "galacticspace"; // Changed from galactic-space to galacticspace (no hyphens)
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
