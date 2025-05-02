@@ -1,5 +1,6 @@
 package com.astroframe.galactic.core.api.space.util;
 
+import com.astroframe.galactic.core.TagHelper;
 import com.astroframe.galactic.core.api.space.component.*;
 import com.astroframe.galactic.core.api.space.component.enums.CompartmentType;
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
@@ -104,15 +105,8 @@ public class ComponentUtils {
      */
     private static IRocketComponent createDefaultComponent(ResourceLocation id, RocketComponentType type, CompoundTag tag) {
         // Extract common properties
-        int tier = 1;
-        if (tag.contains("Tier")) {
-            tier = tag.getInt("Tier");
-        }
-        
-        int mass = 100;
-        if (tag.contains("Mass")) {
-            mass = tag.getInt("Mass");
-        }
+        int tier = TagHelper.getInt(tag, "Tier", 1);
+        int mass = TagHelper.getInt(tag, "Mass", 100);
         
         // Create appropriate component based on type
         switch (type) {
@@ -139,35 +133,18 @@ public class ComponentUtils {
      * Creates a default engine component.
      */
     private static IRocketEngine createDefaultEngine(ResourceLocation id, int tier, int mass, CompoundTag tag) {
-        int thrust = 1000 * tier;
-        if (tag.contains("Thrust")) {
-            thrust = tag.getInt("Thrust");
-        }
-        
-        float efficiency = 0.5f * tier;
-        if (tag.contains("Efficiency")) {
-            efficiency = tag.getFloat("Efficiency");
-        }
-        
-        boolean atmosphereCapable = false;
-        if (tag.contains("AtmosphereCapable")) {
-            atmosphereCapable = tag.getBoolean("AtmosphereCapable");
-        }
-        
-        boolean spaceCapable = true;
-        if (tag.contains("SpaceCapable")) {
-            spaceCapable = tag.getBoolean("SpaceCapable");
-        }
+        int thrust = TagHelper.getInt(tag, "Thrust", 1000 * tier);
+        float efficiency = TagHelper.getFloat(tag, "Efficiency", 0.5f * tier);
+        boolean atmosphereCapable = TagHelper.getBoolean(tag, "AtmosphereCapable", false);
+        boolean spaceCapable = TagHelper.getBoolean(tag, "SpaceCapable", true);
         
         EngineType engineType = EngineType.CHEMICAL;
-        if (tag.contains("EngineType")) {
-            String engineTypeStr = tag.getString("EngineType");
-            if (engineTypeStr != null && !engineTypeStr.isEmpty()) {
-                try {
-                    engineType = EngineType.valueOf(engineTypeStr);
-                } catch (IllegalArgumentException e) {
-                    // Use default
-                }
+        String engineTypeStr = TagHelper.getString(tag, "EngineType", "");
+        if (!engineTypeStr.isEmpty()) {
+            try {
+                engineType = EngineType.valueOf(engineTypeStr);
+            } catch (IllegalArgumentException e) {
+                // Use default
             }
         }
         
@@ -209,7 +186,7 @@ public class ComponentUtils {
     private static ICargoBay createDefaultCargoBay(ResourceLocation id, int tier, int mass, CompoundTag tag) {
         int storageCapacity = 9 * tier;
         if (tag.contains("StorageCapacity")) {
-            storageCapacity = tag.getInt("StorageCapacity").orElse(storageCapacity);
+            storageCapacity = tag.getInt("StorageCapacity");
         }
         
         return new DefaultCargoBay(id, tier, mass, storageCapacity);
