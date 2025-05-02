@@ -44,7 +44,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
     
     @Override
     public void render(HolographicProjectorBlockEntity blockEntity, float partialTicks, PoseStack poseStack,
-                      MultiBufferSource bufferSource, int combinedLight, int combinedOverlay) {
+                      MultiBufferSource bufferSource, int combinedLight, int combinedOverlay, Vec3 camPos) {
         // Spinning animation
         float angle = (Minecraft.getInstance().level.getGameTime() + partialTicks) * 1.5F % 360F;
         
@@ -142,6 +142,8 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
     private void drawLine(VertexConsumer consumer, Matrix4f pose, 
                          float x1, float y1, float z1, float x2, float y2, float z2,
                          float red, float green, float blue, float alpha) {
+        // NeoForge 1.21.5 method for vertex consumer using MatrixStack.Pose
+        // Transform the vertices using the pose matrix
         consumer.vertex(pose, x1, y1, z1)
                 .color(red, green, blue, alpha)
                 .normal(1, 0, 0)
