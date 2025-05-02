@@ -232,8 +232,8 @@ public class ModularRocketItem extends Item {
         
         for (int i = 0; i < enginesList.size(); i++) {
             String engineId = "";
-            if (enginesList.get(i) instanceof net.minecraft.nbt.StringTag stringTag) {
-                engineId = stringTag.getAsString();
+            if (enginesList.get(i) instanceof net.minecraft.nbt.StringTag) {
+                engineId = enginesList.get(i).getAsString();
             }
             
             if (!engineId.isEmpty()) {
@@ -342,8 +342,8 @@ public class ModularRocketItem extends Item {
         
         for (int i = 0; i < cargoBaysList.size(); i++) {
             String cargoBayId = "";
-            if (cargoBaysList.get(i) instanceof net.minecraft.nbt.StringTag stringTag) {
-                cargoBayId = stringTag.getAsString();
+            if (cargoBaysList.get(i) instanceof net.minecraft.nbt.StringTag) {
+                cargoBayId = cargoBaysList.get(i).getAsString();
             }
             
             if (!cargoBayId.isEmpty()) {
