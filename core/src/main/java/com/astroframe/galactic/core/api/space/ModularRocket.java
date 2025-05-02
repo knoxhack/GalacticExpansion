@@ -17,27 +17,7 @@ import java.util.UUID;
  */
 public class ModularRocket implements IRocket {
     
-    /**
-     * Enum for rocket status.
-     */
-    public enum RocketStatus {
-        /** The rocket is being built. */
-        BUILDING,
-        /** The rocket is ready for launch. */
-        READY_FOR_LAUNCH,
-        /** The rocket is preparing to launch. */
-        PREPARING_FOR_LAUNCH,
-        /** The rocket is launching. */
-        LAUNCHING,
-        /** The rocket is in flight. */
-        IN_FLIGHT,
-        /** The rocket is landing. */
-        LANDING,
-        /** The rocket is landed. */
-        LANDED,
-        /** The rocket has crashed. */
-        CRASHED
-    }
+    // Using IRocket.RocketStatus enum
     
     private final ResourceLocation id;
     private final ICommandModule commandModule;
@@ -50,7 +30,7 @@ public class ModularRocket implements IRocket {
     
     private final List<Player> passengers;
     private final Map<Integer, ItemStack> cargo;
-    private RocketStatus status;
+    private IRocket.RocketStatus status;
     private float health;
     private int currentFuel;
     
@@ -279,7 +259,7 @@ public class ModularRocket implements IRocket {
     }
     
     @Override
-    public RocketStatus getStatus() {
+    public IRocket.RocketStatus getStatus() {
         return status;
     }
     
@@ -287,6 +267,7 @@ public class ModularRocket implements IRocket {
      * Sets the status of this rocket.
      * @param status The new status
      */
+    @Override
     public void setStatus(RocketStatus status) {
         this.status = status;
     }
@@ -506,7 +487,7 @@ public class ModularRocket implements IRocket {
             CompoundTag itemTag = new CompoundTag();
             itemTag.putInt("Slot", entry.getKey());
             ItemStack stack = entry.getValue();
-            stack.save(itemTag); // Using the ItemStack.save method properly
+            stack.save(itemTag); // This method now takes a direct CompoundTag in 1.21.5
             cargoTag.put("Item" + i, itemTag);
             i++;
         }
