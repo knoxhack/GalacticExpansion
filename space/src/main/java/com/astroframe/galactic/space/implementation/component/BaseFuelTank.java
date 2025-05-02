@@ -24,7 +24,7 @@ public class BaseFuelTank implements IFuelTank {
     private int currentDurability;
     private final int maxFuelCapacity;
     private int currentFuelLevel;
-    private final IRocketEngine.FuelType fuelType;
+    private final FuelType fuelType;
     private final float leakResistance;
     private final float explosionResistance;
     private final boolean isInsulated;
@@ -141,7 +141,7 @@ public class BaseFuelTank implements IFuelTank {
     }
     
     @Override
-    public IRocketEngine.FuelType getFuelType() {
+    public FuelType getFuelType() {
         return fuelType;
     }
     
@@ -218,7 +218,7 @@ public class BaseFuelTank implements IFuelTank {
         private int maxDurability = 100;
         private int maxFuelCapacity = 1000;
         private int initialFuelLevel = 0;
-        private IRocketEngine.FuelType fuelType = IRocketEngine.FuelType.CHEMICAL;
+        private FuelType fuelType = FuelType.CHEMICAL;
         private float leakResistance = 0.8f;
         private float explosionResistance = 0.5f;
         private boolean isInsulated = false;
@@ -309,7 +309,7 @@ public class BaseFuelTank implements IFuelTank {
          * @param fuelType The fuel type
          * @return This builder
          */
-        public Builder fuelType(IRocketEngine.FuelType fuelType) {
+        public Builder fuelType(FuelType fuelType) {
             this.fuelType = fuelType;
             return this;
         }

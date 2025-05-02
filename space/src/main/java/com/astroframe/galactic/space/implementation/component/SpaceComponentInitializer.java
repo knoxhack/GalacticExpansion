@@ -4,6 +4,7 @@ import com.astroframe.galactic.core.api.space.component.*;
 import com.astroframe.galactic.core.api.space.component.enums.CommandModuleType;
 import com.astroframe.galactic.core.api.space.component.enums.CompartmentType;
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
+import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import com.astroframe.galactic.core.api.space.component.enums.LifeSupportType;
 import com.astroframe.galactic.core.api.space.component.enums.ShieldType;
 import net.minecraft.resources.ResourceLocation;
@@ -160,7 +161,7 @@ public class SpaceComponentInitializer {
              .mass(500)
              .maxFuelCapacity(2000)
              .pressureRating(10.0f)
-             .fuelType(IRocketEngine.FuelType.CHEMICAL)
+             .fuelType(FuelType.CHEMICAL)
              .build()
         );
         
@@ -173,7 +174,7 @@ public class SpaceComponentInitializer {
              .mass(1000)
              .maxFuelCapacity(5000)
              .pressureRating(15.0f)
-             .fuelType(IRocketEngine.FuelType.CHEMICAL)
+             .fuelType(FuelType.CHEMICAL)
              .build()
         );
         
