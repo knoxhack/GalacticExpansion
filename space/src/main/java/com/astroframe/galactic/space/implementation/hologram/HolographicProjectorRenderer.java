@@ -57,7 +57,6 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      * @param packedLight The packed light
      * @param packedOverlay The packed overlay
      */
-    @Override
     public void render(HolographicProjectorBlockEntity blockEntity, float partialTick, PoseStack poseStack, 
                      MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         // Only render if the projector is active
@@ -147,23 +146,16 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             drawLine(pose, lines, x1, 0.0f, z1, x2, 0.0f, z2);
             
             // Draw line from center
-            Vector3f normal = new Vector3f(0, 1, 0);
+            int red = (int)(HOLOGRAM_RED * 255.0F);
+            int green = (int)(HOLOGRAM_GREEN * 255.0F);
+            int blue = (int)(HOLOGRAM_BLUE * 255.0F);
+            int alpha = (int)(HOLOGRAM_ALPHA * 255.0F);
+            int packedColor = (alpha << 24) | (red << 16) | (green << 8) | blue;
+            int fadedAlpha = (int)(0.3f * HOLOGRAM_ALPHA * 255.0F);
+            int fadedPackedColor = (fadedAlpha << 24) | (red << 16) | (green << 8) | blue;
             
-            Vector4f center = new Vector4f(0, 0.0f, 0, 1.0f);
-            Vector4f edge = new Vector4f(x1, 0.0f, z1, 1.0f);
-            
-            center.mul(pose);
-            edge.mul(pose);
-            
-            lines.vertex(center.x(), center.y(), center.z())
-                 .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
-                 .normal(normal.x(), normal.y(), normal.z())
-                 .endVertex();
-                 
-            lines.vertex(edge.x(), edge.y(), edge.z())
-                 .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, 0.3f * HOLOGRAM_ALPHA)
-                 .normal(normal.x(), normal.y(), normal.z())
-                 .endVertex();
+            lines.vertex(pose, 0, 0.0f, 0).color(packedColor).normal(0, 1, 0).endVertex();
+            lines.vertex(pose, x1, 0.0f, z1).color(fadedPackedColor).normal(0, 1, 0).endVertex();
         }
     }
     
@@ -263,23 +255,41 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
      * @param z2 End Z
      */
     private void drawLine(Matrix4f pose, VertexConsumer lines, float x1, float y1, float z1, float x2, float y2, float z2) {
-        Vector3f normal = new Vector3f(0, 1, 0);
+        int red = (int)(HOLOGRAM_RED * 255.0F);
+        int green = (int)(HOLOGRAM_GREEN * 255.0F);
+        int blue = (int)(HOLOGRAM_BLUE * 255.0F);
+        int alpha = (int)(HOLOGRAM_ALPHA * 255.0F);
+        int packedColor = (alpha << 24) | (red << 16) | (green << 8) | blue;
         
-        Vector4f pos1 = new Vector4f(x1, y1, z1, 1.0f);
-        Vector4f pos2 = new Vector4f(x2, y2, z2, 1.0f);
+        // Draw the line using the packed color
+        lines.vertex(pose, x1, y1, z1).color(packedColor).normal(0, 1, 0).endVertex();
+        lines.vertex(pose, x2, y2, z2).color(packedColor).normal(0, 1, 0).endVertex();
+    }
+    
+    /**
+     * Draws a scan line with custom alpha.
+     *
+     * @param pose The matrix pose
+     * @param lines The line renderer
+     * @param x1 Start X
+     * @param y1 Start Y
+     * @param z1 Start Z
+     * @param x2 End X
+     * @param y2 End Y
+     * @param z2 End Z
+     * @param alphaValue The alpha value to use
+     */
+    private void drawScanLine(Matrix4f pose, VertexConsumer lines, float x1, float y1, float z1, 
+                           float x2, float y2, float z2, float alphaValue) {
+        int red = (int)(HOLOGRAM_RED * 255.0F);
+        int green = (int)(HOLOGRAM_GREEN * 255.0F);
+        int blue = (int)(HOLOGRAM_BLUE * 255.0F);
+        int alpha = (int)(alphaValue * 255.0F);
+        int packedColor = (alpha << 24) | (red << 16) | (green << 8) | blue;
         
-        pos1.mul(pose);
-        pos2.mul(pose);
-        
-        lines.vertex(pos1.x(), pos1.y(), pos1.z())
-             .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
-             .normal(normal.x(), normal.y(), normal.z())
-             .endVertex();
-             
-        lines.vertex(pos2.x(), pos2.y(), pos2.z())
-             .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA)
-             .normal(normal.x(), normal.y(), normal.z())
-             .endVertex();
+        // Draw the line using the packed color with custom alpha
+        lines.vertex(pose, x1, y1, z1).color(packedColor).normal(0, 1, 0).endVertex();
+        lines.vertex(pose, x2, y2, z2).color(packedColor).normal(0, 1, 0).endVertex();
     }
     
     /**
@@ -346,45 +356,13 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         // Horizontal lines
         for (int i = 0; i <= gridSize; i++) {
             float z = -size + i * step;
-            Vector3f normal = new Vector3f(0, 1, 0);
-            
-            Vector4f start = new Vector4f(-size, 0.0f, z, 1.0f);
-            Vector4f end = new Vector4f(size, 0.0f, z, 1.0f);
-            
-            start.mul(pose);
-            end.mul(pose);
-            
-            lines.vertex(start.x(), start.y(), start.z())
-                 .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha)
-                 .normal(normal.x(), normal.y(), normal.z())
-                 .endVertex();
-                 
-            lines.vertex(end.x(), end.y(), end.z())
-                 .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha)
-                 .normal(normal.x(), normal.y(), normal.z())
-                 .endVertex();
+            drawScanLine(pose, lines, -size, 0.0f, z, size, 0.0f, z, scanAlpha);
         }
         
         // Vertical lines
         for (int i = 0; i <= gridSize; i++) {
             float x = -size + i * step;
-            Vector3f normal = new Vector3f(0, 1, 0);
-            
-            Vector4f start = new Vector4f(x, 0.0f, -size, 1.0f);
-            Vector4f end = new Vector4f(x, 0.0f, size, 1.0f);
-            
-            start.mul(pose);
-            end.mul(pose);
-            
-            lines.vertex(start.x(), start.y(), start.z())
-                 .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha)
-                 .normal(normal.x(), normal.y(), normal.z())
-                 .endVertex();
-                 
-            lines.vertex(end.x(), end.y(), end.z())
-                 .color(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, scanAlpha)
-                 .normal(normal.x(), normal.y(), normal.z())
-                 .endVertex();
+            drawScanLine(pose, lines, x, 0.0f, -size, x, 0.0f, size, scanAlpha);
         }
         
         poseStack.popPose();

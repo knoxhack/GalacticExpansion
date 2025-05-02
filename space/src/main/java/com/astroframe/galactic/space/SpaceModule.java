@@ -2,6 +2,8 @@ package com.astroframe.galactic.space;
 
 import com.astroframe.galactic.space.implementation.hologram.HolographicProjectorBlock;
 import com.astroframe.galactic.space.implementation.hologram.HolographicProjectorBlockEntity;
+import com.astroframe.galactic.space.implementation.assembly.menu.RocketAssemblyMenu;
+import net.minecraft.world.inventory.MenuType;
 import com.astroframe.galactic.space.implementation.assembly.RocketAssemblyTable;
 import com.astroframe.galactic.space.implementation.assembly.RocketAssemblyTableBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -41,6 +43,10 @@ public class SpaceModule {
     // Registry for block entities
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = 
             DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, MODID);
+            
+    // Registry for menus
+    public static final DeferredRegister<MenuType<?>> MENUS = 
+            DeferredRegister.create(BuiltInRegistries.MENU, MODID);
     
     // Blocks
     public static final DeferredHolder<Block, Block> ROCKET_ASSEMBLY_TABLE = registerBlock("rocket_assembly_table",
@@ -68,6 +74,11 @@ public class SpaceModule {
             BLOCK_ENTITIES.register("rocket_assembly_table", 
                     () -> new BlockEntityType<>(RocketAssemblyTableBlockEntity::new, 
                             java.util.Set.of(ROCKET_ASSEMBLY_TABLE.get()), null));
+                            
+    // Menus
+    public static final DeferredHolder<MenuType<?>, MenuType<RocketAssemblyMenu>> ROCKET_ASSEMBLY_MENU =
+            MENUS.register("rocket_assembly", 
+                    () -> new MenuType<>(RocketAssemblyMenu::new, net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS));
     
     /**
      * Constructor for the Space module.
@@ -80,6 +91,7 @@ public class SpaceModule {
         BLOCKS.register(eventBus);
         ITEMS.register(eventBus);
         BLOCK_ENTITIES.register(eventBus);
+        MENUS.register(eventBus);
         
         // Register event handlers
         eventBus.addListener(this::registerRenderers);
