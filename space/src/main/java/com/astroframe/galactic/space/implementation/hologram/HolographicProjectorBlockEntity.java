@@ -81,11 +81,16 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
         
         // Load linked table position if it exists
         if (tag.contains("LinkedTable")) {
-            CompoundTag posTag = tag.getCompound("LinkedTable");
-            int x = posTag.getInt("X").orElse(0);
-            int y = posTag.getInt("Y").orElse(0);
-            int z = posTag.getInt("Z").orElse(0);
-            linkedTablePos = new BlockPos(x, y, z);
+            // In NeoForge 1.21.5, getCompound returns an Optional<CompoundTag>
+            CompoundTag posTag = tag.getCompound("LinkedTable").orElse(new CompoundTag());
+            if (!posTag.isEmpty()) {
+                int x = posTag.getInt("X").orElse(0);
+                int y = posTag.getInt("Y").orElse(0);
+                int z = posTag.getInt("Z").orElse(0);
+                linkedTablePos = new BlockPos(x, y, z);
+            } else {
+                linkedTablePos = null;
+            }
         } else {
             linkedTablePos = null;
         }

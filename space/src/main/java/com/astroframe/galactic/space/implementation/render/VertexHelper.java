@@ -1,6 +1,7 @@
 package com.astroframe.galactic.space.implementation.render;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import org.joml.Matrix4f;
 
 /**
  * Helper class for vertex rendering compatibility across Minecraft versions.
@@ -24,8 +25,8 @@ public class VertexHelper {
                                        float red, float green, float blue, float alpha) {
         // In NeoForge 1.21.5, we need to use a single method compatible with the current vertex format
         // Build compatible vertex format using pos/color/normal via Pose matrix
-        com.mojang.math.Matrix4f matrix = new com.mojang.math.Matrix4f();
-        matrix.setIdentity();
+        Matrix4f matrix = new Matrix4f();
+        matrix.identity(); // Initialize to identity matrix
         
         // Add the vertex with all required parameters
         consumer.vertex(matrix, x, y, z)  // Position
