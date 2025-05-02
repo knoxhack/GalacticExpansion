@@ -361,14 +361,13 @@ public class ModularRocketItem extends Item {
             }
         }
         
-        // Add life support systems - safely get from Optional
+        // Add life support systems - get tag without using ifPresent
         ListTag lifeSupportsList = new ListTag();
         if (tag.contains("lifeSupports")) {
-            tag.get("lifeSupports").ifPresent(lifeSupportTag -> {
-                if (lifeSupportTag instanceof ListTag listTag) {
-                    lifeSupportsList.addAll(listTag);
-                }
-            });
+            Tag lifeSupportTag = tag.get("lifeSupports");
+            if (lifeSupportTag != null && lifeSupportTag instanceof ListTag listTag) {
+                lifeSupportsList.addAll(listTag);
+            }
         }
         
         for (int i = 0; i < lifeSupportsList.size(); i++) {
