@@ -188,7 +188,7 @@ public class SpaceComponentInitializer {
              .maxFuelCapacity(3000)
              .pressureRating(20.0f)
              .insulated(true)
-             .fuelType(IRocketEngine.FuelType.ELECTRICAL)
+             .fuelType(FuelType.ELECTRIC)
              .build()
         );
         
@@ -202,7 +202,7 @@ public class SpaceComponentInitializer {
              .maxFuelCapacity(10000)
              .pressureRating(50.0f)
              .insulated(true)
-             .fuelType(IRocketEngine.FuelType.PLASMA)
+             .fuelType(FuelType.FUSION)
              .build()
         );
     }
