@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import java.util.Set;
+import java.util.function.Supplier;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -28,7 +29,6 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.function.Supplier;
 
 /**
  * Main class for the Space module of the Galactic mod.
@@ -72,20 +72,20 @@ public class SpaceModule {
                     .requiresCorrectToolForDrops()
                     .lightLevel(state -> state.getValue(HolographicProjectorBlock.ACTIVE) ? 10 : 0)));
     
-    // Block Entities - using BlockEntityType.Builder for NeoForge 1.21.5 compatibility
+    // Block Entities - direct registration for NeoForge 1.21.5 compatibility
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HolographicProjectorBlockEntity>> HOLOGRAPHIC_PROJECTOR_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("holographic_projector", 
-                    () -> BlockEntityType.Builder.of(
+                    () -> new BlockEntityType<>(
                             HolographicProjectorBlockEntity::new, 
-                            HOLOGRAPHIC_PROJECTOR.get())
-                            .build(null));
+                            Set.of(HOLOGRAPHIC_PROJECTOR.get()),
+                            null));
     
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RocketAssemblyTableBlockEntity>> ROCKET_ASSEMBLY_TABLE_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("rocket_assembly_table", 
-                    () -> BlockEntityType.Builder.of(
+                    () -> new BlockEntityType<>(
                             RocketAssemblyTableBlockEntity::new,
-                            ROCKET_ASSEMBLY_TABLE.get())
-                            .build(null));
+                            Set.of(ROCKET_ASSEMBLY_TABLE.get()),
+                            null));
                             
     // Menus
     public static final DeferredHolder<MenuType<?>, MenuType<RocketAssemblyMenu>> ROCKET_ASSEMBLY_MENU =

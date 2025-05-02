@@ -180,9 +180,9 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                         // In NeoForge 1.21.5, getInt returns an Optional<Integer>
                         compoundTag.getInt("Slot").ifPresent(slot -> {
                             if (slot >= 0 && slot < components.size()) {
-                                // Create ItemStack from CompoundTag - use ItemStack constructor
-                                // instead of ItemStack.of which may not exist
-                                components.set(slot, net.minecraft.world.item.ItemStack.of(compoundTag));
+                                // Create ItemStack from CompoundTag - use ItemStack constructor directly
+                                // In NeoForge 1.21.5, ItemStack.of() doesn't exist 
+                                components.set(slot, new net.minecraft.world.item.ItemStack(compoundTag));
                             }
                         });
                     });
@@ -264,7 +264,13 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
             if (!itemStack.isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
-                itemStack.save(itemTag);
+                // In NeoForge 1.21.5, the save method requires a Provider
+                // Use the saveWithoutMetadata method which doesn't require a Provider
+                CompoundTag savedTag = itemStack.saveWithoutMetadata();
+                // Copy all tags from savedTag to itemTag
+                for (String key : savedTag.getAllKeys()) {
+                    itemTag.put(key, savedTag.get(key));
+                }
                 listTag.add(itemTag);
             }
         }
