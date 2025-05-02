@@ -95,8 +95,9 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
         
-        // Start building lines
-        builder.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR);
+        // Start building lines - NeoForge 1.21.5 compatible
+        builder.begin(com.mojang.blaze3d.vertex.VertexFormat.Mode.LINES, 
+                      com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR_TEX_NORMAL);
         
         // Render base platform with direct BufferBuilder
         renderHologramBase(poseStack, builder);
@@ -176,19 +177,19 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             // Line from center to edge - NeoForge 1.21.5 compatible method
             Vector4f pos1 = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
             pos1.mul(pose);
-            builder.vertex(pos1.x, pos1.y, pos1.z, 
-                    red, green, blue, alpha, 
-                    0.0f, 1.0f, 
-                    0, 0, 1, 
-                    0);
+            builder.vertex(pos1.x, pos1.y, pos1.z)
+                   .color(red, green, blue, alpha)
+                   .uv(0.0f, 1.0f)
+                   .normal(0, 0, 1)
+                   .endVertex();
                     
             Vector4f pos2 = new Vector4f(x1, 0.0f, z1, 1.0f);
             pos2.mul(pose);
-            builder.vertex(pos2.x, pos2.y, pos2.z, 
-                    red, green, blue, fadedAlpha, 
-                    0.0f, 1.0f, 
-                    0, 0, 1, 
-                    0);
+            builder.vertex(pos2.x, pos2.y, pos2.z)
+                   .color(red, green, blue, fadedAlpha)
+                   .uv(0.0f, 1.0f)
+                   .normal(0, 0, 1)
+                   .endVertex();
         }
     }
     
