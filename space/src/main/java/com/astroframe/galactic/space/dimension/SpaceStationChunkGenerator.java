@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.carver.CarvingContext;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
@@ -53,8 +54,9 @@ public class SpaceStationChunkGenerator extends ChunkGenerator {
         return CompletableFuture.completedFuture(chunkAccess);
     }
 
-    // Implementation for pre-NeoForge 1.21.5
-    public void applyCarvers(WorldGenLevel level, RandomState randomState, BiomeManager biomeManager, StructureManager structureManager, ChunkAccess chunkAccess, net.minecraft.world.level.levelgen.GenerationStep.Carving carvingStage) {
+    // This method is no longer used in NeoForge 1.21.5, but kept for compatibility with other versions
+    // The new method signature is used instead (the one with WorldGenRegion)
+    public void applyCarvers(WorldGenLevel level, RandomState randomState, BiomeManager biomeManager, StructureManager structureManager, ChunkAccess chunkAccess, GenerationStep.Features carvingStage) {
         // No carvers needed in space station
     }
     
