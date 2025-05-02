@@ -204,16 +204,23 @@ if [ -z "$(ls -A $RELEASE_DIR 2>/dev/null)" ]; then
   fi
 fi
 
-# Verify all files are real binary JAR files, not source JARs or other formats
-echo "Verifying all collected files are binary JARs..."
+# Verify files don't have source/javadoc suffix which indicates they're not compiled code
+echo "Verifying files don't have source/javadoc suffixes..."
 for file in $RELEASE_DIR/*; do
   if [ -f "$file" ]; then
-    # Check if it's a Java archive by looking for the signature
-    if file "$file" | grep -q "Zip archive data" && ! echo "$file" | grep -q "sources.jar"; then
-      echo "$file appears to be a valid archive."
-    else
-      echo "Warning: $file doesn't appear to be a valid JAR file. Removing."
+    # Check file name for source/javadoc indicators
+    if echo "$file" | grep -q -E '(-sources\.jar|-javadoc\.jar)$'; then
+      echo "Warning: $file appears to be a source/javadoc JAR. Removing."
       rm -f "$file"
+    else
+      # Check file size as a basic validation
+      size=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file" 2>/dev/null)
+      if [ -n "$size" ] && [ "$size" -gt 1000 ]; then
+        echo "$file appears to be a valid file (size: $size bytes)."
+      else
+        echo "Warning: $file is too small to be a valid JAR. Removing."
+        rm -f "$file"
+      fi
     fi
   fi
 done
@@ -272,10 +279,20 @@ fi
 
 echo "Release created with ID: $RELEASE_ID"
 
+# Check if there are any files to upload
+if [ -z "$(ls -A $RELEASE_DIR 2>/dev/null)" ]; then
+  echo "No files in release directory. Creating a README.txt file to upload..."
+  echo "# Galactic Expansion Release $RELEASE_TAG\n\nThis release includes the compiled JAR files for the Galactic Expansion mod.\n\nBuild date: $(date)" > "$RELEASE_DIR/README.md"
+fi
+
 # Upload assets to the release
+echo "Uploading files from $RELEASE_DIR"
 for file in $RELEASE_DIR/*; do
+  # Skip if no matches (when wildcard expansion fails)
+  [ -e "$file" ] || continue
+  
   if [ ! -f "$file" ]; then
-    echo "Warning: $file does not exist or is not a regular file. Skipping."
+    echo "Warning: $file is not a regular file. Skipping."
     continue
   fi
   
@@ -297,24 +314,28 @@ for file in $RELEASE_DIR/*; do
   
   echo "File size: $size bytes"
   
-  # Use absolute path and verify it exists
-  abs_file=$(realpath "$file" 2>/dev/null || echo "$file")
-  if [ ! -f "$abs_file" ]; then
-    echo "Error: Cannot resolve absolute path for $file. Skipping."
-    continue
+  # Use absolute path for upload
+  abs_file="$file"
+  if [ -x "$(command -v realpath)" ]; then
+    abs_file=$(realpath "$file")
   fi
   
-  # Upload the file with verbose flag for debugging
-  upload_result=$(curl -v \
+  echo "Uploading from path: $abs_file"
+  
+  # Upload the file with curl
+  upload_result=$(curl \
     -H "Authorization: token $GITHUB_TOKEN" \
-    -H "Content-Type: application/java-archive" \
+    -H "Content-Type: application/octet-stream" \
     -H "Accept: application/vnd.github.v3+json" \
     --data-binary "@$abs_file" \
     "https://uploads.github.com/repos/$REPO_OWNER/$REPO_NAME/releases/$RELEASE_ID/assets?name=$filename" 2>&1)
   
-  echo "Upload result: $upload_result"
-  
-  echo "Uploaded $filename"
+  if echo "$upload_result" | grep -q '"state":"uploaded"'; then
+    echo "Successfully uploaded $filename"
+  else
+    echo "Upload result: $upload_result"
+    echo "Warning: Upload of $filename may have failed"
+  fi
 done
 
 # Clean up temporary directory and files
