@@ -115,18 +115,18 @@ public class CargoBayImpl implements ICargoBay {
     }
     
     /**
-     * Calculate the weight of an item stack in grams
+     * Calculate the weight of an item stack in kg
      * @param item The item stack to calculate
-     * @return The weight in grams
+     * @return The weight in kg
      */
     @Override
-    public int calculateItemWeight(net.minecraft.world.item.ItemStack item) {
-        // Default weight calculation (50g per item)
+    public float calculateItemWeight(net.minecraft.world.item.ItemStack item) {
+        // Default weight calculation (0.05kg per item)
         if (item.isEmpty()) {
-            return 0;
+            return 0.0f;
         }
         
-        return item.getCount() * 50;
+        return item.getCount() * 0.05f;
     }
     
     public ItemStack addItem(ItemStack stack) {
@@ -308,13 +308,14 @@ public class CargoBayImpl implements ICargoBay {
     @Override
     public int getCurrentUsedCapacity() {
         // Calculate the current used capacity
-        int usedCapacity = 0;
+        float usedCapacity = 0.0f;
         for (com.astroframe.galactic.core.api.common.ItemStack stack : contents.values()) {
             if (stack != null && !stack.isEmpty()) {
                 usedCapacity += calculateItemWeight(stack.toMinecraft());
             }
         }
-        return usedCapacity;
+        // Convert from kg to g and return as int
+        return (int)(usedCapacity * 1000);
     }
 
     /**

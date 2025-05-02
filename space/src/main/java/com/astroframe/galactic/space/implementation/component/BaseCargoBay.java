@@ -15,7 +15,7 @@ import java.util.Map;
  * Implementation of the ICargoBay interface.
  * Handles storage of items in a rocket with additional features like vacuum sealing.
  */
-public class BaseCargoBay {
+public class BaseCargoBay implements ICargoBay {
     
     private final ResourceLocation id;
     private final String name;
@@ -115,7 +115,8 @@ public class BaseCargoBay {
         currentDurability = Math.min(maxDurability, currentDurability + amount);
     }
     
-    public int getStorageCapacity() {
+    @Override
+    public int getMaxSlots() {
         return storageCapacity;
     }
     
@@ -191,6 +192,26 @@ public class BaseCargoBay {
         return result;
     }
     
+    @Override
+    public int getMaxCapacity() {
+        // Maximum weight capacity in grams (500g per slot)
+        return storageCapacity * 500;
+    }
+    
+    @Override
+    public int getCurrentUsedCapacity() {
+        // Calculate the current used capacity
+        float usedCapacity = 0.0f;
+        for (ItemStack stack : contents.values()) {
+            if (stack != null && !stack.isEmpty()) {
+                // Using a simple weight calculation (0.05kg per item)
+                usedCapacity += stack.getCount() * 0.05f;
+            }
+        }
+        // Convert from kg to g and return as int
+        return (int)(usedCapacity * 1000);
+    }
+    
     public boolean hasVacuumSeal() {
         return hasVacuumSeal;
     }
@@ -203,19 +224,74 @@ public class BaseCargoBay {
         return hasRadiationShielding;
     }
     
+    @Override
     public boolean hasAutomatedLoading() {
         // By default, this implementation doesn't support automated loading
         return false;
     }
     
+    @Override
     public boolean hasEnvironmentControl() {
         // Environment control corresponds to temperature regulation
         return hasTemperatureRegulation;
     }
     
+    @Override
     public boolean hasSecurityFeatures() {
         // Security features include EMP shielding
         return hasEmpShielding;
+    }
+    
+    @Override
+    public List<net.minecraft.world.item.ItemStack> getItems() {
+        // Convert our internal ItemStacks to Minecraft ItemStacks
+        List<net.minecraft.world.item.ItemStack> result = new ArrayList<>();
+        for (ItemStack stack : contents.values()) {
+            if (stack != null && !stack.isEmpty()) {
+                result.add(stack.toMinecraft());
+            }
+        }
+        return result;
+    }
+    
+    @Override
+    public boolean addItem(net.minecraft.world.item.ItemStack mcStack) {
+        if (mcStack.isEmpty()) {
+            return true; // Empty stack is always "added" successfully
+        }
+        
+        // Convert Minecraft ItemStack to our internal ItemStack
+        ItemStack stack = ItemStack.fromMinecraft(mcStack);
+        
+        // Try to add the item
+        ItemStack remaining = addItem(stack);
+        
+        // If nothing remains, the item was added successfully
+        if (remaining.isEmpty()) {
+            // Consume the original stack
+            mcStack.setCount(0);
+            return true;
+        }
+        
+        // Item couldn't be added completely
+        mcStack.setCount(remaining.getCount());
+        return false;
+    }
+    
+    @Override
+    public net.minecraft.world.item.ItemStack removeItem(int index) {
+        if (index < 0 || index >= storageCapacity || !contents.containsKey(index)) {
+            return net.minecraft.world.item.ItemStack.EMPTY;
+        }
+        
+        // Get the item and remove it
+        ItemStack stack = contents.remove(index);
+        if (stack == null || stack.isEmpty()) {
+            return net.minecraft.world.item.ItemStack.EMPTY;
+        }
+        
+        // Convert to Minecraft ItemStack
+        return stack.toMinecraft();
     }
     
     /**
