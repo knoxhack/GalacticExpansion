@@ -84,6 +84,7 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
             // Get the compound tag directly for NeoForge 1.21.5 compatibility
             CompoundTag posTag = tag.getCompound("LinkedTable");
             if (!posTag.isEmpty()) {
+                // In NeoForge 1.21.5, getInt doesn't return Optional
                 int x = posTag.getInt("X");
                 int y = posTag.getInt("Y");
                 int z = posTag.getInt("Z");
@@ -186,9 +187,8 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
     }
     
     /**
-     * Override to increase the render distance for this block entity.
+     * Increase the render distance for this block entity.
      */
-    @Override
     public AABB getRenderBoundingBox() {
         return new AABB(worldPosition).inflate(HOLOGRAM_HEIGHT);
     }

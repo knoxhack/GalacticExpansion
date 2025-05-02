@@ -62,6 +62,14 @@ public class ItemStack {
     }
     
     /**
+     * Gets the item identifier as a string.
+     * @return The item identifier
+     */
+    public String getItemId() {
+        return mcStack.getItem().builtInRegistryHolder().key().location().toString();
+    }
+    
+    /**
      * Gets the count of items in this stack.
      * @return The stack size
      */

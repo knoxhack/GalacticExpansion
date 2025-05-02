@@ -74,17 +74,17 @@ public class SpaceModule {
     // Block Entities
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HolographicProjectorBlockEntity>> HOLOGRAPHIC_PROJECTOR_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("holographic_projector", 
-                    () -> new BlockEntityType<>(
+                    () -> BlockEntityType.Builder.of(
                             HolographicProjectorBlockEntity::new,
-                            Set.of(HOLOGRAPHIC_PROJECTOR.get()),
-                            null));
+                            HOLOGRAPHIC_PROJECTOR.get())
+                            .build(null));
     
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RocketAssemblyTableBlockEntity>> ROCKET_ASSEMBLY_TABLE_BLOCK_ENTITY = 
             BLOCK_ENTITIES.register("rocket_assembly_table", 
-                    () -> new BlockEntityType<>(
+                    () -> BlockEntityType.Builder.of(
                             RocketAssemblyTableBlockEntity::new,
-                            Set.of(ROCKET_ASSEMBLY_TABLE.get()),
-                            null));
+                            ROCKET_ASSEMBLY_TABLE.get())
+                            .build(null));
                             
     // Menus
     public static final DeferredHolder<MenuType<?>, MenuType<RocketAssemblyMenu>> ROCKET_ASSEMBLY_MENU =

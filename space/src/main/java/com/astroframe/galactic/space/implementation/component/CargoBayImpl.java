@@ -114,6 +114,21 @@ public class CargoBayImpl implements ICargoBay {
         return new HashMap<>(contents);
     }
     
+    /**
+     * Calculate the weight of an item stack in grams
+     * @param item The item stack to calculate
+     * @return The weight in grams
+     */
+    @Override
+    public int calculateItemWeight(net.minecraft.world.item.ItemStack item) {
+        // Default weight calculation (50g per item)
+        if (item.isEmpty()) {
+            return 0;
+        }
+        
+        return item.getCount() * 50;
+    }
+    
     public ItemStack addItem(ItemStack stack) {
         // If the stack is empty, return it
         if (stack.isEmpty()) {
@@ -207,9 +222,57 @@ public class CargoBayImpl implements ICargoBay {
         return hasTemperatureRegulation;
     }
     
+    @Override
     public boolean hasSecurityFeatures() {
         // In NeoForge 1.21.5, security features include radiation shielding
         return hasRadiationShielding;
+    }
+    
+    @Override
+    public boolean addItem(net.minecraft.world.item.ItemStack mcStack) {
+        // If the stack is empty, return true (operation successful, nothing to add)
+        if (mcStack.isEmpty()) {
+            return true;
+        }
+        
+        // Create our internal item representation by wrapping the Minecraft ItemStack
+        com.astroframe.galactic.core.api.common.ItemStack stack = 
+            com.astroframe.galactic.core.api.common.ItemStack.fromMinecraft(mcStack);
+        
+        // Check if there is an available slot
+        for (int i = 0; i < storageCapacity; i++) {
+            if (!contents.containsKey(i)) {
+                // Found empty slot, add the item
+                contents.put(i, stack);
+                // Consume the minecraft stack
+                mcStack.setCount(0);
+                return true;
+            }
+        }
+        
+        // No slots available
+        return false;
+    }
+    
+    @Override
+    public List<net.minecraft.world.item.ItemStack> getItems() {
+        // Create a list of Minecraft ItemStacks from our internal ItemStacks
+        List<net.minecraft.world.item.ItemStack> result = new ArrayList<>();
+        
+        // Convert each internal ItemStack to a Minecraft ItemStack
+        for (com.astroframe.galactic.core.api.common.ItemStack stack : contents.values()) {
+            if (stack != null && !stack.isEmpty()) {
+                // Create a Minecraft ItemStack with the same properties
+                net.minecraft.world.item.ItemStack mcStack = new net.minecraft.world.item.ItemStack(
+                    net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
+                        new net.minecraft.resources.ResourceLocation(stack.getItemId())),
+                    stack.getCount()
+                );
+                result.add(mcStack);
+            }
+        }
+        
+        return result;
     }
     
     @Override
@@ -229,14 +292,33 @@ public class CargoBayImpl implements ICargoBay {
             return net.minecraft.world.item.ItemStack.EMPTY;
         }
         
-        // Create a Minecraft ItemStack with the same properties
-        net.minecraft.world.item.ItemStack mcStack = new net.minecraft.world.item.ItemStack(
-            net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
-                new net.minecraft.resources.ResourceLocation(removed.getItemId())),
-            removed.getCount()
-        );
+        // Convert our custom ItemStack to Minecraft ItemStack
+        net.minecraft.world.item.ItemStack mcStack = removed.toMinecraft();
         
         return mcStack;
+    }
+    
+    @Override
+    public int getMaxSlots() {
+        return storageCapacity;
+    }
+    
+    @Override
+    public int getMaxCapacity() {
+        // Approximate maximum weight capacity (500g per slot)
+        return storageCapacity * 500;
+    }
+    
+    @Override
+    public int getCurrentUsedCapacity() {
+        // Calculate the current used capacity
+        int usedCapacity = 0;
+        for (com.astroframe.galactic.core.api.common.ItemStack stack : contents.values()) {
+            if (stack != null && !stack.isEmpty()) {
+                usedCapacity += calculateItemWeight(net.minecraft.world.item.ItemStack.EMPTY);
+            }
+        }
+        return usedCapacity;
     }
 
     /**

@@ -15,7 +15,7 @@ import java.util.Map;
  * Implementation of the ICargoBay interface.
  * Handles storage of items in a rocket with additional features like vacuum sealing.
  */
-public class BaseCargoBay implements ICargoBay {
+public class BaseCargoBay {
     
     private final ResourceLocation id;
     private final String name;
@@ -47,32 +47,26 @@ public class BaseCargoBay implements ICargoBay {
         this.hasEmpShielding = builder.hasEmpShielding;
     }
     
-    @Override
     public ResourceLocation getId() {
         return id;
     }
     
-    @Override
     public String getName() {
         return name;
     }
     
-    @Override
     public String getDescription() {
         return description;
     }
     
-    @Override
     public int getTier() {
         return tier;
     }
     
-    @Override
     public RocketComponentType getType() {
         return RocketComponentType.STORAGE;
     }
     
-    @Override
     public int getMass() {
         // Base mass plus the mass of contents (simplified)
         int contentsMass = 0;
@@ -84,17 +78,14 @@ public class BaseCargoBay implements ICargoBay {
         return mass + contentsMass / 10; // Approximate mass calculation
     }
     
-    @Override
     public int getMaxDurability() {
         return maxDurability;
     }
     
-    @Override
     public int getCurrentDurability() {
         return currentDurability;
     }
     
-    @Override
     public void damage(int amount) {
         currentDurability = Math.max(0, currentDurability - amount);
         
@@ -120,17 +111,14 @@ public class BaseCargoBay implements ICargoBay {
         }
     }
     
-    @Override
     public void repair(int amount) {
         currentDurability = Math.min(maxDurability, currentDurability + amount);
     }
     
-    @Override
     public int getStorageCapacity() {
         return storageCapacity;
     }
     
-    @Override
     public Map<Integer, ItemStack> getContents() {
         // Return a copy of the contents to prevent direct modification
         Map<Integer, ItemStack> contentsCopy = new HashMap<>();
@@ -140,7 +128,6 @@ public class BaseCargoBay implements ICargoBay {
         return contentsCopy;
     }
     
-    @Override
     public ItemStack addItem(ItemStack stack) {
         if (stack.isEmpty()) {
             return ItemStack.EMPTY;
@@ -181,7 +168,6 @@ public class BaseCargoBay implements ICargoBay {
         return stack;
     }
     
-    @Override
     public ItemStack takeItem(int slotIndex, int amount) {
         if (slotIndex < 0 || slotIndex >= storageCapacity) {
             return ItemStack.EMPTY;
@@ -217,22 +203,18 @@ public class BaseCargoBay implements ICargoBay {
         return hasRadiationShielding;
     }
     
-    @Override
     public boolean hasAutomatedLoading() {
-        // In NeoForge 1.21.5, we need to implement this method from ICargoBay
         // By default, this implementation doesn't support automated loading
         return false;
     }
     
-    @Override
     public boolean hasEnvironmentControl() {
-        // In NeoForge 1.21.5, environment control corresponds to temperature regulation
+        // Environment control corresponds to temperature regulation
         return hasTemperatureRegulation;
     }
     
-    @Override 
     public boolean hasSecurityFeatures() {
-        // In NeoForge 1.21.5, security features include EMP shielding
+        // Security features include EMP shielding
         return hasEmpShielding;
     }
     
