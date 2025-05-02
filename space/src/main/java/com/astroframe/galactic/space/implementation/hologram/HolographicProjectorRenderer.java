@@ -77,6 +77,11 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             return;
         }
         
+        // Initialize projection matrix for NeoForge 1.21.5
+        projectionMatrix = Minecraft.getInstance().gameRenderer.getProjectionMatrix(
+                Minecraft.getInstance().gameRenderer.getFov(
+                Minecraft.getInstance().gameRenderer.getMainCamera(), partialTick, true));
+        
         // Get the rocket data
         IRocket rocketData = blockEntity.getRocketData();
         
@@ -102,6 +107,7 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         RenderSystem.setShaderColor(HOLOGRAM_RED, HOLOGRAM_GREEN, HOLOGRAM_BLUE, HOLOGRAM_ALPHA);
         
         // Start building lines - NeoForge 1.21.5 compatible
+        RenderSystem.setShader(() -> Minecraft.getInstance().gameRenderer.getPositionColorShader());
         builder.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR);
         
         // Render base platform with direct BufferBuilder
@@ -120,14 +126,11 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         renderScanLines(poseStack, builder, scanHeight);
         
         // Finish rendering in NeoForge 1.21.5
-        VertexBuffer vertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
-        vertexBuffer.bind();
-        vertexBuffer.upload(builder.end());
+        // End the builder and draw directly
+        tesselator.end();
         
-        // Set up the shader
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        vertexBuffer.drawWithShader(poseStack.last().pose(), projectionMatrix, RenderSystem.getShader());
-        vertexBuffer.close();
+        // Reset render state
+        RenderSystem.disableBlend();
         
         // Reset render state (NeoForge 1.21.5 doesn't use RenderSystem.disableBlend directly)
         // Instead we rely on the renderer to handle state
@@ -189,15 +192,15 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
             // Line from center to edge - NeoForge 1.21.5 compatible method
             Vector4f pos1 = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
             pos1.mul(pose);
-            // Direct position specification
-            builder.vertex(pos1.x(), pos1.y(), pos1.z())
+            // Direct position specification for NeoForge 1.21.5
+            builder.vertex(pose, pos1.x(), pos1.y(), pos1.z())
                    .color(red, green, blue, alpha)
                    .endVertex();
                     
             Vector4f pos2 = new Vector4f(x1, 0.0f, z1, 1.0f);
             pos2.mul(pose);
-            // Direct position specification
-            builder.vertex(pos2.x(), pos2.y(), pos2.z())
+            // Direct position specification for NeoForge 1.21.5
+            builder.vertex(pose, pos2.x(), pos2.y(), pos2.z())
                    .color(red, green, blue, fadedAlpha)
                    .endVertex();
         }
@@ -223,17 +226,12 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         float blue = HOLOGRAM_BLUE;
         float alpha = HOLOGRAM_ALPHA;
         
-        // Draw the line using Vector4f transformation for NeoForge 1.21.5
-        Vector4f pos1 = new Vector4f(x1, y1, z1, 1.0f);
-        pos1.mul(pose);
-        // Direct position specification for NeoForge 1.21.5
-        builder.vertex(pos1.x(), pos1.y(), pos1.z())
+        // Draw the line using direct position for NeoForge 1.21.5
+        builder.vertex(pose, x1, y1, z1)
                .color(red, green, blue, alpha)
                .endVertex();
                 
-        Vector4f pos2 = new Vector4f(x2, y2, z2, 1.0f);
-        pos2.mul(pose);
-        builder.vertex(pos2.x(), pos2.y(), pos2.z())
+        builder.vertex(pose, x2, y2, z2)
                .color(red, green, blue, alpha)
                .endVertex();
     }
@@ -341,17 +339,12 @@ public class HolographicProjectorRenderer implements BlockEntityRenderer<Hologra
         float green = HOLOGRAM_GREEN;
         float blue = HOLOGRAM_BLUE;
         
-        // Draw the line using Vector4f transformation for NeoForge 1.21.5
-        Vector4f pos1 = new Vector4f(x1, y1, z1, 1.0f);
-        pos1.mul(pose);
-        // Direct position specification for NeoForge 1.21.5
-        builder.vertex(pos1.x(), pos1.y(), pos1.z())
+        // Draw the line using direct position for NeoForge 1.21.5
+        builder.vertex(pose, x1, y1, z1)
                .color(red, green, blue, alphaValue)
                .endVertex();
                 
-        Vector4f pos2 = new Vector4f(x2, y2, z2, 1.0f);
-        pos2.mul(pose);
-        builder.vertex(pos2.x(), pos2.y(), pos2.z())
+        builder.vertex(pose, x2, y2, z2)
                .color(red, green, blue, alphaValue)
                .endVertex();
     }
