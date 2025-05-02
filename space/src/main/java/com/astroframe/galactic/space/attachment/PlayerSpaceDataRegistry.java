@@ -25,15 +25,27 @@ public class PlayerSpaceDataRegistry {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<PlayerSpaceDataAttachment>> PLAYER_SPACE_DATA = 
         ATTACHMENT_TYPES.register("player_space_data", 
             () -> {
-                // Create a new basic attachment type with factory method
-                return new AttachmentType<PlayerSpaceDataAttachment>(
-                    // Constructor factory
-                    PlayerSpaceDataAttachment::new, 
-                    // Serialization handler
-                    (attachment, tag) -> attachment.write(tag), 
-                    // Deserialization handler
-                    PlayerSpaceDataAttachment::read
+                // Create a builder for the attachment type
+                AttachmentType.Builder<PlayerSpaceDataAttachment> builder = AttachmentType.builder(PlayerSpaceDataAttachment::new);
+                
+                // Configure serialization using a codec
+                // Create a custom codec for PlayerSpaceDataAttachment
+                Codec<PlayerSpaceDataAttachment> codec = CompoundTag.CODEC.xmap(
+                    // From CompoundTag to PlayerSpaceDataAttachment
+                    PlayerSpaceDataAttachment::read,
+                    // From PlayerSpaceDataAttachment to CompoundTag
+                    attachment -> {
+                        CompoundTag tag = new CompoundTag();
+                        attachment.write(tag);
+                        return tag;
+                    }
                 );
+                
+                // Use the codec for serialization
+                builder.serialize(codec);
+                
+                // Build the final attachment type
+                return builder.build();
             });
     
     /**
