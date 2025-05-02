@@ -20,6 +20,11 @@ public enum RocketComponentType {
     COCKPIT,
     
     /**
+     * The command module is the control center for the rocket with advanced functionality.
+     */
+    COMMAND_MODULE,
+    
+    /**
      * Cargo bays provide storage for items.
      */
     CARGO_BAY,

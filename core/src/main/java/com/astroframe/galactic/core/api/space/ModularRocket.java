@@ -106,7 +106,7 @@ public class ModularRocket implements IRocket {
     
     @Override
     public int getPayloadCapacity() {
-        return cargoBays.stream().mapToInt(ICargoBay::getStorageCapacity).sum();
+        return cargoBays.stream().mapToInt(ICargoBay::getMaxCapacity).sum();
     }
     
     @Override

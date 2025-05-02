@@ -562,118 +562,124 @@ public class ComponentUtils {
      * Simple implementation of ICargoBay.
      */
     private static class DefaultCargoBay extends AbstractRocketComponent implements ICargoBay {
-        private final int storageCapacity;
-        private final Map<Integer, ItemStack> contents;
-        private final boolean hasVacuumSeal;
-        private final boolean hasTemperatureRegulation;
-        private final boolean hasRadiationShielding;
+        private final int maxCapacity;
+        private final int maxSlots;
+        private final List<ItemStack> items;
+        private final boolean securityFeatures;
+        private final boolean environmentControl;
+        private final boolean automatedLoading;
         
-        public DefaultCargoBay(ResourceLocation id, int tier, int mass, int storageCapacity) {
+        public DefaultCargoBay(ResourceLocation id, int tier, int mass, int maxCapacity) {
             super(id, RocketComponentType.CARGO_BAY, tier, mass);
-            this.storageCapacity = storageCapacity;
-            this.contents = new HashMap<>();
-            this.hasVacuumSeal = tier >= 2;
-            this.hasTemperatureRegulation = tier >= 2;
-            this.hasRadiationShielding = tier >= 3;
+            this.maxCapacity = maxCapacity;
+            this.maxSlots = 9 * tier;
+            this.items = new ArrayList<>();
+            this.securityFeatures = tier >= 2;
+            this.environmentControl = tier >= 2;
+            this.automatedLoading = tier >= 3;
         }
         
         @Override
-        public int getStorageCapacity() {
-            return storageCapacity;
+        public int getMaxCapacity() {
+            return maxCapacity;
         }
         
         @Override
-        public Map<Integer, ItemStack> getContents() {
-            return new HashMap<>(contents);
+        public int getMaxSlots() {
+            return maxSlots;
         }
         
         @Override
-        public ItemStack addItem(ItemStack stack) {
-            if (stack.isEmpty()) {
-                return ItemStack.EMPTY;
-            }
-            
-            ItemStack remaining = stack.copy();
-            
-            for (int i = 0; i < storageCapacity; i++) {
-                if (!contents.containsKey(i)) {
-                    contents.put(i, remaining);
-                    return ItemStack.EMPTY;
-                } else if (contents.get(i).isEmpty()) {
-                    contents.put(i, remaining);
-                    return ItemStack.EMPTY;
+        public int getCurrentUsedCapacity() {
+            int usedCapacity = 0;
+            for (ItemStack stack : items) {
+                if (!stack.isEmpty()) {
+                    usedCapacity += calculateItemWeight(stack);
                 }
             }
-            
-            return remaining;
+            return usedCapacity;
         }
         
         @Override
-        public ItemStack takeItem(int slotIndex, int amount) {
-            if (!contents.containsKey(slotIndex) || contents.get(slotIndex).isEmpty()) {
+        public List<ItemStack> getItems() {
+            return new ArrayList<>(items);
+        }
+        
+        @Override
+        public boolean addItem(ItemStack stack) {
+            if (stack.isEmpty()) {
+                return false;
+            }
+            
+            // Check if there's enough space
+            if (items.size() >= maxSlots) {
+                return false;
+            }
+            
+            float itemWeight = calculateItemWeight(stack);
+            if (getCurrentUsedCapacity() + itemWeight > maxCapacity) {
+                return false;
+            }
+            
+            // Add the item
+            items.add(stack.copy());
+            return true;
+        }
+        
+        @Override
+        public ItemStack removeItem(int index) {
+            if (index < 0 || index >= items.size()) {
                 return ItemStack.EMPTY;
             }
             
-            ItemStack currentStack = contents.get(slotIndex);
-            int amountToTake = Math.min(amount, currentStack.getCount());
-            
-            ItemStack result = currentStack.copy();
-            result.setCount(amountToTake);
-            
-            currentStack.shrink(amountToTake);
-            if (currentStack.isEmpty()) {
-                contents.remove(slotIndex);
-            }
-            
-            return result;
+            return items.remove(index);
         }
         
         @Override
-        public boolean hasVacuumSeal() {
-            return hasVacuumSeal;
+        public boolean hasSecurityFeatures() {
+            return securityFeatures;
         }
         
         @Override
-        public boolean hasTemperatureRegulation() {
-            return hasTemperatureRegulation;
+        public boolean hasEnvironmentControl() {
+            return environmentControl;
         }
         
         @Override
-        public boolean hasRadiationShielding() {
-            return hasRadiationShielding;
+        public boolean hasAutomatedLoading() {
+            return automatedLoading;
         }
         
         @Override
         public void save(CompoundTag tag) {
             super.save(tag);
-            tag.putInt("StorageCapacity", storageCapacity);
-            tag.putBoolean("HasVacuumSeal", hasVacuumSeal);
-            tag.putBoolean("HasTemperatureRegulation", hasTemperatureRegulation);
-            tag.putBoolean("HasRadiationShielding", hasRadiationShielding);
+            tag.putInt("MaxCapacity", maxCapacity);
+            tag.putInt("MaxSlots", maxSlots);
+            tag.putBoolean("SecurityFeatures", securityFeatures);
+            tag.putBoolean("EnvironmentControl", environmentControl);
+            tag.putBoolean("AutomatedLoading", automatedLoading);
             
-            // Save contents
-            CompoundTag contentsTag = new CompoundTag();
-            contentsTag.putInt("Count", contents.size());
-            
-            int index = 0;
-            for (Map.Entry<Integer, ItemStack> entry : contents.entrySet()) {
-                CompoundTag slotTag = new CompoundTag();
-                slotTag.putInt("Slot", entry.getKey());
-                
-                // In NeoForge 1.21, ItemStack doesn't have a direct save method that takes a CompoundTag
-                // Instead, we'll just record the item's count and ID, which is enough for serialization
-                if (!entry.getValue().isEmpty()) {
+            // Save items
+            ListTag itemsTag = new ListTag();
+            for (ItemStack stack : items) {
+                if (!stack.isEmpty()) {
                     CompoundTag itemTag = new CompoundTag();
-                    itemTag.putString("ID", entry.getValue().getItem().toString());
-                    itemTag.putInt("Count", entry.getValue().getCount());
-                    slotTag.put("Item", itemTag);
+                    itemTag.putString("id", stack.getItem().toString());
+                    itemTag.putInt("count", stack.getCount());
+                    
+                    // Add any tags the item might have
+                    if (stack.hasTag()) {
+                        CompoundTag tag = stack.getTag();
+                        if (tag != null) {
+                            itemTag.put("tag", tag);
+                        }
+                    }
+                    
+                    itemsTag.add(itemTag);
                 }
-                
-                contentsTag.put("Slot" + index, slotTag);
-                index++;
             }
             
-            tag.put("Contents", contentsTag);
+            tag.put("Items", itemsTag);
         }
     }
     
