@@ -77,26 +77,29 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
         
         // Load rotation angle
         if (tag.contains("RotationAngle")) {
-            rotationAngle = tag.getFloat("RotationAngle");
+            // Handle Optional return type in NeoForge 1.21.5
+            tag.getFloat("RotationAngle").ifPresent(value -> rotationAngle = value);
         }
         
         // Load linked table position if it exists
         if (tag.contains("LinkedTable")) {
-            CompoundTag posTag = tag.getCompound("LinkedTable");
-            if (posTag != null && !posTag.isEmpty()) {
-                // Read coordinates directly - assuming the tags are primitive integers
-                if (posTag.contains("X") && posTag.contains("Y") && posTag.contains("Z")) {
-                    // Use getInt with default value 0 to avoid Optional issues
-                    int x = posTag.getInt("X");
-                    int y = posTag.getInt("Y");
-                    int z = posTag.getInt("Z");
-                    linkedTablePos = new BlockPos(x, y, z);
+            // Handle Optional return type in NeoForge 1.21.5
+            tag.getCompound("LinkedTable").ifPresent(posTag -> {
+                if (!posTag.isEmpty()) {
+                    // Read coordinates directly - check if all coordinates exist
+                    if (posTag.contains("X") && posTag.contains("Y") && posTag.contains("Z")) {
+                        // Get coordinates safely handling Optional values
+                        Integer x = posTag.getInt("X").orElse(0);
+                        Integer y = posTag.getInt("Y").orElse(0);
+                        Integer z = posTag.getInt("Z").orElse(0);
+                        linkedTablePos = new BlockPos(x, y, z);
+                    } else {
+                        linkedTablePos = null;
+                    }
                 } else {
                     linkedTablePos = null;
                 }
-            } else {
-                linkedTablePos = null;
-            }
+            });
         } else {
             linkedTablePos = null;
         }

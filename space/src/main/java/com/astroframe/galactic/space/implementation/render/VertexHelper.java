@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -59,14 +60,15 @@ public class VertexHelper {
         Vector4f pos = new Vector4f(x, y, z, 1.0F);
         pos.mul(matrix);
         
-        // Use the compatibility approach for NeoForge 1.21.5
-        consumer.defaultColor((int)(red * 255.0F), (int)(green * 255.0F), 
-                         (int)(blue * 255.0F), (int)(alpha * 255.0F));
-        consumer.putBulkData(new PoseStack().last(), pos.x(), pos.y(), pos.z(),
-                    1.0F, 1.0F, // UV
-                    0, 0, // Overlay
-                    1, 1, 1, // Normal
-                    15728880); // Light level - full brightness
+        // Use a simpler approach to add vertices for NeoForge 1.21.5
+        // Just add position, color, normal, and UV coordinates separately
+        consumer.vertex(matrix, x, y, z);
+        consumer.color(red, green, blue, alpha);
+        consumer.normal(0.0F, 1.0F, 0.0F);
+        consumer.uv(0.0F, 0.0F);
+        consumer.overlayCoords(OverlayTexture.NO_OVERLAY);
+        consumer.uv2(15728880); // Full brightness
+        consumer.endVertex();
     }
     
     /**
