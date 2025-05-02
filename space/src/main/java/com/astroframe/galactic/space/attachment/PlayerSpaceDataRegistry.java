@@ -17,7 +17,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  */
 public class PlayerSpaceDataRegistry {
     public static final ResourceLocation PLAYER_SPACE_DATA_RL = 
-        ResourceLocation.of(GalacticSpace.MOD_ID + ":player_space_data", ':');
+        ResourceLocation.parse(GalacticSpace.MOD_ID + ":player_space_data");
     
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = 
         DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, GalacticSpace.MOD_ID);
@@ -26,11 +26,19 @@ public class PlayerSpaceDataRegistry {
         ATTACHMENT_TYPES.register("player_space_data", 
             () -> AttachmentType.builder(
                 PlayerSpaceDataAttachment::new
-            ).serialize(
-                (attachment, tag) -> attachment.write(tag)
-            ).deserialize(
-                (tag) -> PlayerSpaceDataAttachment.read(tag)
-            ).build());
+            ).copyFrom(new AttachmentType.Serializer<CompoundTag, PlayerSpaceDataAttachment>() {
+                @Override
+                public PlayerSpaceDataAttachment read(CompoundTag tag) {
+                    return PlayerSpaceDataAttachment.read(tag);
+                }
+
+                @Override
+                public CompoundTag write(PlayerSpaceDataAttachment attachment) {
+                    CompoundTag tag = new CompoundTag();
+                    attachment.write(tag);
+                    return tag;
+                }
+            }).build());
     
     /**
      * Register the player space data attachment type.
