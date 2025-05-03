@@ -34,6 +34,7 @@ public class RocketAssemblyTable extends Block implements EntityBlock {
      * @param state The block state
      * @return The block entity
      */
+    @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return SpaceBlockEntities.ROCKET_ASSEMBLY_TABLE.get().create(pos, state);
     }

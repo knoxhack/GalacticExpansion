@@ -1,7 +1,7 @@
 package com.astroframe.galactic.space.implementation;
 
 import com.astroframe.galactic.core.api.space.IRocket;
-import com.astroframe.galactic.core.api.space.component.RocketComponentType;
+import com.astroframe.galactic.core.api.space.RocketComponentType;
 import com.astroframe.galactic.space.GalacticSpace;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
