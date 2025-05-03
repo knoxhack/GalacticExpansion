@@ -30,6 +30,9 @@ public class BiotechRegistry {
         // Register objects
         ITEMS.register(eventBus);
         
+        // Initialize creative tabs
+        BiotechCreativeTabs.initialize(eventBus);
+        
         GalacticBiotech.LOGGER.info("Biotech module registration complete");
     }
 }
