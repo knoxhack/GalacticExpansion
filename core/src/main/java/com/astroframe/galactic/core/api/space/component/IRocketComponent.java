@@ -177,14 +177,15 @@ public interface IRocketComponent {
     default void load(net.minecraft.nbt.CompoundTag tag) {
         // Load position if saved
         if (tag.contains("PosX") && tag.contains("PosY") && tag.contains("PosZ")) {
-            // In NeoForge 1.21.5, getDouble() returns direct values
+            // In NeoForge 1.21.5, getDouble() returns Optional<Double>
             try {
-                double x = tag.getDouble("PosX");
-                double y = tag.getDouble("PosY");
-                double z = tag.getDouble("PosZ");
+                // Use the TagHelper utility class for safe tag access
+                double x = com.astroframe.galactic.core.TagHelper.getDouble(tag, "PosX", 0.0);
+                double y = com.astroframe.galactic.core.TagHelper.getDouble(tag, "PosY", 0.0);
+                double z = com.astroframe.galactic.core.TagHelper.getDouble(tag, "PosZ", 0.0);
                 setPosition(new Vec3(x, y, z));
             } catch (Exception e) {
-                // Fallback if the direct approach fails
+                // Fallback if the approach fails
                 setPosition(new Vec3(0, 0, 0));
             }
         }

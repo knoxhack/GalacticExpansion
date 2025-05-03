@@ -47,7 +47,7 @@ public class RocketLaunchController {
         }
         
         // Check if the rocket is valid for launch
-        if (!rocket.isValid()) {
+        if (!hasRequiredComponents()) {
             cannotLaunchReason = Component.translatable("message.galactic-space.invalid_rocket_configuration");
             return false;
         }
@@ -135,7 +135,9 @@ public class RocketLaunchController {
      */
     private boolean isValidLaunchPosition() {
         // For now, just check if they're on the ground
-        return !player.isInWater() && !player.isInLava() && player.isOnGround();
+        return !player.isEyeInFluid(net.minecraft.tags.FluidTags.WATER) && 
+               !player.isEyeInFluid(net.minecraft.tags.FluidTags.LAVA) && 
+               player.onGround();
     }
     
     /**
@@ -173,7 +175,7 @@ public class RocketLaunchController {
      */
     private void applyComponentWear() {
         // Apply wear to components based on their type
-        rocket.getComponents().forEach(component -> {
+        rocket.getAllComponents().forEach(component -> {
             int wear = switch (component.getType()) {
                 case ENGINE -> 10; // Engines wear the most during launch
                 case FUEL_TANK -> 5;
