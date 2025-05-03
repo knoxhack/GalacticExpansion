@@ -200,8 +200,13 @@ public class ItemStackHelper {
             
             // If direct lookup failed, try to get via Holder
             // In NeoForge 1.21.5, we need to get the Holder reference through the registry key
-            Optional<ResourceKey<Item>> resourceKey = ResourceKey.createRegistryKey(Registry.ITEM_REGISTRY, location);
-            Optional<Holder.Reference<Item>> holderOpt = resourceKey.flatMap(registry::getHolder);
+            // In NeoForge 1.21.5, we need to take a different approach for Holder lookup
+            ResourceKey<Item> resourceKey = ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, location);
+            // Use registry lookup directly - the getHolder method doesn't exist in this version
+            Optional<Item> alternateItemOpt = BuiltInRegistries.ITEM.getOptional(location);
+            if (alternateItemOpt.isPresent()) {
+                return alternateItemOpt.get();
+            }
             if (holderOpt.isPresent()) {
                 return holderOpt.get().value();
             }
