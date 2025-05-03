@@ -153,8 +153,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getString returns the value directly
-            return tag.getString(key);
+            // In NeoForge 1.21.5, getString returns an Optional<String>
+            return tag.getString(key).orElse("");
         } catch (Exception e) {
             return "";
         }
@@ -173,8 +173,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getInt returns the value directly
-            return tag.getInt(key);
+            // In NeoForge 1.21.5, getInt returns an Optional<Integer>
+            return tag.getInt(key).orElse(0);
         } catch (Exception e) {
             return 0;
         }
