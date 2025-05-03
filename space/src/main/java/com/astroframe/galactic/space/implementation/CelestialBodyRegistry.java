@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Registry for celestial bodies in the Space module.
@@ -26,10 +25,10 @@ public class CelestialBodyRegistry {
     /**
      * Gets a celestial body by its ID.
      * @param id The celestial body ID
-     * @return The celestial body, or empty if not found
+     * @return The celestial body, or null if not found
      */
-    public static Optional<ICelestialBody> get(ResourceLocation id) {
-        return Optional.ofNullable(CELESTIAL_BODIES.get(id));
+    public static ICelestialBody get(ResourceLocation id) {
+        return CELESTIAL_BODIES.get(id);
     }
     
     /**

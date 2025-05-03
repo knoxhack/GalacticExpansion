@@ -3,7 +3,6 @@ package com.astroframe.galactic.space.implementation.component;
 import net.minecraft.resources.ResourceLocation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,8 +36,11 @@ public class ResourceLocationHelper {
                 LOGGER.log(Level.WARNING, "Failed to create ResourceLocation using parse method, attempting reflection", e2);
                 
                 // Last resort: try using reflection to create the ResourceLocation
-                return createViaReflection(namespace, path)
-                        .orElseThrow(() -> new RuntimeException("Failed to create ResourceLocation by any method"));
+                ResourceLocation result = createViaReflection(namespace, path);
+                if (result == null) {
+                    throw new RuntimeException("Failed to create ResourceLocation by any method");
+                }
+                return result;
             }
         }
     }
@@ -73,14 +75,14 @@ public class ResourceLocationHelper {
      * 
      * @param namespace The namespace
      * @param path The path
-     * @return An Optional containing the ResourceLocation, or empty if creation failed
+     * @return A ResourceLocation, or null if creation failed
      */
-    private static Optional<ResourceLocation> createViaReflection(String namespace, String path) {
+    private static ResourceLocation createViaReflection(String namespace, String path) {
         try {
             // Try to get the constructor that takes namespace and path
             Constructor<ResourceLocation> constructor = ResourceLocation.class.getDeclaredConstructor(String.class, String.class);
             constructor.setAccessible(true);
-            return Optional.of(constructor.newInstance(namespace, path));
+            return constructor.newInstance(namespace, path);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Failed to create ResourceLocation via constructor reflection", e);
             
@@ -88,7 +90,7 @@ public class ResourceLocationHelper {
             try {
                 Method method = ResourceLocation.class.getDeclaredMethod("of", String.class, String.class);
                 method.setAccessible(true);
-                return Optional.of((ResourceLocation) method.invoke(null, namespace, path));
+                return (ResourceLocation) method.invoke(null, namespace, path);
             } catch (Exception e2) {
                 LOGGER.log(Level.SEVERE, "Failed to create ResourceLocation via method reflection", e2);
                 
@@ -96,10 +98,10 @@ public class ResourceLocationHelper {
                 try {
                     Method method = ResourceLocation.class.getDeclaredMethod("create", String.class, String.class);
                     method.setAccessible(true);
-                    return Optional.of((ResourceLocation) method.invoke(null, namespace, path));
+                    return (ResourceLocation) method.invoke(null, namespace, path);
                 } catch (Exception e3) {
                     LOGGER.log(Level.SEVERE, "Failed to create ResourceLocation via all known methods", e3);
-                    return Optional.empty();
+                    return null;
                 }
             }
         }
