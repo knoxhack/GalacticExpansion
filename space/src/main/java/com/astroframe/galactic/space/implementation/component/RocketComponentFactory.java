@@ -4,7 +4,7 @@ import com.astroframe.galactic.core.api.space.component.ICommandModule;
 import com.astroframe.galactic.core.api.space.component.IFuelTank;
 import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.astroframe.galactic.core.api.space.component.IRocketEngine;
-import com.astroframe.galactic.core.api.space.component.RocketComponentType;
+import com.astroframe.galactic.core.api.space.RocketComponentType;
 
 /**
  * Factory for creating rocket components.
