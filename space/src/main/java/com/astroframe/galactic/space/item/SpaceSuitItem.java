@@ -1,24 +1,24 @@
 package com.astroframe.galactic.space.item;
 
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.common.util.Lazy;
 
 /**
  * Space suit armor item with special properties for space survival.
  */
 public class SpaceSuitItem extends ArmorItem {
     
-    private static final SpaceSuitArmorMaterial MATERIAL = new SpaceSuitArmorMaterial();
+    private static final CustomArmorMaterial MATERIAL = new CustomArmorMaterial();
     
     /**
      * Create a new space suit item.
@@ -36,7 +36,7 @@ public class SpaceSuitItem extends ArmorItem {
     }
     
     @Override
-    public int getEnchantmentValue() {
+    public int getEnchantmentValue(ItemStack stack) {
         return 15;
     }
     
@@ -51,6 +51,51 @@ public class SpaceSuitItem extends ArmorItem {
         }
         
         return super.canApplyAtEnchantingTable(stack, enchantment);
+    }
+    
+    /**
+     * Checks if a player is wearing a full space suit.
+     *
+     * @param player The player to check
+     * @return True if wearing a full space suit
+     */
+    public static boolean hasFullSpaceSuit(Player player) {
+        // Check each armor slot
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            if (slot.getType() != EquipmentSlot.Type.ARMOR) continue;
+            
+            ItemStack stack = player.getItemBySlot(slot);
+            if (!(stack.getItem() instanceof SpaceSuitItem)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Get the minimum tier of any piece of space suit armor.
+     * Returns 0 if no space suit is worn.
+     *
+     * @param player The player to check
+     * @return The minimum tier (1-3) or 0 if no suit
+     */
+    public static int getMinimumSuitTier(Player player) {
+        int minTier = 3; // Start with maximum
+        boolean hasSuit = false;
+        
+        // Check each armor slot
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            if (slot.getType() != EquipmentSlot.Type.ARMOR) continue;
+            
+            ItemStack stack = player.getItemBySlot(slot);
+            if (stack.getItem() instanceof SpaceSuitItem) {
+                hasSuit = true;
+                int tier = 1; // Default to tier 1
+                minTier = Math.min(minTier, tier);
+            }
+        }
+        
+        return hasSuit ? minTier : 0;
     }
     
     /**
@@ -72,49 +117,42 @@ public class SpaceSuitItem extends ArmorItem {
     }
     
     /**
-     * Private armor material implementation for the space suit.
+     * Custom armor material implementation for the space suit.
      */
-    private static class SpaceSuitArmorMaterial implements ArmorMaterial {
+    private static class CustomArmorMaterial implements ArmorMaterial {
         
         private static final int[] DURABILITY_PER_SLOT = new int[]{13, 15, 16, 11};
         private static final int[] PROTECTION_PER_SLOT = new int[]{3, 6, 8, 3};
+        private final Lazy<Ingredient> repairMaterial = Lazy.of(() -> Ingredient.of(new ItemStack(Item.byId(1))));
         
-        @Override
         public int getDurabilityForType(Type type) {
             return DURABILITY_PER_SLOT[type.getSlot().getIndex()] * 25;
         }
         
-        @Override
         public int getDefenseForType(Type type) {
             return PROTECTION_PER_SLOT[type.getSlot().getIndex()];
         }
         
-        @Override
         public int getEnchantmentValue() {
             return 15;
         }
         
-        @Override
-        public SoundEvent getEquipSound() {
-            return SoundEvents.ARMOR_EQUIP_IRON;
+        public net.minecraft.core.Holder<SoundEvent> getEquipSound() {
+            return net.minecraft.core.Holder.direct(net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_IRON);
         }
         
-        @Override
         public Ingredient getRepairIngredient() {
-            return Ingredient.EMPTY;
+            return repairMaterial.get();
         }
         
-        @Override
         public String getName() {
             return "space_suit";
         }
         
-        @Override
         public float getToughness() {
             return 2.0F;
         }
         
-        @Override
         public float getKnockbackResistance() {
             return 0.0F;
         }

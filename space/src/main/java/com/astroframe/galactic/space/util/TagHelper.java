@@ -89,6 +89,25 @@ public class TagHelper {
     }
     
     /**
+     * Gets an integer from a compound tag safely with a default value.
+     *
+     * @param tag The parent tag
+     * @param key The key to get
+     * @param defaultValue The default value to return if not found
+     * @return The integer, or defaultValue if not found
+     */
+    public static int getInt(CompoundTag tag, String key, int defaultValue) {
+        try {
+            if (tag.contains(key)) {
+                return tag.getInt(key);
+            }
+            return defaultValue;
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+    
+    /**
      * Gets a float from a compound tag safely.
      *
      * @param tag The parent tag
@@ -100,6 +119,25 @@ public class TagHelper {
             return tag.getFloat(key);
         } catch (Exception e) {
             return 0;
+        }
+    }
+    
+    /**
+     * Gets a float from a compound tag safely with a default value.
+     *
+     * @param tag The parent tag
+     * @param key The key to get
+     * @param defaultValue The default value to return if not found
+     * @return The float, or defaultValue if not found
+     */
+    public static float getFloat(CompoundTag tag, String key, float defaultValue) {
+        try {
+            if (tag.contains(key)) {
+                return tag.getFloat(key);
+            }
+            return defaultValue;
+        } catch (Exception e) {
+            return defaultValue;
         }
     }
     
