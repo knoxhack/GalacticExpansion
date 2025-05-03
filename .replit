@@ -55,6 +55,7 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd buildwidget && node proxy.js"
+waitForPort = 5000
 
 [[workflows.workflow]]
 name = "Build Mod (No Clean)"
