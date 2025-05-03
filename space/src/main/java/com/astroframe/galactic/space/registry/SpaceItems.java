@@ -24,60 +24,60 @@ public class SpaceItems {
     // Create a single Item.Properties instance with stacksTo(64) set
     private static final Item.Properties DEFAULT_PROPS = new Item.Properties().stacksTo(64);
     
-    // Define basic items
+    // Define basic items - explicitly setting stacksTo(64) for each item to ensure it's properly set
     public static final Supplier<Item> ROCKET_PART = ITEMS.register("rocket_part", 
-            () -> new Item(DEFAULT_PROPS));
+            () -> new Item(new Item.Properties().stacksTo(64)));
     
     public static final Supplier<Item> MOON_DUST = ITEMS.register("moon_dust", 
-            () -> new Item(DEFAULT_PROPS));
+            () -> new Item(new Item.Properties().stacksTo(64)));
     
     public static final Supplier<Item> LUNAR_DUST = ITEMS.register("lunar_dust", 
-            () -> new Item(DEFAULT_PROPS));
+            () -> new Item(new Item.Properties().stacksTo(64)));
     
     public static final Supplier<Item> MOON_ROCK = ITEMS.register("moon_rock", 
-            () -> new Item(DEFAULT_PROPS));
+            () -> new Item(new Item.Properties().stacksTo(64)));
     
     public static final Supplier<Item> MARS_ROCK = ITEMS.register("mars_rock", 
-            () -> new Item(DEFAULT_PROPS));
+            () -> new Item(new Item.Properties().stacksTo(64)));
     
     public static final Supplier<Item> STELLAR_FRAGMENT = ITEMS.register("stellar_fragment", 
-            () -> new Item(DEFAULT_PROPS));
+            () -> new Item(new Item.Properties().stacksTo(64)));
     
     public static final Supplier<Item> SPACE_HELMET = ITEMS.register("space_helmet", 
-            () -> new Item(DEFAULT_PROPS));
+            () -> new Item(new Item.Properties().stacksTo(64)));
     
     public static final Supplier<Item> OXYGEN_TANK = ITEMS.register("oxygen_tank", 
-            () -> new Item(DEFAULT_PROPS));
+            () -> new Item(new Item.Properties().stacksTo(64)));
     
     // Create a single Item.Properties instance for single-stack items
     private static final Item.Properties SINGLE_STACK_PROPS = new Item.Properties().stacksTo(1);
     
     // Space suit items
-    // In NeoForge 1.21.5, use EquipmentSlot directly
+    // In NeoForge 1.21.5, use EquipmentSlot directly and explicit stacksTo(1)
     public static final Supplier<Item> SPACE_SUIT_HELMET = ITEMS.register("space_suit_helmet",
-            () -> new SpaceSuitItem(EquipmentSlot.HEAD, SINGLE_STACK_PROPS));
+            () -> new SpaceSuitItem(EquipmentSlot.HEAD, new Item.Properties().stacksTo(1)));
     
     public static final Supplier<Item> SPACE_SUIT_CHESTPLATE = ITEMS.register("space_suit_chestplate",
-            () -> new SpaceSuitItem(EquipmentSlot.CHEST, SINGLE_STACK_PROPS));
+            () -> new SpaceSuitItem(EquipmentSlot.CHEST, new Item.Properties().stacksTo(1)));
     
     public static final Supplier<Item> SPACE_SUIT_LEGGINGS = ITEMS.register("space_suit_leggings",
-            () -> new SpaceSuitItem(EquipmentSlot.LEGS, SINGLE_STACK_PROPS));
+            () -> new SpaceSuitItem(EquipmentSlot.LEGS, new Item.Properties().stacksTo(1)));
     
     public static final Supplier<Item> SPACE_SUIT_BOOTS = ITEMS.register("space_suit_boots",
-            () -> new SpaceSuitItem(EquipmentSlot.FEET, SINGLE_STACK_PROPS));
+            () -> new SpaceSuitItem(EquipmentSlot.FEET, new Item.Properties().stacksTo(1)));
     
-    // Rocket items
+    // Rocket items - ensuring each one has explicit stacksTo(1)
     public static final Supplier<Item> TIER_1_ROCKET = ITEMS.register("tier_1_rocket",
-            () -> new RocketItem(1, SINGLE_STACK_PROPS));
+            () -> new RocketItem(1, new Item.Properties().stacksTo(1)));
     
     public static final Supplier<Item> TIER_2_ROCKET = ITEMS.register("tier_2_rocket",
-            () -> new RocketItem(2, SINGLE_STACK_PROPS));
+            () -> new RocketItem(2, new Item.Properties().stacksTo(1)));
     
     public static final Supplier<Item> TIER_3_ROCKET = ITEMS.register("tier_3_rocket",
-            () -> new RocketItem(3, SINGLE_STACK_PROPS));
+            () -> new RocketItem(3, new Item.Properties().stacksTo(1)));
     
     public static final Supplier<Item> MODULAR_ROCKET = ITEMS.register("modular_rocket",
-            () -> new ModularRocketItem(SINGLE_STACK_PROPS));
+            () -> new ModularRocketItem(new Item.Properties().stacksTo(1)));
     
     /**
      * Initialize and register all items.
@@ -85,5 +85,10 @@ public class SpaceItems {
      */
     public static void initialize(IEventBus modEventBus) {
         ITEMS.register(modEventBus);
+        
+        // Validate that items are properly initialized
+        if (ROCKET_PART == null || MOON_DUST == null || SPACE_SUIT_HELMET == null) {
+            throw new IllegalStateException("Space items failed to initialize properly");
+        }
     }
 }
