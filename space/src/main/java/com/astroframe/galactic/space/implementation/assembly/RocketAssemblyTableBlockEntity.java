@@ -280,12 +280,12 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
      * 
      * @param tag The tag to save to
      */
-    @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    // No @Override since method signature changed in NeoForge 1.21.5
+    protected void saveAdditional(CompoundTag tag, Provider provider) {
+        super.saveAdditional(tag, provider);
         
-        // Save components
-        ContainerHelper.saveAllItems(tag, components);
+        // Save components with provider
+        ContainerHelper.saveAllItems(tag, components, provider);
         
         // Save rocket data
         if (rocketDataTag != null && !rocketDataTag.isEmpty()) {
@@ -298,14 +298,20 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
      * 
      * @param tag The tag to load from
      */
-    @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    // No @Override since method signature changed in NeoForge 1.21.5
+    public void loadSpecific(CompoundTag tag) {
+        // Call NeoForge 1.21.5 compatible method
+        super.loadSpecific(tag);
         
         // Load components
         components = NonNullList.withSize(9, ItemStack.EMPTY);
-        // Use Provider lambda for NeoForge 1.21.5 compatibility
-        ContainerHelper.loadAllItems(tag, components, () -> NonNullList.withSize(9, ItemStack.EMPTY));
+        // Create Provider implementation for NeoForge 1.21.5 compatibility
+        ContainerHelper.loadAllItems(tag, components, new Provider() {
+            @Override
+            public NonNullList<ItemStack> get() {
+                return NonNullList.withSize(9, ItemStack.EMPTY);
+            }
+        });
         
         // Load rocket data
         if (tag.contains("RocketData")) {
