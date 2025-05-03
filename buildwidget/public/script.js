@@ -108,7 +108,7 @@ function connectWebSocket() {
         }
         
         // Request initial status update and short commits
-        socket.send(JSON.stringify({ type: 'getShortCommits' }));
+        socket.send(JSON.stringify({ type: 'requestShortCommits', limit: 10 }));
         socket.send(JSON.stringify({ type: 'requestStatus' }));
     });
     
