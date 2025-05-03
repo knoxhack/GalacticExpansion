@@ -108,7 +108,7 @@ public class ModularRocketItem extends Item {
         
         // Create a basic rocket using builder pattern
         ModularRocket.Builder builder = new ModularRocket.Builder(
-                net.minecraft.resources.ResourceLocation.parse("galactic:basic_rocket"));
+                net.minecraft.resources.ResourceLocationHelper.parse("galactic:basic_rocket"));
         
         // Add basic components for a Tier 1 rocket
         builder.commandModule(RocketComponentFactory.createCockpit(RocketComponentType.COCKPIT, 1));

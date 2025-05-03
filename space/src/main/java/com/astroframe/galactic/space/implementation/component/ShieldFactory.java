@@ -17,7 +17,7 @@ public class ShieldFactory {
      */
     public static IShield createQuantumShield() {
         return new ShieldImpl(
-                ResourceLocation.parse(GalacticSpace.MOD_ID + ":shield_quantum"),
+                ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":shield_quantum"),
                 Component.translatable("component.galactic-space.shield_quantum"),
                 3,
                 350,

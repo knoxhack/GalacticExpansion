@@ -145,7 +145,7 @@ public class PlayerSpaceData {
                 }
                 
                 if (!idString.isEmpty()) {
-                    discoveredBodies.add(ResourceLocation.parse(idString));
+                    discoveredBodies.add(ResourceLocationHelper.parse(idString));
                 }
             }
         }
@@ -155,7 +155,7 @@ public class PlayerSpaceData {
             Tag lastVisitedTag = tag.get("LastVisitedBody");
             if (lastVisitedTag instanceof StringTag) {
                 String bodyId = TagHelper.getStringValue(lastVisitedTag);
-                lastVisitedBody = bodyId.isEmpty() ? null : ResourceLocation.parse(bodyId);
+                lastVisitedBody = bodyId.isEmpty() ? null : ResourceLocationHelper.parse(bodyId);
             } else {
                 lastVisitedBody = null;
                 GalacticSpace.LOGGER.warn("LastVisitedBody tag is not a StringTag");

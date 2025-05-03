@@ -52,7 +52,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation cmdAdvancedId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_advanced");
+        ResourceLocation cmdAdvancedId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":command_module_advanced");
         registerCommandModule(
             cmdAdvancedId,
             new CommandModuleImpl.Builder(cmdAdvancedId)
@@ -68,7 +68,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation cmdEliteId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_elite");
+        ResourceLocation cmdEliteId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":command_module_elite");
         registerCommandModule(
             cmdEliteId,
             new CommandModuleImpl.Builder(cmdEliteId)
@@ -87,7 +87,7 @@ public class RocketComponentFactory {
         );
         
         // Engines (Various tiers and types)
-        ResourceLocation solidEngineId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":solid_fuel_engine");
+        ResourceLocation solidEngineId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":solid_fuel_engine");
         registerEngine(
             solidEngineId,
             new RocketEngineImpl.Builder(solidEngineId)
@@ -105,7 +105,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation liquidEngineId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":liquid_fuel_engine");
+        ResourceLocation liquidEngineId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":liquid_fuel_engine");
         registerEngine(
             liquidEngineId,
             new RocketEngineImpl.Builder(liquidEngineId)
@@ -123,7 +123,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation ionEngineId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":ion_engine");
+        ResourceLocation ionEngineId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":ion_engine");
         registerEngine(
             ionEngineId,
             new RocketEngineImpl.Builder(ionEngineId)
@@ -142,7 +142,7 @@ public class RocketComponentFactory {
         );
         
         // Fuel Tanks (Various sizes)
-        ResourceLocation smallTankId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_small");
+        ResourceLocation smallTankId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":fuel_tank_small");
         registerFuelTank(
             smallTankId,
             new FuelTankImpl.Builder(smallTankId)
@@ -155,7 +155,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation mediumTankId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_medium");
+        ResourceLocation mediumTankId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":fuel_tank_medium");
         registerFuelTank(
             mediumTankId,
             new FuelTankImpl.Builder(mediumTankId)
@@ -169,7 +169,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation largeTankId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_large");
+        ResourceLocation largeTankId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":fuel_tank_large");
         registerFuelTank(
             largeTankId,
             new FuelTankImpl.Builder(largeTankId)
@@ -185,7 +185,7 @@ public class RocketComponentFactory {
         );
         
         // Cargo Bays
-        ResourceLocation smallCargoBayId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_small");
+        ResourceLocation smallCargoBayId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":cargo_bay_small");
         registerCargoBay(
             smallCargoBayId,
             new CargoBayImpl.Builder(smallCargoBayId)
@@ -197,7 +197,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation mediumCargoBayId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_medium");
+        ResourceLocation mediumCargoBayId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":cargo_bay_medium");
         registerCargoBay(
             mediumCargoBayId,
             new CargoBayImpl.Builder(mediumCargoBayId)
@@ -210,7 +210,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation largeCargoBayId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_large");
+        ResourceLocation largeCargoBayId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":cargo_bay_large");
         registerCargoBay(
             largeCargoBayId,
             new CargoBayImpl.Builder(largeCargoBayId)
@@ -226,7 +226,7 @@ public class RocketComponentFactory {
         );
         
         // Passenger Compartments
-        ResourceLocation basicCompartmentId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":passenger_compartment_basic");
+        ResourceLocation basicCompartmentId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":passenger_compartment_basic");
         registerPassengerCompartment(
             basicCompartmentId,
             new PassengerCompartmentImpl.Builder(basicCompartmentId)
@@ -239,7 +239,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation advancedCompartmentId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":passenger_compartment_advanced");
+        ResourceLocation advancedCompartmentId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":passenger_compartment_advanced");
         registerPassengerCompartment(
             advancedCompartmentId,
             new PassengerCompartmentImpl.Builder(advancedCompartmentId)
@@ -255,7 +255,7 @@ public class RocketComponentFactory {
         );
         
         // Shields
-        ResourceLocation basicShieldId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":heat_shield_basic");
+        ResourceLocation basicShieldId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":heat_shield_basic");
         registerShield(
             basicShieldId,
             new ShieldImpl.Builder(basicShieldId)
@@ -269,7 +269,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation advancedShieldId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":heat_shield_advanced");
+        ResourceLocation advancedShieldId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":heat_shield_advanced");
         registerShield(
             advancedShieldId,
             new ShieldImpl.Builder(advancedShieldId)
@@ -285,7 +285,7 @@ public class RocketComponentFactory {
         );
         
         // Life Support Systems
-        ResourceLocation basicLifeSupportId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_basic");
+        ResourceLocation basicLifeSupportId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":life_support_basic");
         registerLifeSupport(
             basicLifeSupportId,
             new BaseLifeSupport.Builder(basicLifeSupportId, Component.literal("Basic Life Support System"))
@@ -298,7 +298,7 @@ public class RocketComponentFactory {
                 .build()
         );
         
-        ResourceLocation advancedLifeSupportId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_advanced");
+        ResourceLocation advancedLifeSupportId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":life_support_advanced");
         registerLifeSupport(
             advancedLifeSupportId,
             new BaseLifeSupport.Builder(advancedLifeSupportId, Component.literal("Advanced Life Support System"))
@@ -388,7 +388,7 @@ public class RocketComponentFactory {
      * @return A basic command module
      */
     public static ICommandModule createBasicCommandModule() {
-        return getCommandModule(ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_basic"));
+        return getCommandModule(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":command_module_basic"));
     }
     
     /**
@@ -396,7 +396,7 @@ public class RocketComponentFactory {
      * @return A standard command module
      */
     public static ICommandModule createStandardCommandModule() {
-        return getCommandModule(ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_advanced"));
+        return getCommandModule(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":command_module_advanced"));
     }
     
     /**
@@ -404,7 +404,7 @@ public class RocketComponentFactory {
      * @return An advanced command module
      */
     public static ICommandModule createAdvancedCommandModule() {
-        return getCommandModule(ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_elite"));
+        return getCommandModule(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":command_module_elite"));
     }
     
     /**
@@ -412,7 +412,7 @@ public class RocketComponentFactory {
      * @return A chemical engine
      */
     public static IRocketEngine createChemicalEngine() {
-        return getEngine(ResourceLocation.parse(GalacticSpace.MOD_ID + ":solid_fuel_engine"));
+        return getEngine(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":solid_fuel_engine"));
     }
     
     /**
@@ -459,11 +459,11 @@ public class RocketComponentFactory {
         
         switch (tier) {
             case 1:
-                return getCommandModule(ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_basic"));
+                return getCommandModule(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":command_module_basic"));
             case 2:
-                return getCommandModule(ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_advanced"));
+                return getCommandModule(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":command_module_advanced"));
             case 3:
-                return getCommandModule(ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_elite"));
+                return getCommandModule(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":command_module_elite"));
             default:
                 return null;
         }
@@ -482,11 +482,11 @@ public class RocketComponentFactory {
         
         switch (tier) {
             case 1:
-                return getEngine(ResourceLocation.parse(GalacticSpace.MOD_ID + ":solid_fuel_engine"));
+                return getEngine(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":solid_fuel_engine"));
             case 2:
-                return getEngine(ResourceLocation.parse(GalacticSpace.MOD_ID + ":liquid_fuel_engine"));
+                return getEngine(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":liquid_fuel_engine"));
             case 3:
-                return getEngine(ResourceLocation.parse(GalacticSpace.MOD_ID + ":ion_engine"));
+                return getEngine(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":ion_engine"));
             default:
                 return null;
         }
@@ -505,11 +505,11 @@ public class RocketComponentFactory {
         
         switch (tier) {
             case 1:
-                return getFuelTank(ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_small"));
+                return getFuelTank(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":fuel_tank_small"));
             case 2:
-                return getFuelTank(ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_medium"));
+                return getFuelTank(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":fuel_tank_medium"));
             case 3:
-                return getFuelTank(ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_large"));
+                return getFuelTank(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":fuel_tank_large"));
             default:
                 return null;
         }
@@ -528,11 +528,11 @@ public class RocketComponentFactory {
         
         switch (tier) {
             case 1:
-                return getCargoBay(ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_small"));
+                return getCargoBay(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":cargo_bay_small"));
             case 2:
-                return getCargoBay(ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_medium"));
+                return getCargoBay(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":cargo_bay_medium"));
             case 3:
-                return getCargoBay(ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_large"));
+                return getCargoBay(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":cargo_bay_large"));
             default:
                 return null;
         }
@@ -551,9 +551,9 @@ public class RocketComponentFactory {
         
         switch (tier) {
             case 1:
-                return getPassengerCompartment(ResourceLocation.parse(GalacticSpace.MOD_ID + ":passenger_compartment_basic"));
+                return getPassengerCompartment(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":passenger_compartment_basic"));
             case 2:
-                return getPassengerCompartment(ResourceLocation.parse(GalacticSpace.MOD_ID + ":passenger_compartment_advanced"));
+                return getPassengerCompartment(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":passenger_compartment_advanced"));
             default:
                 return null;
         }
@@ -572,9 +572,9 @@ public class RocketComponentFactory {
         
         switch (tier) {
             case 1:
-                return getShield(ResourceLocation.parse(GalacticSpace.MOD_ID + ":heat_shield_basic"));
+                return getShield(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":heat_shield_basic"));
             case 2:
-                return getShield(ResourceLocation.parse(GalacticSpace.MOD_ID + ":heat_shield_advanced"));
+                return getShield(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":heat_shield_advanced"));
             default:
                 return null;
         }
@@ -593,9 +593,9 @@ public class RocketComponentFactory {
         
         switch (tier) {
             case 1:
-                return getLifeSupport(ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_basic"));
+                return getLifeSupport(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":life_support_basic"));
             case 2:
-                return getLifeSupport(ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_advanced"));
+                return getLifeSupport(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":life_support_advanced"));
             default:
                 return null;
         }
@@ -609,7 +609,7 @@ public class RocketComponentFactory {
      */
     public static IRocketComponent createStructure(RocketComponentType type, int tier) {
         // Basic implementation for structure - could be expanded later with different structure types
-        return new StructureImpl.Builder(ResourceLocation.parse(GalacticSpace.MOD_ID + ":structure_basic"))
+        return new StructureImpl.Builder(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":structure_basic"))
                 .name("Basic Structural Frame")
                 .description("A standard structural framework for rocket assembly.")
                 .tier(Math.min(3, Math.max(1, tier)))  // Clamp tier to 1-3
@@ -623,7 +623,7 @@ public class RocketComponentFactory {
      * @return An advanced chemical engine
      */
     public static IRocketEngine createAdvancedChemicalEngine() {
-        return getEngine(ResourceLocation.parse(GalacticSpace.MOD_ID + ":liquid_fuel_engine"));
+        return getEngine(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":liquid_fuel_engine"));
     }
     
     /**
@@ -631,7 +631,7 @@ public class RocketComponentFactory {
      * @return An ion engine
      */
     public static IRocketEngine createIonEngine() {
-        return getEngine(ResourceLocation.parse(GalacticSpace.MOD_ID + ":ion_engine"));
+        return getEngine(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":ion_engine"));
     }
     
     /**
@@ -639,7 +639,7 @@ public class RocketComponentFactory {
      * @return A basic fuel tank
      */
     public static IFuelTank createBasicFuelTank() {
-        return getFuelTank(ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_small"));
+        return getFuelTank(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":fuel_tank_small"));
     }
     
     /**
@@ -647,7 +647,7 @@ public class RocketComponentFactory {
      * @return A standard fuel tank
      */
     public static IFuelTank createStandardFuelTank() {
-        return getFuelTank(ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_medium"));
+        return getFuelTank(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":fuel_tank_medium"));
     }
     
     /**
@@ -655,7 +655,7 @@ public class RocketComponentFactory {
      * @return An advanced fuel tank
      */
     public static IFuelTank createAdvancedFuelTank() {
-        return getFuelTank(ResourceLocation.parse(GalacticSpace.MOD_ID + ":fuel_tank_large"));
+        return getFuelTank(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":fuel_tank_large"));
     }
     
     /**
@@ -663,7 +663,7 @@ public class RocketComponentFactory {
      * @return A basic cargo bay
      */
     public static ICargoBay createBasicCargoBay() {
-        return getCargoBay(ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_small"));
+        return getCargoBay(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":cargo_bay_small"));
     }
     
     /**
@@ -671,7 +671,7 @@ public class RocketComponentFactory {
      * @return A standard cargo bay
      */
     public static ICargoBay createStandardCargoBay() {
-        return getCargoBay(ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_medium"));
+        return getCargoBay(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":cargo_bay_medium"));
     }
     
     /**
@@ -679,7 +679,7 @@ public class RocketComponentFactory {
      * @return An advanced cargo bay
      */
     public static ICargoBay createAdvancedCargoBay() {
-        return getCargoBay(ResourceLocation.parse(GalacticSpace.MOD_ID + ":cargo_bay_large"));
+        return getCargoBay(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":cargo_bay_large"));
     }
     
     /**
@@ -687,7 +687,7 @@ public class RocketComponentFactory {
      * @return A basic passenger compartment
      */
     public static IPassengerCompartment createBasicPassengerCompartment() {
-        return getPassengerCompartment(ResourceLocation.parse(GalacticSpace.MOD_ID + ":passenger_compartment_basic"));
+        return getPassengerCompartment(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":passenger_compartment_basic"));
     }
     
     /**
@@ -695,7 +695,7 @@ public class RocketComponentFactory {
      * @return An advanced passenger compartment
      */
     public static IPassengerCompartment createAdvancedPassengerCompartment() {
-        return getPassengerCompartment(ResourceLocation.parse(GalacticSpace.MOD_ID + ":passenger_compartment_advanced"));
+        return getPassengerCompartment(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":passenger_compartment_advanced"));
     }
     
     /**
@@ -703,7 +703,7 @@ public class RocketComponentFactory {
      * @return A basic shield
      */
     public static IShield createBasicShield() {
-        return getShield(ResourceLocation.parse(GalacticSpace.MOD_ID + ":heat_shield_basic"));
+        return getShield(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":heat_shield_basic"));
     }
     
     /**
@@ -711,7 +711,7 @@ public class RocketComponentFactory {
      * @return An advanced shield
      */
     public static IShield createAdvancedShield() {
-        return getShield(ResourceLocation.parse(GalacticSpace.MOD_ID + ":heat_shield_advanced"));
+        return getShield(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":heat_shield_advanced"));
     }
     
     /**
@@ -719,7 +719,7 @@ public class RocketComponentFactory {
      * @return A basic life support system
      */
     public static ILifeSupport createBasicLifeSupport() {
-        return getLifeSupport(ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_basic"));
+        return getLifeSupport(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":life_support_basic"));
     }
     
     /**
@@ -727,7 +727,7 @@ public class RocketComponentFactory {
      * @return An advanced life support system
      */
     public static ILifeSupport createAdvancedLifeSupport() {
-        return getLifeSupport(ResourceLocation.parse(GalacticSpace.MOD_ID + ":life_support_advanced"));
+        return getLifeSupport(ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":life_support_advanced"));
     }
     
     /**

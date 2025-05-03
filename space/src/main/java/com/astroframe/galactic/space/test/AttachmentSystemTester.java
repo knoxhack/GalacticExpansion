@@ -82,7 +82,7 @@ public class AttachmentSystemTester {
         GalacticSpace.LOGGER.info("Rocket ID test: " + (retrievedRocketId != null && retrievedRocketId.equals(testRocketId)));
         
         // Dimension
-        ResourceLocation testDimension = ResourceLocation.parse("galactic-space:space_station");
+        ResourceLocation testDimension = ResourceLocationHelper.parse("galactic-space:space_station");
         attachment.setCurrentDimension(testDimension);
         ResourceLocation retrievedDimension = attachment.getCurrentDimension();
         
@@ -99,7 +99,7 @@ public class AttachmentSystemTester {
         attachment.addExperience(500);
         UUID testRocketId = UUID.randomUUID();
         attachment.setCurrentRocketId(testRocketId);
-        ResourceLocation testDimension = ResourceLocation.parse("galactic-space:space_station");
+        ResourceLocation testDimension = ResourceLocationHelper.parse("galactic-space:space_station");
         attachment.setCurrentDimension(testDimension);
         
         // Serialize to tag

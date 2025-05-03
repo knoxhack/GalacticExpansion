@@ -221,7 +221,7 @@ public class PlayerSpaceDataAttachment {
                 if (bodiesTag.get(i) instanceof StringTag) {
                     String idString = TagHelper.getStringValue(bodiesTag.get(i));
                     if (!idString.isEmpty()) {
-                        data.discoveredBodies.add(ResourceLocation.parse(idString));
+                        data.discoveredBodies.add(ResourceLocationHelper.parse(idString));
                     }
                 } else {
                     // Fallback if tag type is unexpected
@@ -235,7 +235,7 @@ public class PlayerSpaceDataAttachment {
             Tag lastVisitedTag = tag.get("LastVisitedBody");
             if (lastVisitedTag instanceof StringTag) {
                 String bodyId = TagHelper.getStringValue(lastVisitedTag);
-                data.lastVisitedBody = bodyId.isEmpty() ? null : ResourceLocation.parse(bodyId);
+                data.lastVisitedBody = bodyId.isEmpty() ? null : ResourceLocationHelper.parse(bodyId);
             } else {
                 data.lastVisitedBody = null;
                 GalacticSpace.LOGGER.warn("LastVisitedBody tag is not a StringTag");
@@ -273,7 +273,7 @@ public class PlayerSpaceDataAttachment {
         if (tag.contains("CurrentDimension")) {
             String dimString = TagHelper.getStringValue(tag, "CurrentDimension");
             if (!dimString.isEmpty()) {
-                data.currentDimension = ResourceLocation.parse(dimString);
+                data.currentDimension = ResourceLocationHelper.parse(dimString);
             }
         }
         

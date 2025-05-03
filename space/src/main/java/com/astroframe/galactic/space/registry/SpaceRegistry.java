@@ -27,6 +27,6 @@ public class SpaceRegistry {
      * @return A ResourceLocation with the mod's namespace
      */
     public static ResourceLocation id(String path) {
-        return ResourceLocation.parse(GalacticSpace.MOD_ID + ":" + path);
+        return ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":" + path);
     }
 }

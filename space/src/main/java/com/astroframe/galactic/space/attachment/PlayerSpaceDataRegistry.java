@@ -18,7 +18,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  */
 public class PlayerSpaceDataRegistry {
     public static final ResourceLocation PLAYER_SPACE_DATA_RL = 
-        ResourceLocation.parse(GalacticSpace.MOD_ID + ":player_space_data");
+        ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":player_space_data");
     
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = 
         DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, GalacticSpace.MOD_ID);
