@@ -170,11 +170,10 @@ public class SpaceSuitItem extends ArmorItem {
         public net.minecraft.core.Holder<SoundEvent> getEquipSound() {
             // Get the sound event from registry in NeoForge 1.21.5
             ResourceLocation soundId = ResourceLocation.parse("minecraft:item.armor.equip_iron");
-            net.minecraft.resources.ResourceKey<SoundEvent> resourceKey = 
-                net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.SOUND_EVENT, soundId);
             
-            // Use registry holder lookup for NeoForge 1.21.5
-            return net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.getHolderOrThrow(resourceKey);
+            // For NeoForge 1.21.5, we need to create a holder directly
+            SoundEvent soundEvent = SoundEvents.ARMOR_EQUIP_IRON;
+            return net.minecraft.core.Holder.direct(soundEvent);
         }
         
         public Ingredient getRepairIngredient() {
