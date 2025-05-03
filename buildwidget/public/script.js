@@ -107,7 +107,8 @@ function connectWebSocket() {
             statusIndicator.title = 'Connected to build server';
         }
         
-        // Request initial status update
+        // Request initial status update and short commits
+        socket.send(JSON.stringify({ type: 'getShortCommits' }));
         socket.send(JSON.stringify({ type: 'requestStatus' }));
     });
     
