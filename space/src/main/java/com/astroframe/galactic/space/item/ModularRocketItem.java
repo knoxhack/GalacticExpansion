@@ -10,6 +10,7 @@ import com.astroframe.galactic.space.util.ResourceLocationHelper;
 import com.astroframe.galactic.space.util.TagHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;

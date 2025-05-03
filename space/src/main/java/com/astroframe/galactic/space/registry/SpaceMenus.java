@@ -20,8 +20,9 @@ public class SpaceMenus {
     // Menu type for rocket assembly
     public static final DeferredHolder<MenuType<?>, MenuType<RocketAssemblyMenu>> ROCKET_ASSEMBLY_MENU =
             MENUS.register("rocket_assembly", 
-                    () -> IMenuTypeExtension.create((windowId, inv, data) -> 
-                            new RocketAssemblyMenu(windowId, inv, data)));
+                    () -> new MenuType<>(
+                        (windowId, inv, data) -> new RocketAssemblyMenu(windowId, inv, data), 
+                        net.neoforged.fml.util.IExtensibleEnum.createVanillaDisplaySupplier()));
     
     /**
      * Register the menu registry with the event bus.
