@@ -21,7 +21,7 @@ public class SpaceBlockEntities {
     // Register the rocket assembly table block entity
     public static final Supplier<BlockEntityType<RocketAssemblyTableBlockEntity>> ROCKET_ASSEMBLY_TABLE = 
             BLOCK_ENTITIES.register("rocket_assembly_table", 
-                    () -> BlockEntityType.builder(
+                    () -> net.minecraft.world.level.block.entity.BlockEntityType.builder(
                             RocketAssemblyTableBlockEntity::new, 
                             SpaceBlocks.ROCKET_ASSEMBLY_TABLE.get()
                     ).build(null));
