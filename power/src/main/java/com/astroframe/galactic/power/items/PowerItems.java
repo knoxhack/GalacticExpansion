@@ -12,22 +12,22 @@ public class PowerItems {
     // Power Items
     public static final DeferredHolder<Item, Item> BASIC_GENERATOR = PowerRegistry.ITEMS.register(
             "basic_generator", 
-            () -> new Item(new Item.Properties())
+            () -> new Item(new Item.Properties().stacksTo(64))
     );
     
     public static final DeferredHolder<Item, Item> ADVANCED_GENERATOR = PowerRegistry.ITEMS.register(
             "advanced_generator", 
-            () -> new Item(new Item.Properties())
+            () -> new Item(new Item.Properties().stacksTo(64))
     );
     
     public static final DeferredHolder<Item, Item> SOLAR_PANEL = PowerRegistry.ITEMS.register(
             "solar_panel", 
-            () -> new Item(new Item.Properties())
+            () -> new Item(new Item.Properties().stacksTo(64))
     );
     
     public static final DeferredHolder<Item, Item> FUSION_REACTOR = PowerRegistry.ITEMS.register(
             "fusion_reactor", 
-            () -> new Item(new Item.Properties())
+            () -> new Item(new Item.Properties().stacksTo(64))
     );
 
     /**

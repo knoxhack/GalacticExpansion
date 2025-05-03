@@ -9,30 +9,33 @@ import net.neoforged.neoforge.registries.DeferredHolder;
  */
 public class BiotechItems {
 
+    // Create a single Item.Properties instance with stacksTo(64) set
+    private static final Item.Properties DEFAULT_PROPS = new Item.Properties().stacksTo(64);
+    
     // Biotech Items
     public static final DeferredHolder<Item, Item> GENE_SPLICER = BiotechRegistry.ITEMS.register(
             "gene_splicer", 
-            () -> new Item(new Item.Properties())
+            () -> new Item(DEFAULT_PROPS)
     );
     
     public static final DeferredHolder<Item, Item> DNA_SAMPLER = BiotechRegistry.ITEMS.register(
             "dna_sampler", 
-            () -> new Item(new Item.Properties())
+            () -> new Item(DEFAULT_PROPS)
     );
     
     public static final DeferredHolder<Item, Item> GROWTH_SERUM = BiotechRegistry.ITEMS.register(
             "growth_serum", 
-            () -> new Item(new Item.Properties())
+            () -> new Item(DEFAULT_PROPS)
     );
     
     public static final DeferredHolder<Item, Item> MUTATION_CATALYST = BiotechRegistry.ITEMS.register(
             "mutation_catalyst", 
-            () -> new Item(new Item.Properties())
+            () -> new Item(DEFAULT_PROPS)
     );
     
     public static final DeferredHolder<Item, Item> GENETIC_STABILIZER = BiotechRegistry.ITEMS.register(
             "genetic_stabilizer", 
-            () -> new Item(new Item.Properties())
+            () -> new Item(DEFAULT_PROPS)
     );
 
     /**

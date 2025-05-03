@@ -16,8 +16,8 @@ public class GalacticSpaceMod {
     public GalacticSpaceMod() {
         LOGGER.info("Galactic Space module initializing");
         
-        // Register event handlers
-        NeoForge.EVENT_BUS.register(this);
+        // Don't register the mod class as an event handler if it doesn't have @SubscribeEvent methods
+        // NeoForge.EVENT_BUS.register(this);  // This was causing the error
         
         LOGGER.info("Galactic Space module initialized");
     }

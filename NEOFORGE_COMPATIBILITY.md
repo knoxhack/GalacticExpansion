@@ -25,6 +25,23 @@ public class SpaceModule {
 }
 ```
 
+## Event Bus Registration Issues
+
+In NeoForge 1.21.5, the event bus system is more strict about registering classes as event handlers:
+
+```java
+// This causes an error in NeoForge 1.21.5 if the class has no @SubscribeEvent methods
+NeoForge.EVENT_BUS.register(this);
+
+// Only register classes that actually have methods with @SubscribeEvent annotations
+@SubscribeEvent
+public void onSomeEvent(SomeEvent event) {
+    // Event handling code
+}
+```
+
+Always make sure that any class you register to the event bus has at least one method annotated with `@SubscribeEvent`.
+
 ## Item Registration Issues
 
 In NeoForge 1.21.5, Item registration requires properties to be explicitly set to avoid the error "Item id not set":

@@ -122,9 +122,19 @@ One of the most critical changes in NeoForge 1.21.5 is the strict enforcement of
 
 ## Event Handling
 
-1. **Event Subscription**:
+1. **Event Bus Registration**:
+   - Only register classes to the event bus if they have methods with `@SubscribeEvent` annotation
+   - Remove any calls to `EVENT_BUS.register(this)` if the class has no event handler methods
+   - NeoForge is more strict and will throw an exception if you register a class with no event handlers
+
+2. **Event Names and Imports**:
+   - Update from `net.minecraftforge.event` to `net.neoforged.neoforge.event`
+   - Some event classes may have moved or been renamed
+
+3. **Event Subscription**:
    - Review `@SubscribeEvent` annotations
    - Ensure events are registered to the right event bus
+   - Use `NeoForge.EVENT_BUS` instead of `MinecraftForge.EVENT_BUS`
 
 ## Capability System
 
