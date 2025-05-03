@@ -66,7 +66,19 @@ public class SpaceSuitItem extends Item {
                     // Check for built-in enchantments
                     try {
                         // Try to use reflection to find the ENCHANTMENT registry
-                        java.lang.reflect.Field field = net.minecraft.core.registries.BuiltInRegistries.class.getDeclaredField("ENCHANTMENT");
+                        // The field name might vary in NeoForge 1.21.5
+                        java.lang.reflect.Field field = null;
+                        try {
+                            field = net.minecraft.core.registries.BuiltInRegistries.class.getDeclaredField("ENCHANTMENT");
+                        } catch (NoSuchFieldException e) {
+                            // Try alternative field names
+                            try {
+                                field = net.minecraft.core.registries.BuiltInRegistries.class.getDeclaredField("ENCHANTMENTS");
+                            } catch (NoSuchFieldException e2) {
+                                // Try Registries class instead
+                                field = net.minecraft.core.registries.Registries.class.getDeclaredField("ENCHANTMENT");
+                            }
+                        }
                         field.setAccessible(true);
                         net.minecraft.core.Registry<?> registry = (net.minecraft.core.Registry<?>) field.get(null);
                         
