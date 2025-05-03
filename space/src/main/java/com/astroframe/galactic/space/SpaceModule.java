@@ -1,24 +1,12 @@
 package com.astroframe.galactic.space;
 
-import com.astroframe.galactic.space.implementation.component.test.RocketComponentTester;
-import com.astroframe.galactic.space.implementation.hologram.HolographicProjectorBlock;
-import com.astroframe.galactic.space.implementation.hologram.HolographicProjectorBlockEntity;
-import com.astroframe.galactic.space.implementation.assembly.menu.RocketAssemblyMenu;
 import com.astroframe.galactic.space.registry.SpaceMenus;
-import net.minecraft.world.inventory.MenuType;
-import com.astroframe.galactic.space.implementation.assembly.RocketAssemblyTable;
-import com.astroframe.galactic.space.implementation.assembly.RocketAssemblyTableBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.MapColor;
-import java.util.Set;
+import net.minecraft.world.inventory.MenuType;
 import net.neoforged.bus.api.IEventBus;
 import java.util.function.Supplier;
 import net.neoforged.fml.common.Mod;
@@ -56,46 +44,6 @@ public class SpaceModule {
     public static final DeferredRegister<MenuType<?>> MENUS = 
             DeferredRegister.create(BuiltInRegistries.MENU, MODID);
     
-    // Blocks
-    public static final DeferredHolder<Block, Block> ROCKET_ASSEMBLY_TABLE = registerBlock("rocket_assembly_table",
-            () -> new RocketAssemblyTable(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .strength(5.0F, 6.0F)
-                    .sound(SoundType.METAL)
-                    .requiresCorrectToolForDrops()));
-    
-    public static final DeferredHolder<Block, Block> HOLOGRAPHIC_PROJECTOR = registerBlock("holographic_projector",
-            () -> new HolographicProjectorBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .strength(3.5F)
-                    .sound(SoundType.METAL)
-                    .requiresCorrectToolForDrops()
-                    .lightLevel(state -> state.getValue(HolographicProjectorBlock.ACTIVE) ? 10 : 0)));
-    
-    // Block Entities - direct registration for NeoForge 1.21.5 compatibility
-    // Explicitly specify the generic parameter types to avoid inference errors
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HolographicProjectorBlockEntity>> HOLOGRAPHIC_PROJECTOR_BLOCK_ENTITY = 
-            BLOCK_ENTITIES.register("holographic_projector", 
-                    () -> new BlockEntityType<HolographicProjectorBlockEntity>(
-                            HolographicProjectorBlockEntity::new, 
-                            Set.of(HOLOGRAPHIC_PROJECTOR.get()),
-                            false)); // Last parameter is 'isClientSideOnly' which should be false
-    
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RocketAssemblyTableBlockEntity>> ROCKET_ASSEMBLY_TABLE_BLOCK_ENTITY = 
-            BLOCK_ENTITIES.register("rocket_assembly_table", 
-                    () -> new BlockEntityType<RocketAssemblyTableBlockEntity>(
-                            RocketAssemblyTableBlockEntity::new,
-                            Set.of(ROCKET_ASSEMBLY_TABLE.get()),
-                            false)); // Last parameter is 'isClientSideOnly' which should be false
-                            
-    // Menus
-    public static final DeferredHolder<MenuType<?>, MenuType<RocketAssemblyMenu>> ROCKET_ASSEMBLY_MENU =
-            MENUS.register("rocket_assembly", 
-                    () -> new MenuType<>((containerId, inv) -> 
-                        new RocketAssemblyMenu(containerId, inv, 
-                            net.minecraft.network.FriendlyByteBuf.class.cast(null)), 
-                        net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS));
-    
     /**
      * Constructor for the Space module.
      * Registers all content and sets up event handlers.
@@ -113,8 +61,6 @@ public class SpaceModule {
         SpaceMenus.register();
         
         // Register event handlers
-        eventBus.addListener(this::registerRenderers);
-        eventBus.addListener(this::addItemsToTabs);
         eventBus.addListener(this::onCommonSetup);
     }
     
@@ -127,18 +73,11 @@ public class SpaceModule {
     private void onCommonSetup(FMLCommonSetupEvent event) {
         LOGGER.info("Space Module initializing...");
         
-        // Run tests for the component system
-        LOGGER.info("Testing rocket component system...");
         event.enqueueWork(() -> {
             try {
-                boolean success = RocketComponentTester.runTests();
-                if (success) {
-                    LOGGER.info("Rocket component tests completed successfully!");
-                } else {
-                    LOGGER.error("Rocket component tests failed. Check logs for details.");
-                }
+                LOGGER.info("Space module setup complete");
             } catch (Exception e) {
-                LOGGER.error("Exception during rocket component tests", e);
+                LOGGER.error("Exception during Space module setup", e);
             }
         });
     }
@@ -154,29 +93,5 @@ public class SpaceModule {
         DeferredHolder<Block, T> block = BLOCKS.register(name, blockSupplier);
         ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
         return block;
-    }
-    
-    /**
-     * Registers client-side renderers for block entities.
-     *
-     * @param event The renderer registration event
-     */
-    private void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(HOLOGRAPHIC_PROJECTOR_BLOCK_ENTITY.get(), 
-                com.astroframe.galactic.space.implementation.hologram.HolographicProjectorRenderer::new);
-    }
-    
-    /**
-     * Adds items to creative tabs.
-     *
-     * @param event The creative tab event
-     */
-    private void addItemsToTabs(BuildCreativeModeTabContentsEvent event) {
-        // Add space module items to appropriate tabs
-        if (event.getTabKey() == net.minecraft.world.item.CreativeModeTabs.TOOLS_AND_UTILITIES) {
-            // Get the item forms of the blocks and add them
-            event.accept(HOLOGRAPHIC_PROJECTOR.get().asItem());
-            event.accept(ROCKET_ASSEMBLY_TABLE.get().asItem());
-        }
     }
 }

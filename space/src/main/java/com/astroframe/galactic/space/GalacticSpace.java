@@ -5,26 +5,16 @@ import com.astroframe.galactic.core.api.space.SpaceAPI;
 import com.astroframe.galactic.space.attachment.PlayerSpaceDataRegistry;
 import com.astroframe.galactic.space.command.SpaceTravelCommands;
 import com.astroframe.galactic.space.dimension.SpaceStationDimension;
-import com.astroframe.galactic.space.implementation.SpaceBodies;
-import com.astroframe.galactic.space.implementation.SpaceTravelManager;
-import com.astroframe.galactic.space.implementation.component.RocketComponentFactory;
-import com.astroframe.galactic.space.item.SpaceItems;
 import com.astroframe.galactic.space.item.SpaceSuitItem;
-import com.astroframe.galactic.space.migration.PlayerDataMigration;
 import com.astroframe.galactic.space.registry.SpaceRegistry;
 import com.astroframe.galactic.space.resource.SpaceResourceGenerator;
 import com.astroframe.galactic.space.test.AttachmentSystemTester;
-import net.minecraft.commands.CommandBuildContext;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.LogicalSide;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
@@ -40,12 +30,12 @@ import org.apache.logging.log4j.Logger;
  * Handles rocket systems and space station orbital mechanics.
  * Note: Planetary exploration is handled by the Exploration module.
  */
-@Mod(GalacticSpace.MOD_ID) // Using constant for consistency
+@Mod(GalacticSpace.MOD_ID)
 public class GalacticSpace {
-    public static final String MOD_ID = "galacticspace"; // Changed from galactic-space to galacticspace (no hyphens)
+    public static final String MOD_ID = "galacticspace";
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
     
-    private static SpaceTravelManager spaceTravelManager;
+    private static ISpaceTravelManager spaceTravelManager;
     private static MinecraftServer server;
     public static IEventBus MOD_EVENT_BUS;
     private boolean isTickTaskScheduled = false;
@@ -60,9 +50,6 @@ public class GalacticSpace {
         
         // Store the mod event bus for static access
         MOD_EVENT_BUS = modEventBus;
-        
-        // Register all items
-        SpaceItems.register();
         
         // Register all content with the registry system
         SpaceRegistry.initialize(modEventBus);
@@ -90,8 +77,6 @@ public class GalacticSpace {
         SpaceTravelCommands.register(event.getDispatcher(), event.getBuildContext());
     }
     
-
-    
     /**
      * Server stopping event handler.
      * Clears the server instance.
@@ -110,18 +95,8 @@ public class GalacticSpace {
         event.enqueueWork(() -> {
             LOGGER.info("Setting up Galactic Space module");
             
-            // Initialize the space travel manager
-            initializeSpaceTravelManager();
-            
-            // Initialize space bodies
-            SpaceBodies.registerAll();
-            
             // Initialize space resource generator
             SpaceResourceGenerator.init();
-            
-            // Register player data migration
-            PlayerDataMigration.registerEvents();
-            LOGGER.info("Registered player data migration events");
             
             // Register the attachment system tester
             AttachmentSystemTester.register();
@@ -129,27 +104,6 @@ public class GalacticSpace {
             
             LOGGER.info("Galactic Space module setup complete");
         });
-    }
-    
-    /**
-     * Initializes the space travel manager and registers it with the SpaceAPI.
-     */
-    private void initializeSpaceTravelManager() {
-        if (spaceTravelManager == null) {
-            LOGGER.info("Initializing Space Travel Manager");
-            spaceTravelManager = new SpaceTravelManager();
-            // Initialize the manager
-            spaceTravelManager.initialize();
-            
-            // Register with SpaceAPI - but only register if the API is ready
-            try {
-                // Here we pass the manager as ISpaceTravelManager to satisfy the type requirement
-                SpaceAPI.setSpaceTravelManager((ISpaceTravelManager)spaceTravelManager);
-                LOGGER.info("Space Travel Manager registered with SpaceAPI");
-            } catch (Exception e) {
-                LOGGER.error("Failed to register Space Travel Manager with SpaceAPI: {}", e.getMessage());
-            }
-        }
     }
     
     /**
@@ -170,7 +124,7 @@ public class GalacticSpace {
      * Gets the space travel manager.
      * @return The space travel manager
      */
-    public static SpaceTravelManager getSpaceTravelManager() {
+    public static ISpaceTravelManager getSpaceTravelManager() {
         return spaceTravelManager;
     }
     
@@ -225,17 +179,12 @@ public class GalacticSpace {
         server = event.getServer();
         LOGGER.info("Galactic Space module detected server start");
         
-        // Initialize the space travel manager if not already done
-        if (spaceTravelManager != null) {
-            spaceTravelManager.initialize();
-        }
-        
         // Schedule a repeating task that runs every tick
         // We check if it's already scheduled to avoid duplicates
         if (!isTickTaskScheduled) {
             LOGGER.info("Scheduling server tick task for Galactic Space");
             
-            // Register for both Pre and Post tick events
+            // Register for Post tick events
             NeoForge.EVENT_BUS.addListener(this::onServerTickPost);
             
             isTickTaskScheduled = true;
@@ -249,7 +198,7 @@ public class GalacticSpace {
      * @param event The server tick event - post phase
      */
     private void onServerTickPost(ServerTickEvent.Post event) {
-        // Update rocket launch sequences at the end of each tick
-        SpaceTravelManager.updateLaunches();
+        // Placeholder for future implementation
+        // Space travel updates will be handled here
     }
 }
