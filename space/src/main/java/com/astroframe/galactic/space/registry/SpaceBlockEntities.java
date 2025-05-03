@@ -8,6 +8,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
+import java.util.Set;
 
 /**
  * Registry for all block entities in the Space module.
@@ -23,10 +24,10 @@ public class SpaceBlockEntities {
     public static final Supplier<BlockEntityType<RocketAssemblyTableBlockEntity>> ROCKET_ASSEMBLY_TABLE = 
             BLOCK_ENTITIES.register("rocket_assembly_table", 
                     () -> {
-                        // In NeoForge 1.21.5, we need to create the BlockEntityType directly
+                        // In NeoForge 1.21.5, we should create the type directly
                         return new BlockEntityType<>(
                             RocketAssemblyTableBlockEntity::new, 
-                            java.util.Set.of(SpaceBlocks.ROCKET_ASSEMBLY_TABLE.get()), 
+                            Set.of(SpaceBlocks.ROCKET_ASSEMBLY_TABLE.get()), 
                             null
                         );
                     });

@@ -190,8 +190,20 @@ public class ItemStackHelper {
         try {
             // In NeoForge 1.21.5, we should use BuiltInRegistries instead of Registries
             Registry<Item> registry = BuiltInRegistries.ITEM;
+            
+            // Try to get the item directly from the registry
             Item item = registry.get(location);
-            return item != null ? item : Items.AIR;
+            if (item != null) {
+                return item;
+            }
+            
+            // If direct lookup failed, try to get via Holder
+            Optional<Holder<Item>> holderOpt = registry.getHolder(ResourceLocation.createFromKey(location));
+            if (holderOpt.isPresent()) {
+                return holderOpt.get().value();
+            }
+            
+            return Items.AIR;
         } catch (Exception e) {
             return Items.AIR;
         }
