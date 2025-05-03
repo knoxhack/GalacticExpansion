@@ -248,7 +248,7 @@ public class PlayerSpaceDataAttachment {
             int expValue = 0;
             try {
                 // Direct integer conversion for NeoForge 1.21.5
-                expValue = TagHelper.getIntValue(tag, "Experience");
+                expValue = com.astroframe.galactic.space.util.TagHelper.getInt(tag, "Experience");
             } catch (Exception e) {
                 GalacticSpace.LOGGER.warn("Failed to get Experience value: " + e.getMessage());
             }
@@ -256,12 +256,12 @@ public class PlayerSpaceDataAttachment {
         }
         
         // Load space state
-        data.inSpace = TagHelper.getBooleanValue(tag, "InSpace");
+        data.inSpace = com.astroframe.galactic.space.util.TagHelper.getBoolean(tag, "InSpace");
         
         // Load current rocket
         if (tag.contains("CurrentRocket")) {
             try {
-                String rocketIdStr = TagHelper.getStringValue(tag, "CurrentRocket");
+                String rocketIdStr = com.astroframe.galactic.space.util.TagHelper.getString(tag, "CurrentRocket");
                 if (!rocketIdStr.isEmpty()) {
                     data.currentRocketId = UUID.fromString(rocketIdStr);
                 }
@@ -272,14 +272,14 @@ public class PlayerSpaceDataAttachment {
         
         // Load current dimension
         if (tag.contains("CurrentDimension")) {
-            String dimString = TagHelper.getStringValue(tag, "CurrentDimension");
+            String dimString = com.astroframe.galactic.space.util.TagHelper.getString(tag, "CurrentDimension");
             if (!dimString.isEmpty()) {
                 data.currentDimension = ResourceLocationHelper.parse(dimString);
             }
         }
         
         // Load dimension change state
-        data.changingDimension = TagHelper.getBooleanValue(tag, "ChangingDimension");
+        data.changingDimension = com.astroframe.galactic.space.util.TagHelper.getBoolean(tag, "ChangingDimension");
         
         return data;
     }

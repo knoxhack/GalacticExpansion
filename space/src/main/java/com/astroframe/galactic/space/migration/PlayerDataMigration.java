@@ -31,8 +31,8 @@ public class PlayerDataMigration {
     public static boolean isPlayerMigrated(Player player) {
         CompoundTag persistedData = player.getPersistentData();
         if (persistedData.contains("PlayerPersisted")) {
-            CompoundTag playerPersisted = persistedData.getCompound("PlayerPersisted");
-            return TagHelper.getBooleanValue(playerPersisted, MIGRATION_MARKER);
+            CompoundTag playerPersisted = com.astroframe.galactic.space.util.TagHelper.getCompoundTag(persistedData, "PlayerPersisted");
+            return com.astroframe.galactic.space.util.TagHelper.getBoolean(playerPersisted, MIGRATION_MARKER);
         }
         return false;
     }
@@ -45,7 +45,7 @@ public class PlayerDataMigration {
         CompoundTag persistedData = player.getPersistentData();
         CompoundTag playerPersisted;
         if (persistedData.contains("PlayerPersisted")) {
-            playerPersisted = persistedData.getCompound("PlayerPersisted");
+            playerPersisted = com.astroframe.galactic.space.util.TagHelper.getCompoundTag(persistedData, "PlayerPersisted");
         } else {
             playerPersisted = new CompoundTag();
         }
@@ -144,9 +144,9 @@ public class PlayerDataMigration {
         
         CompoundTag persistedData = player.getPersistentData();
         if (persistedData.contains("ForgeCaps")) {
-            CompoundTag forgeCaps = persistedData.getCompound("ForgeCaps");
+            CompoundTag forgeCaps = com.astroframe.galactic.space.util.TagHelper.getCompoundTag(persistedData, "ForgeCaps");
             if (forgeCaps.contains(LEGACY_CAPABILITY_ID)) {
-                return forgeCaps.getCompound(LEGACY_CAPABILITY_ID);
+                return com.astroframe.galactic.space.util.TagHelper.getCompoundTag(forgeCaps, LEGACY_CAPABILITY_ID);
             }
         }
         
