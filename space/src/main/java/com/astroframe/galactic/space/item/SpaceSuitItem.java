@@ -27,7 +27,7 @@ import net.neoforged.neoforge.registries.ForgeRegistries;
 public class SpaceSuitItem extends ArmorItem {
     
     private static final CustomArmorMaterial MATERIAL = new CustomArmorMaterial();
-    private final net.minecraft.world.item.ArmorItem.Type type;
+    private final ArmorItem.Type type;
     
     /**
      * Create a new space suit item.
@@ -35,7 +35,7 @@ public class SpaceSuitItem extends ArmorItem {
      * @param type The armor type (helmet, chestplate, etc.)
      * @param properties The item properties
      */
-    public SpaceSuitItem(net.minecraft.world.item.ArmorItem.Type type, Properties properties) {
+    public SpaceSuitItem(ArmorItem.Type type, Properties properties) {
         super(MATERIAL, type, properties);
         this.type = type;
     }
@@ -53,8 +53,8 @@ public class SpaceSuitItem extends ArmorItem {
         // In NeoForge 1.21.5, access the enchantment registry using BuiltInRegistries and ResourceKey
         ResourceLocation enchLocation = null;
         try {
-            // In NeoForge 1.21.5, use Registry.ENCHANTMENT to access the registry
-            enchLocation = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+            // In NeoForge 1.21.5, ForgeRegistries is used to get the registry key
+            enchLocation = net.neoforged.neoforge.registries.ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
         } catch (Exception e) {
             // If all else fails, just return default value
             return false;
@@ -105,8 +105,8 @@ public class SpaceSuitItem extends ArmorItem {
         if (stack.isEmpty()) return false;
         
         Item item = stack.getItem();
-        // In NeoForge 1.21.5, use BuiltInRegistries to get the key from the registry
-        ResourceLocation itemId = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item);
+        // In NeoForge 1.21.5, use ForgeRegistries to get the key from the registry
+        ResourceLocation itemId = net.neoforged.neoforge.registries.ForgeRegistries.ITEMS.getKey(item);
         return itemId != null && itemId.getPath().contains("space_suit");
     }
     
@@ -164,11 +164,11 @@ public class SpaceSuitItem extends ArmorItem {
         private static final int[] PROTECTION_PER_SLOT = new int[]{3, 6, 8, 3};
         private final Lazy<Ingredient> repairMaterial = Lazy.of(() -> Ingredient.of(Items.IRON_INGOT));
         
-        public int getDurabilityForType(net.minecraft.world.item.ArmorItem.Type type) {
+        public int getDurabilityForType(ArmorItem.Type type) {
             return DURABILITY_PER_SLOT[type.getSlot().getIndex()] * 25;
         }
         
-        public int getDefenseForType(net.minecraft.world.item.ArmorItem.Type type) {
+        public int getDefenseForType(ArmorItem.Type type) {
             return PROTECTION_PER_SLOT[type.getSlot().getIndex()];
         }
         
