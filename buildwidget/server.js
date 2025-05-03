@@ -20,7 +20,8 @@ const {
   formatChangelogMarkdown,
   handleCheckpoint,
   saveVersionHistory,
-  saveChangelogHistory
+  saveChangelogHistory,
+  getShortCommitChanges
 } = require('./build-and-release');
 
 // Initialize express app
