@@ -202,9 +202,13 @@ public class ItemStackHelper {
             // Just use registry lookup directly as a fallback
             // In NeoForge 1.21.5, let's use a simpler approach by trying one more direct registry lookup
             try {
-                Item item = ForgeRegistries.ITEMS.getValue(location);
-                if (item != null && item != Items.AIR) {
-                    return item;
+                // In NeoForge 1.21.5, we need to handle the Optional return value
+                Optional<Item> optItem = net.minecraft.core.registries.BuiltInRegistries.ITEM.getOptional(location);
+                if (optItem.isPresent()) {
+                    Item item = optItem.get();
+                    if (item != null && item != Items.AIR) {
+                        return item;
+                    }
                 }
             } catch (Exception ignored) {
                 // Ignore and continue with fallback
