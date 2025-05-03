@@ -260,8 +260,10 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
             ListTag componentsTag = new ListTag();
             for (ItemStack stack : components) {
                 if (!stack.isEmpty()) {
-                    CompoundTag componentTag = new CompoundTag();
-                    stack.save(componentTag);
+                    // In NeoForge 1.21.5, ItemStack.save requires a Provider parameter
+                    // We'll create a temporary tag and use built-in registry
+                    CompoundTag componentTag = stack.save(new CompoundTag(), 
+                        net.minecraft.core.registries.BuiltInRegistries.ITEM);
                     componentsTag.add(componentTag);
                 }
             }
@@ -280,12 +282,16 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
      * 
      * @param tag The tag to save to
      */
-    // No @Override since method signature changed in NeoForge 1.21.5
-    protected void saveAdditional(CompoundTag tag, Provider provider) {
-        super.saveAdditional(tag, provider);
-        
-        // Save components with provider
-        ContainerHelper.saveAllItems(tag, components, provider);
+    /**
+     * Save data implementation for NeoForge 1.21.5 compatibility.
+     * This method is called by the parent class saveAdditional method.
+     * 
+     * @param tag The tag to save to
+     */
+    @Override
+    protected void saveData(CompoundTag tag) {
+        // Save components - need to use Provider with NeoForge 1.21.5
+        ContainerHelper.saveAllItems(tag, components, net.minecraft.core.registries.BuiltInRegistries.ITEM);
         
         // Save rocket data
         if (rocketDataTag != null && !rocketDataTag.isEmpty()) {
@@ -294,24 +300,16 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
     }
     
     /**
-     * Loads data from NBT.
+     * Load data implementation for NeoForge 1.21.5 compatibility.
+     * This method is called by the parent class loadAdditional method.
      * 
      * @param tag The tag to load from
      */
-    // No @Override since method signature changed in NeoForge 1.21.5
-    public void loadSpecific(CompoundTag tag) {
-        // Call NeoForge 1.21.5 compatible method
-        super.loadSpecific(tag);
-        
+    @Override
+    protected void loadData(CompoundTag tag) {
         // Load components
         components = NonNullList.withSize(9, ItemStack.EMPTY);
-        // Create Provider implementation for NeoForge 1.21.5 compatibility
-        ContainerHelper.loadAllItems(tag, components, new Provider() {
-            @Override
-            public NonNullList<ItemStack> get() {
-                return NonNullList.withSize(9, ItemStack.EMPTY);
-            }
-        });
+        ContainerHelper.loadAllItems(tag, components);
         
         // Load rocket data
         if (tag.contains("RocketData")) {
