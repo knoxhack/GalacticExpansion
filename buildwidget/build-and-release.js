@@ -285,6 +285,90 @@ function saveVersionHistory(version, metadata = {}) {
 }
 
 /**
+ * Get a short summary of recent commit changes
+ * @param {number} limit Maximum number of commits to include
+ * @returns {Promise<Array>} Array of short commit summaries
+ */
+async function getShortCommitChanges(limit = 5) {
+  console.log(`Getting short commit summaries (limit: ${limit})...`);
+  
+  try {
+    // Get the most recent commits with short format
+    const commitsResult = await runCommand(`git log --pretty=format:"%h||%s||%an||%ad" --date=short -n ${limit}`);
+    
+    if (!commitsResult.success) {
+      console.error('Failed to get commit history for short summaries');
+      return [];
+    }
+    
+    // Process each commit into a simple format
+    const commits = commitsResult.output.split('\n').filter(Boolean);
+    const results = [];
+    
+    for (const commit of commits) {
+      try {
+        const [hash, message, author, date] = commit.split('||');
+        
+        // Skip merge commits and Replit metadata
+        if (message.startsWith('Merge ') || message.includes('Replit-Commit-')) {
+          continue;
+        }
+        
+        // Format commit message
+        const shortMessage = formatShortCommitMessage(message);
+        
+        results.push({
+          hash: hash.substring(0, 7),  // Short hash
+          message: shortMessage,
+          author: author.split(' ')[0], // First name only
+          date: date,
+          raw: message
+        });
+        
+        if (results.length >= limit) {
+          break;
+        }
+      } catch (error) {
+        console.error('Error processing commit for short summary:', error);
+      }
+    }
+    
+    return results;
+  } catch (error) {
+    console.error('Error getting short commit changes:', error);
+    return [];
+  }
+}
+
+/**
+ * Format commit message into a shorter version
+ * @param {string} message The original commit message
+ * @returns {string} Shortened commit message
+ */
+function formatShortCommitMessage(message) {
+  // Remove common prefixes from conventional commits
+  const prefixes = ['feat:', 'fix:', 'chore:', 'docs:', 'style:', 'refactor:', 'perf:', 'test:', 'build:', 'ci:'];
+  
+  let shortMessage = message;
+  for (const prefix of prefixes) {
+    if (message.startsWith(prefix)) {
+      shortMessage = message.substring(prefix.length).trim();
+      break;
+    }
+  }
+  
+  // Remove scope if present
+  shortMessage = shortMessage.replace(/^\([\w-]+\)\s*/, '');
+  
+  // Truncate to reasonable length (50 chars)
+  if (shortMessage.length > 50) {
+    shortMessage = shortMessage.substring(0, 47) + '...';
+  }
+  
+  return shortMessage;
+}
+
+/**
  * Format the changelog into markdown for GitHub release
  * @param {object} changelog The changelog object
  * @returns {string} Formatted markdown
