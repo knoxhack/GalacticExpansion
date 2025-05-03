@@ -7,6 +7,7 @@ import com.astroframe.galactic.space.implementation.common.RocketDataProvider;
 import com.astroframe.galactic.space.registry.SpaceBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -260,9 +261,13 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
             ListTag componentsTag = new ListTag();
             for (ItemStack stack : components) {
                 if (!stack.isEmpty()) {
-                    // For NeoForge 1.21.5, manually handle itemstack saving
+                    // For NeoForge 1.21.5, manually create the ItemStack tag
                     CompoundTag componentTag = new CompoundTag();
-                    stack.getItem().serializeNBT(stack, componentTag);
+                    componentTag.putString("id", BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
+                    componentTag.putByte("Count", (byte)stack.getCount());
+                    if (stack.hasTag()) {
+                        componentTag.put("tag", stack.getTag().copy());
+                    }
                     componentsTag.add(componentTag);
                 }
             }
@@ -292,9 +297,13 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
         // since ContainerHelper API has changed
         for (int i = 0; i < components.size(); i++) {
             if (!components.get(i).isEmpty()) {
-                // For NeoForge 1.21.5, manually handle itemstack saving
+                // For NeoForge 1.21.5, manually create the ItemStack tag
                 CompoundTag itemTag = new CompoundTag();
-                components.get(i).getItem().serializeNBT(components.get(i), itemTag);
+                itemTag.putString("id", BuiltInRegistries.ITEM.getKey(components.get(i).getItem()).toString());
+                itemTag.putByte("Count", (byte)components.get(i).getCount());
+                if (components.get(i).hasTag()) {
+                    itemTag.put("tag", components.get(i).getTag().copy());
+                }
                 tag.put("Item" + i, itemTag);
             }
         }

@@ -1,6 +1,7 @@
 package com.astroframe.galactic.space.items;
 
 import com.astroframe.galactic.space.util.ResourceLocationHelper;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -117,8 +118,8 @@ public class ItemStackHelper {
      */
     public static ItemStack createStack(ResourceLocation location, int count) {
         try {
-            // In NeoForge 1.21.5, we need to use ForgeRegistries instead of BuiltInRegistries
-            Item item = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(location);
+            // In NeoForge 1.21.5, we need to use BuiltInRegistries instead of ForgeRegistries
+            Item item = BuiltInRegistries.ITEMS.get(location);
             
             if (item == Items.AIR) {
                 return ItemStack.EMPTY;
