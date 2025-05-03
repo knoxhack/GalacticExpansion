@@ -23,17 +23,17 @@ import net.neoforged.neoforge.common.util.Lazy;
 public class SpaceSuitItem extends ArmorItem {
     
     private static final CustomArmorMaterial MATERIAL = new CustomArmorMaterial();
-    private final ArmorItem.Type armorType;
+    private final EquipmentSlot slot;
     
     /**
      * Create a new space suit item.
      *
-     * @param type The armor type (helmet, chestplate, etc.)
+     * @param slot The equipment slot this armor occupies
      * @param properties The item properties
      */
-    public SpaceSuitItem(ArmorItem.Type type, Properties properties) {
-        super(MATERIAL, type, properties);
-        this.armorType = type;
+    public SpaceSuitItem(EquipmentSlot slot, Properties properties) {
+        super(MATERIAL, slot, properties);
+        this.slot = slot;
     }
     
     // Enchantment behavior methods
@@ -46,20 +46,23 @@ public class SpaceSuitItem extends ArmorItem {
     }
     
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        // In NeoForge 1.21.5, we need to check registry IDs directly
-        ResourceLocation enchId = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
-        if (enchId != null) {
-            String path = enchId.getPath();
+        // In NeoForge 1.21.5, we need to access the registry differently
+        ResourceLocation enchId = net.minecraft.core.registries.Registries.ENCHANTMENT.location();
+        Registry<Enchantment> enchRegistry = BuiltInRegistries.REGISTRY.get(enchId);
+        ResourceLocation enchLocation = enchRegistry.getKey(enchantment);
+        
+        if (enchLocation != null) {
+            String path = enchLocation.getPath();
             
             // For helmet-specific enchantments
-            if (this.armorType == ArmorItem.Type.HELMET && 
+            if (this.slot == EquipmentSlot.HEAD && 
                 (path.equals("respiration") || path.equals("aqua_affinity"))) {
                 return true;
             }
         }
         
         // Use basic compatibility test for NeoForge 1.21.5
-        return enchantment.isCompatibleWith(this.armorType);
+        return super.canApplyAtEnchantingTable(stack, enchantment);
     }
     
     /**
@@ -152,12 +155,12 @@ public class SpaceSuitItem extends ArmorItem {
         private static final int[] PROTECTION_PER_SLOT = new int[]{3, 6, 8, 3};
         private final Lazy<Ingredient> repairMaterial = Lazy.of(() -> Ingredient.of(Items.IRON_INGOT));
         
-        public int getDurabilityForType(ArmorItem.Type type) {
-            return DURABILITY_PER_SLOT[type.getSlot().getIndex()] * 25;
+        public int getDurabilityForType(EquipmentSlot slot) {
+            return DURABILITY_PER_SLOT[slot.getIndex()] * 25;
         }
         
-        public int getDefenseForType(ArmorItem.Type type) {
-            return PROTECTION_PER_SLOT[type.getSlot().getIndex()];
+        public int getDefenseForType(EquipmentSlot slot) {
+            return PROTECTION_PER_SLOT[slot.getIndex()];
         }
         
         public int getEnchantmentValue() {

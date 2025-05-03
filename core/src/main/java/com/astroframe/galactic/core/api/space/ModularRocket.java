@@ -5,6 +5,7 @@ import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Basic implementation of the IRocket interface.
@@ -17,6 +18,7 @@ public class ModularRocket implements IRocket {
     private float fuelCapacity = 1000.0f;
     private float mass = 1000.0f;
     private float thrust = 5000.0f;
+    private String id = "default_rocket";
     private final List<RocketComponent> components = new ArrayList<>();
     
     /**
@@ -157,6 +159,24 @@ public class ModularRocket implements IRocket {
     }
     
     /**
+     * Sets the rocket ID.
+     *
+     * @param id The new ID
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+    
+    /**
+     * Gets the rocket ID.
+     *
+     * @return The rocket ID
+     */
+    public String getId() {
+        return this.id;
+    }
+    
+    /**
      * Saves the rocket data to a compound tag.
      *
      * @param tag The tag to save to
@@ -172,6 +192,7 @@ public class ModularRocket implements IRocket {
         tag.putFloat("fuelCapacity", fuelCapacity);
         tag.putFloat("mass", mass);
         tag.putFloat("thrust", thrust);
+        tag.putString("id", id);
         
         // Save components
         if (!components.isEmpty()) {
@@ -217,6 +238,10 @@ public class ModularRocket implements IRocket {
         
         if (tag.contains("thrust")) {
             thrust = tag.getFloat("thrust").orElse(5000.0f);
+        }
+        
+        if (tag.contains("id")) {
+            id = tag.getString("id").orElse("default_rocket");
         }
         
         // Load components
