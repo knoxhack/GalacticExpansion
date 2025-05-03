@@ -290,8 +290,8 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
      */
     @Override
     protected void saveData(CompoundTag tag) {
-        // Save components - need to use Provider with NeoForge 1.21.5
-        ContainerHelper.saveAllItems(tag, components, net.minecraft.core.registries.BuiltInRegistries.ITEM);
+        // Save components - in NeoForge 1.21.5 we don't need to provide a registry
+        ContainerHelper.saveAllItems(tag, components);
         
         // Save rocket data
         if (rocketDataTag != null && !rocketDataTag.isEmpty()) {
@@ -311,9 +311,9 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
         components = NonNullList.withSize(9, ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag, components, net.minecraft.core.registries.BuiltInRegistries.ITEM);
         
-        // Load rocket data
+        // Load rocket data - Updated for NeoForge 1.21.5 (direct access instead of Optional)
         if (tag.contains("RocketData")) {
-            rocketDataTag = tag.getCompound("RocketData").orElse(new CompoundTag());
+            rocketDataTag = tag.getCompound("RocketData");
         } else {
             rocketDataTag = new CompoundTag();
         }
