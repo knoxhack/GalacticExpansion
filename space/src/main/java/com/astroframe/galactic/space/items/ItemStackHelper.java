@@ -120,9 +120,12 @@ public class ItemStackHelper {
      */
     public static ItemStack createStack(ResourceLocation location, int count) {
         try {
-            // In NeoForge 1.21.5, the registry returns Optional<Reference<Item>>
-            Optional<Reference<Item>> itemRef = BuiltInRegistries.ITEM.get(location);
-            Item item = itemRef.isPresent() ? itemRef.get().value() : Items.AIR;
+            // In NeoForge 1.21.5, the registry returns the item directly
+            Item item = BuiltInRegistries.ITEM.get(location);
+            // If no item is found, return AIR
+            if (item == null) {
+                item = Items.AIR;
+            }
             
             if (item == Items.AIR) {
                 return ItemStack.EMPTY;

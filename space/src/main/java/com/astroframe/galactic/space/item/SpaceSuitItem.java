@@ -1,71 +1,80 @@
 package com.astroframe.galactic.space.item;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.util.Lazy;
-// ForgeRegistries no longer used in NeoForge 1.21.5, we use BuiltInRegistries instead
-import java.util.Optional;
+
 import java.util.UUID;
 
 /**
  * Space suit armor item with special properties for space survival.
  */
-public class SpaceSuitItem extends ArmorItem {
+public class SpaceSuitItem extends Item {
     
-    private static final CustomArmorMaterial MATERIAL = new CustomArmorMaterial();
-    private final ArmorItem.Type type;
+    private final EquipmentSlot slot;
     
     /**
      * Create a new space suit item.
      *
-     * @param type The armor type (helmet, chestplate, etc.)
+     * @param slot The equipment slot (helmet, chestplate, etc.)
      * @param properties The item properties
      */
-    public SpaceSuitItem(ArmorItem.Type type, Properties properties) {
-        super(MATERIAL, type, properties);
-        this.type = type;
+    public SpaceSuitItem(EquipmentSlot slot, Properties properties) {
+        super(properties);
+        this.slot = slot;
+    }
+    
+    /**
+     * Get the equipment slot this armor is for.
+     * 
+     * @return The equipment slot
+     */
+    public EquipmentSlot getSlot() {
+        return this.slot;
     }
     
     // Enchantment behavior methods
+    @Override
     public boolean isEnchantable(ItemStack stack) {
         return true;
     }
     
+    @Override
     public int getEnchantmentValue() {
         return 15;
     }
     
+    @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        // In NeoForge 1.21.5, access the enchantment registry using BuiltInRegistries and ResourceKey
         ResourceLocation enchLocation = null;
         try {
-            // In NeoForge 1.21.5, BuiltInRegistries is used to get the registry key
+            // Try to get the enchantment resource location
             enchLocation = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+            if (enchLocation == null) {
+                // Fallback to class name if not found in registry
+                enchLocation = new ResourceLocation("minecraft", 
+                    enchantment.getClass().getSimpleName().toLowerCase());
+            }
         } catch (Exception e) {
-            // If all else fails, just return default value
             return false;
         }
         
         if (enchLocation != null) {
             String path = enchLocation.getPath();
             
-            // For helmet-specific enchantments (helmet is type 0 in NeoForge 1.21.5)
-            if (this.type.getSlot() == EquipmentSlot.HEAD && 
-                (path.equals("respiration") || path.equals("aqua_affinity"))) {
+            // For helmet-specific enchantments
+            if (this.slot == EquipmentSlot.HEAD && 
+                (path.contains("respiration") || path.contains("aqua_affinity"))) {
                 return true;
             }
         }
@@ -105,7 +114,6 @@ public class SpaceSuitItem extends ArmorItem {
         if (stack.isEmpty()) return false;
         
         Item item = stack.getItem();
-        // In NeoForge 1.21.5, use BuiltInRegistries to get the key from the registry
         ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item);
         return itemId != null && itemId.getPath().contains("space_suit");
     }
@@ -123,7 +131,6 @@ public class SpaceSuitItem extends ArmorItem {
         
         // Check each armor slot
         for (EquipmentSlot slot : EquipmentSlot.values()) {
-            // Skip non-armor slots 
             if (!slot.isArmor()) continue;
             
             ItemStack stack = player.getItemBySlot(slot);
@@ -139,12 +146,6 @@ public class SpaceSuitItem extends ArmorItem {
     
     /**
      * Checks if a full space suit is being worn by comparing armor items.
-     *
-     * @param helmet The helmet item stack
-     * @param chestplate The chestplate item stack
-     * @param leggings The leggings item stack
-     * @param boots The boots item stack
-     * @return Whether a full space suit is being worn
      */
     public static boolean isFullSpaceSuit(ItemStack helmet, ItemStack chestplate, 
             ItemStack leggings, ItemStack boots) {
@@ -153,49 +154,5 @@ public class SpaceSuitItem extends ArmorItem {
                 !chestplate.isEmpty() && isSpaceSuit(chestplate) &&
                 !leggings.isEmpty() && isSpaceSuit(leggings) && 
                 !boots.isEmpty() && isSpaceSuit(boots);
-    }
-    
-    /**
-     * Custom armor material implementation for the space suit.
-     */
-    private static class CustomArmorMaterial implements ArmorMaterial {
-        
-        private static final int[] DURABILITY_PER_SLOT = new int[]{13, 15, 16, 11};
-        private static final int[] PROTECTION_PER_SLOT = new int[]{3, 6, 8, 3};
-        private final Lazy<Ingredient> repairMaterial = Lazy.of(() -> Ingredient.of(Items.IRON_INGOT));
-        
-        public int getDurabilityForType(ArmorItem.Type type) {
-            return DURABILITY_PER_SLOT[type.getSlot().getIndex()] * 25;
-        }
-        
-        public int getDefenseForType(ArmorItem.Type type) {
-            return PROTECTION_PER_SLOT[type.getSlot().getIndex()];
-        }
-        
-        public int getEnchantmentValue() {
-            return 15;
-        }
-        
-        public Holder<SoundEvent> getEquipSound() {
-            // In NeoForge 1.21.5, SoundEvents are stored as Holders
-            // We need to use Holder.direct() to return the sound event properly
-            return Holder.direct(SoundEvents.ARMOR_EQUIP_IRON.value());
-        }
-        
-        public Ingredient getRepairIngredient() {
-            return repairMaterial.get();
-        }
-        
-        public String getName() {
-            return "space_suit";
-        }
-        
-        public float getToughness() {
-            return 2.0F;
-        }
-        
-        public float getKnockbackResistance() {
-            return 0.0F;
-        }
     }
 }

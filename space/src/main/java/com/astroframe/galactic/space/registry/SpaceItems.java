@@ -5,7 +5,7 @@ import com.astroframe.galactic.space.item.ModularRocketItem;
 import com.astroframe.galactic.space.item.SpaceSuitItem;
 import com.astroframe.galactic.space.items.RocketItem;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;

@@ -22,10 +22,14 @@ public class SpaceBlockEntities {
     // In NeoForge 1.21.5, BlockEntityType.Builder.of() should be used instead of builder()
     public static final Supplier<BlockEntityType<RocketAssemblyTableBlockEntity>> ROCKET_ASSEMBLY_TABLE = 
             BLOCK_ENTITIES.register("rocket_assembly_table", 
-                    () -> BlockEntityType.Builder.of(
+                    () -> {
+                        // In NeoForge 1.21.5, we need to create the BlockEntityType directly
+                        return new BlockEntityType<>(
                             RocketAssemblyTableBlockEntity::new, 
-                            SpaceBlocks.ROCKET_ASSEMBLY_TABLE.get()
-                    ).build(null));
+                            java.util.Set.of(SpaceBlocks.ROCKET_ASSEMBLY_TABLE.get()), 
+                            null
+                        );
+                    });
     
     /**
      * Register the block entity registry with the event bus.
