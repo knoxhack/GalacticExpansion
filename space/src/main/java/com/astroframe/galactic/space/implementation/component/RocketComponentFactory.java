@@ -6,6 +6,7 @@ import com.astroframe.galactic.core.api.space.component.enums.EngineType;
 import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import com.astroframe.galactic.space.GalacticSpace;
 import com.astroframe.galactic.space.implementation.component.engine.RocketEngineImpl;
+import com.astroframe.galactic.space.util.TagHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
