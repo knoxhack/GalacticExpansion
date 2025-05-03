@@ -49,18 +49,18 @@ public class SpaceUtil {
      * Gets a random celestial body appropriate for the given rocket tier.
      * 
      * @param tier The rocket tier
-     * @return An optional celestial body
+     * @return A celestial body, or null if none are available
      */
-    public static Optional<ICelestialBody> getRandomReachableCelestialBody(int tier) {
+    public static ICelestialBody getRandomReachableCelestialBody(int tier) {
         var bodies = CelestialBodyRegistry.getAll().stream()
                 .filter(body -> body.getRocketTierRequired() <= tier)
                 .toList();
         
         if (bodies.isEmpty()) {
-            return Optional.empty();
+            return null;
         }
         
-        return Optional.of(bodies.get(RANDOM.nextInt(bodies.size())));
+        return bodies.get(RANDOM.nextInt(bodies.size()));
     }
     
     /**

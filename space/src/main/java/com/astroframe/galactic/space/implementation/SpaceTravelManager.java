@@ -325,21 +325,21 @@ public class SpaceTravelManager implements ISpaceTravelManager {
      * Gets the current celestial body the player is on.
      * 
      * @param player The player
-     * @return The current celestial body, or empty if in an unrelated dimension
+     * @return The current celestial body, or null if in an unrelated dimension
      */
     @Override
-    public Optional<ICelestialBody> getCurrentCelestialBody(Player player) {
+    public ICelestialBody getCurrentCelestialBody(Player player) {
         // Check for space station dimension
         if (SpaceStationDimension.isSpaceStation(player.level())) {
-            return Optional.of(SpaceBodies.SPACE_STATION);
+            return SpaceBodies.SPACE_STATION;
         }
         
         // Check for overworld
         if (player.level().dimension().equals(Level.OVERWORLD)) {
-            return Optional.of(SpaceBodies.EARTH);
+            return SpaceBodies.EARTH;
         }
         
         // Unknown dimension
-        return Optional.empty();
+        return null;
     }
 }
