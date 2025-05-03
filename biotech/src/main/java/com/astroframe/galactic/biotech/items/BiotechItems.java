@@ -2,6 +2,7 @@ package com.astroframe.galactic.biotech.items;
 
 import com.astroframe.galactic.biotech.GalacticBiotech;
 import com.astroframe.galactic.biotech.registry.BiotechRegistry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -11,6 +12,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  * Registry for all items in the Biotech module.
  */
 public class BiotechItems {
+
+    // Create a deferred register for items - needed for proper model loading
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, GalacticBiotech.MOD_ID);
 
     /**
      * Define a Items DeferredRegister with the registerItem helper method
@@ -51,6 +55,9 @@ public class BiotechItems {
     public static void init() {
         // Register our Items DeferredRegister to the EVENT BUS, not to another DeferredRegister
         ITEMS_HELPER.register(GalacticBiotech.MOD_EVENT_BUS);
+        
+        // Register the traditional DeferredRegister for proper model loading
+        ITEMS.register(GalacticBiotech.MOD_EVENT_BUS);
         
         // Validate that important items are registered correctly
         if (GENE_SPLICER == null || DNA_SAMPLER == null || GROWTH_SERUM == null) {
