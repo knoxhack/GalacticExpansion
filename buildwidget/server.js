@@ -46,6 +46,80 @@ app.get('/api/status', (req, res) => {
   });
 });
 
+// Endpoint for module status updates from the Gradle plugin
+app.post('/api/module-update', express.json(), (req, res) => {
+  const { module, status, task } = req.body;
+  
+  if (module && status) {
+    console.log(`Received module update: ${module} - ${status} (${task})`);
+    
+    // Update module status
+    if (buildStatus.modules[module]) {
+      buildStatus.modules[module].status = status;
+      buildStatus.modules[module].lastBuild = new Date().toISOString();
+      buildStatus.modules[module].lastTask = task;
+      
+      // Broadcast updated status
+      broadcastStatus();
+      
+      // If module failed, add notification
+      if (status === 'failed') {
+        addNotification({
+          type: 'error', 
+          title: 'Module Build Failed',
+          message: `${module} build failed during task ${task}`,
+          autoHide: false
+        });
+        broadcastNotifications();
+      }
+    }
+    
+    res.json({ success: true });
+  } else {
+    res.status(400).json({ success: false, message: 'Missing module or status' });
+  }
+});
+
+// Endpoint for build complete status
+app.post('/api/build-complete', express.json(), (req, res) => {
+  const { status } = req.body;
+  
+  if (status) {
+    console.log(`Received build complete status: ${status}`);
+    
+    // Update build status
+    buildStatus.status = status;
+    buildStatus.endTime = new Date().toISOString();
+    
+    // Calculate duration if we have a start time
+    if (buildStatus.startTime) {
+      const startTime = new Date(buildStatus.startTime);
+      const endTime = new Date(buildStatus.endTime);
+      buildStatus.duration = endTime - startTime;
+    }
+    
+    // Broadcast updated status
+    broadcastStatus();
+    
+    // Add notification based on status
+    addNotification({
+      type: status === 'success' ? 'success' : 'error',
+      title: status === 'success' ? 'Build Successful' : 'Build Failed',
+      message: status === 'success' 
+        ? 'The build completed successfully' 
+        : 'The build failed. Check logs for details.',
+      autoHide: status === 'success',
+      timeout: status === 'success' ? 5000 : 0
+    });
+    
+    broadcastNotifications();
+    
+    res.json({ success: true });
+  } else {
+    res.status(400).json({ success: false, message: 'Missing status' });
+  }
+});
+
 // Endpoint for version history
 app.get('/api/versions', (req, res) => {
   const versionHistory = getVersionHistory();

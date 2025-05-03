@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * BlockEntity for the rocket assembly table.
@@ -220,8 +221,12 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                                                     // In NeoForge 1.21.5, we need to use a different approach
                                                     // Since direct tag manipulation is not available, create a new stack
                                                     
+                                                    // Make stack effectively final by copying to final variables
+                                                    final net.minecraft.world.item.Item finalItem = stack.getItem();
+                                                    final int finalCount = stack.getCount();
+                                                    
                                                     // First, create a basic stack with the same item and count
-                                                    ItemStack newStack = new ItemStack(stack.getItem(), stack.getCount());
+                                                    ItemStack newStack = new ItemStack(finalItem, finalCount);
                                                     
                                                     // Then make a compound tag to hold the tag data
                                                     CompoundTag tagData = new CompoundTag();
