@@ -5,7 +5,6 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -60,73 +59,73 @@ public class RocketComponentRegistry {
     /**
      * Gets a component by ID.
      * @param id The component ID
-     * @return The component, if found
+     * @return The component, or null if not found
      */
-    public static Optional<IRocketComponent> getComponent(ResourceLocation id) {
-        return Optional.ofNullable(COMPONENTS.get(id));
+    public static IRocketComponent getComponent(ResourceLocation id) {
+        return COMPONENTS.get(id);
     }
     
     /**
      * Gets a command module by ID.
      * @param id The component ID
-     * @return The command module, if found
+     * @return The command module, or null if not found
      */
-    public static Optional<ICommandModule> getCommandModule(ResourceLocation id) {
-        return Optional.ofNullable(COMMAND_MODULES.get(id));
+    public static ICommandModule getCommandModule(ResourceLocation id) {
+        return COMMAND_MODULES.get(id);
     }
     
     /**
      * Gets an engine by ID.
      * @param id The component ID
-     * @return The engine, if found
+     * @return The engine, or null if not found
      */
-    public static Optional<IRocketEngine> getEngine(ResourceLocation id) {
-        return Optional.ofNullable(ENGINES.get(id));
+    public static IRocketEngine getEngine(ResourceLocation id) {
+        return ENGINES.get(id);
     }
     
     /**
      * Gets a fuel tank by ID.
      * @param id The component ID
-     * @return The fuel tank, if found
+     * @return The fuel tank, or null if not found
      */
-    public static Optional<IFuelTank> getFuelTank(ResourceLocation id) {
-        return Optional.ofNullable(FUEL_TANKS.get(id));
+    public static IFuelTank getFuelTank(ResourceLocation id) {
+        return FUEL_TANKS.get(id);
     }
     
     /**
      * Gets a cargo bay by ID.
      * @param id The component ID
-     * @return The cargo bay, if found
+     * @return The cargo bay, or null if not found
      */
-    public static Optional<ICargoBay> getCargoBay(ResourceLocation id) {
-        return Optional.ofNullable(CARGO_BAYS.get(id));
+    public static ICargoBay getCargoBay(ResourceLocation id) {
+        return CARGO_BAYS.get(id);
     }
     
     /**
      * Gets a passenger compartment by ID.
      * @param id The component ID
-     * @return The passenger compartment, if found
+     * @return The passenger compartment, or null if not found
      */
-    public static Optional<IPassengerCompartment> getPassengerCompartment(ResourceLocation id) {
-        return Optional.ofNullable(PASSENGER_COMPARTMENTS.get(id));
+    public static IPassengerCompartment getPassengerCompartment(ResourceLocation id) {
+        return PASSENGER_COMPARTMENTS.get(id);
     }
     
     /**
      * Gets a shield by ID.
      * @param id The component ID
-     * @return The shield, if found
+     * @return The shield, or null if not found
      */
-    public static Optional<IShield> getShield(ResourceLocation id) {
-        return Optional.ofNullable(SHIELDS.get(id));
+    public static IShield getShield(ResourceLocation id) {
+        return SHIELDS.get(id);
     }
     
     /**
      * Gets a life support system by ID.
      * @param id The component ID
-     * @return The life support system, if found
+     * @return The life support system, or null if not found
      */
-    public static Optional<ILifeSupport> getLifeSupport(ResourceLocation id) {
-        return Optional.ofNullable(LIFE_SUPPORTS.get(id));
+    public static ILifeSupport getLifeSupport(ResourceLocation id) {
+        return LIFE_SUPPORTS.get(id);
     }
     
     /**

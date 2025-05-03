@@ -240,11 +240,11 @@ public class SpaceTravelManager implements ISpaceTravelManager {
      * Gets a celestial body by its ID.
      *
      * @param id The celestial body ID
-     * @return The celestial body, or empty if not found
+     * @return The celestial body, or null if not found
      */
     @Override
-    public Optional<ICelestialBody> getCelestialBody(ResourceLocation id) {
-        return Optional.ofNullable(registeredBodies.get(id));
+    public ICelestialBody getCelestialBody(ResourceLocation id) {
+        return registeredBodies.get(id);
     }
     
     /**
