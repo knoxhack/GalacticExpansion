@@ -2,6 +2,7 @@ package com.astroframe.galactic.space.implementation.assembly.menu;
 
 import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.astroframe.galactic.space.implementation.assembly.RocketAssemblyTableBlockEntity;
+import com.astroframe.galactic.space.implementation.common.RocketDataProvider;
 import com.astroframe.galactic.space.implementation.component.ComponentValidator;
 import com.astroframe.galactic.space.registry.SpaceMenus;
 
@@ -34,6 +35,9 @@ public class RocketAssemblyMenu extends AbstractContainerMenu {
     
     // The block entity
     private final RocketAssemblyTableBlockEntity blockEntity;
+    
+    // The rocket data provider (interface-based approach to avoid circular dependencies)
+    private final RocketDataProvider rocketDataProvider;
     
     // Component slots (3x3 grid)
     private static final int COMPONENT_SLOTS = 9;
