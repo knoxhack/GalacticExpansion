@@ -3,7 +3,7 @@ package com.astroframe.galactic.space.implementation.component.cargobay;
 import com.astroframe.galactic.core.api.space.component.ICargoBay;
 import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
-import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
+import com.astroframe.galactic.space.util.ResourceLocationHelper;
 import com.astroframe.galactic.space.items.ItemStackHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

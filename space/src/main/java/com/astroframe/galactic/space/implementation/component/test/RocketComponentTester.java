@@ -9,7 +9,7 @@ import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
 import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import com.astroframe.galactic.core.api.space.util.ComponentUtils;
-import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
+import com.astroframe.galactic.space.util.ResourceLocationHelper;
 import com.astroframe.galactic.space.implementation.component.cargobay.StandardCargoBay;
 import com.astroframe.galactic.space.implementation.component.command.BasicCommandModule;
 import com.astroframe.galactic.space.implementation.component.engine.BasicChemicalEngine;
