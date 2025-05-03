@@ -103,7 +103,6 @@ public class SpaceTravelManager implements ISpaceTravelManager {
      * @param player The player to check
      * @return True if the player is traveling
      */
-    @Override
     public boolean isPlayerTraveling(Player player) {
         if (player == null) {
             return false;
@@ -118,7 +117,6 @@ public class SpaceTravelManager implements ISpaceTravelManager {
      * @param player The player to check
      * @return Remaining travel time in milliseconds, or -1 if not traveling
      */
-    @Override
     public long getRemainingTravelTime(Player player) {
         if (player == null || !isPlayerTraveling(player)) {
             return -1;
@@ -140,7 +138,6 @@ public class SpaceTravelManager implements ISpaceTravelManager {
      * @param destination The destination celestial body
      * @return Required fuel units
      */
-    @Override
     public int calculateRequiredFuel(IRocket rocket, ICelestialBody destination) {
         if (rocket == null || destination == null) {
             return 0;

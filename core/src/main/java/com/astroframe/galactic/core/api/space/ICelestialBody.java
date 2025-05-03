@@ -3,30 +3,6 @@ package com.astroframe.galactic.core.api.space;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Celestial body temperature range categories.
- */
-public enum TemperatureRange {
-    EXTREME_COLD,
-    VERY_COLD,
-    COLD,
-    TEMPERATE,
-    HOT,
-    VERY_HOT,
-    EXTREME_HOT
-}
-
-/**
- * Celestial body radiation level categories.
- */
-public enum RadiationLevel {
-    NONE,
-    LOW,
-    MODERATE,
-    HIGH,
-    EXTREME
-}
-
-/**
  * Interface for celestial bodies such as planets, moons, asteroids, etc.
  */
 public interface ICelestialBody {
@@ -129,14 +105,7 @@ public interface ICelestialBody {
      * @return The temperature range
      */
     default TemperatureRange getTemperatureRange() {
-        float temp = getTemperature();
-        if (temp < -100) return TemperatureRange.EXTREME_COLD;
-        if (temp < -50) return TemperatureRange.VERY_COLD;
-        if (temp < 0) return TemperatureRange.COLD;
-        if (temp < 30) return TemperatureRange.TEMPERATE;
-        if (temp < 100) return TemperatureRange.HOT;
-        if (temp < 500) return TemperatureRange.VERY_HOT;
-        return TemperatureRange.EXTREME_HOT;
+        return TemperatureRange.fromTemperature(getTemperature());
     }
     
     /**
@@ -145,7 +114,8 @@ public interface ICelestialBody {
      * @return The radiation level
      */
     default RadiationLevel getRadiationLevel() {
-        return RadiationLevel.NONE; // Default implementation assumes no radiation
+        // Default implementation assumes no radiation
+        return RadiationLevel.NONE;
     }
     
     /**
