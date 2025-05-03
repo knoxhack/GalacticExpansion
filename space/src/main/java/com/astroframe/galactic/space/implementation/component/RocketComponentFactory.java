@@ -37,7 +37,7 @@ public class RocketComponentFactory {
      */
     public static void registerAll() {
         // Command Modules (Tiers 1-3)
-        ResourceLocation cmdBasicId = ResourceLocation.parse(GalacticSpace.MOD_ID + ":command_module_basic");
+        ResourceLocation cmdBasicId = ResourceLocationHelper.parse(GalacticSpace.MOD_ID + ":command_module_basic");
         registerCommandModule(
             cmdBasicId,
             new CommandModuleImpl.Builder(cmdBasicId)
