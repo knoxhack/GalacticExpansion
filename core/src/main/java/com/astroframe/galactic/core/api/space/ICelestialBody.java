@@ -98,4 +98,103 @@ public interface ICelestialBody {
     default boolean hasUniqueResources() {
         return true; // Default implementation assumes all celestial bodies have unique resources
     }
+    
+    /**
+     * Gets the temperature range category of this celestial body.
+     * 
+     * @return The temperature range
+     */
+    default TemperatureRange getTemperatureRange() {
+        float temp = getTemperature();
+        if (temp < -100) return TemperatureRange.EXTREME_COLD;
+        if (temp < -50) return TemperatureRange.VERY_COLD;
+        if (temp < 0) return TemperatureRange.COLD;
+        if (temp < 30) return TemperatureRange.TEMPERATE;
+        if (temp < 100) return TemperatureRange.HOT;
+        if (temp < 500) return TemperatureRange.VERY_HOT;
+        return TemperatureRange.EXTREME_HOT;
+    }
+    
+    /**
+     * Gets the radiation level category of this celestial body.
+     * 
+     * @return The radiation level
+     */
+    default RadiationLevel getRadiationLevel() {
+        return RadiationLevel.NONE; // Default implementation assumes no radiation
+    }
+    
+    /**
+     * Checks if this celestial body is discovered by the player.
+     * 
+     * @return true if the celestial body is discovered
+     */
+    default boolean isDiscovered() {
+        return true; // Default implementation assumes all celestial bodies are discovered
+    }
+    
+    /**
+     * Checks if this celestial body has liquid water.
+     * 
+     * @return true if the celestial body has liquid water
+     */
+    default boolean hasLiquidWater() {
+        float temp = getTemperature();
+        return hasAtmosphere() && temp > 0 && temp < 100;
+    }
+    
+    /**
+     * Gets the relative size of this celestial body compared to Earth.
+     * 
+     * @return The size multiplier (Earth = 1.0)
+     */
+    default float getRelativeSize() {
+        return 1.0f; // Default implementation assumes Earth-sized
+    }
+    
+    /**
+     * Gets the relative gravity of this celestial body compared to Earth.
+     * 
+     * @return The gravity multiplier (Earth = 1.0)
+     */
+    default float getRelativeGravity() {
+        return getGravity(); // By default, use the gravity method
+    }
+    
+    /**
+     * Gets the description of this celestial body.
+     * 
+     * @return The description
+     */
+    default String getDescription() {
+        return "A celestial body in space."; // Default generic description
+    }
+    
+    /**
+     * Gets the type of this celestial body.
+     * 
+     * @return The celestial body type
+     */
+    default CelestialBodyType getType() {
+        return CelestialBodyType.PLANET; // Default to planet type
+    }
+    
+    /**
+     * Gets the parent celestial body of this celestial body (e.g., the planet a moon orbits).
+     * 
+     * @return The parent celestial body, or null if none
+     */
+    default ICelestialBody getParent() {
+        return null; // Default to no parent
+    }
+    
+    /**
+     * Gets the atmospheric density relative to Earth.
+     * This is an alias for getAtmosphericPressure for compatibility.
+     * 
+     * @return The atmospheric density (Earth = 1.0)
+     */
+    default float getAtmosphereDensity() {
+        return hasAtmosphere() ? getAtmosphericPressure() : 0.0f;
+    }
 }

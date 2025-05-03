@@ -1,9 +1,9 @@
 package com.astroframe.galactic.space.registry;
 
 import com.astroframe.galactic.core.api.space.ICelestialBody;
-import com.astroframe.galactic.core.api.space.ICelestialBody.CelestialBodyType;
-import com.astroframe.galactic.core.api.space.ICelestialBody.RadiationLevel;
-import com.astroframe.galactic.core.api.space.ICelestialBody.TemperatureRange;
+import com.astroframe.galactic.core.api.space.CelestialBodyType;
+import com.astroframe.galactic.core.api.space.RadiationLevel;
+import com.astroframe.galactic.core.api.space.TemperatureRange;
 import com.astroframe.galactic.space.GalacticSpace;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
