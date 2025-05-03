@@ -12,7 +12,7 @@ import com.astroframe.galactic.space.implementation.SpaceBodies;
 import com.astroframe.galactic.space.implementation.SpaceTravelManager;
 import com.astroframe.galactic.space.implementation.component.RocketComponentFactory;
 import com.astroframe.galactic.space.item.ModularRocketItem;
-import com.astroframe.galactic.space.item.SpaceItems;
+import com.astroframe.galactic.space.registry.SpaceItems;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
