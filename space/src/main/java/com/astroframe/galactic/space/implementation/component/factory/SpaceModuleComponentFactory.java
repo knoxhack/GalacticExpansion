@@ -1,6 +1,6 @@
 package com.astroframe.galactic.space.implementation.component.factory;
 
-import com.astroframe.galactic.core.TagHelper;
+import com.astroframe.galactic.space.util.TagHelper;
 import com.astroframe.galactic.core.api.space.component.ICargoBay;
 import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
