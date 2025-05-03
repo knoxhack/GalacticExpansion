@@ -93,10 +93,12 @@ public class BaseCargoBay implements ICargoBay {
         if (currentDurability < maxDurability * 0.25 && !hasVacuumSeal) {
             // Simulate item loss (random item removal)
             if (!contents.isEmpty()) {
-                int randomSlot = contents.keySet().stream()
-                        .skip((int) (Math.random() * contents.size()))
-                        .findFirst()
-                        .orElse(0);
+                // Find a random slot from the available keys, or use 0 as fallback
+                int randomSlot = 0;
+                if (!contents.isEmpty()) {
+                    Integer[] slots = contents.keySet().toArray(new Integer[0]);
+                    randomSlot = slots[(int)(Math.random() * slots.length)];
+                }
                 
                 ItemStack stack = contents.get(randomSlot);
                 if (stack != null && !stack.isEmpty()) {

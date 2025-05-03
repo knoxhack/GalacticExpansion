@@ -116,9 +116,8 @@ public class ItemStackHelper {
      */
     public static ItemStack createStack(ResourceLocation location, int count) {
         try {
-            // Handle Optional return type in NeoForge 1.21.5
-            java.util.Optional<Item> itemOpt = net.minecraft.core.registries.BuiltInRegistries.ITEM.getOptional(location);
-            Item item = itemOpt.orElse(Items.AIR);
+            // In NeoForge 1.21.5, registry lookups return the item directly or null
+            Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(location);
             if (item == null || item == Items.AIR) {
                 return ItemStack.EMPTY;
             }
@@ -154,16 +153,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getString returns an Optional<String>
-            Object result = tag.getString(key);
-            if (result instanceof java.util.Optional) {
-                @SuppressWarnings("unchecked")
-                java.util.Optional<String> opt = (java.util.Optional<String>) result;
-                return opt.orElse("");
-            } else if (result instanceof String) {
-                return (String) result;
-            }
-            return "";
+            // In NeoForge 1.21.5, getString returns the value directly
+            return tag.getString(key);
         } catch (Exception e) {
             return "";
         }
@@ -182,16 +173,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getInt returns an Optional<Integer>
-            Object result = tag.getInt(key);
-            if (result instanceof java.util.Optional) {
-                @SuppressWarnings("unchecked")
-                java.util.Optional<Integer> opt = (java.util.Optional<Integer>) result;
-                return opt.orElse(0);
-            } else if (result instanceof Integer) {
-                return (Integer) result;
-            }
-            return 0;
+            // In NeoForge 1.21.5, getInt returns the value directly
+            return tag.getInt(key);
         } catch (Exception e) {
             return 0;
         }
@@ -211,23 +194,19 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getList() returns Optional<ListTag>
-            Object result = tag.getList(key);
-            if (result instanceof java.util.Optional) {
-                @SuppressWarnings("unchecked")
-                java.util.Optional<ListTag> opt = (java.util.Optional<ListTag>) result;
-                return opt.orElse(null);
-            } else if (result instanceof ListTag) {
-                return (ListTag) result;
-            }
-            
-            // Last resort: get raw and cast
-            Tag rawTag = tag.get(key);
-            if (rawTag instanceof ListTag) {
-                return (ListTag) rawTag;
-            }
+            // In NeoForge 1.21.5, getList returns the value directly
+            return tag.getList(key);
         } catch (Exception e) {
             // Fallback to null on any error
+            try {
+                // Last resort: get raw and cast
+                Tag rawTag = tag.get(key);
+                if (rawTag instanceof ListTag) {
+                    return (ListTag) rawTag;
+                }
+            } catch (Exception ex) {
+                // Ignore nested exception
+            }
         }
         
         return null;
@@ -246,23 +225,18 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getCompound() returns Optional<CompoundTag>
-            Object result = listTag.getCompound(index);
-            if (result instanceof java.util.Optional) {
-                @SuppressWarnings("unchecked")
-                java.util.Optional<CompoundTag> opt = (java.util.Optional<CompoundTag>) result;
-                return opt.orElse(null);
-            } else if (result instanceof CompoundTag) {
-                return (CompoundTag) result;
-            }
-            
-            // Try alternate approach
-            Tag tag = listTag.get(index);
-            if (tag instanceof CompoundTag) {
-                return (CompoundTag) tag;
-            }
+            // In NeoForge 1.21.5, getCompound returns the value directly
+            return listTag.getCompound(index);
         } catch (Exception e) {
-            // Ignore and return null
+            // Try alternate approach
+            try {
+                Tag tag = listTag.get(index);
+                if (tag instanceof CompoundTag) {
+                    return (CompoundTag) tag;
+                }
+            } catch (Exception ex) {
+                // Ignore nested exception
+            }
         }
         
         return null;
