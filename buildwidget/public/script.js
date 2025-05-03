@@ -288,7 +288,11 @@ function updateBuildStatus(status) {
     
     // Update progress bar
     if (status.progress !== undefined) {
-        const progressPercent = Math.round(status.progress * 100);
+        // Ensure progress is a value between 0 and 1
+        const normalizedProgress = Math.min(Math.max(status.progress, 0), 1);
+        const progressPercent = Math.round(normalizedProgress * 100);
+        
+        // Apply to UI
         progressBar.style.width = `${progressPercent}%`;
         progressText.textContent = `${progressPercent}%`;
         
@@ -300,6 +304,15 @@ function updateBuildStatus(status) {
             progressBar.classList.add('progress-success');
         } else if (status.status === 'failed') {
             progressBar.classList.add('progress-failed');
+        }
+    } else {
+        // If progress is undefined, set a default based on status
+        if (status.status === 'success' || status.status === 'failed') {
+            progressBar.style.width = '100%';
+            progressText.textContent = '100%';
+        } else {
+            progressBar.style.width = '0%';
+            progressText.textContent = '0%';
         }
     }
     

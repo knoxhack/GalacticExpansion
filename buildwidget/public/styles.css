@@ -1189,3 +1189,62 @@ pre {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* Recent Commits Section */
+.recent-commits {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+    box-shadow: var(--card-shadow);
+}
+
+.commit-list {
+    margin-top: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.commit-item {
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 5px;
+    background-color: var(--bg-secondary);
+    border-radius: 4px;
+}
+
+.commit-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.commit-message {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.commit-author {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.commit-date {
+    color: var(--text-secondary);
+    font-size: 0.8em;
+    margin-left: auto;
+}
+
+.loading-commits {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 20px;
+}
+
+#refreshCommits {
+    margin-top: 10px;
+    font-size: 0.9em;
+    padding: 5px 10px;
+}
