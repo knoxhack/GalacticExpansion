@@ -1,7 +1,7 @@
 package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.ICommandModule;
-import com.astroframe.galactic.core.api.space.RocketComponentType;
+import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.space.util.TagHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
