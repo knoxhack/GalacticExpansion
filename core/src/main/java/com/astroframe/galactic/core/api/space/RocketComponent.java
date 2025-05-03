@@ -1,6 +1,7 @@
 package com.astroframe.galactic.core.api.space;
 
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
+import com.astroframe.galactic.core.api.util.TagHelper;
 import net.minecraft.nbt.CompoundTag;
 
 /**
@@ -272,55 +273,34 @@ public class RocketComponent {
             return;
         }
         
-        if (tag.contains("type")) {
-            // In NeoForge 1.21.5, getString returns the actual value, not an Optional
-            String typeStr = tag.getString("type");
-            if (typeStr != null && !typeStr.isEmpty()) {
-                this.type = RocketComponentType.getById(typeStr);
-            }
+        // Use TagHelper to safely get values with fallbacks for NeoForge 1.21.5
+        String typeStr = TagHelper.getString(tag, "type", "");
+        if (!typeStr.isEmpty()) {
+            this.type = RocketComponentType.getById(typeStr);
         }
         
-        if (tag.contains("tier")) {
-            // Direct access in NeoForge 1.21.5
-            this.tier = tag.getInt("tier");
-            // Validate tier range
-            if (this.tier < 1 || this.tier > 5) {
-                this.tier = 1;
-            }
+        // Get tier with validation
+        this.tier = TagHelper.getInt(tag, "tier", 1);
+        if (this.tier < 1 || this.tier > 5) {
+            this.tier = 1;
         }
         
-        if (tag.contains("mass")) {
-            this.mass = tag.getFloat("mass");
-            if (this.mass <= 0) {
-                this.mass = calculateMass();
-            }
-        } else {
-            this.mass = calculateMass();
-        }
+        // Get mass with calculated fallback
+        float loadedMass = TagHelper.getFloat(tag, "mass", -1);
+        this.mass = (loadedMass > 0) ? loadedMass : calculateMass();
         
-        if (tag.contains("durability")) {
-            this.durability = tag.getFloat("durability");
-            if (this.durability < 0) {
-                this.durability = calculateDurability();
-            }
-        } else {
-            this.durability = calculateDurability();
-        }
+        // Get durability with calculated fallback
+        float loadedDurability = TagHelper.getFloat(tag, "durability", -1);
+        this.durability = (loadedDurability >= 0) ? loadedDurability : calculateDurability();
         
-        if (tag.contains("maxDurability")) {
-            this.maxDurability = tag.getFloat("maxDurability");
-            if (this.maxDurability <= 0) {
-                this.maxDurability = calculateDurability();
-            }
-        } else {
-            this.maxDurability = calculateDurability();
-        }
+        // Get maxDurability with calculated fallback
+        float loadedMaxDurability = TagHelper.getFloat(tag, "maxDurability", -1);
+        this.maxDurability = (loadedMaxDurability > 0) ? loadedMaxDurability : calculateDurability();
         
-        if (tag.contains("efficiency")) {
-            this.efficiency = tag.getFloat("efficiency");
-            if (this.efficiency < 0 || this.efficiency > 1) {
-                this.efficiency = calculateEfficiency();
-            }
+        // Get efficiency with calculated fallback and bounds checking
+        float loadedEfficiency = TagHelper.getFloat(tag, "efficiency", -1);
+        if (loadedEfficiency >= 0 && loadedEfficiency <= 1) {
+            this.efficiency = loadedEfficiency;
         } else {
             this.efficiency = calculateEfficiency();
         }
