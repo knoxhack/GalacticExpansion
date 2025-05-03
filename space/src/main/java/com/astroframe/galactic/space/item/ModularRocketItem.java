@@ -123,6 +123,7 @@ public class ModularRocketItem extends Item {
                 ResourceLocationHelper.parse("galactic:basic_rocket"));
         
         // Add basic components for a Tier 1 rocket
+        // Using the adapter pattern for NeoForge 1.21.5 compatibility
         builder.commandModule(RocketComponentFactory.createCockpit(RocketComponentType.COCKPIT, 1));
         builder.addEngine(RocketComponentFactory.createEngine(RocketComponentType.ENGINE, 1));
         builder.addFuelTank(RocketComponentFactory.createFuelTank(RocketComponentType.FUEL_TANK, 1));

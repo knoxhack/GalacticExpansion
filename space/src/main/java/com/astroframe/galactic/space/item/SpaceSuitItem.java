@@ -47,7 +47,7 @@ public class SpaceSuitItem extends ArmorItem {
     
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         // In NeoForge 1.21.5, access the enchantment registry directly
-        ResourceLocation enchLocation = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+        ResourceLocation enchLocation = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
         
         if (enchLocation != null) {
             String path = enchLocation.getPath();
@@ -59,8 +59,8 @@ public class SpaceSuitItem extends ArmorItem {
             }
         }
         
-        // Use armor item compatibility test
-        return ArmorItem.super.canApplyAtEnchantingTable(stack, enchantment);
+        // Use armor material properties to determine compatibility
+        return enchantment.category.canEnchant(stack.getItem());
     }
     
     /**
@@ -167,7 +167,7 @@ public class SpaceSuitItem extends ArmorItem {
         
         public net.minecraft.core.Holder<SoundEvent> getEquipSound() {
             // For NeoForge 1.21.5, we need to return the sound event directly
-            return net.minecraft.core.Holder.direct(SoundEvents.ARMOR_EQUIP_IRON);
+            return net.minecraft.core.Holder.direct((SoundEvent)SoundEvents.ARMOR_EQUIP_IRON);
         }
         
         public Ingredient getRepairIngredient() {
