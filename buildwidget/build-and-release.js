@@ -487,8 +487,9 @@ async function buildAndRelease() {
                 CHANGELOG_FILE: changelogFile
             };
             
-            // Then create a GitHub release with the version and changelog
-            const releaseResult = await runCommand('bash scripts/push_to_github_release.sh', env);
+            // Create a GitHub release with the version and changelog using the improved script
+            console.log('Using improved GitHub release script...');
+            const releaseResult = await runCommand('bash scripts/improved_github_release.sh', env);
             
             // Clean up temp file
             if (fs.existsSync(changelogFile)) {
@@ -508,8 +509,8 @@ async function buildAndRelease() {
             // Export version as environment variable for the release script
             const env = { ...process.env, GALACTIC_VERSION: version };
             
-            // Then create a GitHub release with the version
-            const releaseResult = await runCommand('bash scripts/push_to_github_release.sh', env);
+            // Create a GitHub release with the version using improved script
+            const releaseResult = await runCommand('bash scripts/improved_github_release.sh', env);
             
             // Still save version history without changelog
             saveVersionHistory(version, { buildMetrics: { result: 'success' } });
