@@ -6,6 +6,7 @@ import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.space.GalacticSpace;
 import com.astroframe.galactic.space.implementation.RocketLaunchController;
 import com.astroframe.galactic.space.implementation.component.RocketComponentFactory;
+import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -108,7 +109,7 @@ public class ModularRocketItem extends Item {
         
         // Create a basic rocket using builder pattern
         ModularRocket.Builder builder = new ModularRocket.Builder(
-                net.minecraft.resources.ResourceLocationHelper.parse("galactic:basic_rocket"));
+                ResourceLocationHelper.parse("galactic:basic_rocket"));
         
         // Add basic components for a Tier 1 rocket
         builder.commandModule(RocketComponentFactory.createCockpit(RocketComponentType.COCKPIT, 1));
