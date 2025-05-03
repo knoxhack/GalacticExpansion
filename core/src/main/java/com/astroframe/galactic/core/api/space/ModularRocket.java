@@ -1,5 +1,7 @@
 package com.astroframe.galactic.core.api.space;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.nbt.CompoundTag;
 
 /**
@@ -13,13 +15,29 @@ public class ModularRocket implements IRocket {
     private float fuelCapacity = 1000.0f;
     private float mass = 1000.0f;
     private float thrust = 5000.0f;
+    private final List<RocketComponent> components = new ArrayList<>();
     
     /**
      * Creates a new modular rocket with default parameters.
      */
     public ModularRocket() {
         // Default constructor for NeoForge 1.21.5
-        System.out.println("Creating modular rocket for NeoForge 1.21.5");
+    }
+    
+    /**
+     * Creates a modular rocket from an NBT tag.
+     *
+     * @param tag The tag to load from
+     * @return The created rocket
+     */
+    public static ModularRocket fromTag(CompoundTag tag) {
+        if (tag == null) {
+            return new ModularRocket();
+        }
+        
+        ModularRocket rocket = new ModularRocket();
+        rocket.load(tag);
+        return rocket;
     }
     
     /**
@@ -153,6 +171,19 @@ public class ModularRocket implements IRocket {
         tag.putFloat("mass", mass);
         tag.putFloat("thrust", thrust);
         
+        // Save components
+        if (!components.isEmpty()) {
+            net.minecraft.nbt.ListTag componentsList = new net.minecraft.nbt.ListTag();
+            
+            for (RocketComponent component : components) {
+                CompoundTag componentTag = new CompoundTag();
+                component.save(componentTag);
+                componentsList.add(componentTag);
+            }
+            
+            tag.put("components", componentsList);
+        }
+        
         return tag;
     }
     
@@ -184,6 +215,192 @@ public class ModularRocket implements IRocket {
         
         if (tag.contains("thrust")) {
             thrust = tag.getFloat("thrust").orElse(5000.0f);
+        }
+        
+        // Load components
+        components.clear();
+        
+        if (tag.contains("components", net.minecraft.nbt.Tag.TAG_LIST)) {
+            net.minecraft.nbt.ListTag componentsList = tag.getList("components", net.minecraft.nbt.Tag.TAG_COMPOUND);
+            
+            for (int i = 0; i < componentsList.size(); i++) {
+                CompoundTag componentTag = componentsList.getCompound(i);
+                RocketComponent component = RocketComponent.fromTag(componentTag);
+                components.add(component);
+            }
+        }
+    }
+    
+    /**
+     * Implements the saveToTag method from IRocket interface.
+     * 
+     * @param tag The tag to save to
+     * @return The updated tag
+     */
+    @Override
+    public CompoundTag saveToTag(CompoundTag tag) {
+        return save(tag);
+    }
+    
+    /**
+     * Adds a component to this rocket.
+     *
+     * @param component The component to add
+     */
+    public void addComponent(RocketComponent component) {
+        if (component != null) {
+            components.add(component);
+            recalculateStats();
+        }
+    }
+    
+    /**
+     * Removes a component from this rocket.
+     *
+     * @param component The component to remove
+     */
+    public void removeComponent(RocketComponent component) {
+        components.remove(component);
+        recalculateStats();
+    }
+    
+    /**
+     * Recalculates the rocket stats based on its components.
+     */
+    private void recalculateStats() {
+        float totalMass = 0.0f;
+        float totalThrust = 0.0f;
+        float totalFuelCapacity = 0.0f;
+        int maxTier = 1;
+        
+        for (RocketComponent component : components) {
+            totalMass += component.getMass();
+            
+            if (component.getType() == RocketComponentType.ENGINE) {
+                totalThrust += 1000.0f * component.getTier() * component.getEfficiency();
+            }
+            
+            if (component.getType() == RocketComponentType.FUEL_TANK) {
+                totalFuelCapacity += 500.0f * component.getTier();
+            }
+            
+            maxTier = Math.max(maxTier, component.getTier());
+        }
+        
+        // Apply minimum values to ensure rocket is always functional
+        this.mass = Math.max(500.0f, totalMass);
+        this.thrust = Math.max(1000.0f, totalThrust);
+        
+        float oldCapacity = this.fuelCapacity;
+        this.fuelCapacity = Math.max(100.0f, totalFuelCapacity);
+        
+        // Adjust fuel if capacity changed
+        if (oldCapacity != this.fuelCapacity) {
+            this.fuel = Math.min(this.fuel, this.fuelCapacity);
+        }
+        
+        this.tier = maxTier;
+    }
+    
+    @Override
+    public boolean hasComponent(RocketComponentType type) {
+        for (RocketComponent component : components) {
+            if (component.getType() == type) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public List<RocketComponent> getAllComponents() {
+        return new ArrayList<>(components);
+    }
+    
+    @Override
+    public void setFuelLevel(float fuelLevel) {
+        setFuel(fuelLevel);
+    }
+    
+    /**
+     * Builder class for creating ModularRocket instances.
+     */
+    public static class Builder {
+        private final ModularRocket rocket = new ModularRocket();
+        
+        /**
+         * Sets the tier for the rocket.
+         *
+         * @param tier The rocket tier
+         * @return This builder
+         */
+        public Builder tier(int tier) {
+            rocket.setTier(tier);
+            return this;
+        }
+        
+        /**
+         * Sets the fuel level for the rocket.
+         *
+         * @param fuel The fuel level
+         * @return This builder
+         */
+        public Builder fuel(float fuel) {
+            rocket.setFuel(fuel);
+            return this;
+        }
+        
+        /**
+         * Sets the fuel capacity for the rocket.
+         *
+         * @param fuelCapacity The fuel capacity
+         * @return This builder
+         */
+        public Builder fuelCapacity(float fuelCapacity) {
+            rocket.setFuelCapacity(fuelCapacity);
+            return this;
+        }
+        
+        /**
+         * Sets the mass for the rocket.
+         *
+         * @param mass The rocket mass
+         * @return This builder
+         */
+        public Builder mass(float mass) {
+            rocket.setMass(mass);
+            return this;
+        }
+        
+        /**
+         * Sets the thrust for the rocket.
+         *
+         * @param thrust The rocket thrust
+         * @return This builder
+         */
+        public Builder thrust(float thrust) {
+            rocket.setThrust(thrust);
+            return this;
+        }
+        
+        /**
+         * Adds a component to the rocket.
+         *
+         * @param component The component to add
+         * @return This builder
+         */
+        public Builder addComponent(RocketComponent component) {
+            rocket.addComponent(component);
+            return this;
+        }
+        
+        /**
+         * Builds the rocket instance.
+         *
+         * @return The built rocket
+         */
+        public ModularRocket build() {
+            return rocket;
         }
     }
 }

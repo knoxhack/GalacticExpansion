@@ -52,15 +52,14 @@ public class SpaceSuitItem extends ArmorItem {
             String path = enchId.getPath();
             
             // For helmet-specific enchantments
-            if (this.getType() == ArmorItem.Type.HELMET && 
+            if (this.armorType == ArmorItem.Type.HELMET && 
                 (path.equals("respiration") || path.equals("aqua_affinity"))) {
                 return true;
             }
         }
         
-        // Can't use super.canApplyAtEnchantingTable in this implementation
-        // Just allow common enchantments based on the enchantment type
-        return enchantment.getSlotItems(stack.getItem().getDefaultInstance()).containsKey(EquipmentSlot.byTypeAndIndex(EquipmentSlot.Type.ARMOR, getType().getSlot()));
+        // Use the enchantment's category check in NeoForge 1.21.5
+        return enchantment.category.canEnchant(stack.getItem());
     }
     
     /**
