@@ -316,15 +316,18 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
         
         // Manually load each item from its individual tag
         for (int i = 0; i < 9; i++) {
-            if (tag.contains("Item" + i, net.minecraft.nbt.Tag.TAG_COMPOUND)) {
-                CompoundTag itemTag = tag.getCompound("Item" + i);
-                components.set(i, ItemStack.of(itemTag));
+            // In NeoForge 1.21.5, contains() method signature has changed and doesn't take tag type
+            if (tag.contains("Item" + i)) {
+                // In NeoForge 1.21.5, getCompound returns the tag directly rather than Optional<CompoundTag>
+                CompoundTag itemTag = tag.getCompound("Item" + i).orElse(new CompoundTag());
+                // In NeoForge 1.21.5, use ItemStack.of to create from CompoundTag
+                components.set(i, net.minecraft.world.item.ItemStack.of(itemTag));
             }
         }
         
-        // Load rocket data - in NeoForge 1.21.5 getCompound returns directly without Optional
+        // Load rocket data - in NeoForge 1.21.5 getCompound returns Optional<CompoundTag>
         if (tag.contains("RocketData")) {
-            rocketDataTag = tag.getCompound("RocketData");
+            rocketDataTag = tag.getCompound("RocketData").orElse(new CompoundTag());
         } else {
             rocketDataTag = new CompoundTag();
         }

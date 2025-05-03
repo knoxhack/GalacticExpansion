@@ -195,6 +195,11 @@ public class SpaceBodies {
         // }
         
         @Override
+        public boolean hasAtmosphere() {
+            return hasAtmosphere;
+        }
+        
+        @Override
         public boolean hasBreathableAtmosphere() {
             return hasAtmosphere;
         }

@@ -118,7 +118,7 @@ public class ItemStackHelper {
     public static ItemStack createStack(ResourceLocation location, int count) {
         try {
             // In NeoForge 1.21.5, we need to use ForgeRegistries instead of BuiltInRegistries
-            Item item = net.neoforged.neoforge.registries.ForgeRegistries.ITEMS.getValue(location);
+            Item item = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(location);
             
             if (item == Items.AIR) {
                 return ItemStack.EMPTY;
