@@ -537,26 +537,29 @@ function runCommand(command, env = null) {
     return new Promise((resolve) => {
         console.log(`Executing: ${command}`);
         
+        // Get Node.js global process safely
+        const nodeProcess = global.process;
+        
         const options = { 
             maxBuffer: 10 * 1024 * 1024, // 10MB buffer
-            env: env || process.env
+            env: env || nodeProcess.env
         };
         
-        const process = exec(command, options);
+        const childProc = exec(command, options);
         
         let output = '';
         
-        process.stdout.on('data', (data) => {
+        childProc.stdout.on('data', (data) => {
             output += data.toString();
             console.log(data.toString());
         });
         
-        process.stderr.on('data', (data) => {
+        childProc.stderr.on('data', (data) => {
             output += data.toString();
             console.error(data.toString());
         });
         
-        process.on('close', (code) => {
+        childProc.on('close', (code) => {
             console.log(`Command exited with code ${code}`);
             resolve({ success: code === 0, output });
         });
@@ -575,7 +578,7 @@ async function getGitHubStatus() {
     
     // Get PR info if we have GitHub token
     let prStatus = null;
-    if (process.env.GITHUB_TOKEN) {
+    if (global.process && global.process.env && global.process.env.GITHUB_TOKEN) {
         try {
             // This would need GitHub CLI or direct API calls - placeholder for now
             const prResult = await runCommand('echo "GitHub PR integration placeholder"');
