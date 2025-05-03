@@ -3,6 +3,7 @@ package com.astroframe.galactic.space.implementation.hologram;
 import com.astroframe.galactic.core.api.block.BlockEntityBase;
 import com.astroframe.galactic.core.api.space.IRocket;
 import com.astroframe.galactic.space.SpaceModule;
+import com.astroframe.galactic.space.implementation.common.HolographicProjectorAccess;
 import com.astroframe.galactic.space.implementation.common.RocketDataProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -16,8 +17,10 @@ import net.minecraft.world.phys.AABB;
 /**
  * BlockEntity for the holographic projector.
  * Manages the state and rendering of holographic rocket projections.
+ * Implements HolographicProjectorAccess for interface-based access
+ * to avoid circular dependencies.
  */
-public class HolographicProjectorBlockEntity extends BlockEntityBase {
+public class HolographicProjectorBlockEntity extends BlockEntityBase implements HolographicProjectorAccess {
     
     // Size of the hologram projection
     public static final double HOLOGRAM_HEIGHT = 4.0D;

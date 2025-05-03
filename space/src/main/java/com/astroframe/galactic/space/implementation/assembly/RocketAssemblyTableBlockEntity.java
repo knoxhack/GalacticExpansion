@@ -6,6 +6,7 @@ import com.astroframe.galactic.core.api.space.ModularRocket;
 import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.astroframe.galactic.space.SpaceModule;
 import com.astroframe.galactic.space.implementation.assembly.menu.RocketAssemblyMenu;
+import com.astroframe.galactic.space.implementation.common.HolographicProjectorAccess;
 import com.astroframe.galactic.space.implementation.common.RocketDataProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -89,7 +90,7 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
         
         // First, clean up any invalid linked projectors
         linkedProjectors.removeIf(projPos -> {
-            if (level.getBlockEntity(projPos) instanceof HolographicProjectorBlockEntity) {
+            if (level.getBlockEntity(projPos) instanceof HolographicProjectorAccess) {
                 return false; // Keep it
             }
             return true; // Remove it
@@ -97,7 +98,7 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
         
         // Then update all linked projectors with the current rocket data
         for (BlockPos projPos : linkedProjectors) {
-            if (level.getBlockEntity(projPos) instanceof HolographicProjectorBlockEntity projector) {
+            if (level.getBlockEntity(projPos) instanceof HolographicProjectorAccess projector) {
                 projector.setRocketData(rocketData);
             }
         }
