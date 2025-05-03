@@ -102,13 +102,8 @@ public class SpaceSuitItem extends ArmorItem {
         if (stack.isEmpty()) return false;
         
         Item item = stack.getItem();
-        // Check the registry name of the item - in NeoForge 1.21.5, we need to get the holder and extract the key
-        Optional<net.minecraft.core.Holder.Reference<Item>> holder = 
-            net.minecraft.core.registries.BuiltInRegistries.ITEM.getHolder(
-                net.minecraft.core.registries.Registries.ITEM, 
-                item
-            );
-        ResourceLocation itemId = holder.map(h -> h.key().location()).orElse(null);
+        // In NeoForge 1.21.5, we use getKey instead of getHolder to get resource location
+        ResourceLocation itemId = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item);
         return itemId != null && itemId.getPath().contains("space_suit");
     }
     
