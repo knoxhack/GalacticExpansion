@@ -14,31 +14,18 @@ public class TagHelper {
     
     /**
      * Gets a compound tag from another compound tag safely, handling version differences.
-     * In newer versions of Minecraft, getCompound returns an Optional<CompoundTag>
      *
      * @param tag The parent tag
      * @param key The key to get
      * @return The compound tag, or a new one if not found
      */
     public static CompoundTag getCompoundTag(CompoundTag tag, String key) {
-        // In NeoForge 1.21.5, this returns Optional<CompoundTag>
-        // We need to unwrap the optional
         try {
-            // Attempt to handle as Optional (newer versions)
-            try {
-                Optional<CompoundTag> result = tag.getCompound(key);
-                if (result.isPresent()) {
-                    return result.get();
-                }
-                return new CompoundTag();
-            } catch (ClassCastException e) {
-                // Direct access (older versions)
-                CompoundTag directResult = (CompoundTag) tag.get(key);
-                if (directResult != null) {
-                    return directResult;
-                }
-                return new CompoundTag();
+            // In NeoForge 1.21.5, this is direct access without Optional wrapping
+            if (tag.contains(key, Tag.TAG_COMPOUND)) {
+                return (CompoundTag) tag.get(key);
             }
+            return new CompoundTag();
         } catch (Exception e) {
             // Fallback
             return new CompoundTag();
@@ -55,21 +42,14 @@ public class TagHelper {
      */
     public static ListTag getListTag(CompoundTag tag, String key, int type) {
         try {
-            // Attempt to handle as Optional (newer versions)
-            try {
-                Optional<ListTag> result = tag.getList(key, type);
-                if (result.isPresent()) {
-                    return result.get();
+            // In NeoForge 1.21.5, this is direct access without Optional wrapping
+            if (tag.contains(key, Tag.TAG_LIST)) {
+                ListTag list = (ListTag) tag.get(key);
+                if (list != null) {
+                    return list;
                 }
-                return new ListTag();
-            } catch (ClassCastException e) {
-                // Direct access (older versions)
-                ListTag directResult = (ListTag) tag.get(key);
-                if (directResult != null) {
-                    return directResult;
-                }
-                return new ListTag();
             }
+            return new ListTag();
         } catch (Exception e) {
             // Fallback
             return new ListTag();
@@ -85,21 +65,8 @@ public class TagHelper {
      */
     public static String getString(CompoundTag tag, String key) {
         try {
-            // Attempt to handle as Optional (newer versions)
-            try {
-                Optional<String> result = tag.getString(key);
-                if (result.isPresent()) {
-                    return result.get();
-                }
-                return "";
-            } catch (ClassCastException e) {
-                // Direct access (older versions)
-                String directResult = tag.getString(key);
-                if (directResult != null) {
-                    return directResult;
-                }
-                return "";
-            }
+            // In NeoForge 1.21.5, this is direct access without Optional wrapping
+            return tag.getString(key);
         } catch (Exception e) {
             // Fallback
             return "";

@@ -182,8 +182,11 @@ public class ModularRocketItem extends Item {
             if (tag.contains("rocket")) {
                 try {
                     // Use our TagHelper utility for more reliable extraction
-                    // In NeoForge 1.21.5, getCompound returns an Optional<CompoundTag>
-                    CompoundTag rocketTag = tag.getCompound("rocket").orElse(null);
+                    // In NeoForge 1.21.5, we use direct access instead of Optional
+                    CompoundTag rocketTag = null;
+                    if (tag.contains("rocket", Tag.TAG_COMPOUND)) {
+                        rocketTag = (CompoundTag) tag.get("rocket");
+                    }
                     
                     if (rocketTag == null) {
                         return null;
