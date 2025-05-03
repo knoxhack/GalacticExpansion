@@ -1,6 +1,9 @@
 package com.astroframe.galactic.space.registry;
 
 import com.astroframe.galactic.core.api.space.ICelestialBody;
+import com.astroframe.galactic.core.api.space.ICelestialBody.CelestialBodyType;
+import com.astroframe.galactic.core.api.space.ICelestialBody.RadiationLevel;
+import com.astroframe.galactic.core.api.space.ICelestialBody.TemperatureRange;
 import com.astroframe.galactic.space.GalacticSpace;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -98,6 +101,7 @@ public class SpaceBodies {
         private final String name;
         private final boolean hasAtmosphere;
         private final boolean hasUniqueResources;
+        private boolean discovered = false;
         
         public CelestialBody(ResourceLocation id, String name, boolean hasAtmosphere, boolean hasUniqueResources) {
             this.id = id;
@@ -117,13 +121,78 @@ public class SpaceBodies {
         }
         
         @Override
-        public boolean hasAtmosphere() {
+        public String getDescription() {
+            return "A celestial body in space.";
+        }
+        
+        @Override
+        public CelestialBodyType getType() {
+            return CelestialBodyType.PLANET;
+        }
+        
+        @Override
+        public ICelestialBody getParent() {
+            return null; // No parent by default
+        }
+        
+        @Override
+        public int getDistanceFromHome() {
+            return 0; // Default distance
+        }
+        
+        @Override
+        public float getRelativeSize() {
+            return 1.0f; // Earth-sized by default
+        }
+        
+        @Override
+        public float getRelativeGravity() {
+            return 1.0f; // Earth-like gravity by default
+        }
+        
+        @Override
+        public float getAtmosphereDensity() {
+            return hasAtmosphere ? 1.0f : 0.0f;
+        }
+        
+        @Override
+        public TemperatureRange getTemperatureRange() {
+            return TemperatureRange.TEMPERATE; // Moderate temperatures by default
+        }
+        
+        @Override
+        public RadiationLevel getRadiationLevel() {
+            return RadiationLevel.NONE; // No radiation by default
+        }
+        
+        @Override
+        public int getRocketTierRequired() {
+            return 1; // Basic rocket tier by default
+        }
+        
+        @Override
+        public boolean hasBreathableAtmosphere() {
             return hasAtmosphere;
+        }
+        
+        @Override
+        public boolean hasLiquidWater() {
+            return false; // No liquid water by default
         }
         
         @Override
         public boolean hasUniqueResources() {
             return hasUniqueResources;
+        }
+        
+        @Override
+        public boolean isDiscovered() {
+            return discovered;
+        }
+        
+        @Override
+        public void setDiscovered(boolean discovered) {
+            this.discovered = discovered;
         }
     }
 }

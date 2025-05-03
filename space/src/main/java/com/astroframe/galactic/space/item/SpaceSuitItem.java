@@ -1,8 +1,9 @@
 package com.astroframe.galactic.space.item;
 
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlot.Type;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
@@ -26,7 +27,7 @@ public class SpaceSuitItem extends ArmorItem {
      * @param type The armor type (helmet, chestplate, etc.)
      * @param properties The item properties
      */
-    public SpaceSuitItem(Type type, Properties properties) {
+    public SpaceSuitItem(ArmorItem.Type type, Properties properties) {
         super(MATERIAL, type, properties);
     }
     
@@ -42,11 +43,11 @@ public class SpaceSuitItem extends ArmorItem {
     
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        if (enchantment == Enchantments.RESPIRATION && getType() == Type.HELMET) {
+        if (enchantment == Enchantments.RESPIRATION && getType() == ArmorItem.Type.HELMET) {
             return true;
         }
         
-        if (enchantment == Enchantments.AQUA_AFFINITY && getType() == Type.HELMET) {
+        if (enchantment == Enchantments.AQUA_AFFINITY && getType() == ArmorItem.Type.HELMET) {
             return true;
         }
         
@@ -62,10 +63,10 @@ public class SpaceSuitItem extends ArmorItem {
     public static boolean hasFullSpaceSuit(Player player) {
         // Check each armor slot
         for (EquipmentSlot slot : EquipmentSlot.values()) {
-            if (slot.getType() != EquipmentSlot.Type.ARMOR) continue;
+            if (slot.getType() != Type.ARMOR) continue;
             
             ItemStack stack = player.getItemBySlot(slot);
-            if (!(stack.getItem() instanceof SpaceSuitItem)) {
+            if (stack.isEmpty() || !(stack.getItem() instanceof SpaceSuitItem)) {
                 return false;
             }
         }
@@ -85,10 +86,10 @@ public class SpaceSuitItem extends ArmorItem {
         
         // Check each armor slot
         for (EquipmentSlot slot : EquipmentSlot.values()) {
-            if (slot.getType() != EquipmentSlot.Type.ARMOR) continue;
+            if (slot.getType() != Type.ARMOR) continue;
             
             ItemStack stack = player.getItemBySlot(slot);
-            if (stack.getItem() instanceof SpaceSuitItem) {
+            if (!stack.isEmpty() && stack.getItem() instanceof SpaceSuitItem) {
                 hasSuit = true;
                 int tier = 1; // Default to tier 1
                 minTier = Math.min(minTier, tier);
@@ -110,10 +111,10 @@ public class SpaceSuitItem extends ArmorItem {
     public static boolean isFullSpaceSuit(ItemStack helmet, ItemStack chestplate, 
             ItemStack leggings, ItemStack boots) {
         
-        return helmet.getItem() instanceof SpaceSuitItem && 
-                chestplate.getItem() instanceof SpaceSuitItem &&
-                leggings.getItem() instanceof SpaceSuitItem && 
-                boots.getItem() instanceof SpaceSuitItem;
+        return !helmet.isEmpty() && helmet.getItem() instanceof SpaceSuitItem && 
+                !chestplate.isEmpty() && chestplate.getItem() instanceof SpaceSuitItem &&
+                !leggings.isEmpty() && leggings.getItem() instanceof SpaceSuitItem && 
+                !boots.isEmpty() && boots.getItem() instanceof SpaceSuitItem;
     }
     
     /**
@@ -123,13 +124,13 @@ public class SpaceSuitItem extends ArmorItem {
         
         private static final int[] DURABILITY_PER_SLOT = new int[]{13, 15, 16, 11};
         private static final int[] PROTECTION_PER_SLOT = new int[]{3, 6, 8, 3};
-        private final Lazy<Ingredient> repairMaterial = Lazy.of(() -> Ingredient.of(new ItemStack(Item.byId(1))));
+        private final Lazy<Ingredient> repairMaterial = Lazy.of(() -> Ingredient.ofItems(Item.byId(1)));
         
-        public int getDurabilityForType(Type type) {
+        public int getDurabilityForType(ArmorItem.Type type) {
             return DURABILITY_PER_SLOT[type.getSlot().getIndex()] * 25;
         }
         
-        public int getDefenseForType(Type type) {
+        public int getDefenseForType(ArmorItem.Type type) {
             return PROTECTION_PER_SLOT[type.getSlot().getIndex()];
         }
         
@@ -138,7 +139,7 @@ public class SpaceSuitItem extends ArmorItem {
         }
         
         public net.minecraft.core.Holder<SoundEvent> getEquipSound() {
-            return net.minecraft.core.Holder.direct(net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_IRON);
+            return net.minecraft.core.Holder.direct(SoundEvents.ARMOR_EQUIP_IRON);
         }
         
         public Ingredient getRepairIngredient() {

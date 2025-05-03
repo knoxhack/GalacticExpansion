@@ -35,6 +35,15 @@ public class ModularRocketItem extends Item {
     
     /**
      * Creates a new modular rocket item.
+     * 
+     * @param properties The item properties
+     */
+    public ModularRocketItem(Properties properties) {
+        super(properties.fireResistant());
+    }
+    
+    /**
+     * Creates a new modular rocket item with default properties.
      */
     public ModularRocketItem() {
         super(new Item.Properties()
