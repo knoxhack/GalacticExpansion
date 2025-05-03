@@ -3,6 +3,7 @@ package com.astroframe.galactic.space.implementation.assembly;
 import com.astroframe.galactic.core.api.space.IRocket;
 import com.astroframe.galactic.space.SpaceModule;
 import com.astroframe.galactic.space.implementation.hologram.HolographicProjectorBlockEntity;
+import com.astroframe.galactic.space.implementation.common.RocketDataProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -151,8 +152,8 @@ public class RocketAssemblyTable extends BaseEntityBlock {
                         
                         // Get the rocket data to display in the projector
                         BlockEntity assemblyEntity = level.getBlockEntity(pos);
-                        if (assemblyEntity instanceof RocketAssemblyTableBlockEntity assemblyTable) {
-                            projector.setRocketData(assemblyTable.getRocketData());
+                        if (assemblyEntity instanceof RocketDataProvider rocketDataProvider) {
+                            projector.setRocketData(rocketDataProvider.getRocketData());
                         }
                     }
                 }

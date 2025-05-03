@@ -1,0 +1,19 @@
+Initialized native services in: /home/runner/.gradle/native
+Initialized jansi services in: /home/runner/.gradle/native
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.12.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Starting process 'Gradle build daemon'. Working directory: /home/runner/.gradle/daemon/8.12.1 Command: /nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35/lib/openjdk/bin/java --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-opens=java.base/java.nio.charset=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens=java.xml/javax.xml.namespace=ALL-UNNAMED -XX:MaxMetaspaceSize=1G -XX:+HeapDumpOnOutOfMemoryError -Xmx3G -Dfile.encoding=UTF-8 -Duser.country=US -Duser.language=en -Duser.variant -cp /home/runner/.gradle/wrapper/dists/gradle-8.12.1-bin/eumc4uhoysa37zql93vfjkxy0/gradle-8.12.1/lib/gradle-daemon-main-8.12.1.jar -javaagent:/home/runner/.gradle/wrapper/dists/gradle-8.12.1-bin/eumc4uhoysa37zql93vfjkxy0/gradle-8.12.1/lib/agents/gradle-instrumentation-agent-8.12.1.jar org.gradle.launcher.daemon.bootstrap.GradleDaemon 8.12.1
+Successfully started process 'Gradle build daemon'
+An attempt to start the daemon took 2.589 secs.
+The client will now receive all logging from the daemon (pid: 5259). The daemon log file: /home/runner/.gradle/daemon/8.12.1/daemon-5259.out.log
+Daemon will be stopped at the end of the build 
+Using 4 worker leases.
+Received JVM installation metadata from '/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35/lib/openjdk': {JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35/lib/openjdk, JAVA_VERSION=21, JAVA_VENDOR=N/A, RUNTIME_NAME=OpenJDK Runtime Environment, RUNTIME_VERSION=21+35-nixos, VM_NAME=OpenJDK 64-Bit Server VM, VM_VERSION=21+35-nixos, VM_VENDOR=Oracle Corporation, OS_ARCH=amd64}
+Watching the file system is configured to be enabled if available
+Not watching /home/runner/workspace since the file system is not supported
+Not watching /home/runner/workspace/buildSrc since the file system is not supported
+File system watching is active
+Starting Build
+Settings evaluated using settings file '/home/runner/workspace/settings.gradle'.
+Using local directory build cache for the root build (location = /home/runner/.gradle/caches/build-cache-1, remove unused entries = after 7 days).
+Projects loaded. Root project using build file '/home/runner/workspace/build.gradle'.
+Included projects: [root project 'GalacticExpansion', project ':biotech', project ':construction', project ':core', project ':energy', project ':machinery', project ':power', project ':robotics', project ':space', project ':utilities', project ':vehicles', project ':weaponry']
