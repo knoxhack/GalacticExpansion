@@ -87,4 +87,15 @@ public class RocketComponentFactory {
     public static IRocketComponent createShield(RocketComponentType type, int tier) {
         return new BasicRocketComponent(type, tier);
     }
+    
+    /**
+     * Creates a structure component.
+     *
+     * @param type The component type
+     * @param tier The tier level
+     * @return The component
+     */
+    public static IRocketComponent createStructure(RocketComponentType type, int tier) {
+        return new BasicRocketComponent(type, tier);
+    }
 }

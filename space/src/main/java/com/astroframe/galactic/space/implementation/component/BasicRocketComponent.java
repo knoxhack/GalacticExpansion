@@ -239,11 +239,11 @@ public class BasicRocketComponent implements IRocketComponent {
         }
         
         if (tag.contains("CurrentDurability")) {
-            this.durability = tag.getInt("CurrentDurability");
+            this.durability = TagHelper.getInt(tag, "CurrentDurability", this.durability);
         }
         
         if (tag.contains("MaxDurability")) {
-            this.maxDurability = tag.getInt("MaxDurability");
+            this.maxDurability = TagHelper.getInt(tag, "MaxDurability", this.maxDurability);
         }
     }
     
