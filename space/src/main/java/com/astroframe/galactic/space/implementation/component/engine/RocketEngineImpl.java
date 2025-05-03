@@ -7,6 +7,7 @@ import com.astroframe.galactic.core.api.space.component.enums.EngineType;
 import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,9 @@ public class RocketEngineImpl implements IRocketEngine {
     // Durability fields required by IRocketComponent
     private final int maxDurability;
     private int currentDurability;
+    
+    // Position in the rocket
+    private Vec3 position;
 
     private RocketEngineImpl(ResourceLocation id, String name, String description, int tier, 
                            double mass, double thrust, double efficiency, 
@@ -178,6 +182,56 @@ public class RocketEngineImpl implements IRocketEngine {
     @Override
     public RocketComponentType getType() {
         return RocketComponentType.ENGINE;
+    }
+    
+    @Override
+    public void save(net.minecraft.nbt.CompoundTag tag) {
+        // Save basic component properties
+        tag.putString("ID", getId().toString());
+        tag.putString("Type", getType().name());
+        tag.putString("Name", getName());
+        tag.putString("Description", getDescription());
+        tag.putInt("Tier", getTier());
+        tag.putInt("Mass", getMass());
+        tag.putInt("MaxDurability", getMaxDurability());
+        tag.putInt("CurrentDurability", getCurrentDurability());
+        
+        // Save engine-specific properties
+        tag.putString("EngineType", getEngineType().name());
+        tag.putDouble("Thrust", getThrust());
+        tag.putDouble("Efficiency", getEfficiency());
+        tag.putDouble("FuelConsumptionRate", getFuelConsumptionRate());
+        tag.putString("FuelType", getFuelType().name());
+        tag.putBoolean("AtmosphereCapable", canOperateInAtmosphere());
+        tag.putBoolean("SpaceCapable", canOperateInSpace());
+        tag.putDouble("HeatGeneration", getHeatGeneration());
+        tag.putString("MountingPosition", getRequiredMountingPosition().name());
+        
+        // Save compatible fuels as a list
+        StringBuilder fuelsStr = new StringBuilder();
+        for (FuelType fuel : getCompatibleFuels()) {
+            if (fuelsStr.length() > 0) {
+                fuelsStr.append(",");
+            }
+            fuelsStr.append(fuel.name());
+        }
+        tag.putString("CompatibleFuels", fuelsStr.toString());
+    }
+    
+    @Override
+    public void load(net.minecraft.nbt.CompoundTag tag) {
+        // Load durability (other properties are final)
+        if (tag.contains("CurrentDurability")) {
+            this.currentDurability = com.astroframe.galactic.space.util.TagHelper.getIntValue(tag, "CurrentDurability");
+        }
+        
+        // Load position if saved
+        if (tag.contains("PosX") && tag.contains("PosY") && tag.contains("PosZ")) {
+            double x = com.astroframe.galactic.space.util.TagHelper.getDoubleValue(tag, "PosX");
+            double y = com.astroframe.galactic.space.util.TagHelper.getDoubleValue(tag, "PosY");
+            double z = com.astroframe.galactic.space.util.TagHelper.getDoubleValue(tag, "PosZ");
+            setPosition(new net.minecraft.world.phys.Vec3(x, y, z));
+        }
     }
 
     /**
