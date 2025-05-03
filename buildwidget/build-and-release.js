@@ -776,6 +776,19 @@ async function handleCheckpoint(checkpointName, description) {
         
         console.log('Commit result:', commitResult);
         
+        // Save checkpoint metadata
+        const timestamp = new Date().toISOString();
+        const buildNumber = getBuildNumber();
+        const checkpointData = {
+            name: checkpointName,
+            description: description || 'Automated checkpoint with build and release',
+            timestamp: timestamp,
+            buildNumber: buildNumber
+        };
+        
+        // Save as the last checkpoint
+        saveLastCheckpoint(checkpointData);
+        
         // Trigger a build
         const buildResult = await buildAndRelease();
         
@@ -784,7 +797,8 @@ async function handleCheckpoint(checkpointName, description) {
             commitResult,
             buildResult,
             checkpointName,
-            timestamp: new Date().toISOString()
+            checkpointData,
+            timestamp
         };
     } catch (error) {
         console.error('Error creating checkpoint:', error);
@@ -792,6 +806,52 @@ async function handleCheckpoint(checkpointName, description) {
             success: false,
             error: error.message || 'Unknown error occurred'
         };
+    }
+}
+
+/**
+ * Save the last checkpoint information to a file
+ * @param {object} checkpoint The checkpoint metadata to save
+ */
+function saveLastCheckpoint(checkpoint) {
+    try {
+        // Ensure directory exists
+        const fs = require('fs');
+        const path = require('path');
+        const dataDir = path.resolve('./buildwidget/data');
+        
+        if (!fs.existsSync(dataDir)) {
+            fs.mkdirSync(dataDir, { recursive: true });
+        }
+        
+        const checkpointData = JSON.stringify(checkpoint, null, 2);
+        fs.writeFileSync(path.join(dataDir, 'last-checkpoint.json'), checkpointData);
+        console.log('Last checkpoint data saved');
+    } catch (error) {
+        console.error('Error saving last checkpoint data:', error);
+    }
+}
+
+/**
+ * Get the last checkpoint information
+ * @returns {object|null} Last checkpoint data or null if none exists
+ */
+function getLastCheckpoint() {
+    try {
+        const fs = require('fs');
+        const path = require('path');
+        const filePath = path.resolve('./buildwidget/data/last-checkpoint.json');
+        
+        // Check if file exists
+        if (!fs.existsSync(filePath)) {
+            return null;
+        }
+        
+        const data = fs.readFileSync(filePath, 'utf8');
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error reading last checkpoint data:', error);
+        return null;
     }
 }
 
@@ -809,5 +869,7 @@ module.exports = {
     saveVersionHistory,
     saveChangelogHistory,
     getShortCommitChanges,
-    formatShortCommitMessage
+    formatShortCommitMessage,
+    saveLastCheckpoint,
+    getLastCheckpoint
 };
