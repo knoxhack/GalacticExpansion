@@ -220,7 +220,7 @@ public class PlayerSpaceDataAttachment {
             for (int i = 0; i < bodiesTag.size(); i++) {
                 // Direct access to string content in NeoForge 1.21.5
                 if (bodiesTag.get(i) instanceof StringTag) {
-                    String idString = TagHelper.getStringValue(bodiesTag.get(i));
+                    String idString = bodiesTag.get(i).getAsString();
                     if (!idString.isEmpty()) {
                         data.discoveredBodies.add(ResourceLocationHelper.parse(idString));
                     }
@@ -235,7 +235,7 @@ public class PlayerSpaceDataAttachment {
         if (tag.contains("LastVisitedBody")) {
             Tag lastVisitedTag = tag.get("LastVisitedBody");
             if (lastVisitedTag instanceof StringTag) {
-                String bodyId = TagHelper.getStringValue(lastVisitedTag);
+                String bodyId = lastVisitedTag.getAsString();
                 data.lastVisitedBody = bodyId.isEmpty() ? null : ResourceLocationHelper.parse(bodyId);
             } else {
                 data.lastVisitedBody = null;
