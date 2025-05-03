@@ -46,11 +46,14 @@ public class SpaceSuitItem extends ArmorItem {
     }
     
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        // In NeoForge 1.21.5, access the enchantment registry using BuiltInRegistries
+        // In NeoForge 1.21.5, access the enchantment registry using BuiltInRegistries and ResourceKey
         ResourceLocation enchLocation = null;
         try {
-            // Get the registry key from BuiltInRegistries
-            enchLocation = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+            // Get the registry key for this enchantment using ResourceKey
+            var resourceKey = BuiltInRegistries.ENCHANTMENT.getResourceKey(enchantment).orElse(null);
+            if (resourceKey != null) {
+                enchLocation = resourceKey.location();
+            }
         } catch (Exception e) {
             // If all else fails, just return default value
             return false;
@@ -60,7 +63,7 @@ public class SpaceSuitItem extends ArmorItem {
             String path = enchLocation.getPath();
             
             // For helmet-specific enchantments
-            if (this.type == ArmorItem.Type.HELMET && 
+            if (this.type == net.minecraft.world.item.ArmorItem.Type.HELMET && 
                 (path.equals("respiration") || path.equals("aqua_affinity"))) {
                 return true;
             }

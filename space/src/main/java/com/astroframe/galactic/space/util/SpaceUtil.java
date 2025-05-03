@@ -52,7 +52,7 @@ public class SpaceUtil {
      */
     public static ICelestialBody getRandomReachableCelestialBody(int tier) {
         var bodies = SpaceBodies.getAll().stream()
-                .filter(body -> body.getRocketTierRequired() <= tier)
+                .filter(body -> body.getRequiredTier() <= tier)
                 .toList();
         
         if (bodies.isEmpty()) {
@@ -69,6 +69,7 @@ public class SpaceUtil {
      * @return The amount of fuel required
      */
     public static int getFuelRequiredForTravel(ICelestialBody body) {
-        return body.getDistanceFromHome() * 10;
+        // Convert float distance to int for fuel calculation
+        return (int)(body.getDistance() * 10.0f);
     }
 }
