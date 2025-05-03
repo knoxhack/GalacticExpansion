@@ -1,5 +1,6 @@
 package com.astroframe.galactic.core.api.space;
 
+import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import java.util.List;
 import net.minecraft.nbt.CompoundTag;
 
@@ -100,7 +101,7 @@ public interface IRocket {
      * 
      * @return List of all rocket components
      */
-    default List<RocketComponent> getAllComponents() {
+    default List<com.astroframe.galactic.core.api.space.component.IRocketComponent> getAllComponents() {
         return List.of();
     }
     
