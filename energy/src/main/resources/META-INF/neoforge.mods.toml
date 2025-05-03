@@ -1,6 +1,6 @@
 # This is a configuration file for NeoForge
 modLoader="javafml"
-loaderVersion="[47,)" # Minimum version of the mod loader required to load the mod. For NeoForge 1.21.x - use 47+
+loaderVersion="[7.0,8.0)" # Updated for compatibility with JavaFML 7.0.10 in NeoForge 1.21.5
 license="All Rights Reserved"
 issueTrackerURL="https://github.com/AstroFrame/GalacticExpansion/issues"
 
