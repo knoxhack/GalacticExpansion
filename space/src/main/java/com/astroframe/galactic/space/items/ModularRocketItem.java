@@ -326,7 +326,7 @@ public class ModularRocketItem extends Item {
             
             if (!cargoBayId.isEmpty()) {
                 ResourceLocation cargoBayRes = ResourceLocationHelper.of(cargoBayId);
-                IRocketComponent cargoBayComp = RocketComponentRegistry.getComponent(cargoBayRes).orElse(null);
+                IRocketComponent cargoBayComp = RocketComponentRegistry.getComponent(cargoBayRes);
                 if (cargoBayComp != null && cargoBayComp instanceof ICargoBay) {
                     builder.addCargoBay((ICargoBay) cargoBayComp);
                 }
@@ -347,7 +347,7 @@ public class ModularRocketItem extends Item {
             
             if (!compartmentId.isEmpty()) {
                 ResourceLocation compartmentRes = ResourceLocationHelper.of(compartmentId);
-                IRocketComponent compartmentComp = RocketComponentRegistry.getComponent(compartmentRes).orElse(null);
+                IRocketComponent compartmentComp = RocketComponentRegistry.getComponent(compartmentRes);
                 if (compartmentComp != null && compartmentComp instanceof IPassengerCompartment) {
                     builder.addPassengerCompartment((IPassengerCompartment) compartmentComp);
                 }
@@ -368,7 +368,7 @@ public class ModularRocketItem extends Item {
             
             if (!shieldId.isEmpty()) {
                 ResourceLocation shieldRes = ResourceLocationHelper.of(shieldId);
-                IRocketComponent shieldComp = RocketComponentRegistry.getComponent(shieldRes).orElse(null);
+                IRocketComponent shieldComp = RocketComponentRegistry.getComponent(shieldRes);
                 if (shieldComp != null && shieldComp instanceof IShield) {
                     builder.addShield((IShield) shieldComp);
                 }
@@ -389,7 +389,7 @@ public class ModularRocketItem extends Item {
             
             if (!lifeSupportId.isEmpty()) {
                 ResourceLocation lifeSupportRes = ResourceLocationHelper.of(lifeSupportId);
-                IRocketComponent lifeSupportComp = RocketComponentRegistry.getComponent(lifeSupportRes).orElse(null);
+                IRocketComponent lifeSupportComp = RocketComponentRegistry.getComponent(lifeSupportRes);
                 if (lifeSupportComp != null && lifeSupportComp instanceof ILifeSupport) {
                     builder.addLifeSupport((ILifeSupport) lifeSupportComp);
                 }
