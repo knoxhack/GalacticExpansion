@@ -349,8 +349,8 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
                     ResourceLocation itemLocation = ResourceLocation.parse(itemId);
                     // Need to use ForgeRegistries for direct registry lookup
                     Item item = ForgeRegistries.ITEMS.getValue(itemLocation);
-                    // In NeoForge 1.21.5, getByte returns an Optional<Byte> that needs unwrapping
-                    int count = itemTag.contains("Count") ? itemTag.getByte("Count").orElse((byte)1) : 1;
+                    // In NeoForge 1.21.5, we use regular getByte without unwrapping
+                    int count = itemTag.contains("Count") ? itemTag.getByte("Count") : 1;
                     ItemStack stack = new ItemStack(item, count);
                     if (itemTag.contains("tag")) {
                         // In NeoForge 1.21.5, get the compound tag via our helper

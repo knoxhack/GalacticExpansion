@@ -47,18 +47,18 @@ public class SpaceItems {
             () -> new Item(new Item.Properties()));
     
     // Space suit items
-    // In NeoForge 1.21.5, need to use ArmorItem.Type
+    // In NeoForge 1.21.5, need to use fully qualified ArmorItem.Type
     public static final Supplier<Item> SPACE_SUIT_HELMET = ITEMS.register("space_suit_helmet",
-            () -> new SpaceSuitItem(ArmorItem.Type.HELMET, new Item.Properties().stacksTo(1)));
+            () -> new SpaceSuitItem(net.minecraft.world.item.ArmorItem.Type.HELMET, new Item.Properties().stacksTo(1)));
     
     public static final Supplier<Item> SPACE_SUIT_CHESTPLATE = ITEMS.register("space_suit_chestplate",
-            () -> new SpaceSuitItem(ArmorItem.Type.CHESTPLATE, new Item.Properties().stacksTo(1)));
+            () -> new SpaceSuitItem(net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, new Item.Properties().stacksTo(1)));
     
     public static final Supplier<Item> SPACE_SUIT_LEGGINGS = ITEMS.register("space_suit_leggings",
-            () -> new SpaceSuitItem(ArmorItem.Type.LEGGINGS, new Item.Properties().stacksTo(1)));
+            () -> new SpaceSuitItem(net.minecraft.world.item.ArmorItem.Type.LEGGINGS, new Item.Properties().stacksTo(1)));
     
     public static final Supplier<Item> SPACE_SUIT_BOOTS = ITEMS.register("space_suit_boots",
-            () -> new SpaceSuitItem(ArmorItem.Type.BOOTS, new Item.Properties().stacksTo(1)));
+            () -> new SpaceSuitItem(net.minecraft.world.item.ArmorItem.Type.BOOTS, new Item.Properties().stacksTo(1)));
     
     // Rocket items
     public static final Supplier<Item> TIER_1_ROCKET = ITEMS.register("tier_1_rocket",

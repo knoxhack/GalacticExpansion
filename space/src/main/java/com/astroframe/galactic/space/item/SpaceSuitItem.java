@@ -24,7 +24,7 @@ import net.neoforged.neoforge.registries.ForgeRegistries;
 public class SpaceSuitItem extends ArmorItem {
     
     private static final CustomArmorMaterial MATERIAL = new CustomArmorMaterial();
-    private final Type type;
+    private final net.minecraft.world.item.ArmorItem.Type type;
     
     /**
      * Create a new space suit item.
@@ -32,7 +32,7 @@ public class SpaceSuitItem extends ArmorItem {
      * @param type The armor type (helmet, chestplate, etc.)
      * @param properties The item properties
      */
-    public SpaceSuitItem(Type type, Properties properties) {
+    public SpaceSuitItem(net.minecraft.world.item.ArmorItem.Type type, Properties properties) {
         super(MATERIAL, type, properties);
         this.type = type;
     }
@@ -162,11 +162,11 @@ public class SpaceSuitItem extends ArmorItem {
         private static final int[] PROTECTION_PER_SLOT = new int[]{3, 6, 8, 3};
         private final Lazy<Ingredient> repairMaterial = Lazy.of(() -> Ingredient.of(Items.IRON_INGOT));
         
-        public int getDurabilityForType(Type type) {
+        public int getDurabilityForType(net.minecraft.world.item.ArmorItem.Type type) {
             return DURABILITY_PER_SLOT[type.getSlot().getIndex()] * 25;
         }
         
-        public int getDefenseForType(Type type) {
+        public int getDefenseForType(net.minecraft.world.item.ArmorItem.Type type) {
             return PROTECTION_PER_SLOT[type.getSlot().getIndex()];
         }
         

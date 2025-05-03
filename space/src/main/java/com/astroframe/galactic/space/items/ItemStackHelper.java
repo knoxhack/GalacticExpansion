@@ -371,8 +371,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getFloat returns an Optional<Float> that needs unwrapping
-            return tag.getFloat(key).orElse(0.0f);
+            // In NeoForge 1.21.5, getFloat returns the float directly (no Optional)
+            return tag.getFloat(key);
         } catch (Exception e) {
             return 0.0f;
         }
