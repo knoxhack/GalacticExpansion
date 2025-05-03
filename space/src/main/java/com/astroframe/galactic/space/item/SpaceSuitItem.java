@@ -37,31 +37,28 @@ public class SpaceSuitItem extends ArmorItem {
     }
     
     // Enchantment behavior methods
-    @Override
     public boolean isEnchantable(ItemStack stack) {
         return true;
     }
     
-    @Override
     public int getEnchantmentValue() {
         return 15;
     }
     
-    @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         // In NeoForge 1.21.5, we need to check registry IDs directly
-        ResourceLocation enchId = Registry.ENCHANTMENT.getKey(enchantment);
+        ResourceLocation enchId = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
         if (enchId != null) {
             String path = enchId.getPath();
             
             // For helmet-specific enchantments
-            if (this.armorType == ArmorItem.Type.HELMET && 
+            if (this.armorType == net.minecraft.world.item.ArmorItem.Type.HELMET && 
                 (path.equals("respiration") || path.equals("aqua_affinity"))) {
                 return true;
             }
         }
         
-        return ArmorItem.super.canApplyAtEnchantingTable(stack, enchantment);
+        return super.canApplyAtEnchantingTable(stack, enchantment);
     }
     
     /**
@@ -169,8 +166,8 @@ public class SpaceSuitItem extends ArmorItem {
         public net.minecraft.core.Holder<SoundEvent> getEquipSound() {
             // Get the sound event directly by ID for NeoForge 1.21.5
             ResourceLocation soundId = ResourceLocation.parse("minecraft:item.armor.equip_iron");
-            SoundEvent soundEvent = Registry.SOUND_EVENT.get(soundId);
-            return Registry.SOUND_EVENT.wrapAsHolder(soundEvent != null ? soundEvent : SoundEvents.ARMOR_EQUIP_IRON);
+            SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.get(soundId);
+            return BuiltInRegistries.SOUND_EVENT.wrapAsHolder(soundEvent != null ? soundEvent : SoundEvents.ARMOR_EQUIP_IRON);
         }
         
         public Ingredient getRepairIngredient() {

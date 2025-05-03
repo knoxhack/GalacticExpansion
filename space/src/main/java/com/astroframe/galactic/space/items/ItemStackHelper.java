@@ -116,11 +116,8 @@ public class ItemStackHelper {
      */
     public static ItemStack createStack(ResourceLocation location, int count) {
         try {
-            // In NeoForge 1.21.5, registry access pattern has changed
-            net.minecraft.core.HolderSet.Named<Item> itemHolderSet = net.minecraft.core.registries.BuiltInRegistries.ITEM.getOrCreateTag(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, location));
-            Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.getHolder(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, location))
-                    .map(net.minecraft.core.Holder::value)
-                    .orElse(Items.AIR);
+            // In NeoForge 1.21.5, get the item directly by ID
+            Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(location);
             
             if (item == Items.AIR) {
                 return ItemStack.EMPTY;
