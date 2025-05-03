@@ -54,7 +54,7 @@ public class MachineryItems {
             throw new IllegalStateException("Machinery items failed to initialize properly");
         }
         
-        // Register our Items DeferredRegister to the normal ITEMS DeferredRegister
-        ITEMS_HELPER.register(MachineryRegistry.ITEMS);
+        // Register our Items DeferredRegister to the event bus
+        ITEMS_HELPER.register(GalacticMachinery.MOD_EVENT_BUS);
     }
 }

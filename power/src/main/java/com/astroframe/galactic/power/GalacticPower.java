@@ -29,12 +29,16 @@ public class GalacticPower {
     /** Singleton instance of the power mod */
     public static GalacticPower INSTANCE;
     
+    /** The mod's event bus - static access for NeoForge 1.21.5 registration */
+    public static IEventBus MOD_EVENT_BUS;
+    
     /**
      * Constructs a new instance of the Galactic Power mod.
      * This initializes power generation and storage systems.
      */
     public GalacticPower(IEventBus modEventBus) {
         INSTANCE = this;
+        MOD_EVENT_BUS = modEventBus; // Store static reference for module registration
         
         LOGGER.info("Initializing Galactic Power module");
         

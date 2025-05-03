@@ -27,12 +27,16 @@ public class GalacticMachinery {
     /** Singleton instance of the machinery mod */
     public static GalacticMachinery INSTANCE;
     
+    /** The mod's event bus - static access for NeoForge 1.21.5 registration */
+    public static IEventBus MOD_EVENT_BUS;
+    
     /**
      * Constructs a new instance of the Galactic Machinery mod.
      * This initializes industrial machines and automation systems.
      */
     public GalacticMachinery(IEventBus modEventBus) {
         INSTANCE = this;
+        MOD_EVENT_BUS = modEventBus; // Store static reference for module registration
         
         LOGGER.info("Initializing Galactic Machinery module");
         

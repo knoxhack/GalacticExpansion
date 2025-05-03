@@ -114,8 +114,8 @@ public class SpaceItems {
      * @param modEventBus The mod event bus to register items on
      */
     public static void initialize(IEventBus modEventBus) {
-        // Register our Items DeferredRegister to the normal ITEMS DeferredRegister
-        ITEMS_HELPER.register(ITEMS);
+        // Register our Items DeferredRegister to the event bus
+        ITEMS_HELPER.register(modEventBus);
         
         // Register items to the event bus
         ITEMS.register(modEventBus);

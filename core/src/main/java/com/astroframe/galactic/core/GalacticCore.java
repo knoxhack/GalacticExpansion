@@ -31,7 +31,10 @@ public class GalacticCore {
     /** Singleton instance of the core mod */
     public static GalacticCore INSTANCE;
     
-    /** The mod's event bus */
+    /** The mod's event bus - static access for NeoForge 1.21.5 registration */
+    public static IEventBus MOD_EVENT_BUS;
+    
+    /** The mod's event bus - instance field */
     private final IEventBus modEventBus;
     
     /**
@@ -41,6 +44,7 @@ public class GalacticCore {
     public GalacticCore(IEventBus modEventBus) {
         INSTANCE = this;
         this.modEventBus = modEventBus;
+        MOD_EVENT_BUS = modEventBus; // Store static reference for module registration
         
         LOGGER.info("Initializing Galactic Core API module");
         
