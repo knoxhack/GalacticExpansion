@@ -346,6 +346,55 @@ public class ModularRocket implements IRocket {
         private final ModularRocket rocket = new ModularRocket();
         
         /**
+         * Default constructor.
+         */
+        public Builder() {
+            // Empty constructor
+        }
+        
+        /**
+         * Constructor with rocket ID.
+         * 
+         * @param rocketId The unique identifier for the rocket
+         */
+        public Builder(ResourceLocation rocketId) {
+            rocket.setId(rocketId.toString());
+        }
+        
+        /**
+         * Sets the command module for the rocket.
+         * 
+         * @param commandModule The command module component
+         * @return This builder
+         */
+        public Builder commandModule(RocketComponent commandModule) {
+            rocket.addComponent(commandModule);
+            return this;
+        }
+        
+        /**
+         * Adds an engine to the rocket.
+         * 
+         * @param engine The engine component
+         * @return This builder
+         */
+        public Builder addEngine(RocketComponent engine) {
+            rocket.addComponent(engine);
+            return this;
+        }
+        
+        /**
+         * Adds a fuel tank to the rocket.
+         * 
+         * @param fuelTank The fuel tank component
+         * @return This builder
+         */
+        public Builder addFuelTank(RocketComponent fuelTank) {
+            rocket.addComponent(fuelTank);
+            return this;
+        }
+        
+        /**
          * Sets the tier for the rocket.
          *
          * @param tier The rocket tier
