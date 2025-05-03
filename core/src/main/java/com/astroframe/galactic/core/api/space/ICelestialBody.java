@@ -134,6 +134,15 @@ public interface ICelestialBody {
     }
     
     /**
+     * Sets the discovered state of this celestial body.
+     * 
+     * @param discovered true to mark as discovered, false otherwise
+     */
+    default void setDiscovered(boolean discovered) {
+        // Default implementation does nothing
+    }
+    
+    /**
      * Checks if this celestial body has liquid water.
      * 
      * @return true if the celestial body has liquid water
