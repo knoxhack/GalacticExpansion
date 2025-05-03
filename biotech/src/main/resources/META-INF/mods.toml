@@ -5,20 +5,20 @@ license="All Rights Reserved"
 issueTrackerURL="https://github.com/AstroFrame/GalacticExpansion/issues"
 
 [[mods]]
-modId="galacticspace" # Note: Changed from galactic-space to galacticspace (no hyphens)
+modId="galacticbiotech"
 version="0.1.0"
-displayName="Galactic Space"
+displayName="Galactic Biotech"
 displayURL="https://github.com/AstroFrame/GalacticExpansion"
 credits="The AstroFrame Team"
 authors="AstroFrame"
 description='''
-The Space module of the Galactic Framework, providing celestial bodies, space travel, and rocket systems.
+The Biotech module of the Galactic Framework, providing biological and agricultural systems.
 
-Explore distant planets and harness the resources of the cosmos!
+Develop space agriculture and biological utilities for your cosmic adventures!
 '''
 
 # NeoForge dependency for 1.21.5
-[[dependencies.galacticspace]]
+[[dependencies.galacticbiotech]]
     modId="neoforge"
     type="required"
     versionRange="[21.5,)"  # Requires NeoForge 21.5 or later
@@ -26,7 +26,7 @@ Explore distant planets and harness the resources of the cosmos!
     side="BOTH"
 
 # Minecraft dependency for 1.21.5
-[[dependencies.galacticspace]]
+[[dependencies.galacticbiotech]]
     modId="minecraft"
     type="required"
     versionRange="[1.21.5,1.22)"  # Requires Minecraft 1.21.5 but less than 1.22
@@ -34,8 +34,8 @@ Explore distant planets and harness the resources of the cosmos!
     side="BOTH"
     
 # Core module dependency
-[[dependencies.galacticspace]]
-    modId="galacticcore"  # Note: Changed from galactic-core to galacticcore (no hyphens)
+[[dependencies.galacticbiotech]]
+    modId="galacticcore"
     type="required"
     versionRange="[0.1.0,)"
     ordering="AFTER"
