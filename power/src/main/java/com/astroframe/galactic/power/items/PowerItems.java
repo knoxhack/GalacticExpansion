@@ -3,6 +3,7 @@ package com.astroframe.galactic.power.items;
 import com.astroframe.galactic.power.GalacticPower;
 import com.astroframe.galactic.power.registry.PowerRegistry;
 import net.minecraft.world.item.Item;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -43,8 +44,8 @@ public class PowerItems {
      * Called during the module's registry phase.
      */
     public static void init() {
-        // Register our Items DeferredRegister to the normal ITEMS DeferredRegister
-        ITEMS_HELPER.register(PowerRegistry.ITEMS);
+        // Register our Items DeferredRegister to the EVENT BUS, not to another DeferredRegister
+        ITEMS_HELPER.register(GalacticPower.MOD_EVENT_BUS);
         
         // Validate that important items are registered correctly
         if (BASIC_GENERATOR == null || ADVANCED_GENERATOR == null || SOLAR_PANEL == null) {

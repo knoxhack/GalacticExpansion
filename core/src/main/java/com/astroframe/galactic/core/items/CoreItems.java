@@ -6,6 +6,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -47,7 +48,8 @@ public class CoreItems {
             throw new IllegalStateException("Core items failed to initialize properly");
         }
         
-        // Register our Items DeferredRegister to the normal ITEMS DeferredRegister
-        ITEMS_HELPER.register(CoreRegistry.ITEMS);
+        // Register our Items DeferredRegister to the EVENT BUS, not to another DeferredRegister
+        // Both DeferredRegister.Items and regular DeferredRegister should be registered to the event bus
+        ITEMS_HELPER.register(GalacticCore.MOD_EVENT_BUS);
     }
 }
