@@ -300,8 +300,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, the method is called getData() or tag()
-            return stack.tag();
+            // In NeoForge 1.21.5, the method is called getTag()
+            return stack.getTag();
         } catch (Exception e) {
             // Fall back to our tag cache system
             UUID stackId = stackIds.get(stack);
@@ -353,9 +353,9 @@ public class ItemStackHelper {
             return false;
         }
         
-        // In NeoForge 1.21.5, check if the tag is non-null
+        // In NeoForge 1.21.5, use the hasTag method
         try {
-            return stack.tag() != null;
+            return stack.hasTag();
         } catch (Exception e) {
             // Fall back to our tag cache system if needed
             UUID stackId = stackIds.get(stack);
