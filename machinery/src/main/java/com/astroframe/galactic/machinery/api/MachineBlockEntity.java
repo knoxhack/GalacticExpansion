@@ -58,7 +58,7 @@ public abstract class MachineBlockEntity extends BlockEntityBase implements Mach
         // Create a simple implementation of the MachineEnergyStorage interface
         return new MachineEnergyStorage() {
             private int energy = 0;
-            private final int maxEnergy = getMaxEnergyCapacity();
+            private final int maxEnergy = getMaxEnergy();
             private final int maxInput = getMaxEnergyInput();
             private final int maxOutput = getMaxEnergyOutput();
 

@@ -188,6 +188,6 @@ public class ProcessorMachine extends BaseMachine {
     
     @Override
     public EnergyUnit getEnergyUnit() {
-        return EnergyUnit.GALACTIC_ENERGY_UNIT;
+        return EnergyUnit.GEU;
     }
 }
