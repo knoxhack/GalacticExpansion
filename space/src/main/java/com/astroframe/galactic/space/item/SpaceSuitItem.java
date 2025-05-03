@@ -11,8 +11,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.neoforged.neoforge.common.util.Lazy;
 
 /**
@@ -32,29 +33,29 @@ public class SpaceSuitItem extends ArmorItem {
         super(MATERIAL, type, properties);
     }
     
-    @Override
+    // Enchantment behavior methods
     public boolean isEnchantable(ItemStack stack) {
         return true;
     }
     
-    @Override
-    public int getEnchantmentValue(ItemStack stack) {
+    public int getEnchantmentValue() {
         return 15;
     }
     
-    @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        // In NeoForge 1.21.5, we need to check categories and registry IDs instead of direct comparison
-        if (enchantment.getCategory() == EnchantmentCategory.ARMOR_HEAD && getSlot().getType() == EquipmentSlot.Type.ARMOR) {
-            ResourceLocation enchId = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
-            if (enchId != null && (
-                enchId.toString().equals("minecraft:respiration") || 
-                enchId.toString().equals("minecraft:aqua_affinity"))) {
+        // In NeoForge 1.21.5, we need to check registry IDs directly
+        ResourceLocation enchId = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+        if (enchId != null) {
+            String path = enchId.getPath();
+            
+            // For helmet-specific enchantments
+            if (getType() == ArmorItem.Type.HELMET && 
+                (path.equals("respiration") || path.equals("aqua_affinity"))) {
                 return true;
             }
         }
         
-        return ArmorItem.super.canApplyAtEnchantingTable(stack, enchantment);
+        return super.canApplyAtEnchantingTable(stack, enchantment);
     }
     
     /**
@@ -64,9 +65,10 @@ public class SpaceSuitItem extends ArmorItem {
      * @return True if wearing a full space suit
      */
     public static boolean hasFullSpaceSuit(Player player) {
-        // Check each armor slot for ARMOR type
+        // Check each armor slot for main equipment slots
         for (EquipmentSlot slot : EquipmentSlot.values()) {
-            if (slot.getType() == EquipmentSlot.Type.HAND) continue; // Skip hand slots
+            // Skip non-armor slots
+            if (slot.isArmor() == false) continue;
             
             ItemStack stack = player.getItemBySlot(slot);
             // Check if empty or not a SpaceSuitItem by item registry ID
@@ -105,7 +107,8 @@ public class SpaceSuitItem extends ArmorItem {
         
         // Check each armor slot
         for (EquipmentSlot slot : EquipmentSlot.values()) {
-            if (slot.getType() == EquipmentSlot.Type.HAND) continue; // Skip hand slots
+            // Skip non-armor slots 
+            if (slot.isArmor() == false) continue;
             
             ItemStack stack = player.getItemBySlot(slot);
             if (!stack.isEmpty() && isSpaceSuit(stack)) {
@@ -158,11 +161,10 @@ public class SpaceSuitItem extends ArmorItem {
         }
         
         public net.minecraft.core.Holder<SoundEvent> getEquipSound() {
-            ResourceLocation soundLocation = ResourceLocation.parse("minecraft:item.armor.equip_iron");
-            return net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.getHolderOrThrow(
-                   net.minecraft.resources.ResourceKey.create(
-                        net.minecraft.core.registries.Registries.SOUND_EVENT, 
-                        soundLocation));
+            // Get the sound event directly by ID for NeoForge 1.21.5
+            ResourceLocation soundId = ResourceLocation.parse("minecraft:item.armor.equip_iron");
+            return BuiltInRegistries.SOUND_EVENT.wrapAsHolder(
+                BuiltInRegistries.SOUND_EVENT.get(soundId));
         }
         
         public Ingredient getRepairIngredient() {
