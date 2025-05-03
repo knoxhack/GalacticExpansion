@@ -5,7 +5,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Interface for managing space travel between planets and dimensions.
@@ -45,9 +44,9 @@ public interface ISpaceTravelManager {
     /**
      * Gets the current celestial body the player is on.
      * @param player The player
-     * @return The current celestial body, or empty if in an unrelated dimension
+     * @return The current celestial body, or null if in an unrelated dimension
      */
-    Optional<ICelestialBody> getCurrentCelestialBody(Player player);
+    ICelestialBody getCurrentCelestialBody(Player player);
     
     /**
      * Registers a new celestial body with the manager.
@@ -58,9 +57,9 @@ public interface ISpaceTravelManager {
     /**
      * Gets a celestial body by its ID.
      * @param id The celestial body ID
-     * @return The celestial body, or empty if not found
+     * @return The celestial body, or null if not found
      */
-    Optional<ICelestialBody> getCelestialBody(ResourceLocation id);
+    ICelestialBody getCelestialBody(ResourceLocation id);
     
     /**
      * Gets all registered celestial bodies.

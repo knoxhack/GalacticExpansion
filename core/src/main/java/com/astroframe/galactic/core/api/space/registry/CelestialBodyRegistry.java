@@ -6,7 +6,6 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -39,10 +38,10 @@ public class CelestialBodyRegistry {
     /**
      * Gets a celestial body by its location ID.
      * @param location The celestial body location ID
-     * @return The celestial body, or empty if not found
+     * @return The celestial body, or null if not found
      */
-    public static Optional<ICelestialBody> getCelestialBody(ResourceLocation location) {
-        return Optional.ofNullable(CELESTIAL_BODIES.get(location));
+    public static ICelestialBody getCelestialBody(ResourceLocation location) {
+        return CELESTIAL_BODIES.get(location);
     }
     
     /**
