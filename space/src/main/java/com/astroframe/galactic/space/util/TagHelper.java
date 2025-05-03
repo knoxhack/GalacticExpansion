@@ -175,4 +175,30 @@ public class TagHelper {
     public static boolean contains(CompoundTag tag, String key) {
         return tag.contains(key);
     }
+    
+    /**
+     * Get a compound tag from a compound tag.
+     * @param tag The compound tag
+     * @param key The key
+     * @return The compound tag, or null if not found or not a compound tag
+     */
+    public static CompoundTag getCompoundTag(CompoundTag tag, String key) {
+        if (tag.contains(key)) {
+            try {
+                // In NeoForge 1.21.5, the getCompound method returns an Optional<CompoundTag>
+                return tag.getCompound(key).orElse(null);
+            } catch (Exception e) {
+                // Fallback if the Optional approach doesn't work
+                try {
+                    Object tagValue = tag.get(key);
+                    if (tagValue instanceof CompoundTag) {
+                        return (CompoundTag) tagValue;
+                    }
+                } catch (Exception ex) {
+                    GalacticSpace.LOGGER.warn("Failed to get compound tag from tag: " + ex.getMessage());
+                }
+            }
+        }
+        return null;
+    }
 }

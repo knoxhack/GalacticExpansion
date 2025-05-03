@@ -7,6 +7,7 @@ import com.astroframe.galactic.space.GalacticSpace;
 import com.astroframe.galactic.space.implementation.RocketLaunchController;
 import com.astroframe.galactic.space.implementation.component.RocketComponentFactory;
 import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
+import com.astroframe.galactic.space.util.TagHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -180,34 +181,8 @@ public class ModularRocketItem extends Item {
             
             if (tag.contains("rocket")) {
                 try {
-                    // Use reflection to get the compound tag
-                    CompoundTag rocketTag = null;
-                    
-                    // In NeoForge 1.21.5, getCompound returns an Optional<CompoundTag>
-                    try {
-                        // The getCompound method now returns Optional<CompoundTag>
-                        rocketTag = tag.getCompound("rocket").orElse(null);
-                    } catch (Exception ex) {
-                        // Fall back to alternative method if the direct approach fails
-                        try {
-                            // Try using the get method directly
-                            Object rawTag = tag.get("rocket");
-                            if (rawTag instanceof CompoundTag) {
-                                rocketTag = (CompoundTag)rawTag;
-                            } else {
-                                // Last resort: reflection
-                                java.lang.reflect.Method getMethod = tag.getClass().getMethod("get", String.class);
-                                getMethod.setAccessible(true);
-                                Object result = getMethod.invoke(tag, "rocket");
-                                
-                                if (result instanceof CompoundTag) {
-                                    rocketTag = (CompoundTag)result;
-                                }
-                            }
-                        } catch (Exception e) {
-                            GalacticSpace.LOGGER.error("Failed to get rocket tag: {}", e.getMessage());
-                        }
-                    }
+                    // Use our TagHelper utility for more reliable extraction
+                    CompoundTag rocketTag = TagHelper.getCompoundTag(tag, "rocket");
                     
                     if (rocketTag == null) {
                         return null;
