@@ -60,7 +60,7 @@ public class AssemblerBlockEntity extends MachineBlockEntity {
      * @return The default processing time in ticks
      */
     @Override
-    protected int getDefaultProcessingTime() {
+    public int getDefaultProcessingTime() {
         return 200; // 10 seconds
     }
     
@@ -70,7 +70,7 @@ public class AssemblerBlockEntity extends MachineBlockEntity {
      * @return The inventory size
      */
     @Override
-    protected int getInventorySize() {
+    public int getInventorySize() {
         return 9; // 3x3 crafting grid
     }
     
@@ -80,7 +80,7 @@ public class AssemblerBlockEntity extends MachineBlockEntity {
      * @return The maximum energy
      */
     @Override
-    protected int getMaxEnergy() {
+    public int getMaxEnergy() {
         return 10000;
     }
     
@@ -90,7 +90,7 @@ public class AssemblerBlockEntity extends MachineBlockEntity {
      * @return The maximum energy input rate
      */
     @Override
-    protected int getMaxEnergyInput() {
+    public int getMaxEnergyInput() {
         return 100;
     }
     
@@ -100,7 +100,7 @@ public class AssemblerBlockEntity extends MachineBlockEntity {
      * @return The maximum energy output rate
      */
     @Override
-    protected int getMaxEnergyOutput() {
+    public int getMaxEnergyOutput() {
         return 0; // This machine does not output energy
     }
     
@@ -110,7 +110,7 @@ public class AssemblerBlockEntity extends MachineBlockEntity {
      * @return The energy consumption rate
      */
     @Override
-    protected int getEnergyConsumptionRate() {
+    public int getEnergyConsumption() {
         return 10;
     }
     
