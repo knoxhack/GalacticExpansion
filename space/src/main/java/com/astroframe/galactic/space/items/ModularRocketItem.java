@@ -146,7 +146,7 @@ public class ModularRocketItem extends Item {
         
         // Try to get the component from the registry
         ResourceLocation resLoc = ResourceLocationHelper.of(componentId);
-        IRocketComponent component = RocketComponentRegistry.getComponent(resLoc).orElse(null);
+        IRocketComponent component = RocketComponentRegistry.getComponent(resLoc);
         return component != null ? component.getName() : "Unknown";
     }
     
@@ -212,7 +212,7 @@ public class ModularRocketItem extends Item {
         String commandModuleId = TagHelper.getStringValue(tag, "commandModule");
         
         ResourceLocation cmdModRes = ResourceLocationHelper.of(commandModuleId);
-        IRocketComponent commandModule = RocketComponentRegistry.getComponent(cmdModRes).orElse(null);
+        IRocketComponent commandModule = RocketComponentRegistry.getComponent(cmdModRes);
         int commandModuleTier = commandModule != null ? commandModule.getTier() : 0;
         
         // Get highest engine tier
@@ -231,7 +231,7 @@ public class ModularRocketItem extends Item {
             
             if (!engineId.isEmpty()) {
                 ResourceLocation engineRes = ResourceLocationHelper.of(engineId);
-                IRocketComponent engine = RocketComponentRegistry.getComponent(engineRes).orElse(null);
+                IRocketComponent engine = RocketComponentRegistry.getComponent(engineRes);
                 highestEngineTier = Math.max(highestEngineTier, engine != null ? engine.getTier() : 0);
             }
         }
@@ -263,7 +263,7 @@ public class ModularRocketItem extends Item {
         }
         
         ResourceLocation cmdModRes = ResourceLocationHelper.of(commandModuleId);
-        IRocketComponent commandModuleComp = RocketComponentRegistry.getComponent(cmdModRes).orElse(null);
+        IRocketComponent commandModuleComp = RocketComponentRegistry.getComponent(cmdModRes);
         if (commandModuleComp != null && commandModuleComp instanceof ICommandModule) {
             builder.commandModule((ICommandModule) commandModuleComp);
         } else {
@@ -284,7 +284,7 @@ public class ModularRocketItem extends Item {
             
             if (!engineId.isEmpty()) {
                 ResourceLocation engineRes = ResourceLocationHelper.of(engineId);
-                IRocketComponent engineComp = RocketComponentRegistry.getComponent(engineRes).orElse(null);
+                IRocketComponent engineComp = RocketComponentRegistry.getComponent(engineRes);
                 if (engineComp != null && engineComp instanceof IRocketEngine) {
                     builder.addEngine((IRocketEngine) engineComp);
                 }
@@ -305,7 +305,7 @@ public class ModularRocketItem extends Item {
             
             if (!fuelTankId.isEmpty()) {
                 ResourceLocation fuelTankRes = ResourceLocationHelper.of(fuelTankId);
-                IRocketComponent fuelTankComp = RocketComponentRegistry.getComponent(fuelTankRes).orElse(null);
+                IRocketComponent fuelTankComp = RocketComponentRegistry.getComponent(fuelTankRes);
                 if (fuelTankComp != null && fuelTankComp instanceof IFuelTank) {
                     builder.addFuelTank((IFuelTank) fuelTankComp);
                 }

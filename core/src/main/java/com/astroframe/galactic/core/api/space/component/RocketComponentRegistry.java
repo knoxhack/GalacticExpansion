@@ -34,10 +34,10 @@ public class RocketComponentRegistry {
     /**
      * Gets a component by its ID.
      * @param id The component ID
-     * @return The component, or empty if not found
+     * @return The component, or null if not found
      */
-    public static Optional<IRocketComponent> getComponent(ResourceLocation id) {
-        return Optional.ofNullable(COMPONENTS.get(id));
+    public static IRocketComponent getComponent(ResourceLocation id) {
+        return COMPONENTS.get(id);
     }
     
     /**
@@ -84,13 +84,13 @@ public class RocketComponentRegistry {
     /**
      * Finds a component by its ID string.
      * @param id The component ID string
-     * @return The component, or empty if not found
+     * @return The component, or null if not found
      */
-    public static Optional<IRocketComponent> getComponent(String id) {
+    public static IRocketComponent getComponent(String id) {
         try {
             return getComponent(ResourceLocation.parse(id));
         } catch (Exception e) {
-            return Optional.empty();
+            return null;
         }
     }
     
