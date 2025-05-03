@@ -255,23 +255,18 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getCompound() returns Optional<CompoundTag>
-            Object result = tag.getCompound(key);
-            if (result instanceof java.util.Optional) {
-                @SuppressWarnings("unchecked")
-                java.util.Optional<CompoundTag> opt = (java.util.Optional<CompoundTag>) result;
-                return opt.orElse(null);
-            } else if (result instanceof CompoundTag) {
-                return (CompoundTag) result;
-            }
-            
-            // Try to get the raw tag and cast it
-            Tag innerTag = tag.get(key);
-            if (innerTag instanceof CompoundTag) {
-                return (CompoundTag) innerTag;
-            }
+            // In NeoForge 1.21.5, getCompound returns the value directly
+            return tag.getCompound(key);
         } catch (Exception e) {
-            // Ignore and return null
+            // Try to get the raw tag and cast it
+            try {
+                Tag innerTag = tag.get(key);
+                if (innerTag instanceof CompoundTag) {
+                    return (CompoundTag) innerTag;
+                }
+            } catch (Exception ex) {
+                // Ignore nested exception
+            }
         }
         
         return null;
@@ -329,16 +324,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getFloat returns an Optional<Float>
-            Object result = tag.getFloat(key);
-            if (result instanceof java.util.Optional) {
-                @SuppressWarnings("unchecked")
-                java.util.Optional<Float> opt = (java.util.Optional<Float>) result;
-                return opt.orElse(0.0f);
-            } else if (result instanceof Float) {
-                return (Float) result;
-            }
-            return 0.0f;
+            // In NeoForge 1.21.5, getFloat returns the value directly
+            return tag.getFloat(key);
         } catch (Exception e) {
             return 0.0f;
         }

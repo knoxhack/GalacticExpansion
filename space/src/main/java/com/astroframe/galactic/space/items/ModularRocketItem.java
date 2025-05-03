@@ -146,8 +146,8 @@ public class ModularRocketItem extends Item {
         
         // Try to get the component from the registry
         ResourceLocation resLoc = ResourceLocationHelper.of(componentId);
-        Optional<IRocketComponent> component = RocketComponentRegistry.getComponent(resLoc);
-        return component.map(c -> c.getName()).orElse("Unknown");
+        IRocketComponent component = RocketComponentRegistry.getComponent(resLoc).orElse(null);
+        return component != null ? component.getName() : "Unknown";
     }
     
     /**
@@ -212,8 +212,8 @@ public class ModularRocketItem extends Item {
         String commandModuleId = TagHelper.getStringValue(tag, "commandModule");
         
         ResourceLocation cmdModRes = ResourceLocationHelper.of(commandModuleId);
-        Optional<IRocketComponent> commandModule = RocketComponentRegistry.getComponent(cmdModRes);
-        int commandModuleTier = commandModule.map(IRocketComponent::getTier).orElse(0);
+        IRocketComponent commandModule = RocketComponentRegistry.getComponent(cmdModRes).orElse(null);
+        int commandModuleTier = commandModule != null ? commandModule.getTier() : 0;
         
         // Get highest engine tier
         int highestEngineTier = 0;
@@ -231,8 +231,8 @@ public class ModularRocketItem extends Item {
             
             if (!engineId.isEmpty()) {
                 ResourceLocation engineRes = ResourceLocationHelper.of(engineId);
-                Optional<IRocketComponent> engine = RocketComponentRegistry.getComponent(engineRes);
-                highestEngineTier = Math.max(highestEngineTier, engine.map(IRocketComponent::getTier).orElse(0));
+                IRocketComponent engine = RocketComponentRegistry.getComponent(engineRes).orElse(null);
+                highestEngineTier = Math.max(highestEngineTier, engine != null ? engine.getTier() : 0);
             }
         }
         
