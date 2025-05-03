@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
@@ -19,6 +20,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -265,8 +267,9 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
                     CompoundTag componentTag = new CompoundTag();
                     componentTag.putString("id", BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
                     componentTag.putByte("Count", (byte)stack.getCount());
-                    if (stack.hasTag()) {
-                        componentTag.put("tag", stack.getTag().copy());
+                    CompoundTag stackTag = stack.getTag();
+                    if (stackTag != null) {
+                        componentTag.put("tag", stackTag.copy());
                     }
                     componentsTag.add(componentTag);
                 }
@@ -301,8 +304,9 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putString("id", BuiltInRegistries.ITEM.getKey(components.get(i).getItem()).toString());
                 itemTag.putByte("Count", (byte)components.get(i).getCount());
-                if (components.get(i).hasTag()) {
-                    itemTag.put("tag", components.get(i).getTag().copy());
+                CompoundTag compTag = components.get(i).getTag();
+                if (compTag != null) {
+                    itemTag.put("tag", compTag.copy());
                 }
                 tag.put("Item" + i, itemTag);
             }
@@ -330,9 +334,20 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
             // In NeoForge 1.21.5, contains() method signature has changed and doesn't take tag type
             if (tag.contains("Item" + i)) {
                 // In NeoForge 1.21.5, getCompound returns the tag directly rather than Optional<CompoundTag>
-                CompoundTag itemTag = tag.getCompound("Item" + i).orElse(new CompoundTag());
-                // In NeoForge 1.21.5, use ItemStack.of to create from CompoundTag
-                components.set(i, net.minecraft.world.item.ItemStack.of(itemTag));
+                CompoundTag itemTag = tag.getCompound("Item" + i);
+                // In NeoForge 1.21.5, manually create the ItemStack from tag
+                // In NeoForge 1.21.5, getString() returns the value directly instead of Optional
+                String itemId = itemTag.getString("id");
+                if (itemId != null && !itemId.isEmpty()) {
+                    ResourceLocation itemLocation = ResourceLocation.parse(itemId);
+                    Item item = BuiltInRegistries.ITEM.get(itemLocation);
+                    int count = itemTag.getByte("Count");
+                    ItemStack stack = new ItemStack(item, count);
+                    if (itemTag.contains("tag")) {
+                        stack.setTag(itemTag.getCompound("tag"));
+                    }
+                    components.set(i, stack);
+                }
             }
         }
         
