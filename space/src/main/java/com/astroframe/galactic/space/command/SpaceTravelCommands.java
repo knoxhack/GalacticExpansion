@@ -8,7 +8,7 @@ import com.astroframe.galactic.space.GalacticSpace;
 import com.astroframe.galactic.space.dimension.SpaceStationDimension;
 import com.astroframe.galactic.space.dimension.SpaceStationTeleporter;
 import com.astroframe.galactic.space.implementation.RocketLaunchController;
-import com.astroframe.galactic.space.implementation.SpaceBodies;
+import com.astroframe.galactic.space.registry.SpaceBodies;
 import com.astroframe.galactic.space.implementation.SpaceTravelManager;
 import com.astroframe.galactic.space.implementation.component.RocketComponentFactory;
 import com.astroframe.galactic.space.item.ModularRocketItem;

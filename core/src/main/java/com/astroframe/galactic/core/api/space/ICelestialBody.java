@@ -1,5 +1,8 @@
 package com.astroframe.galactic.core.api.space;
 
+import com.astroframe.galactic.core.api.space.CelestialBodyType;
+import com.astroframe.galactic.core.api.space.TemperatureRange;
+import com.astroframe.galactic.core.api.space.RadiationLevel;
 import net.minecraft.resources.ResourceLocation;
 
 /**
