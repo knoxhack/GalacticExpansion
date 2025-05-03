@@ -347,8 +347,8 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
                 String itemId = com.astroframe.galactic.space.items.ItemStackHelper.getString(itemTag, "id");
                 if (itemId != null && !itemId.isEmpty()) {
                     ResourceLocation itemLocation = ResourceLocation.parse(itemId);
-                    // Need to use ForgeRegistries for direct registry lookup
-                    Item item = ForgeRegistries.ITEMS.getValue(itemLocation);
+                    // Need to use BuiltInRegistries for direct registry lookup
+                    Item item = BuiltInRegistries.ITEM.get(itemLocation);
                     // In NeoForge 1.21.5, we use regular getByte without unwrapping
                     int count = itemTag.contains("Count") ? itemTag.getByte("Count") : 1;
                     ItemStack stack = new ItemStack(item, count);

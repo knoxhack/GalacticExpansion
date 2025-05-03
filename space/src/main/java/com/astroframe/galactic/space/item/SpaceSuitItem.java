@@ -50,9 +50,8 @@ public class SpaceSuitItem extends ArmorItem {
         // In NeoForge 1.21.5, access the enchantment registry using BuiltInRegistries and ResourceKey
         ResourceLocation enchLocation = null;
         try {
-            // In NeoForge 1.21.5, use the correct registry reference
-            // ForgeRegistries should be used for mod-related registries
-            enchLocation = ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
+            // In NeoForge 1.21.5, use BuiltInRegistries for the enchantment registry
+            enchLocation = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
         } catch (Exception e) {
             // If all else fails, just return default value
             return false;
@@ -103,8 +102,8 @@ public class SpaceSuitItem extends ArmorItem {
         if (stack.isEmpty()) return false;
         
         Item item = stack.getItem();
-        // In NeoForge 1.21.5, use ForgeRegistries for item registry lookups
-        ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(item);
+        // In NeoForge 1.21.5, use BuiltInRegistries for item registry lookups
+        ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item);
         return itemId != null && itemId.getPath().contains("space_suit");
     }
     
@@ -175,8 +174,8 @@ public class SpaceSuitItem extends ArmorItem {
         }
         
         public net.minecraft.core.Holder<SoundEvent> getEquipSound() {
-            // In NeoForge 1.21.5, SoundEvents are already Holders so we need to extract and rewrap
-            return net.minecraft.core.Holder.direct(SoundEvents.ARMOR_EQUIP_IRON.value());
+            // In NeoForge 1.21.5, SoundEvents are references so we need direct holder
+            return net.minecraft.core.Holder.direct(SoundEvents.ARMOR_EQUIP_IRON);
         }
         
         public Ingredient getRepairIngredient() {

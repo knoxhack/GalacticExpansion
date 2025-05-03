@@ -119,8 +119,8 @@ public class ItemStackHelper {
      */
     public static ItemStack createStack(ResourceLocation location, int count) {
         try {
-            // In NeoForge 1.21.5, use ForgeRegistries for direct registry lookup
-            Item item = ForgeRegistries.ITEMS.getValue(location);
+            // In NeoForge 1.21.5, use BuiltInRegistries for direct registry lookup
+            Item item = BuiltInRegistries.ITEM.get(location);
             
             if (item == Items.AIR) {
                 return ItemStack.EMPTY;
@@ -157,8 +157,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getString returns an Optional<String> that needs unwrapping
-            return tag.getString(key).orElse("");
+            // In NeoForge 1.21.5, getString returns the string directly
+            return tag.getString(key);
         } catch (Exception e) {
             return "";
         }
@@ -177,8 +177,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getInt returns an Optional<Integer> that needs unwrapping
-            return tag.getInt(key).orElse(0);
+            // In NeoForge 1.21.5, getInt returns the int directly
+            return tag.getInt(key);
         } catch (Exception e) {
             return 0;
         }
@@ -198,8 +198,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getList returns an Optional<ListTag> that needs unwrapping
-            return tag.getList(key).orElse(null);
+            // In NeoForge 1.21.5, getList returns the ListTag directly
+            return tag.getList(key);
         } catch (Exception e) {
             // Fallback to null on any error
             try {
