@@ -119,8 +119,9 @@ public class ItemStackHelper {
      */
     public static ItemStack createStack(ResourceLocation location, int count) {
         try {
-            // In NeoForge 1.21.5, use BuiltInRegistries for direct registry lookup
-            Item item = BuiltInRegistries.ITEM.get(location);
+            // In NeoForge 1.21.5, BuiltInRegistries.ITEM.get() returns an Optional<Reference<Item>>
+            Optional<? extends Reference<Item>> itemRef = BuiltInRegistries.ITEM.get(location);
+            Item item = itemRef.isPresent() ? itemRef.get().value() : Items.AIR;
             
             if (item == Items.AIR) {
                 return ItemStack.EMPTY;
@@ -157,8 +158,9 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getString returns the string directly
-            return tag.getString(key);
+            // In NeoForge 1.21.5, getString returns an Optional<String>
+            Optional<String> value = tag.getString(key);
+            return value.orElse("");
         } catch (Exception e) {
             return "";
         }
@@ -177,8 +179,9 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getInt returns the int directly
-            return tag.getInt(key);
+            // In NeoForge 1.21.5, getInt returns an Optional<Integer>
+            Optional<Integer> value = tag.getInt(key);
+            return value.orElse(0);
         } catch (Exception e) {
             return 0;
         }
@@ -198,8 +201,9 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getList returns the ListTag directly
-            return tag.getList(key);
+            // In NeoForge 1.21.5, getList returns an Optional<ListTag>
+            Optional<ListTag> value = tag.getList(key);
+            return value.orElse(null);
         } catch (Exception e) {
             // Fallback to null on any error
             try {
@@ -294,8 +298,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // Check for the getNbt method which is the correct name in NeoForge 1.21.5
-            return stack.getNbt();
+            // In NeoForge 1.21.5, the method is called getTag(), not getNbt()
+            return stack.getTag();
         } catch (Exception e) {
             // Fall back to our tag cache system
             UUID stackId = stackIds.get(stack);
@@ -319,8 +323,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, use setNbt() instead of setTag()
-            stack.setNbt(tag);
+            // In NeoForge 1.21.5, the method is called setTag(), not setNbt()
+            stack.setTag(tag);
         } catch (Exception e) {
             // Fall back to our tag cache system
             if (tag == null) {
@@ -347,14 +351,19 @@ public class ItemStackHelper {
             return false;
         }
         
-        // For NeoForge 1.21.5: use our tag cache system
-        UUID stackId = stackIds.get(stack);
-        if (stackId == null) {
-            return false; 
+        // In NeoForge 1.21.5, we can call hasTag() directly
+        try {
+            return stack.hasTag();
+        } catch (Exception e) {
+            // Fall back to our tag cache system if needed
+            UUID stackId = stackIds.get(stack);
+            if (stackId == null) {
+                return false; 
+            }
+            
+            CompoundTag tag = tagCache.get(stackId);
+            return tag != null && !tag.isEmpty();
         }
-        
-        CompoundTag tag = tagCache.get(stackId);
-        return tag != null && !tag.isEmpty();
     }
     
     /**
@@ -371,8 +380,9 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getFloat returns the float directly (no Optional)
-            return tag.getFloat(key);
+            // In NeoForge 1.21.5, getFloat returns an Optional<Float>
+            Optional<Float> value = tag.getFloat(key);
+            return value.orElse(0.0f);
         } catch (Exception e) {
             return 0.0f;
         }
