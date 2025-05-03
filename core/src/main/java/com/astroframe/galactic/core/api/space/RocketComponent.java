@@ -273,34 +273,54 @@ public class RocketComponent {
         }
         
         if (tag.contains("type")) {
+            // In NeoForge 1.21.5, getString returns the actual value, not an Optional
             String typeStr = tag.getString("type");
-            this.type = RocketComponentType.getById(typeStr);
+            if (typeStr != null && !typeStr.isEmpty()) {
+                this.type = RocketComponentType.getById(typeStr);
+            }
         }
         
         if (tag.contains("tier")) {
+            // Direct access in NeoForge 1.21.5
             this.tier = tag.getInt("tier");
+            // Validate tier range
+            if (this.tier < 1 || this.tier > 5) {
+                this.tier = 1;
+            }
         }
         
         if (tag.contains("mass")) {
             this.mass = tag.getFloat("mass");
+            if (this.mass <= 0) {
+                this.mass = calculateMass();
+            }
         } else {
             this.mass = calculateMass();
         }
         
         if (tag.contains("durability")) {
             this.durability = tag.getFloat("durability");
+            if (this.durability < 0) {
+                this.durability = calculateDurability();
+            }
         } else {
             this.durability = calculateDurability();
         }
         
         if (tag.contains("maxDurability")) {
             this.maxDurability = tag.getFloat("maxDurability");
+            if (this.maxDurability <= 0) {
+                this.maxDurability = calculateDurability();
+            }
         } else {
             this.maxDurability = calculateDurability();
         }
         
         if (tag.contains("efficiency")) {
             this.efficiency = tag.getFloat("efficiency");
+            if (this.efficiency < 0 || this.efficiency > 1) {
+                this.efficiency = calculateEfficiency();
+            }
         } else {
             this.efficiency = calculateEfficiency();
         }

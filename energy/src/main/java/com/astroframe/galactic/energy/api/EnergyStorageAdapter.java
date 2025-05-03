@@ -61,9 +61,19 @@ public class EnergyStorageAdapter implements EnergyStorage {
     
     @Override
     public EnergyType getEnergyType() {
-        // Use a default type based on the energy unit
-        // In the future we can implement a proper mapping between units and types
-        switch (original.getEnergyUnit()) {
+        // Map from core API energy unit to energy module energy type
+        EnergyUnit unit = original.getEnergyUnit();
+        if (unit == null) {
+            return EnergyType.ELECTRICAL; // Default
+        }
+        
+        switch (unit) {
+            case FE:
+            case GEU:
+                return EnergyType.ELECTRICAL;
+            case FUEL:
+                return EnergyType.THERMAL;
+            case JOULE:
             default:
                 return EnergyType.ELECTRICAL;
         }
