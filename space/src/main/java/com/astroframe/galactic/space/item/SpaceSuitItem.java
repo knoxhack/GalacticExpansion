@@ -13,6 +13,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
+import java.util.Optional;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.common.util.Lazy;
@@ -49,8 +50,13 @@ public class SpaceSuitItem extends ArmorItem {
         // In NeoForge 1.21.5, access the enchantment registry using BuiltInRegistries and ResourceKey
         ResourceLocation enchLocation = null;
         try {
-            // Get the registry key directly from the builtin registry for enchantments in NeoForge 1.21.5
-            enchLocation = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+            // Get the registry key directly from the registry reference in NeoForge 1.21.5
+            Optional<net.minecraft.core.Holder.Reference<Enchantment>> holder = 
+                net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getHolder(
+                    net.minecraft.core.registries.Registries.ENCHANTMENT, 
+                    enchantment
+                );
+            enchLocation = holder.map(h -> h.key().location()).orElse(null);
         } catch (Exception e) {
             // If all else fails, just return default value
             return false;
@@ -101,8 +107,13 @@ public class SpaceSuitItem extends ArmorItem {
         if (stack.isEmpty()) return false;
         
         Item item = stack.getItem();
-        // Check the registry name of the item
-        ResourceLocation itemId = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item);
+        // Check the registry name of the item - in NeoForge 1.21.5, we need to get the holder and extract the key
+        Optional<net.minecraft.core.Holder.Reference<Item>> holder = 
+            net.minecraft.core.registries.BuiltInRegistries.ITEM.getHolder(
+                net.minecraft.core.registries.Registries.ITEM, 
+                item
+            );
+        ResourceLocation itemId = holder.map(h -> h.key().location()).orElse(null);
         return itemId != null && itemId.getPath().contains("space_suit");
     }
     

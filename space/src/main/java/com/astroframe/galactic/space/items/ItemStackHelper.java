@@ -11,6 +11,7 @@ import net.minecraft.world.item.Items;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -116,8 +117,9 @@ public class ItemStackHelper {
      */
     public static ItemStack createStack(ResourceLocation location, int count) {
         try {
-            // In NeoForge 1.21.5, we need to lookup the item by its real registry key using BuiltInRegistries
-            Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(location);
+            // In NeoForge 1.21.5, we need to lookup the item by its registry key and handle the Optional return
+            Optional<net.minecraft.core.Holder<Item>> holder = net.minecraft.core.registries.BuiltInRegistries.ITEM.getHolder(location);
+            Item item = holder.map(net.minecraft.core.Holder::value).orElse(Items.AIR);
             
             if (item == Items.AIR) {
                 return ItemStack.EMPTY;
