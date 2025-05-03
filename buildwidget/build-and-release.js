@@ -807,5 +807,7 @@ module.exports = {
     getModuleDependencies,
     formatChangelogMarkdown,
     saveVersionHistory,
-    saveChangelogHistory
+    saveChangelogHistory,
+    getShortCommitChanges,
+    formatShortCommitMessage
 };

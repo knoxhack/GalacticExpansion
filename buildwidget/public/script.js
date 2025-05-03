@@ -198,6 +198,9 @@ function connectWebSocket() {
                 case 'moduleStatus':
                     updateModuleStatus(data);
                     break;
+                case 'shortCommits':
+                    updateShortCommits(data);
+                    break;
                 case 'versionHistory':
                 case 'versionInfo':
                     updateVersionInfo(data);

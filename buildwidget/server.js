@@ -139,6 +139,25 @@ app.get('/api/changelogs', (req, res) => {
   });
 });
 
+// Endpoint for short commit changes
+app.get('/api/commits/short', async (req, res) => {
+  try {
+    const limit = req.query.limit ? parseInt(req.query.limit) : 5;
+    const shortCommits = await getShortCommitChanges(limit);
+    res.json({
+      success: true,
+      commits: shortCommits
+    });
+  } catch (error) {
+    console.error('Error getting short commits:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch short commit changes',
+      message: error.message
+    });
+  }
+});
+
 // Endpoint for build metrics
 app.get('/api/metrics', (req, res) => {
   res.json(getBuildMetrics());
@@ -405,6 +424,29 @@ wss.on('connection', (ws) => {
             type: 'dependencies', 
             data: getModuleDependencies() 
           }));
+        }
+      } else if (data.type === 'requestShortCommits') {
+        // Send short commit history
+        try {
+          const limit = data.limit || 5;
+          getShortCommitChanges(limit).then(commits => {
+            if (ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({
+                type: 'shortCommits',
+                data: commits
+              }));
+            }
+          }).catch(error => {
+            console.error('Error getting short commits:', error);
+            if (ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({
+                type: 'error',
+                data: 'Failed to fetch short commit changes'
+              }));
+            }
+          });
+        } catch (error) {
+          console.error('Error processing short commits request:', error);
         }
       } else if (data.type === 'customNotification') {
         // Handle custom notification from client
