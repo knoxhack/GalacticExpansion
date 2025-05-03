@@ -273,20 +273,9 @@ public class ItemStackHelper {
     }
     
     /**
-     * Helper method to handle OptionalXXX return types in NeoForge 1.21.5
+     * This method has been removed as OptionalXXX return types are no longer used in NeoForge 1.21.5
+     * Direct access via getInt, getFloat, etc. now returns values directly.
      */
-    @SuppressWarnings("unchecked")
-    private static <T> java.util.Optional<T> getOptional(CompoundTag tag, String key, Function<String, Object> getter) {
-        try {
-            Object result = getter.apply(key);
-            if (result instanceof java.util.Optional) {
-                return (java.util.Optional<T>) result;
-            }
-            return java.util.Optional.ofNullable((T) result);
-        } catch (Exception e) {
-            return java.util.Optional.empty();
-        }
-    }
     
     /**
      * Checks if an ItemStack has a tag.
@@ -312,7 +301,7 @@ public class ItemStackHelper {
     
     /**
      * Safely gets a float from a compound tag.
-     * Works with NeoForge 1.21.5 where getFloat returns Optional<Float>.
+     * Updated for NeoForge 1.21.5 where getFloat returns the value directly.
      * 
      * @param tag The tag
      * @param key The key
