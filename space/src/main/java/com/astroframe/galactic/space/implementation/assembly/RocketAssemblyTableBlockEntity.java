@@ -307,9 +307,9 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
      */
     @Override
     protected void loadData(CompoundTag tag) {
-        // Load components
+        // Load components with proper Provider parameter for NeoForge 1.21.5
         components = NonNullList.withSize(9, ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(tag, components);
+        ContainerHelper.loadAllItems(tag, components, net.minecraft.core.registries.BuiltInRegistries.ITEM);
         
         // Load rocket data
         if (tag.contains("RocketData")) {
