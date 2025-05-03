@@ -113,6 +113,52 @@ public class ItemStackHelper {
     }
     
     /**
+     * Helper method to handle the Optional<Reference<Item>> returns in NeoForge 1.21.5
+     * 
+     * @param location The resource location to resolve
+     * @return The resolved Item or Items.AIR if not found
+     */
+    public static Item resolveItemFromRegistry(ResourceLocation location) {
+        try {
+            // In NeoForge 1.21.5, registry lookups return Optional<Reference<Type>>
+            Object result = BuiltInRegistries.ITEM.get(location);
+            
+            // Handle Optional<Reference<Item>> case
+            if (result instanceof Optional) {
+                Optional<?> optional = (Optional<?>) result;
+                if (optional.isPresent()) {
+                    Object reference = optional.get();
+                    // Try to get the value() method from the Reference class
+                    try {
+                        Method valueMethod = reference.getClass().getMethod("value");
+                        Object value = valueMethod.invoke(reference);
+                        if (value instanceof Item) {
+                            return (Item) value;
+                        }
+                    } catch (Exception e) {
+                        // If we can't use value(), try toString() and lookup again
+                        String itemId = reference.toString();
+                        if (itemId != null && !itemId.isEmpty()) {
+                            return Items.AIR; // Fallback if we can't extract the item
+                        }
+                    }
+                }
+                // If we got here, the Optional was empty or we couldn't extract the item
+                return Items.AIR;
+            } 
+            // Direct Item case (older versions)
+            else if (result instanceof Item) {
+                return (Item) result;
+            }
+            
+            // Default fallback
+            return Items.AIR;
+        } catch (Exception e) {
+            return Items.AIR;
+        }
+    }
+
+    /**
      * Creates an ItemStack from a ResourceLocation and count.
      * 
      * @param location The resource location for the item

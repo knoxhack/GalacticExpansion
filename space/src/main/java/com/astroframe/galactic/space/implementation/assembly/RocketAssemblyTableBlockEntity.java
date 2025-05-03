@@ -25,6 +25,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import java.util.Optional;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -348,9 +350,27 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
                 if (itemId != null && !itemId.isEmpty()) {
                     ResourceLocation itemLocation = ResourceLocation.parse(itemId);
                     // Need to use BuiltInRegistries for direct registry lookup
-                    Item item = BuiltInRegistries.ITEM.get(itemLocation);
-                    // In NeoForge 1.21.5, we use regular getByte without unwrapping
-                    int count = itemTag.contains("Count") ? itemTag.getByte("Count") : 1;
+                    // Use our helper to handle Optional<Reference<Item>> in NeoForge 1.21.5
+                    Item item = com.astroframe.galactic.space.items.ItemStackHelper.resolveItemFromRegistry(itemLocation);
+                    if (item == null || item == Items.AIR) {
+                        continue;
+                    }
+                    
+                    // In NeoForge 1.21.5, getByte may return Optional<Byte>
+                    int count = 1;
+                    if (itemTag.contains("Count")) {
+                        try {
+                            Object countObj = itemTag.getByte("Count");
+                            if (countObj instanceof Optional) {
+                                Optional<?> opt = (Optional<?>)countObj;
+                                count = opt.isPresent() ? ((Number)opt.get()).intValue() : 1;
+                            } else if (countObj instanceof Number) {
+                                count = ((Number)countObj).intValue();
+                            }
+                        } catch (Exception e) {
+                            count = 1;
+                        }
+                    }
                     ItemStack stack = new ItemStack(item, count);
                     if (itemTag.contains("tag")) {
                         // In NeoForge 1.21.5, get the compound tag via our helper

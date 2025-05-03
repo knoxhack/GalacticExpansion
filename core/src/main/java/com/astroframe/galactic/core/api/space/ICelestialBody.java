@@ -3,6 +3,30 @@ package com.astroframe.galactic.core.api.space;
 import net.minecraft.resources.ResourceLocation;
 
 /**
+ * Celestial body temperature range categories.
+ */
+enum TemperatureRange {
+    EXTREME_COLD,
+    VERY_COLD,
+    COLD,
+    TEMPERATE,
+    HOT,
+    VERY_HOT,
+    EXTREME_HOT
+}
+
+/**
+ * Celestial body radiation level categories.
+ */
+enum RadiationLevel {
+    NONE,
+    LOW,
+    MODERATE,
+    HIGH,
+    EXTREME
+}
+
+/**
  * Interface for celestial bodies such as planets, moons, asteroids, etc.
  */
 public interface ICelestialBody {
