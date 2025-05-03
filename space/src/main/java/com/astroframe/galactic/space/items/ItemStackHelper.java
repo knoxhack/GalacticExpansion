@@ -1,6 +1,7 @@
 package com.astroframe.galactic.space.items;
 
 import com.astroframe.galactic.space.util.ResourceLocationHelper;
+import net.minecraft.core.Reference;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -119,11 +120,9 @@ public class ItemStackHelper {
      */
     public static ItemStack createStack(ResourceLocation location, int count) {
         try {
-            // In NeoForge 1.21.5, use BuiltInRegistries
-            Item item = BuiltInRegistries.ITEM.get(location);
-            if (item == null) {
-                item = Items.AIR;
-            }
+            // In NeoForge 1.21.5, the registry returns Optional<Reference<Item>>
+            Optional<Reference<Item>> itemRef = BuiltInRegistries.ITEM.get(location);
+            Item item = itemRef.isPresent() ? itemRef.get().value() : Items.AIR;
             
             if (item == Items.AIR) {
                 return ItemStack.EMPTY;
@@ -262,8 +261,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getCompound returns an Optional<CompoundTag> that needs unwrapping
-            return tag.getCompound(key).orElse(null);
+            // In NeoForge 1.21.5, getCompound returns a CompoundTag directly
+            return tag.getCompound(key);
         } catch (Exception e) {
             // Try to get the raw tag and cast it
             try {
