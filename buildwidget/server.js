@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const fs = require('fs');
-const { WebSocketServer } = require('ws');
+const { WebSocketServer, WebSocket } = require('ws');
 const { exec } = require('child_process');
 const { promisify } = require('util');
 const execAsync = promisify(exec);
@@ -32,9 +32,6 @@ const wss = new WebSocketServer({
   path: '/ws',
   clientTracking: true 
 });
-
-// Import WebSocket for readyState constants
-const WebSocket = require('ws');
 
 // Middleware for JSON handling
 app.use(express.json());
@@ -265,14 +262,14 @@ wss.on('connection', (ws) => {
   
   // Send current build status to client
   const sendStatus = () => {
-    if (ws.readyState === ws.OPEN) {
+    if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'status', data: buildStatus }));
     }
   };
   
   // Send build output to client
   const sendBuildOutput = (output) => {
-    if (ws.readyState === ws.OPEN) {
+    if (ws.readyState === WebSocket.OPEN) {
       try {
         // Ensure output is properly formatted
         let formattedOutput = output;
@@ -312,21 +309,21 @@ wss.on('connection', (ws) => {
   
   // Send task updates to client
   const sendTaskUpdates = (tasks) => {
-    if (ws.readyState === ws.OPEN) {
+    if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'tasks', data: tasks }));
     }
   };
   
   // Send error message to client
   const sendError = (errorMessage) => {
-    if (ws.readyState === ws.OPEN) {
+    if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'error', data: errorMessage }));
     }
   };
   
   // Send notifications to client
   const sendNotifications = (notifications) => {
-    if (ws.readyState === ws.OPEN) {
+    if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'notifications', data: notifications }));
     }
   };
@@ -387,7 +384,7 @@ wss.on('connection', (ws) => {
         }
       } else if (data.type === 'requestVersionHistory') {
         // Send version history data
-        if (ws.readyState === ws.OPEN) {
+        if (ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify({ 
             type: 'versionHistory', 
             data: getVersionHistory() 
@@ -395,7 +392,7 @@ wss.on('connection', (ws) => {
         }
       } else if (data.type === 'requestChangelogHistory') {
         // Send changelog history data
-        if (ws.readyState === ws.OPEN) {
+        if (ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify({ 
             type: 'changelogHistory', 
             data: getChangelogHistory() 
@@ -403,7 +400,7 @@ wss.on('connection', (ws) => {
         }
       } else if (data.type === 'requestDependencies') {
         // Send module dependencies
-        if (ws.readyState === ws.OPEN) {
+        if (ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify({ 
             type: 'dependencies', 
             data: getModuleDependencies() 
@@ -416,7 +413,7 @@ wss.on('connection', (ws) => {
         }
       } else if (data.type === 'requestMetrics') {
         // Send build metrics
-        if (ws.readyState === ws.OPEN) {
+        if (ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify({ 
             type: 'metrics', 
             data: getBuildMetrics() 
@@ -989,14 +986,14 @@ function broadcastMetrics() {
   
   // Send to all clients - both ways to ensure delivery
   clients.forEach((handlers, client) => {
-    if (client.readyState === client.OPEN) {
+    if (client.readyState === WebSocket.OPEN) {
       handlers.sendStatus();
     }
   });
   
   // Also send to all clients using the WSS clients collection
   wss.clients.forEach(client => {
-    if (client.readyState === client.OPEN) {
+    if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify({ type: 'metrics', data: metricsData }));
     }
   });
