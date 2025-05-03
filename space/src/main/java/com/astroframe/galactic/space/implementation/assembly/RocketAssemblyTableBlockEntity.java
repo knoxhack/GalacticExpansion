@@ -491,15 +491,38 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
      * @return The ItemStack with the tag set
      */
     private ItemStack setTagForStack(ItemStack stack, CompoundTag tag) {
-        // For NeoForge 1.21.5, we need to use reflection to get tag data
-        // This is a workaround since the original ItemStack.getTag() is not available
+        // For NeoForge 1.21.5, we need to use reflection to set tag data
+        // This is a workaround since the original ItemStack.setTag() is not available
         try {
-            // In NeoForge 1.21.5, use a Consumer to set the tag
-            stack.setTag(tag);
+            // In NeoForge 1.21.5, we need to use a different approach with reflection
+            java.lang.reflect.Method setTagMethod = stack.getClass().getMethod("setTag", CompoundTag.class);
+            setTagMethod.setAccessible(true);
+            setTagMethod.invoke(stack, tag);
             return stack;
         } catch (Exception e) {
             System.err.println("Failed to set tag on ItemStack: " + e.getMessage());
-            return stack; // Return original stack if tag setting fails
+            
+            // Fallback: Try to create a new ItemStack with the tag
+            try {
+                // Create a new stack with the same item and count
+                ItemStack newStack = new ItemStack(stack.getItem(), stack.getCount());
+                
+                // Try to find a consumer method that takes the tag
+                java.lang.reflect.Method consumerMethod = newStack.getClass().getMethod("setTagElement", String.class, Tag.class);
+                if (consumerMethod != null) {
+                    // If there's a tag, iterate through its keys and add each element
+                    for (String key : tag.getAllKeys()) {
+                        Tag value = tag.get(key);
+                        if (value != null) {
+                            consumerMethod.invoke(newStack, key, value);
+                        }
+                    }
+                }
+                return newStack;
+            } catch (Exception ex) {
+                System.err.println("Complete failure setting tag: " + ex.getMessage());
+                return stack; // Return original stack as last resort
+            }
         }
     }
     
