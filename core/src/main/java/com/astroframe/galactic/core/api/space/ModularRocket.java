@@ -18,7 +18,8 @@ public class ModularRocket implements IRocket {
      * Creates a new modular rocket with default parameters.
      */
     public ModularRocket() {
-        // Default constructor
+        // Default constructor for NeoForge 1.21.5
+        System.out.println("Creating modular rocket for NeoForge 1.21.5");
     }
     
     /**
@@ -166,23 +167,23 @@ public class ModularRocket implements IRocket {
         }
         
         if (tag.contains("tier")) {
-            tier = tag.getInt("tier");
+            tier = tag.getInt("tier").orElse(1);
         }
         
         if (tag.contains("fuel")) {
-            fuel = tag.getFloat("fuel");
+            fuel = tag.getFloat("fuel").orElse(0.0f);
         }
         
         if (tag.contains("fuelCapacity")) {
-            fuelCapacity = tag.getFloat("fuelCapacity");
+            fuelCapacity = tag.getFloat("fuelCapacity").orElse(1000.0f);
         }
         
         if (tag.contains("mass")) {
-            mass = tag.getFloat("mass");
+            mass = tag.getFloat("mass").orElse(1000.0f);
         }
         
         if (tag.contains("thrust")) {
-            thrust = tag.getFloat("thrust");
+            thrust = tag.getFloat("thrust").orElse(5000.0f);
         }
     }
 }
