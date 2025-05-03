@@ -67,6 +67,9 @@ public class RocketEngineImpl implements IRocketEngine {
         // Set durability based on tier
         this.maxDurability = 500 * tier;
         this.currentDurability = this.maxDurability;
+        
+        // Initialize position to origin
+        this.position = new Vec3(0, 0, 0);
     }
     
     /**
@@ -185,6 +188,16 @@ public class RocketEngineImpl implements IRocketEngine {
     }
     
     @Override
+    public Vec3 getPosition() {
+        return position;
+    }
+    
+    @Override
+    public void setPosition(Vec3 position) {
+        this.position = position;
+    }
+    
+    @Override
     public void save(net.minecraft.nbt.CompoundTag tag) {
         // Save basic component properties
         tag.putString("ID", getId().toString());
@@ -216,6 +229,14 @@ public class RocketEngineImpl implements IRocketEngine {
             fuelsStr.append(fuel.name());
         }
         tag.putString("CompatibleFuels", fuelsStr.toString());
+        
+        // Save position if component has a non-default position
+        Vec3 pos = getPosition();
+        if (pos.x != 0 || pos.y != 0 || pos.z != 0) {
+            tag.putDouble("PosX", pos.x);
+            tag.putDouble("PosY", pos.y);
+            tag.putDouble("PosZ", pos.z);
+        }
     }
     
     @Override
