@@ -178,7 +178,6 @@ public class PlayerDataMigration {
      */
     private static class MockCelestialBody implements com.astroframe.galactic.core.api.space.ICelestialBody {
         private final ResourceLocation id;
-        private boolean discovered = true;
         
         public MockCelestialBody(ResourceLocation id) {
             this.id = id;
@@ -195,76 +194,42 @@ public class PlayerDataMigration {
         }
         
         @Override
-        public String getDescription() {
-            return "Migrated celestial body";
-        }
-        
-        @Override
-        public CelestialBodyType getType() {
-            return CelestialBodyType.PLANET;
-        }
-        
-        @Override
-        public ICelestialBody getParent() {
-            return null;
-        }
-        
-        @Override
-        public int getDistanceFromHome() {
-            return 0;
-        }
-        
-        @Override
-        public float getRelativeSize() {
+        public float getDistance() {
             return 1.0f;
         }
         
         @Override
-        public float getRelativeGravity() {
-            return 1.0f;
-        }
-        
-        @Override
-        public float getAtmosphereDensity() {
-            return 1.0f;
-        }
-        
-        @Override
-        public TemperatureRange getTemperatureRange() {
-            return TemperatureRange.TEMPERATE;
-        }
-        
-        @Override
-        public RadiationLevel getRadiationLevel() {
-            return RadiationLevel.NONE;
-        }
-        
-        @Override
-        public int getRocketTierRequired() {
+        public int getRequiredTier() {
             return 1;
         }
         
         @Override
-        public boolean hasBreathableAtmosphere() {
+        public float getGravity() {
+            return 1.0f;
+        }
+        
+        @Override
+        public boolean hasAtmosphere() {
             return true;
         }
         
         @Override
-        public boolean hasLiquidWater() {
-            return true;
+        public float getAtmosphericPressure() {
+            return 1.0f;
         }
         
         @Override
-        public boolean hasUniqueResources() {
-            return false;
+        public float getTemperature() {
+            return 20.0f;
         }
         
-        @Override
+        private boolean discovered = true;
+        
+        // Extra methods for compatibility with old code
         public boolean isDiscovered() {
             return discovered;
         }
         
-        @Override
         public void setDiscovered(boolean discovered) {
             this.discovered = discovered;
         }

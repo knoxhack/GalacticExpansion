@@ -82,10 +82,10 @@ public class SpaceSuitItem extends ArmorItem {
      * @return True if wearing a full space suit
      */
     public static boolean hasFullSpaceSuit(Player player) {
-        // Check each armor slot for main equipment slots
+        // Check all armor equipment slots
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             // Skip non-armor slots
-            if (slot.isArmor() == false) continue;
+            if (!slot.isArmor()) continue;
             
             ItemStack stack = player.getItemBySlot(slot);
             // Check if empty or not a SpaceSuitItem by item registry ID
@@ -125,7 +125,7 @@ public class SpaceSuitItem extends ArmorItem {
         // Check each armor slot
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             // Skip non-armor slots 
-            if (slot.isArmor() == false) continue;
+            if (!slot.isArmor()) continue;
             
             ItemStack stack = player.getItemBySlot(slot);
             if (!stack.isEmpty() && isSpaceSuit(stack)) {
