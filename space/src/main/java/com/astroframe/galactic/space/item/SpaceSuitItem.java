@@ -11,7 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.util.Lazy;
 
 /**
@@ -43,15 +44,17 @@ public class SpaceSuitItem extends ArmorItem {
     
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        if (enchantment == Enchantments.RESPIRATION && getType() == ArmorItem.Type.HELMET) {
-            return true;
+        // In NeoForge 1.21.5, we need to check categories and registry IDs instead of direct comparison
+        if (enchantment.getCategory() == EnchantmentCategory.ARMOR_HEAD && getSlot().getType() == EquipmentSlot.Type.ARMOR) {
+            ResourceLocation enchId = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+            if (enchId != null && (
+                enchId.toString().equals("minecraft:respiration") || 
+                enchId.toString().equals("minecraft:aqua_affinity"))) {
+                return true;
+            }
         }
         
-        if (enchantment == Enchantments.AQUA_AFFINITY && getType() == ArmorItem.Type.HELMET) {
-            return true;
-        }
-        
-        return super.canApplyAtEnchantingTable(stack, enchantment);
+        return ArmorItem.super.canApplyAtEnchantingTable(stack, enchantment);
     }
     
     /**
@@ -61,16 +64,32 @@ public class SpaceSuitItem extends ArmorItem {
      * @return True if wearing a full space suit
      */
     public static boolean hasFullSpaceSuit(Player player) {
-        // Check each armor slot
+        // Check each armor slot for ARMOR type
         for (EquipmentSlot slot : EquipmentSlot.values()) {
-            if (slot.getType() != EquipmentSlot.Type.ARMOR) continue;
+            if (slot.getType() == EquipmentSlot.Type.HAND) continue; // Skip hand slots
             
             ItemStack stack = player.getItemBySlot(slot);
-            if (stack.isEmpty() || !(stack.getItem().getClass().equals(SpaceSuitItem.class))) {
+            // Check if empty or not a SpaceSuitItem by item registry ID
+            if (stack.isEmpty() || !isSpaceSuit(stack)) {
                 return false;
             }
         }
         return true;
+    }
+    
+    /**
+     * Checks if an ItemStack is a space suit item
+     * 
+     * @param stack The item stack to check
+     * @return True if it's a space suit
+     */
+    private static boolean isSpaceSuit(ItemStack stack) {
+        if (stack.isEmpty()) return false;
+        
+        Item item = stack.getItem();
+        // Check the registry name of the item
+        ResourceLocation itemId = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item);
+        return itemId != null && itemId.getPath().contains("space_suit");
     }
     
     /**
@@ -86,10 +105,10 @@ public class SpaceSuitItem extends ArmorItem {
         
         // Check each armor slot
         for (EquipmentSlot slot : EquipmentSlot.values()) {
-            if (slot.getType() != EquipmentSlot.Type.ARMOR) continue;
+            if (slot.getType() == EquipmentSlot.Type.HAND) continue; // Skip hand slots
             
             ItemStack stack = player.getItemBySlot(slot);
-            if (!stack.isEmpty() && stack.getItem().getClass().equals(SpaceSuitItem.class)) {
+            if (!stack.isEmpty() && isSpaceSuit(stack)) {
                 hasSuit = true;
                 int tier = 1; // Default to tier 1
                 minTier = Math.min(minTier, tier);
@@ -111,10 +130,10 @@ public class SpaceSuitItem extends ArmorItem {
     public static boolean isFullSpaceSuit(ItemStack helmet, ItemStack chestplate, 
             ItemStack leggings, ItemStack boots) {
         
-        return !helmet.isEmpty() && helmet.getItem().getClass().equals(SpaceSuitItem.class) && 
-                !chestplate.isEmpty() && chestplate.getItem().getClass().equals(SpaceSuitItem.class) &&
-                !leggings.isEmpty() && leggings.getItem().getClass().equals(SpaceSuitItem.class) && 
-                !boots.isEmpty() && boots.getItem().getClass().equals(SpaceSuitItem.class);
+        return !helmet.isEmpty() && isSpaceSuit(helmet) && 
+                !chestplate.isEmpty() && isSpaceSuit(chestplate) &&
+                !leggings.isEmpty() && isSpaceSuit(leggings) && 
+                !boots.isEmpty() && isSpaceSuit(boots);
     }
     
     /**
@@ -139,11 +158,11 @@ public class SpaceSuitItem extends ArmorItem {
         }
         
         public net.minecraft.core.Holder<SoundEvent> getEquipSound() {
-            return net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.getHolder(
+            ResourceLocation soundLocation = ResourceLocation.parse("minecraft:item.armor.equip_iron");
+            return net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.getHolderOrThrow(
                    net.minecraft.resources.ResourceKey.create(
                         net.minecraft.core.registries.Registries.SOUND_EVENT, 
-                        SoundEvents.ARMOR_EQUIP_IRON.getLocation()))
-                   .orElseThrow();
+                        soundLocation));
         }
         
         public Ingredient getRepairIngredient() {

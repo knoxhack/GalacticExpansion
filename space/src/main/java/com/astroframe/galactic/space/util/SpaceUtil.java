@@ -3,7 +3,7 @@ package com.astroframe.galactic.space.util;
 import com.astroframe.galactic.core.api.space.ICelestialBody;
 import com.astroframe.galactic.core.api.space.IRocket;
 import com.astroframe.galactic.space.GalacticSpace;
-import com.astroframe.galactic.space.implementation.CelestialBodyRegistry;
+import com.astroframe.galactic.space.registry.SpaceBodies;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -51,7 +51,7 @@ public class SpaceUtil {
      * @return A celestial body, or null if none are available
      */
     public static ICelestialBody getRandomReachableCelestialBody(int tier) {
-        var bodies = CelestialBodyRegistry.getAll().stream()
+        var bodies = SpaceBodies.getAll().stream()
                 .filter(body -> body.getRocketTierRequired() <= tier)
                 .toList();
         

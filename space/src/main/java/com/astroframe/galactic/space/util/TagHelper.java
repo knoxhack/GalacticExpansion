@@ -21,13 +21,16 @@ public class TagHelper {
      */
     public static CompoundTag getCompoundTag(CompoundTag tag, String key) {
         try {
-            // In NeoForge 1.21.5, this is direct access without Optional wrapping
-            if (tag.contains(key, Tag.TAG_COMPOUND)) {
-                return (CompoundTag) tag.get(key);
+            // In NeoForge 1.21.5, we need to check contains first, then get the tag
+            if (tag.contains(key)) {
+                Tag rawTag = tag.get(key);
+                if (rawTag instanceof CompoundTag) {
+                    return (CompoundTag) rawTag;
+                }
             }
             return new CompoundTag();
         } catch (Exception e) {
-            // Fallback
+            // Fallback for any errors
             return new CompoundTag();
         }
     }
@@ -37,21 +40,21 @@ public class TagHelper {
      *
      * @param tag The parent tag
      * @param key The key to get
-     * @param type The element type
+     * @param type The element type (not used in NeoForge 1.21.5)
      * @return The list tag, or a new one if not found
      */
     public static ListTag getListTag(CompoundTag tag, String key, int type) {
         try {
-            // In NeoForge 1.21.5, this is direct access without Optional wrapping
-            if (tag.contains(key, Tag.TAG_LIST)) {
-                ListTag list = (ListTag) tag.get(key);
-                if (list != null) {
-                    return list;
+            // In NeoForge 1.21.5, we check contains then cast
+            if (tag.contains(key)) {
+                Tag rawTag = tag.get(key);
+                if (rawTag instanceof ListTag) {
+                    return (ListTag) rawTag;
                 }
             }
             return new ListTag();
         } catch (Exception e) {
-            // Fallback
+            // Fallback for any errors
             return new ListTag();
         }
     }
@@ -65,10 +68,10 @@ public class TagHelper {
      */
     public static String getString(CompoundTag tag, String key) {
         try {
-            // In NeoForge 1.21.5, this is direct access without Optional wrapping
-            return tag.getString(key);
+            // In NeoForge 1.21.5, getString returns an Optional<String>
+            return tag.getString(key).orElse("");
         } catch (Exception e) {
-            // Fallback
+            // Fallback for any errors
             return "";
         }
     }
@@ -82,8 +85,10 @@ public class TagHelper {
      */
     public static int getInt(CompoundTag tag, String key) {
         try {
-            return tag.getInt(key);
+            // In NeoForge 1.21.5, getInt returns an Optional<Integer>
+            return tag.getInt(key).orElse(0);
         } catch (Exception e) {
+            // Fallback for any errors
             return 0;
         }
     }
@@ -93,16 +98,18 @@ public class TagHelper {
      *
      * @param tag The parent tag
      * @param key The key to get
-     * @param defaultValue The default value to return if not found
+     * @param defaultValue The default value if not found
      * @return The integer, or defaultValue if not found
      */
     public static int getInt(CompoundTag tag, String key, int defaultValue) {
         try {
             if (tag.contains(key)) {
-                return tag.getInt(key);
+                // In NeoForge 1.21.5, getInt returns an Optional<Integer>
+                return tag.getInt(key).orElse(defaultValue);
             }
             return defaultValue;
         } catch (Exception e) {
+            // Fallback for any errors
             return defaultValue;
         }
     }
@@ -116,9 +123,11 @@ public class TagHelper {
      */
     public static float getFloat(CompoundTag tag, String key) {
         try {
-            return tag.getFloat(key);
+            // In NeoForge 1.21.5, getFloat returns an Optional<Float>
+            return tag.getFloat(key).orElse(0.0f);
         } catch (Exception e) {
-            return 0;
+            // Fallback for any errors
+            return 0.0f;
         }
     }
     
@@ -127,16 +136,18 @@ public class TagHelper {
      *
      * @param tag The parent tag
      * @param key The key to get
-     * @param defaultValue The default value to return if not found
+     * @param defaultValue The default value if not found
      * @return The float, or defaultValue if not found
      */
     public static float getFloat(CompoundTag tag, String key, float defaultValue) {
         try {
             if (tag.contains(key)) {
-                return tag.getFloat(key);
+                // In NeoForge 1.21.5, getFloat returns an Optional<Float>
+                return tag.getFloat(key).orElse(defaultValue);
             }
             return defaultValue;
         } catch (Exception e) {
+            // Fallback for any errors
             return defaultValue;
         }
     }
@@ -150,8 +161,10 @@ public class TagHelper {
      */
     public static boolean getBoolean(CompoundTag tag, String key) {
         try {
-            return tag.getBoolean(key);
+            // In NeoForge 1.21.5, getBoolean returns an Optional<Boolean>
+            return tag.getBoolean(key).orElse(false);
         } catch (Exception e) {
+            // Fallback for any errors
             return false;
         }
     }
@@ -161,13 +174,15 @@ public class TagHelper {
      *
      * @param tag The parent tag
      * @param key The key to get
-     * @return The double, or 0.0 if not found
+     * @return The double, or 0 if not found
      */
     public static double getDouble(CompoundTag tag, String key) {
         try {
-            return tag.getDouble(key);
+            // In NeoForge 1.21.5, getDouble returns an Optional<Double>
+            return tag.getDouble(key).orElse(0.0d);
         } catch (Exception e) {
-            return 0.0;
+            // Fallback for any errors
+            return 0.0d;
         }
     }
     
@@ -176,16 +191,18 @@ public class TagHelper {
      *
      * @param tag The parent tag
      * @param key The key to get
-     * @param defaultValue The default value to return if not found
+     * @param defaultValue The default value if not found
      * @return The double, or defaultValue if not found
      */
     public static double getDouble(CompoundTag tag, String key, double defaultValue) {
         try {
             if (tag.contains(key)) {
-                return tag.getDouble(key);
+                // In NeoForge 1.21.5, getDouble returns an Optional<Double>
+                return tag.getDouble(key).orElse(defaultValue);
             }
             return defaultValue;
         } catch (Exception e) {
+            // Fallback for any errors
             return defaultValue;
         }
     }
