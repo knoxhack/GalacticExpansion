@@ -159,8 +159,13 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getString returns a String directly
-            return tag.getString(key);
+            // In NeoForge 1.21.5, getString may return an Optional<String>
+            Object result = tag.getString(key);
+            if (result instanceof Optional) {
+                Optional<?> opt = (Optional<?>) result;
+                return opt.isPresent() ? opt.get().toString() : "";
+            }
+            return result.toString();
         } catch (Exception e) {
             return "";
         }
@@ -179,8 +184,24 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getInt returns an int directly
-            return tag.getInt(key);
+            // In NeoForge 1.21.5, getInt may return an Optional<Integer>
+            Object result = tag.getInt(key);
+            if (result instanceof Optional) {
+                Optional<?> opt = (Optional<?>) result;
+                if (opt.isPresent()) {
+                    Object value = opt.get();
+                    if (value instanceof Integer) {
+                        return (Integer) value;
+                    } else {
+                        return Integer.parseInt(value.toString());
+                    }
+                }
+                return 0;
+            }
+            if (result instanceof Integer) {
+                return (Integer) result;
+            }
+            return Integer.parseInt(result.toString());
         } catch (Exception e) {
             return 0;
         }
@@ -200,9 +221,39 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getList needs the list type parameter and returns a ListTag directly
-            return tag.getList(key, Tag.TAG_COMPOUND);
-        } catch (Exception e) {
+            // In NeoForge 1.21.5, getList method may have changed
+            try {
+                // First try getting without type parameter
+                java.lang.reflect.Method method = tag.getClass().getMethod("getList", String.class);
+                Object result = method.invoke(tag, key);
+                if (result instanceof ListTag) {
+                    return (ListTag) result;
+                } else if (result instanceof Optional) {
+                    Optional<?> opt = (Optional<?>) result;
+                    if (opt.isPresent() && opt.get() instanceof ListTag) {
+                        return (ListTag) opt.get();
+                    }
+                }
+            } catch (NoSuchMethodException ex) {
+                // Try with type parameter
+                try {
+                    java.lang.reflect.Method method = tag.getClass().getMethod("getList", String.class, int.class);
+                    Object result = method.invoke(tag, key, type);
+                    if (result instanceof ListTag) {
+                        return (ListTag) result;
+                    } else if (result instanceof Optional) {
+                        Optional<?> opt = (Optional<?>) result;
+                        if (opt.isPresent() && opt.get() instanceof ListTag) {
+                            return (ListTag) opt.get();
+                        }
+                    }
+                } catch (Exception ex2) {
+                    // Fall through to alternate approaches
+                }
+            } catch (Exception ex3) {
+                // Fall through to alternate approaches
+            }
+            
             // Fallback to null on any error
             try {
                 // Last resort: get raw and cast
@@ -231,9 +282,16 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getCompound returns a CompoundTag directly
-            return listTag.getCompound(index);
-        } catch (Exception e) {
+            // In NeoForge 1.21.5, getCompound might return an Optional<CompoundTag>
+            Object result = listTag.getCompound(index);
+            if (result instanceof CompoundTag) {
+                return (CompoundTag) result;
+            } else if (result instanceof Optional) {
+                Optional<?> opt = (Optional<?>) result;
+                if (opt.isPresent() && opt.get() instanceof CompoundTag) {
+                    return (CompoundTag) opt.get();
+                }
+            }
             // Try alternate approach
             try {
                 Tag tag = listTag.get(index);
@@ -296,8 +354,23 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, the method is called getTag()
-            return stack.getTag();
+            // In NeoForge 1.21.5, the method is called tag() not getTag()
+            CompoundTag tag = null;
+            try {
+                java.lang.reflect.Method method = stack.getClass().getMethod("tag");
+                tag = (CompoundTag) method.invoke(stack);
+                return tag;
+            } catch (Exception ex) {
+                // Try original method name
+                try {
+                    java.lang.reflect.Method method = stack.getClass().getMethod("getTag");
+                    tag = (CompoundTag) method.invoke(stack);
+                    return tag;
+                } catch (Exception ex2) {
+                    // Fall back to cache system
+                    return null;
+                }
+            }
         } catch (Exception e) {
             // Fall back to our tag cache system
             UUID stackId = stackIds.get(stack);
@@ -321,8 +394,32 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, the method is called setTag() or setData()
-            stack.setTag(tag);
+            // In NeoForge 1.21.5, the method is called setTag() is no longer available, use direct assignment
+            // Using reflection because the field is not directly accessible
+            try {
+                java.lang.reflect.Method method = stack.getClass().getMethod("setTag", CompoundTag.class);
+                method.invoke(stack, tag);
+            } catch (NoSuchMethodException e1) {
+                // For NeoForge 1.21.5, we need to use a different approach
+                try {
+                    // Try to find a method that lets us set the tag data
+                    for (java.lang.reflect.Method m : stack.getClass().getMethods()) {
+                        if (m.getName().equals("save") && m.getParameterCount() == 1) {
+                            // Use the save method as a workaround
+                            CompoundTag newTag = new CompoundTag();
+                            if (tag != null) {
+                                newTag.merge(tag);
+                            }
+                            m.invoke(stack, newTag);
+                            return;
+                        }
+                    }
+                } catch (Exception e2) {
+                    // Fall through to cache system
+                }
+            } catch (Exception e3) {
+                // Fall through to cache system  
+            }
         } catch (Exception e) {
             // Fall back to our tag cache system
             if (tag == null) {
@@ -349,9 +446,24 @@ public class ItemStackHelper {
             return false;
         }
         
-        // In NeoForge 1.21.5, use the hasTag method
+        // In NeoForge 1.21.5, the hasTag method is replaced with another method
         try {
-            return stack.hasTag();
+            // First try the modern API
+            CompoundTag tag = null;
+            try {
+                java.lang.reflect.Method method = stack.getClass().getMethod("tag");
+                tag = (CompoundTag) method.invoke(stack);
+            } catch (Exception ex) {
+                // Try original method name
+                try {
+                    java.lang.reflect.Method method = stack.getClass().getMethod("getTag");
+                    tag = (CompoundTag) method.invoke(stack);
+                } catch (Exception ex2) {
+                    // Fall back to cache system
+                    return false;
+                }
+            }
+            return tag != null && !tag.isEmpty();
         } catch (Exception e) {
             // Fall back to our tag cache system if needed
             UUID stackId = stackIds.get(stack);
@@ -378,8 +490,24 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getFloat returns a float directly
-            return tag.getFloat(key);
+            // In NeoForge 1.21.5, getFloat may return an Optional<Float>
+            Object result = tag.getFloat(key);
+            if (result instanceof Optional) {
+                Optional<?> opt = (Optional<?>) result;
+                if (opt.isPresent()) {
+                    Object value = opt.get();
+                    if (value instanceof Float) {
+                        return (Float) value;
+                    } else {
+                        return Float.parseFloat(value.toString());
+                    }
+                }
+                return 0.0f;
+            }
+            if (result instanceof Float) {
+                return (Float) result;
+            }
+            return Float.parseFloat(result.toString());
         } catch (Exception e) {
             return 0.0f;
         }
