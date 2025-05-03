@@ -47,7 +47,7 @@ public class SpaceItems {
             () -> new Item(new Item.Properties()));
     
     // Space suit items
-    // In NeoForge 1.21.5, need to use fully qualified ArmorItem.Type
+    // In NeoForge 1.21.5, ArmorItem.Type is in a different package
     public static final Supplier<Item> SPACE_SUIT_HELMET = ITEMS.register("space_suit_helmet",
             () -> new SpaceSuitItem(net.minecraft.world.item.ArmorItem.Type.HELMET, new Item.Properties().stacksTo(1)));
     

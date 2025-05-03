@@ -119,9 +119,11 @@ public class ItemStackHelper {
      */
     public static ItemStack createStack(ResourceLocation location, int count) {
         try {
-            // In NeoForge 1.21.5, BuiltInRegistries.ITEM.get() returns an Optional<Reference<Item>>
-            Optional<? extends Reference<Item>> itemRef = BuiltInRegistries.ITEM.get(location);
-            Item item = itemRef.isPresent() ? itemRef.get().value() : Items.AIR;
+            // In NeoForge 1.21.5, Registry.byNameOrId returns the Item directly or null
+            Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(location);
+            if (item == null) {
+                item = Items.AIR;
+            }
             
             if (item == Items.AIR) {
                 return ItemStack.EMPTY;

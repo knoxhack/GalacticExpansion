@@ -50,8 +50,8 @@ public class SpaceSuitItem extends ArmorItem {
         // In NeoForge 1.21.5, access the enchantment registry using BuiltInRegistries and ResourceKey
         ResourceLocation enchLocation = null;
         try {
-            // In NeoForge 1.21.5, use Registry.ENCHANTMENT instead of BuiltInRegistries.ENCHANTMENT
-            enchLocation = net.minecraft.core.registries.Registries.ENCHANTMENT.getKey(enchantment);
+            // In NeoForge 1.21.5, use BuiltInRegistries to get the key from the registry
+            enchLocation = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
         } catch (Exception e) {
             // If all else fails, just return default value
             return false;
@@ -102,7 +102,7 @@ public class SpaceSuitItem extends ArmorItem {
         if (stack.isEmpty()) return false;
         
         Item item = stack.getItem();
-        // In NeoForge 1.21.5, use fully qualified BuiltInRegistries for item registry lookups
+        // In NeoForge 1.21.5, use BuiltInRegistries to get the key from the registry
         ResourceLocation itemId = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item);
         return itemId != null && itemId.getPath().contains("space_suit");
     }
@@ -173,9 +173,9 @@ public class SpaceSuitItem extends ArmorItem {
             return 15;
         }
         
-        public net.minecraft.core.Holder<SoundEvent> getEquipSound() {
-            // In NeoForge 1.21.5, SoundEvents are references so we need direct holder
-            return net.minecraft.core.Holder.direct(SoundEvents.ARMOR_EQUIP_IRON);
+        public net.minecraft.core.Holder.Reference<SoundEvent> getEquipSound() {
+            // In NeoForge 1.21.5, we need to return a Holder.Reference, not the SoundEvent itself
+            return SoundEvents.ARMOR_EQUIP_IRON;
         }
         
         public Ingredient getRepairIngredient() {
