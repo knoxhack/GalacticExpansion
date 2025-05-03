@@ -1,5 +1,6 @@
 package com.astroframe.galactic.space.implementation.hologram;
 
+import com.astroframe.galactic.space.implementation.common.HolographicProjectorAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -69,13 +70,13 @@ public class HolographicProjectorBlock extends Block implements EntityBlock {
         }
         
         BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof HolographicProjectorBlockEntity holographicProjector) {
+        if (blockEntity instanceof HolographicProjectorAccess projector) {
             // Toggle the active state
             boolean newActiveState = !state.getValue(ACTIVE);
             level.setBlock(pos, state.setValue(ACTIVE, newActiveState), 3);
             
             // Update the block entity
-            holographicProjector.setActive(newActiveState);
+            projector.setActive(newActiveState);
             
             return InteractionResult.CONSUME;
         }
@@ -102,8 +103,8 @@ public class HolographicProjectorBlock extends Block implements EntityBlock {
                     level.setBlock(pos, state.setValue(POWERED, true).setValue(ACTIVE, true), 3);
                     
                     BlockEntity blockEntity = level.getBlockEntity(pos);
-                    if (blockEntity instanceof HolographicProjectorBlockEntity holographicProjector) {
-                        holographicProjector.setActive(true);
+                    if (blockEntity instanceof HolographicProjectorAccess projector) {
+                        projector.setActive(true);
                     }
                 }
             }
@@ -120,6 +121,8 @@ public class HolographicProjectorBlock extends Block implements EntityBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
         return (lvl, pos, blockState, blockEntity) -> {
+            // Use instanceof check and case to specific implementation
+            // This is still safe because we know our BlockEntity implements HolographicProjectorAccess
             if (blockEntity instanceof HolographicProjectorBlockEntity holographicProjector) {
                 holographicProjector.tick(lvl, pos, blockState);
             }
