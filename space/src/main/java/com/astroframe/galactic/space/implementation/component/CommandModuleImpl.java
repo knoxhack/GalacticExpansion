@@ -180,15 +180,15 @@ public class CommandModuleImpl implements ICommandModule {
     public void load(CompoundTag tag) {
         // Load position if saved
         if (tag.contains("PosX") && tag.contains("PosY") && tag.contains("PosZ")) {
-            double x = TagHelper.getDoubleValue(tag, "PosX");
-            double y = TagHelper.getDoubleValue(tag, "PosY");
-            double z = TagHelper.getDoubleValue(tag, "PosZ");
+            double x = tag.getDouble("PosX").orElse(0.0);
+            double y = tag.getDouble("PosY").orElse(0.0);
+            double z = tag.getDouble("PosZ").orElse(0.0);
             setPosition(new Vec3(x, y, z));
         }
         
         // Load durability (other properties are final)
         if (tag.contains("CurrentDurability")) {
-            this.currentDurability = TagHelper.getIntValue(tag, "CurrentDurability");
+            this.currentDurability = tag.getInt("CurrentDurability").orElse(this.maxDurability);
         }
     }
     

@@ -171,8 +171,15 @@ public class BaseFuelTank implements IFuelTank {
     
     @Override
     public void save(CompoundTag tag) {
-        // Call the parent implementation to save common properties
-        super.save(tag);
+        // Save basic component properties
+        tag.putString("ID", getId().toString());
+        tag.putString("Type", getType().name());
+        tag.putString("Name", getName());
+        tag.putString("Description", getDescription());
+        tag.putInt("Tier", getTier());
+        tag.putInt("Mass", getMass());
+        tag.putInt("MaxDurability", getMaxDurability());
+        tag.putInt("CurrentDurability", getCurrentDurability());
         
         // Save fuel tank specific properties
         tag.putInt("CurrentFuelLevel", currentFuelLevel);
@@ -191,19 +198,21 @@ public class BaseFuelTank implements IFuelTank {
     
     @Override
     public void load(CompoundTag tag) {
-        // Call the parent implementation to load common properties
-        super.load(tag);
+        // Load basic component properties that can change
+        if (tag.contains("CurrentDurability")) {
+            this.currentDurability = tag.getInt("CurrentDurability").orElse(this.maxDurability);
+        }
         
         // Load fuel tank specific properties
         if (tag.contains("CurrentFuelLevel")) {
-            this.currentFuelLevel = tag.getInt("CurrentFuelLevel");
+            this.currentFuelLevel = tag.getInt("CurrentFuelLevel").orElse(0);
         }
         
         // Load position if present - direct approach for NeoForge 1.21.5
         if (tag.contains("PosX") && tag.contains("PosY") && tag.contains("PosZ")) {
-            double x = tag.getDouble("PosX");
-            double y = tag.getDouble("PosY");
-            double z = tag.getDouble("PosZ");
+            double x = tag.getDouble("PosX").orElse(0.0);
+            double y = tag.getDouble("PosY").orElse(0.0);
+            double z = tag.getDouble("PosZ").orElse(0.0);
             this.position = new Vec3(x, y, z);
         }
         
