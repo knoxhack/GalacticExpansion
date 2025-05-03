@@ -4,6 +4,7 @@ import com.astroframe.galactic.core.api.block.BlockEntityBase;
 import com.astroframe.galactic.core.api.space.IRocket;
 import com.astroframe.galactic.space.SpaceModule;
 import com.astroframe.galactic.space.implementation.assembly.RocketAssemblyTableBlockEntity;
+import com.astroframe.galactic.space.implementation.common.RocketDataProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -63,9 +64,9 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
             
             // Check if we need to update the rocket data from a linked table
             if (linkedTablePos != null) {
-                if (level.getBlockEntity(linkedTablePos) instanceof RocketAssemblyTableBlockEntity assemblyTable) {
-                    // Use the provider interface directly with the assembly table
-                    rocketData = assemblyTable.getRocketData();
+                if (level.getBlockEntity(linkedTablePos) instanceof RocketDataProvider provider) {
+                    // Use the common interface to get rocket data
+                    rocketData = provider.getRocketData();
                 }
             }
             
@@ -213,17 +214,5 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
      */
     public AABB getRenderBoundingBox() {
         return new AABB(worldPosition).inflate(HOLOGRAM_HEIGHT);
-    }
-    
-    /**
-     * Utility interface for blocks that can provide rocket data.
-     */
-    public interface RocketAssemblyTableProvider {
-        /**
-         * Gets the rocket data to display.
-         *
-         * @return The rocket data
-         */
-        IRocket getRocketData();
     }
 }

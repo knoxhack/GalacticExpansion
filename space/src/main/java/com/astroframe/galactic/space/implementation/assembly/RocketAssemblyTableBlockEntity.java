@@ -6,7 +6,7 @@ import com.astroframe.galactic.core.api.space.ModularRocket;
 import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.astroframe.galactic.space.SpaceModule;
 import com.astroframe.galactic.space.implementation.assembly.menu.RocketAssemblyMenu;
-import com.astroframe.galactic.space.implementation.hologram.HolographicProjectorBlockEntity;
+import com.astroframe.galactic.space.implementation.common.RocketDataProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -33,10 +33,10 @@ import java.util.Set;
  * BlockEntity for the rocket assembly table.
  * Manages rocket components, their configuration, and interaction with
  * holographic projectors.
- * Implements the RocketAssemblyTableProvider interface for integration with projectors.
+ * Implements the RocketDataProvider interface for integration with projectors.
  */
 public class RocketAssemblyTableBlockEntity extends BlockEntityBase
-        implements Container, MenuProvider, HolographicProjectorBlockEntity.RocketAssemblyTableProvider {
+        implements Container, MenuProvider, RocketDataProvider {
     
     // Maximum number of components the rocket can have
     private static final int MAX_COMPONENTS = 27;
