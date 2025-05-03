@@ -222,9 +222,22 @@ public class ItemStackHelper {
         
         // In NeoForge 1.21.5, getList method may have changed
         try {
-                // First try getting without type parameter
-                java.lang.reflect.Method method = tag.getClass().getMethod("getList", String.class);
-                Object result = method.invoke(tag, key);
+            // First try getting without type parameter
+            java.lang.reflect.Method method = tag.getClass().getMethod("getList", String.class);
+            Object result = method.invoke(tag, key);
+            if (result instanceof ListTag) {
+                return (ListTag) result;
+            } else if (result instanceof Optional) {
+                Optional<?> opt = (Optional<?>) result;
+                if (opt.isPresent() && opt.get() instanceof ListTag) {
+                    return (ListTag) opt.get();
+                }
+            }
+        } catch (NoSuchMethodException ex) {
+            // Try with type parameter
+            try {
+                java.lang.reflect.Method method = tag.getClass().getMethod("getList", String.class, int.class);
+                Object result = method.invoke(tag, key, type);
                 if (result instanceof ListTag) {
                     return (ListTag) result;
                 } else if (result instanceof Optional) {
@@ -233,36 +246,22 @@ public class ItemStackHelper {
                         return (ListTag) opt.get();
                     }
                 }
-            } catch (NoSuchMethodException ex) {
-                // Try with type parameter
-                try {
-                    java.lang.reflect.Method method = tag.getClass().getMethod("getList", String.class, int.class);
-                    Object result = method.invoke(tag, key, type);
-                    if (result instanceof ListTag) {
-                        return (ListTag) result;
-                    } else if (result instanceof Optional) {
-                        Optional<?> opt = (Optional<?>) result;
-                        if (opt.isPresent() && opt.get() instanceof ListTag) {
-                            return (ListTag) opt.get();
-                        }
-                    }
-                } catch (Exception ex2) {
-                    // Fall through to alternate approaches
-                }
-            } catch (Exception ex3) {
+            } catch (Exception ex2) {
                 // Fall through to alternate approaches
             }
-            
-            // Fallback to null on any error
-            try {
-                // Last resort: get raw and cast
-                Tag rawTag = tag.get(key);
-                if (rawTag instanceof ListTag) {
-                    return (ListTag) rawTag;
-                }
-            } catch (Exception ex) {
-                // Ignore nested exception
+        } catch (Exception ex3) {
+            // Fall through to alternate approaches
+        }
+        
+        // Fallback to null on any error
+        try {
+            // Last resort: get raw and cast
+            Tag rawTag = tag.get(key);
+            if (rawTag instanceof ListTag) {
+                return (ListTag) rawTag;
             }
+        } catch (Exception ex) {
+            // Ignore nested exception
         }
         
         return null;
