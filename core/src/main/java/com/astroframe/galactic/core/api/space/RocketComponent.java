@@ -1,5 +1,6 @@
 package com.astroframe.galactic.core.api.space;
 
+import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import net.minecraft.nbt.CompoundTag;
 
 /**
@@ -144,18 +145,34 @@ public class RocketComponent {
      * @return The calculated mass
      */
     private float calculateMass() {
-        float baseMass = switch(type) {
-            case ENGINE -> 1000.0f;
-            case COCKPIT -> 750.0f;
-            case FUEL_TANK -> 500.0f;
-            case CARGO_BAY -> 600.0f;
-            case LANDING_GEAR -> 300.0f;
-            case HEAT_SHIELD -> 250.0f;
-            case SOLAR_PANEL -> 100.0f;
-            case COMMUNICATION -> 50.0f;
-            case NAVIGATION -> 75.0f;
-            case LIFE_SUPPORT -> 400.0f;
-        };
+        float baseMass;
+        
+        // Use switch on name instead of direct enum reference to avoid comparison issues
+        String typeName = type.name();
+        
+        if (typeName.equals("ENGINE")) {
+            baseMass = 1000.0f;
+        } else if (typeName.equals("COCKPIT")) {
+            baseMass = 750.0f;
+        } else if (typeName.equals("FUEL_TANK")) {
+            baseMass = 500.0f;
+        } else if (typeName.equals("CARGO_BAY")) {
+            baseMass = 600.0f;
+        } else if (typeName.equals("LANDING_GEAR")) {
+            baseMass = 300.0f;
+        } else if (typeName.equals("HEAT_SHIELD")) {
+            baseMass = 250.0f;
+        } else if (typeName.equals("SOLAR_PANEL")) {
+            baseMass = 100.0f;
+        } else if (typeName.equals("COMMUNICATION")) {
+            baseMass = 50.0f;
+        } else if (typeName.equals("NAVIGATION")) {
+            baseMass = 75.0f;
+        } else if (typeName.equals("LIFE_SUPPORT")) {
+            baseMass = 400.0f;
+        } else {
+            baseMass = 200.0f; // Default value for unknown component types
+        }
         
         // Higher tier components are lighter (better materials)
         float tierModifier = 1.0f - ((tier - 1) * 0.1f);
@@ -168,18 +185,34 @@ public class RocketComponent {
      * @return The calculated durability
      */
     private float calculateDurability() {
-        float baseDurability = switch(type) {
-            case ENGINE -> 800.0f;
-            case COCKPIT -> 1000.0f;
-            case FUEL_TANK -> 900.0f;
-            case CARGO_BAY -> 700.0f;
-            case LANDING_GEAR -> 600.0f;
-            case HEAT_SHIELD -> 1200.0f;
-            case SOLAR_PANEL -> 300.0f;
-            case COMMUNICATION -> 400.0f;
-            case NAVIGATION -> 500.0f;
-            case LIFE_SUPPORT -> 850.0f;
-        };
+        float baseDurability;
+        
+        // Use string comparison instead of enum switch
+        String typeName = type.name();
+        
+        if (typeName.equals("ENGINE")) {
+            baseDurability = 800.0f;
+        } else if (typeName.equals("COCKPIT")) {
+            baseDurability = 1000.0f;
+        } else if (typeName.equals("FUEL_TANK")) {
+            baseDurability = 900.0f;
+        } else if (typeName.equals("CARGO_BAY")) {
+            baseDurability = 700.0f;
+        } else if (typeName.equals("LANDING_GEAR")) {
+            baseDurability = 600.0f;
+        } else if (typeName.equals("HEAT_SHIELD")) {
+            baseDurability = 1200.0f;
+        } else if (typeName.equals("SOLAR_PANEL")) {
+            baseDurability = 300.0f;
+        } else if (typeName.equals("COMMUNICATION")) {
+            baseDurability = 400.0f;
+        } else if (typeName.equals("NAVIGATION")) {
+            baseDurability = 500.0f;
+        } else if (typeName.equals("LIFE_SUPPORT")) {
+            baseDurability = 850.0f;
+        } else {
+            baseDurability = 500.0f; // Default value for unknown component types
+        }
         
         // Higher tier components have more durability
         float tierModifier = 1.0f + ((tier - 1) * 0.2f);

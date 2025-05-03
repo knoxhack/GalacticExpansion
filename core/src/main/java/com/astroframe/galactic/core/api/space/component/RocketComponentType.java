@@ -72,5 +72,48 @@ public enum RocketComponentType {
     /**
      * Fuel resource type (not a physical component but used for validation).
      */
-    FUEL
+    FUEL,
+    
+    /**
+     * Landing gear for safe landings.
+     */
+    LANDING_GEAR,
+    
+    /**
+     * Heat shield for atmospheric entry.
+     */
+    HEAT_SHIELD,
+    
+    /**
+     * Solar panels for power generation.
+     */
+    SOLAR_PANEL;
+    
+    /**
+     * Gets the ID string for this component type.
+     * 
+     * @return The string ID, lowercase form of the enum name
+     */
+    public String getId() {
+        return this.name().toLowerCase();
+    }
+    
+    /**
+     * Gets a component type by its string ID.
+     * 
+     * @param id The string ID to look up
+     * @return The matching component type, or ENGINE if not found
+     */
+    public static RocketComponentType getById(String id) {
+        if (id == null || id.isEmpty()) {
+            return ENGINE;
+        }
+        
+        try {
+            return RocketComponentType.valueOf(id.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            // Handle legacy component IDs or invalid values
+            return ENGINE;
+        }
+    }
 }
