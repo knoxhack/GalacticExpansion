@@ -1,41 +1,46 @@
 package com.astroframe.galactic.machinery.items;
 
+import com.astroframe.galactic.machinery.GalacticMachinery;
 import com.astroframe.galactic.machinery.registry.MachineryRegistry;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * Registry for all items in the Machinery module.
  */
 public class MachineryItems {
 
-    // Create a single Item.Properties instance with stacksTo(64) set
-    private static final Item.Properties DEFAULT_PROPS = new Item.Properties().stacksTo(64);
+    /**
+     * Define a Items DeferredRegister with the registerItem helper method
+     * This properly sets the item ID in the Item.Properties as required in NeoForge 1.21.5+
+     */
+    private static final DeferredRegister.Items ITEMS_HELPER = DeferredRegister.createItems(GalacticMachinery.MOD_ID);
     
-    // Machinery Items - explicitly setting stacksTo(64) for each item to ensure it's properly set
-    public static final DeferredHolder<Item, Item> CRUSHER = MachineryRegistry.ITEMS.register(
+    // Machinery Items - using the DeferredRegister.Items.registerItem to properly set IDs
+    public static final DeferredHolder<Item, Item> CRUSHER = ITEMS_HELPER.registerItem(
             "crusher", 
-            () -> new Item(new Item.Properties().stacksTo(64))
+            properties -> new Item(properties.stacksTo(64))
     );
     
-    public static final DeferredHolder<Item, Item> SMELTER = MachineryRegistry.ITEMS.register(
+    public static final DeferredHolder<Item, Item> SMELTER = ITEMS_HELPER.registerItem(
             "smelter", 
-            () -> new Item(new Item.Properties().stacksTo(64))
+            properties -> new Item(properties.stacksTo(64))
     );
     
-    public static final DeferredHolder<Item, Item> EXTRACTOR = MachineryRegistry.ITEMS.register(
+    public static final DeferredHolder<Item, Item> EXTRACTOR = ITEMS_HELPER.registerItem(
             "extractor", 
-            () -> new Item(new Item.Properties().stacksTo(64))
+            properties -> new Item(properties.stacksTo(64))
     );
     
-    public static final DeferredHolder<Item, Item> CENTRIFUGE = MachineryRegistry.ITEMS.register(
+    public static final DeferredHolder<Item, Item> CENTRIFUGE = ITEMS_HELPER.registerItem(
             "centrifuge", 
-            () -> new Item(new Item.Properties().stacksTo(64))
+            properties -> new Item(properties.stacksTo(64))
     );
     
-    public static final DeferredHolder<Item, Item> ASSEMBLER = MachineryRegistry.ITEMS.register(
+    public static final DeferredHolder<Item, Item> ASSEMBLER = ITEMS_HELPER.registerItem(
             "assembler", 
-            () -> new Item(new Item.Properties().stacksTo(64))
+            properties -> new Item(properties.stacksTo(64))
     );
 
     /**
@@ -48,5 +53,8 @@ public class MachineryItems {
         if (CRUSHER == null || SMELTER == null || ASSEMBLER == null) {
             throw new IllegalStateException("Machinery items failed to initialize properly");
         }
+        
+        // Register our Items DeferredRegister to the normal ITEMS DeferredRegister
+        ITEMS_HELPER.register(MachineryRegistry.ITEMS);
     }
 }
