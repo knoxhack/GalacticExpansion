@@ -22,6 +22,10 @@ if (!isCI) {
     }
 }
 
+// Configure Gradle daemon for better memory management
+gradle.startParameter.maxWorkerCount = Math.max(1, Runtime.runtime.availableProcessors() - 1)
+
+// Configure JVM arguments for Gradle daemon
 allprojects {
     group = project.mod_group_id
     version = project.mod_version
