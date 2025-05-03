@@ -337,26 +337,34 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
             if (tag.contains("Item" + i)) {
                 // In NeoForge 1.21.5, getCompound returns the tag directly rather than Optional<CompoundTag>
                 CompoundTag itemTag = tag.getCompound("Item" + i);
-                // In NeoForge 1.21.5, manually create the ItemStack from tag
-                // In NeoForge 1.21.5, getString() returns the value directly instead of Optional
-                String itemId = itemTag.getString("id");
+                // In NeoForge 1.21.5, manually create the ItemStack from tag using helper methods
+                String itemId = com.astroframe.galactic.space.items.ItemStackHelper.getString(itemTag, "id");
                 if (itemId != null && !itemId.isEmpty()) {
                     ResourceLocation itemLocation = ResourceLocation.parse(itemId);
-                    Item item = BuiltInRegistries.ITEM.get(itemLocation);
-                    int count = itemTag.getByte("Count");
+                    // Need to use ForgeRegistries for direct registry lookup
+                    Item item = net.neoforged.neoforge.registries.ForgeRegistries.ITEMS.getValue(itemLocation);
+                    // Use getByte from tag directly with .byteValue() to convert to primitive
+                    int count = itemTag.contains("Count") ? itemTag.getByte("Count").byteValue() : 1;
                     ItemStack stack = new ItemStack(item, count);
                     if (itemTag.contains("tag")) {
-                        // In NeoForge 1.21.5, setTag is replaced with setData
-                        stack.setData(itemTag.getCompound("tag"));
+                        // In NeoForge 1.21.5, get the compound tag via our helper
+                        CompoundTag dataTag = com.astroframe.galactic.space.items.ItemStackHelper.getCompound(itemTag, "tag");
+                        if (dataTag != null) {
+                            // Use setData instead of setTag in NeoForge 1.21.5
+                            stack.setData(dataTag);
+                        }
                     }
                     components.set(i, stack);
                 }
             }
         }
         
-        // Load rocket data - in NeoForge 1.21.5 getCompound returns CompoundTag directly
+        // Load rocket data using the helper method to ensure compatibility
         if (tag.contains("RocketData")) {
-            rocketDataTag = tag.getCompound("RocketData");
+            rocketDataTag = com.astroframe.galactic.space.items.ItemStackHelper.getCompound(tag, "RocketData");
+            if (rocketDataTag == null) {
+                rocketDataTag = new CompoundTag();
+            }
         } else {
             rocketDataTag = new CompoundTag();
         }
