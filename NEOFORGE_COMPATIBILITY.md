@@ -25,6 +25,26 @@ public class SpaceModule {
 }
 ```
 
+## Item Registration Issues
+
+In NeoForge 1.21.5, Item registration requires properties to be explicitly set to avoid the error "Item id not set":
+
+```java
+// This causes "Item id not set" error in NeoForge 1.21.5
+public static final DeferredHolder<Item, Item> CIRCUIT_BOARD = CoreRegistry.ITEMS.register(
+    "circuit_board", 
+    () -> new Item(new Item.Properties())
+);
+
+// This works in NeoForge 1.21.5
+public static final DeferredHolder<Item, Item> CIRCUIT_BOARD = CoreRegistry.ITEMS.register(
+    "circuit_board", 
+    () -> new Item(new Item.Properties().stacksTo(64))
+);
+```
+
+Always call at least one method on the Item.Properties object when registering items to ensure proper initialization.
+
 ## Key Changes
 
 ### Registry Access

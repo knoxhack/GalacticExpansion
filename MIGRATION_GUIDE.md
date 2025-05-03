@@ -81,6 +81,25 @@ One of the most critical changes in NeoForge 1.21.5 is the strict enforcement of
    - Update import to `net.neoforged.neoforge.registries.DeferredRegister`
    - Registration process remains similar
 
+## Item Registration Changes
+
+1. **Item Properties**:
+   - In NeoForge 1.21.5, items need explicit properties set to avoid "Item id not set" errors
+   - Always call at least one method on the Item.Properties object when registering items
+   ```java
+   // This will crash in NeoForge 1.21.5
+   new Item(new Item.Properties())
+   
+   // This will work in NeoForge 1.21.5
+   new Item(new Item.Properties().stacksTo(64))
+   // or
+   new Item(new Item.Properties().durability(100))
+   ```
+
+2. **Item Registry Names**:
+   - Ensure registry names are consistent with mod ID format (no underscores)
+   - Use the same format in both code and JSON files
+
 ## NBT and Tag Changes
 
 1. **CompoundTag Operations**:

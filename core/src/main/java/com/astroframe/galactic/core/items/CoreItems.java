@@ -12,17 +12,17 @@ public class CoreItems {
     // Core Items
     public static final DeferredHolder<Item, Item> CIRCUIT_BOARD = CoreRegistry.ITEMS.register(
             "circuit_board", 
-            () -> new Item(new Item.Properties())
+            () -> new Item(new Item.Properties().stacksTo(64))
     );
     
     public static final DeferredHolder<Item, Item> ADVANCED_CIRCUIT = CoreRegistry.ITEMS.register(
             "advanced_circuit", 
-            () -> new Item(new Item.Properties())
+            () -> new Item(new Item.Properties().stacksTo(64))
     );
     
     public static final DeferredHolder<Item, Item> QUANTUM_PROCESSOR = CoreRegistry.ITEMS.register(
             "quantum_processor", 
-            () -> new Item(new Item.Properties())
+            () -> new Item(new Item.Properties().stacksTo(64))
     );
 
     /**
