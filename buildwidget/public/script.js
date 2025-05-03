@@ -27,6 +27,9 @@ let buildStartTime;
 let buildEndTime;
 let timerInterval;
 
+// WebSocket states for proper state checking
+const WebSocket = window.WebSocket;
+
 // Connect to WebSocket with improved reconnection logic
 function connectWebSocket() {
     console.log('Connecting to WebSocket...');

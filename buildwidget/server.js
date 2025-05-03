@@ -26,11 +26,15 @@ const {
 // Initialize express app
 const app = express();
 const server = http.createServer(app);
+// Initialize WebSocket server on a distinct path to avoid conflicts with HMR
 const wss = new WebSocketServer({ 
   server, 
   path: '/ws',
   clientTracking: true 
 });
+
+// Import WebSocket for readyState constants
+const WebSocket = require('ws');
 
 // Middleware for JSON handling
 app.use(express.json());
@@ -793,14 +797,14 @@ function stopBuild() {
 function broadcastStatus() {
   // Broadcast full status update to all connected clients
   clients.forEach((handlers, client) => {
-    if (client.readyState === client.OPEN) {
+    if (client.readyState === WebSocket.OPEN) {
       handlers.sendStatus();
     }
   });
   
   // Also send directly to all clients using WebSocketServer's client tracking
   wss.clients.forEach(client => {
-    if (client.readyState === client.OPEN) {
+    if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify({ type: 'status', data: buildStatus }));
     }
   });
@@ -844,7 +848,7 @@ function broadcastOutput(output) {
     
     // Direct broadcast to all websocket clients
     wss.clients.forEach(client => {
-      if (client.readyState === client.OPEN) {
+      if (client.readyState === WebSocket.OPEN) {
         const message = JSON.stringify({
           type: 'buildOutput',
           data: formattedOutput
@@ -855,7 +859,7 @@ function broadcastOutput(output) {
     
     // Also use the handler approach for backward compatibility
     clients.forEach((handlers, client) => {
-      if (client.readyState === client.OPEN) {
+      if (client.readyState === WebSocket.OPEN) {
         handlers.sendBuildOutput(formattedOutput);
       }
     });
@@ -867,7 +871,7 @@ function broadcastOutput(output) {
 // Broadcast error message
 function broadcastError(errorMessage) {
   clients.forEach((handlers, client) => {
-    if (client.readyState === client.OPEN) {
+    if (client.readyState === WebSocket.OPEN) {
       handlers.sendError(errorMessage);
     }
   });
@@ -923,7 +927,7 @@ function removeNotification(id) {
 // Broadcast notifications to all clients
 function broadcastNotifications() {
   clients.forEach((handlers, client) => {
-    if (client.readyState === client.OPEN) {
+    if (client.readyState === WebSocket.OPEN) {
       handlers.sendNotifications(notificationStack);
     }
   });
