@@ -1,5 +1,10 @@
 package com.astroframe.galactic.space.item;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -11,15 +16,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.resources.ResourceLocation;
-import java.util.Optional;
-import java.util.UUID;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.registries.ForgeRegistries;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Space suit armor item with special properties for space survival.
@@ -54,7 +54,7 @@ public class SpaceSuitItem extends ArmorItem {
         ResourceLocation enchLocation = null;
         try {
             // In NeoForge 1.21.5, ForgeRegistries is used to get the registry key
-            enchLocation = net.neoforged.neoforge.registries.ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
+            enchLocation = ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
         } catch (Exception e) {
             // If all else fails, just return default value
             return false;
@@ -106,7 +106,7 @@ public class SpaceSuitItem extends ArmorItem {
         
         Item item = stack.getItem();
         // In NeoForge 1.21.5, use ForgeRegistries to get the key from the registry
-        ResourceLocation itemId = net.neoforged.neoforge.registries.ForgeRegistries.ITEMS.getKey(item);
+        ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(item);
         return itemId != null && itemId.getPath().contains("space_suit");
     }
     
@@ -178,7 +178,8 @@ public class SpaceSuitItem extends ArmorItem {
         
         public Holder<SoundEvent> getEquipSound() {
             // In NeoForge 1.21.5, SoundEvents are stored as Holders
-            return SoundEvents.ARMOR_EQUIP_IRON;
+            // We need to use Holder.direct() to return the sound event properly
+            return Holder.direct(SoundEvents.ARMOR_EQUIP_IRON.value());
         }
         
         public Ingredient getRepairIngredient() {

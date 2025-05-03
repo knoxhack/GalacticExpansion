@@ -119,8 +119,8 @@ public class ItemStackHelper {
      */
     public static ItemStack createStack(ResourceLocation location, int count) {
         try {
-            // In NeoForge 1.21.5, Registry.byNameOrId returns the Item directly or null
-            Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(location);
+            // In NeoForge 1.21.5, use ForgeRegistries
+            Item item = ForgeRegistries.ITEMS.getValue(location);
             if (item == null) {
                 item = Items.AIR;
             }
