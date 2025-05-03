@@ -3,6 +3,7 @@ package com.astroframe.galactic.space.implementation.hologram;
 import com.astroframe.galactic.core.api.block.BlockEntityBase;
 import com.astroframe.galactic.core.api.space.IRocket;
 import com.astroframe.galactic.space.SpaceModule;
+import com.astroframe.galactic.space.implementation.assembly.RocketAssemblyTableBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -61,8 +62,11 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
             }
             
             // Check if we need to update the rocket data from a linked table
-            if (linkedTablePos != null && level.getBlockEntity(linkedTablePos) instanceof RocketAssemblyTableProvider provider) {
-                rocketData = provider.getRocketData();
+            if (linkedTablePos != null) {
+                if (level.getBlockEntity(linkedTablePos) instanceof RocketAssemblyTableBlockEntity assemblyTable) {
+                    // Use the provider interface directly with the assembly table
+                    rocketData = assemblyTable.getRocketData();
+                }
             }
             
             // Mark the block for re-render to update the hologram visuals
