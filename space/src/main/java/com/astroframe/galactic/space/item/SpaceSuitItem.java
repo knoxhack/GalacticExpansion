@@ -56,8 +56,8 @@ public class SpaceSuitItem extends Item {
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         ResourceLocation enchLocation = null;
         try {
-            // In NeoForge 1.21.5, get registry key from enchantment via ForgeRegistries
-            enchLocation = net.neoforged.neoforge.registries.ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
+            // In NeoForge 1.21.5, get registry key from enchantment via BuiltInRegistries
+            enchLocation = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
             if (enchLocation == null) {
                 // If not in registry, try getting from class name as fallback
                 String simpleName = enchantment.getClass().getSimpleName().toLowerCase();

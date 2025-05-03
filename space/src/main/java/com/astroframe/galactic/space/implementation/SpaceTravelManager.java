@@ -32,7 +32,6 @@ public class SpaceTravelManager implements ISpaceTravelManager {
      * @param destination The celestial body destination
      * @return True if launch was successful
      */
-    @Override
     public boolean launchRocket(Player player, IRocket rocket, ICelestialBody destination) {
         if (player == null || rocket == null || destination == null) {
             return false;
@@ -89,7 +88,6 @@ public class SpaceTravelManager implements ISpaceTravelManager {
      * @param player The player to check
      * @return The destination celestial body, or empty if not traveling
      */
-    @Override
     public Optional<ICelestialBody> getPlayerDestination(Player player) {
         if (player == null) {
             return Optional.empty();

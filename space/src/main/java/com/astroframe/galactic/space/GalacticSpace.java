@@ -5,7 +5,9 @@ import com.astroframe.galactic.core.api.space.SpaceAPI;
 import com.astroframe.galactic.space.attachment.PlayerSpaceDataRegistry;
 import com.astroframe.galactic.space.command.SpaceTravelCommands;
 import com.astroframe.galactic.space.dimension.SpaceStationDimension;
+import com.astroframe.galactic.space.implementation.SpaceTravelManager;
 import com.astroframe.galactic.space.item.SpaceSuitItem;
+import com.astroframe.galactic.space.registry.SpaceBodies;
 import com.astroframe.galactic.space.registry.SpaceRegistry;
 import com.astroframe.galactic.space.resource.SpaceResourceGenerator;
 import com.astroframe.galactic.space.test.AttachmentSystemTester;
@@ -98,12 +100,34 @@ public class GalacticSpace {
             // Initialize space resource generator
             SpaceResourceGenerator.init();
             
+            // Initialize the space travel manager
+            initializeSpaceTravelManager();
+            
             // Register the attachment system tester
             AttachmentSystemTester.register();
             LOGGER.info("Registered attachment system tester");
             
             LOGGER.info("Galactic Space module setup complete");
         });
+    }
+    
+    /**
+     * Initialize the space travel manager and register it with SpaceAPI.
+     */
+    private void initializeSpaceTravelManager() {
+        LOGGER.info("Initializing SpaceTravelManager");
+        
+        // Create a new instance of our manager
+        spaceTravelManager = new SpaceTravelManager();
+        
+        // Register all celestial bodies with the manager
+        SpaceBodies.registerWithManager(spaceTravelManager);
+        
+        // Set the manager in the API for other mods to access
+        SpaceAPI.setSpaceTravelManager(spaceTravelManager);
+        
+        LOGGER.info("SpaceTravelManager initialized with {} celestial bodies", 
+            spaceTravelManager.getAllCelestialBodies().size());
     }
     
     /**

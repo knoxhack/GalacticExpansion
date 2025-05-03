@@ -94,6 +94,25 @@ public class SpaceBodies {
     }
     
     /**
+     * Registers all celestial bodies with a space travel manager.
+     * 
+     * @param manager The space travel manager
+     */
+    public static void registerWithManager(com.astroframe.galactic.core.api.space.ISpaceTravelManager manager) {
+        if (manager == null) {
+            GalacticSpace.LOGGER.error("Cannot register celestial bodies with null manager");
+            return;
+        }
+        
+        GalacticSpace.LOGGER.info("Registering {} celestial bodies with manager", CELESTIAL_BODIES.size());
+        
+        // Register each celestial body with the manager
+        for (ICelestialBody body : CELESTIAL_BODIES.values()) {
+            manager.registerCelestialBody(body);
+        }
+    }
+    
+    /**
      * Simple implementation of ICelestialBody
      */
     private static class CelestialBody implements ICelestialBody {

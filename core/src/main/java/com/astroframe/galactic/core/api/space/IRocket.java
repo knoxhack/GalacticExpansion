@@ -87,6 +87,19 @@ public interface IRocket {
     }
     
     /**
+     * Consumes the specified amount of fuel
+     * 
+     * @param amount The amount of fuel to consume
+     * @return The amount of fuel actually consumed
+     */
+    default float consumeFuel(int amount) {
+        float currentFuel = getFuelLevel();
+        float toConsume = Math.min(currentFuel, amount);
+        setFuelLevel(currentFuel - toConsume);
+        return toConsume;
+    }
+    
+    /**
      * Checks if the rocket has a specific component
      * 
      * @param type The component type to check

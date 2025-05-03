@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Celestial body temperature range categories.
  */
-enum TemperatureRange {
+public enum TemperatureRange {
     EXTREME_COLD,
     VERY_COLD,
     COLD,
@@ -18,7 +18,7 @@ enum TemperatureRange {
 /**
  * Celestial body radiation level categories.
  */
-enum RadiationLevel {
+public enum RadiationLevel {
     NONE,
     LOW,
     MODERATE,
