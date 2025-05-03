@@ -106,6 +106,23 @@ public interface IRocket {
     }
     
     /**
+     * Determines if this rocket can reach a specific celestial body.
+     * This is based on the rocket's capabilities and fuel level.
+     * 
+     * @param body The celestial body to check
+     * @return true if the rocket can reach the body, false otherwise
+     */
+    default boolean canReach(ICelestialBody body) {
+        if (body == null) return false;
+        
+        // Default implementation uses simple tier and fuel checks
+        if (getTier() < body.getRequiredTier()) return false;
+        if (getFuelLevel() < getFuelCapacity() * 0.25f) return false;
+        
+        return true;
+    }
+    
+    /**
      * Saves the rocket data to an NBT tag
      * 
      * @param tag The tag to save to

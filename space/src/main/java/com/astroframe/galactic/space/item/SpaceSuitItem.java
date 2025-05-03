@@ -46,8 +46,20 @@ public class SpaceSuitItem extends ArmorItem {
     }
     
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        // In NeoForge 1.21.5, access the enchantment registry directly
-        ResourceLocation enchLocation = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+        // In NeoForge 1.21.5, access the enchantment registry indirectly
+        ResourceLocation enchLocation = null;
+        try {
+            // Try to get the registry key directly
+            enchLocation = net.minecraft.core.Registry.ENCHANTMENT.getKey(enchantment);
+        } catch (Exception e) {
+            // Fallback to getting from built-in registries if available
+            try {
+                enchLocation = net.minecraft.world.item.enchantment.Enchantment.getEnchantmentId(enchantment);
+            } catch (Exception ex) {
+                // If all else fails, just return default value
+                return false;
+            }
+        }
         
         if (enchLocation != null) {
             String path = enchLocation.getPath();
@@ -59,8 +71,8 @@ public class SpaceSuitItem extends ArmorItem {
             }
         }
         
-        // Use armor material properties to determine compatibility
-        return enchantment.category.canEnchant(stack.getItem());
+        // Use basic item compatibility check
+        return enchantment.canEnchant(stack);
     }
     
     /**

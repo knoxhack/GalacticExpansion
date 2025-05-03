@@ -159,8 +159,8 @@ public class SpaceTravelCommands {
         if (tier >= 2) {
             // Use command module for navigation features for now
             // We don't have a dedicated navigation component yet
-            ICommandModule advancedModule = RocketComponentFactory.createCockpit(RocketComponentType.COCKPIT, tier);
-            rocket.addComponent(advancedModule);
+            // Use the adapter-compatible version for NeoForge 1.21.5
+            rocket.addComponent(RocketComponentFactory.createCockpit(RocketComponentType.COCKPIT, tier));
         }
         
         if (tier >= 3) {
