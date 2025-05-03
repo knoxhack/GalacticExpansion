@@ -267,9 +267,9 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                         CompoundTag posCompound = (CompoundTag) posTag;
                         
                         // Extract coordinates directly in NeoForge 1.21.5
-                        int x = posCompound.getInt("X").orElse(0);
-                        int y = posCompound.getInt("Y").orElse(0);
-                        int z = posCompound.getInt("Z").orElse(0);
+                        int x = posCompound.getInt("X");
+                        int y = posCompound.getInt("Y");
+                        int z = posCompound.getInt("Z");
                         
                         linkedProjectors.add(new BlockPos(x, y, z));
                     }
