@@ -157,6 +157,10 @@ function connectWebSocket() {
             switch (message.type) {
                 case 'status':
                     updateBuildStatus(data);
+                    // Also update module status if available
+                    if (data && data.modules) {
+                        updateModuleStatus(data.modules);
+                    }
                     break;
                 case 'buildOutput':
                     updateBuildOutput(data);
@@ -562,7 +566,11 @@ function showNotification(title, message, type = 'info', duration = 5000) {
 function updateModuleStatus(modules) {
     if (!modules) return;
     
+    console.log("Updating module status:", modules);
+    
     Object.entries(modules).forEach(([moduleName, status]) => {
+        console.log(`Updating module ${moduleName} with status:`, status);
+        
         const moduleBar = document.getElementById(`module-${moduleName}`);
         if (moduleBar) {
             // Update progress bar
@@ -570,18 +578,20 @@ function updateModuleStatus(modules) {
             if (progressBar) {
                 // Update status class
                 progressBar.className = 'module-progress-bar';
-                progressBar.classList.add(status.status || 'pending');
+                const statusValue = typeof status === 'string' ? status : (status.status || 'pending');
+                progressBar.classList.add(statusValue);
                 
                 // Update progress width
                 let progressWidth = 0;
                 
-                if (status.status === 'success') {
+                if (statusValue === 'success') {
                     progressWidth = 100;
-                } else if (status.status === 'failed') {
+                } else if (statusValue === 'failed') {
                     progressWidth = 100;
-                } else if (status.status === 'building') {
+                } else if (statusValue === 'building') {
                     // If we have progress info, use it, otherwise use 50%
-                    progressWidth = status.progress ? status.progress * 100 : 50;
+                    const progress = typeof status === 'object' && status.progress ? status.progress : 0.5;
+                    progressWidth = progress * 100;
                 }
                 
                 progressBar.style.width = `${progressWidth}%`;
@@ -591,19 +601,22 @@ function updateModuleStatus(modules) {
             const indicator = moduleBar.querySelector('.module-indicator');
             if (indicator) {
                 indicator.className = 'module-indicator';
-                indicator.classList.add(status.status || 'pending');
+                const statusValue = typeof status === 'string' ? status : (status.status || 'pending');
+                indicator.classList.add(statusValue);
             }
             
             // Update task name
             const taskElement = moduleBar.querySelector('.module-task');
             if (taskElement) {
-                taskElement.textContent = status.currentTask || '';
+                const statusValue = typeof status === 'string' ? status : (status.status || 'pending');
+                const taskValue = typeof status === 'object' ? (status.currentTask || status.lastTask || '') : '';
+                taskElement.textContent = taskValue;
                 
                 // For success status, add a check mark symbol and smiley
-                if (status.status === 'success' && !status.currentTask) {
+                if (statusValue === 'success' && !taskValue) {
                     taskElement.textContent = 'Build complete';
                     moduleBar.classList.add('success-complete');
-                } else if (status.status === 'failed' && !status.currentTask) {
+                } else if (statusValue === 'failed' && !taskValue) {
                     taskElement.textContent = 'Build failed';
                     moduleBar.classList.add('failed-complete');
                 } else {
