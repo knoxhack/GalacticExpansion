@@ -9,25 +9,28 @@ import net.neoforged.neoforge.registries.DeferredHolder;
  */
 public class PowerItems {
 
+    // Create a single Item.Properties instance with stacksTo(64) set
+    private static final Item.Properties DEFAULT_PROPS = new Item.Properties().stacksTo(64);
+    
     // Power Items
     public static final DeferredHolder<Item, Item> BASIC_GENERATOR = PowerRegistry.ITEMS.register(
             "basic_generator", 
-            () -> new Item(new Item.Properties().stacksTo(64))
+            () -> new Item(DEFAULT_PROPS)
     );
     
     public static final DeferredHolder<Item, Item> ADVANCED_GENERATOR = PowerRegistry.ITEMS.register(
             "advanced_generator", 
-            () -> new Item(new Item.Properties().stacksTo(64))
+            () -> new Item(DEFAULT_PROPS)
     );
     
     public static final DeferredHolder<Item, Item> SOLAR_PANEL = PowerRegistry.ITEMS.register(
             "solar_panel", 
-            () -> new Item(new Item.Properties().stacksTo(64))
+            () -> new Item(DEFAULT_PROPS)
     );
     
     public static final DeferredHolder<Item, Item> FUSION_REACTOR = PowerRegistry.ITEMS.register(
             "fusion_reactor", 
-            () -> new Item(new Item.Properties().stacksTo(64))
+            () -> new Item(DEFAULT_PROPS)
     );
 
     /**
