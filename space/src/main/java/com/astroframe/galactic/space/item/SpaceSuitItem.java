@@ -59,7 +59,7 @@ public class SpaceSuitItem extends ArmorItem {
         }
         
         // Use basic compatibility test for NeoForge 1.21.5
-        return enchantment.isCompatibleWith(this.getType());
+        return enchantment.isCompatibleWith(this.armorType);
     }
     
     /**
@@ -167,9 +167,11 @@ public class SpaceSuitItem extends ArmorItem {
         public net.minecraft.core.Holder<SoundEvent> getEquipSound() {
             // Get the sound event from registry in NeoForge 1.21.5
             ResourceLocation soundId = ResourceLocation.parse("minecraft:item.armor.equip_iron");
-            return net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.getHolder(
-                net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.SOUND_EVENT, soundId)
-            ).orElseThrow();
+            net.minecraft.resources.ResourceKey<SoundEvent> resourceKey = 
+                net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.SOUND_EVENT, soundId);
+            
+            // Use registry holder lookup for NeoForge 1.21.5
+            return net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.getHolderOrThrow(resourceKey);
         }
         
         public Ingredient getRepairIngredient() {

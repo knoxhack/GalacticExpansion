@@ -1,109 +1,139 @@
 package com.astroframe.galactic.core.api.energy;
 
 /**
- * Interface for handling energy storage and transfer.
+ * Interface for objects that can handle energy.
+ * This is the core energy API that all energy-related modules build upon.
  */
 public interface IEnergyHandler {
     
     /**
-     * Enum representing different energy units.
+     * Energy units that can be used by energy handlers.
      */
     enum EnergyUnit {
-        RF("Redstone Flux", "RF"),
-        EU("Energy Units", "EU"),
-        FE("Forge Energy", "FE"),
-        J("Joules", "J"),
-        GJ("Galactic Joules", "GJ");
-
         /**
-         * The default energy unit used by Galactic Expansion.
+         * Forge Energy Units, compatible with other mods.
          */
-        public static final EnergyUnit GALACTIC_ENERGY_UNIT = GJ;
-        
-        private final String displayName;
-        private final String symbol;
-        
-        EnergyUnit(String displayName, String symbol) {
-            this.displayName = displayName;
-            this.symbol = symbol;
-        }
+        FE,
         
         /**
-         * Gets the display name of this energy unit.
-         * @return The display name
+         * Galactic Energy Units, internal to this mod.
          */
-        public String getDisplayName() {
-            return displayName;
-        }
+        GEU,
         
         /**
-         * Gets the symbol of this energy unit.
-         * @return The symbol
+         * Joules, standard SI unit of energy.
          */
-        public String getSymbol() {
-            return symbol;
-        }
+        JOULE,
+        
+        /**
+         * Fuel Units, used for liquid rocket fuel.
+         */
+        FUEL
     }
     
     /**
-     * Gets the energy stored.
-     * @return The energy stored
-     */
-    int getEnergyStored();
-    
-    /**
-     * Alias for getEnergyStored() for compatibility with other energy systems.
-     * @return The energy stored
-     */
-    default int getEnergy() {
-        return getEnergyStored();
-    }
-    
-    /**
-     * Gets the maximum energy capacity.
-     * @return The maximum energy capacity
-     */
-    int getMaxEnergyCapacity();
-    
-    /**
-     * Alias for getMaxEnergyCapacity() for compatibility with other energy systems.
-     * @return The maximum energy capacity
-     */
-    default int getMaxEnergy() {
-        return getMaxEnergyCapacity();
-    }
-    
-    /**
-     * Gets the energy unit used by this handler.
-     * @return The energy unit
-     */
-    EnergyUnit getEnergyUnit();
-    
-    /**
-     * Receives energy.
-     * @param maxReceive The maximum amount to receive
+     * Receives energy into the handler.
+     * 
+     * @param maxReceive Maximum amount to receive
      * @param simulate If true, the transfer will only be simulated
-     * @return The amount of energy that was (or would have been, if simulated) received
+     * @return Amount of energy that was (or would have been) received
      */
     int receiveEnergy(int maxReceive, boolean simulate);
     
     /**
-     * Extracts energy.
-     * @param maxExtract The maximum amount to extract
+     * Extracts energy from the handler.
+     * 
+     * @param maxExtract Maximum amount to extract
      * @param simulate If true, the extraction will only be simulated
-     * @return The amount of energy that was (or would have been, if simulated) extracted
+     * @return Amount of energy that was (or would have been) extracted
      */
     int extractEnergy(int maxExtract, boolean simulate);
     
     /**
-     * Checks if energy can be extracted.
-     * @return True if energy can be extracted, false otherwise
+     * Gets the amount of energy currently stored.
+     * 
+     * @return The amount of energy stored
+     */
+    int getEnergy();
+    
+    /**
+     * Gets the maximum amount of energy that can be stored.
+     * 
+     * @return The maximum energy capacity
+     */
+    int getMaxEnergy();
+    
+    /**
+     * Returns whether this energy handler can extract energy.
+     * 
+     * @return true if this can extract energy, false otherwise
      */
     boolean canExtract();
     
     /**
-     * Checks if energy can be received.
-     * @return True if energy can be received, false otherwise
+     * Returns whether this energy handler can receive energy.
+     * 
+     * @return true if this can receive energy, false otherwise
      */
     boolean canReceive();
+    
+    /**
+     * Gets the unit of energy used by this handler.
+     * 
+     * @return The energy unit
+     */
+    default EnergyUnit getEnergyUnit() {
+        return EnergyUnit.FE;
+    }
+    
+    /**
+     * Converts the given amount of energy from the source unit to the target unit.
+     * 
+     * @param amount The amount of energy to convert
+     * @param from The source energy unit
+     * @param to The target energy unit
+     * @return The converted energy amount
+     */
+    static int convertEnergy(int amount, EnergyUnit from, EnergyUnit to) {
+        if (from == to) {
+            return amount;
+        }
+        
+        // Conversion factors may need to be adjusted based on game balance
+        double converted = amount;
+        
+        // First convert to joules as the common unit
+        switch (from) {
+            case FE:
+                converted = amount * 10.0; // 1 FE = 10 J
+                break;
+            case GEU:
+                converted = amount * 100.0; // 1 GEU = 100 J
+                break;
+            case JOULE:
+                // Already in joules
+                break;
+            case FUEL:
+                converted = amount * 1000.0; // 1 FUEL = 1000 J
+                break;
+        }
+        
+        // Then convert from joules to the target unit
+        switch (to) {
+            case FE:
+                converted = converted / 10.0; // 10 J = 1 FE
+                break;
+            case GEU:
+                converted = converted / 100.0; // 100 J = 1 GEU
+                break;
+            case JOULE:
+                // Already in joules
+                break;
+            case FUEL:
+                converted = converted / 1000.0; // 1000 J = 1 FUEL
+                break;
+        }
+        
+        return (int) Math.round(converted);
+    }
 }
