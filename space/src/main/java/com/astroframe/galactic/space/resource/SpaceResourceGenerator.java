@@ -36,8 +36,8 @@ public class SpaceResourceGenerator {
         
         // Register space station resources
         registerCelestialBodyResources(SpaceBodies.SPACE_STATION.getId(), new ResourceDistribution()
-            .addResource(SpaceItems.STELLAR_FRAGMENT.get(), 0.15f, 1, 2)
-            .addResource(SpaceItems.LUNAR_DUST.get(), 0.6f, 1, 3));
+            .addResource(com.astroframe.galactic.space.registry.SpaceItems.MOON_DUST.get(), 0.15f, 1, 2)
+            .addResource(com.astroframe.galactic.space.registry.SpaceItems.MARS_ROCK.get(), 0.6f, 1, 3));
         
         // Register earth (no special resources)
         registerCelestialBodyResources(SpaceBodies.EARTH.getId(), new ResourceDistribution());

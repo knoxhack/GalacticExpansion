@@ -106,7 +106,7 @@ public class ModularRocketItem extends Item {
      * @return A new rocket item
      */
     public static ItemStack createBasicRocket() {
-        ItemStack stack = new ItemStack(SpaceItems.MODULAR_ROCKET.get());
+        ItemStack stack = new ItemStack(com.astroframe.galactic.space.registry.SpaceItems.TIER_1_ROCKET.get());
         
         // Create a basic rocket using builder pattern
         ModularRocket.Builder builder = new ModularRocket.Builder(
