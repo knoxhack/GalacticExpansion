@@ -5,7 +5,7 @@ channel = "stable-24_05"
 packages = ["unzip", "jdk21_headless", "wget", "imagemagick", "jq", "zip"]
 
 [workflows]
-runButton = "Project"
+runButton = "Build Mod (All Modules)"
 
 [[workflows.workflow]]
 name = "Project"

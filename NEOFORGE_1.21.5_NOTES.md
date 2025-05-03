@@ -34,9 +34,89 @@ public static void init() {
 - Always explicitly set the stack size using `properties.stacksTo(64)` for standard items
 - For single stack items use `properties.stacksTo(1)`
 
+## Event Bus Changes
+
+### Static Event Bus Access
+
+In NeoForge 1.21.5, it's important to provide static access to the mod's event bus for registration:
+
+```java
+@Mod(MyMod.MOD_ID)
+public class MyMod {
+    
+    /** The mod ID for this module */
+    public static final String MOD_ID = "mymod";
+    
+    /** The mod's event bus - static access for NeoForge 1.21.5 registration */
+    public static IEventBus MOD_EVENT_BUS;
+    
+    /** Singleton instance of the mod */
+    public static MyMod INSTANCE;
+    
+    /**
+     * Constructs a new instance of the mod.
+     */
+    public MyMod(IEventBus modEventBus) {
+        INSTANCE = this;
+        MOD_EVENT_BUS = modEventBus; // Store static reference for module registration
+        
+        // Initialize registries
+        // ...
+    }
+}
+```
+
+### Event Handler Registration
+
+There are two distinct event buses in NeoForge 1.21.5, and it's critical to register handlers to the correct one:
+
+#### Mod Event Bus
+
+- Register to `MOD_EVENT_BUS` for mod lifecycle events
+- Handles events that implement `IModBusEvent` interface
+- Examples: `FMLCommonSetupEvent`, `RegisterEvent`, `BuildCreativeModeTabContentsEvent`
+- Used for mod initialization, registration, and setup
+
+```java
+// Register to mod event bus
+GalacticCore.MOD_EVENT_BUS.register(this);
+
+// Example mod event handler
+@SubscribeEvent
+public void setup(FMLCommonSetupEvent event) {
+    // Mod initialization code
+}
+```
+
+#### Game Event Bus
+
+- Register to `NeoForge.EVENT_BUS` for game events
+- Handles events that do not implement `IModBusEvent`
+- Examples: `PlayerEvent.PlayerLoggedInEvent`, `LivingDamageEvent`, `ServerTickEvent`
+- Used for gameplay interactions and responding to game state changes
+
+```java
+// Register to game event bus
+NeoForge.EVENT_BUS.register(this);
+
+// Example game event handler
+@SubscribeEvent
+public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+    // Player login handling code
+}
+```
+
+#### Best Practices
+
+- Only register classes with `@SubscribeEvent` methods to event buses
+- All DeferredRegister objects should be registered directly to the mod event bus
+- Never register a DeferredRegister to another DeferredRegister - always register to the event bus
+- Using the wrong event bus will cause a `java.lang.IllegalArgumentException` at runtime
+
 ## Package Changes
 
 - Many packages have moved from `net.minecraftforge` to `net.neoforged.neoforge`
+- Event bus package has moved to `net.neoforged.bus.api`
 - `net.minecraft.resources.ResourceLocation` constructors are deprecated, use `ResourceLocation.parse()` instead
 - Sound Event handling uses the `Holder.direct` pattern
 - Registry access should use `BuiltInRegistries` or `Registries` instead of `ForgeRegistries`
@@ -58,12 +138,6 @@ Recommended helper methods to create:
 - TagHelper - for handling NBT data across versions
 - ResourceLocationHelper - for creating resource locations
 - ItemStackHelper - for working with item stacks and tags
-
-## Event Bus Registration
-
-- Only register classes with `@SubscribeEvent` methods to event buses
-- Static event handler methods should be registered with `NeoForge.EVENT_BUS`
-- Mod initialization event handlers should be registered with `modEventBus`
 
 ## Creative Tabs
 

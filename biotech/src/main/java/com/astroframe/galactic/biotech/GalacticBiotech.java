@@ -28,12 +28,16 @@ public class GalacticBiotech {
     /** Singleton instance of the biotech mod */
     public static GalacticBiotech INSTANCE;
     
+    /** The mod's event bus - static access for NeoForge 1.21.5 registration */
+    public static IEventBus MOD_EVENT_BUS;
+    
     /**
      * Constructs a new instance of the Galactic Biotech mod.
      * This initializes biological technologies and genetic engineering systems.
      */
     public GalacticBiotech(IEventBus modEventBus) {
         INSTANCE = this;
+        MOD_EVENT_BUS = modEventBus; // Store static reference for module registration
         
         LOGGER.info("Initializing Galactic Biotech module");
         

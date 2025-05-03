@@ -127,8 +127,12 @@ public class AttachmentSystemTester {
     
     /**
      * Register this class to the event bus.
+     * 
+     * Note: PlayerEvent.PlayerLoggedInEvent is a game event, not a mod bus event,
+     * so we need to register to the NeoForge event bus, not the mod event bus.
      */
     public static void register() {
-        GalacticSpace.MOD_EVENT_BUS.register(new AttachmentSystemTester());
+        // Register to NeoForge.EVENT_BUS for game events like PlayerLoggedInEvent
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(new AttachmentSystemTester());
     }
 }
