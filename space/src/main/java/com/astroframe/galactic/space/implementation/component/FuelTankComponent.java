@@ -2,7 +2,7 @@ package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.IFuelTank;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
-import com.astroframe.galactic.core.api.space.component.enums.FuelType;
+import com.astroframe.galactic.core.api.space.component.FuelType;
 import com.astroframe.galactic.space.util.TagHelper;
 import net.minecraft.nbt.CompoundTag;
 

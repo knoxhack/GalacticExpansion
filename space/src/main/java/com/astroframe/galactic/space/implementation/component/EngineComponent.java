@@ -3,7 +3,7 @@ package com.astroframe.galactic.space.implementation.component;
 import com.astroframe.galactic.core.api.space.component.IRocketEngine;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
-import com.astroframe.galactic.core.api.space.component.enums.FuelType;
+import com.astroframe.galactic.core.api.space.component.FuelType;
 import com.astroframe.galactic.space.util.TagHelper;
 import net.minecraft.nbt.CompoundTag;
 
@@ -148,8 +148,8 @@ public class EngineComponent extends BasicRocketComponent implements IRocketEngi
     @Override
     public void deserializeNBT(CompoundTag tag) {
         super.deserializeNBT(tag);
-        this.thrust = tag.getDouble("thrust");
-        this.efficiency = tag.getDouble("efficiency");
+        this.thrust = TagHelper.getDouble(tag, "thrust");
+        this.efficiency = TagHelper.getDouble(tag, "efficiency");
         
         try {
             this.engineType = EngineType.valueOf(TagHelper.getString(tag, "engineType"));
@@ -163,8 +163,8 @@ public class EngineComponent extends BasicRocketComponent implements IRocketEngi
             this.fuelType = FuelType.CHEMICAL;
         }
         
-        this.fuelConsumptionRate = tag.getDouble("fuelConsumptionRate");
-        this.heatGeneration = tag.getDouble("heatGeneration");
+        this.fuelConsumptionRate = TagHelper.getDouble(tag, "fuelConsumptionRate");
+        this.heatGeneration = TagHelper.getDouble(tag, "heatGeneration");
         this.canOperateInAtmosphere = TagHelper.getBoolean(tag, "canOperateInAtmosphere");
         this.canOperateInSpace = TagHelper.getBoolean(tag, "canOperateInSpace");
         

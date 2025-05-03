@@ -14,6 +14,7 @@ public class BasicRocketComponent implements IRocketComponent {
     private final int tier;
     private int durability;
     private int maxDurability;
+    private net.minecraft.resources.ResourceLocation id;
     
     /**
      * Create a new basic rocket component.
@@ -26,6 +27,13 @@ public class BasicRocketComponent implements IRocketComponent {
         this.tier = tier;
         this.maxDurability = calculateMaxDurability(tier);
         this.durability = this.maxDurability;
+        this.id = new net.minecraft.resources.ResourceLocation("galactic", 
+            type.toString().toLowerCase() + "_t" + tier);
+    }
+    
+    @Override
+    public net.minecraft.resources.ResourceLocation getId() {
+        return this.id;
     }
     
     /**
@@ -54,8 +62,18 @@ public class BasicRocketComponent implements IRocketComponent {
     }
     
     @Override
+    public int getCurrentDurability() {
+        return durability;
+    }
+    
+    @Override
     public int getMaxDurability() {
         return maxDurability;
+    }
+    
+    @Override
+    public double getMass() {
+        return 10.0 * tier;
     }
     
     @Override
