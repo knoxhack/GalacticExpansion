@@ -74,16 +74,14 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
     protected void loadData(CompoundTag tag) {
         // Load active state - updated for NeoForge 1.21.5 compatibility
         if (tag.contains("Active")) {
-            // Get boolean value handling Optional return
-            java.util.Optional<Boolean> activeOpt = tag.getBoolean("Active");
-            active = activeOpt.orElse(false);
+            // Get boolean value directly in NeoForge 1.21.5
+            active = tag.getBoolean("Active");
         }
         
         // Load rotation angle - updated for NeoForge 1.21.5 compatibility
         if (tag.contains("RotationAngle")) {
-            // Get float value handling Optional return
-            java.util.Optional<Float> rotationOpt = tag.getFloat("RotationAngle");
-            rotationAngle = rotationOpt.orElse(0.0F);
+            // Get float value directly in NeoForge 1.21.5
+            rotationAngle = tag.getFloat("RotationAngle");
         }
         
         // Load linked table position if it exists - updated approach for NeoForge 1.21.5
@@ -99,18 +97,10 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
                     linkedTag.contains("Y") && 
                     linkedTag.contains("Z")) {
                     
-                    // For NeoForge 1.21.5, we need to handle Optional returns
-                    int x = 0, y = 0, z = 0;
-                    
-                    // Use the Optional API directly
-                    java.util.Optional<Integer> xOpt = linkedTag.getInt("X");
-                    java.util.Optional<Integer> yOpt = linkedTag.getInt("Y");
-                    java.util.Optional<Integer> zOpt = linkedTag.getInt("Z");
-                    
-                    // Extract values safely
-                    x = xOpt.orElse(0);
-                    y = yOpt.orElse(0);
-                    z = zOpt.orElse(0);
+                    // Direct access in NeoForge 1.21.5
+                    int x = linkedTag.getInt("X");
+                    int y = linkedTag.getInt("Y");
+                    int z = linkedTag.getInt("Z");
                     
                     linkedTablePos = new BlockPos(x, y, z);
                 } else {
