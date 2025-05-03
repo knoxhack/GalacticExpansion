@@ -260,8 +260,7 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
             ListTag componentsTag = new ListTag();
             for (ItemStack stack : components) {
                 if (!stack.isEmpty()) {
-                    // In NeoForge 1.21.5, ItemStack.save requires a Provider parameter
-                    // We'll create a temporary tag and use built-in registry
+                    // In NeoForge 1.21.5, we need to provide the registry
                     CompoundTag componentTag = stack.save(new CompoundTag(), 
                         net.minecraft.core.registries.BuiltInRegistries.ITEM);
                     componentsTag.add(componentTag);
@@ -288,10 +287,9 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
      * 
      * @param tag The tag to save to
      */
-    @Override
     protected void saveData(CompoundTag tag) {
-        // Save components - in NeoForge 1.21.5 we don't need to provide a registry
-        ContainerHelper.saveAllItems(tag, components);
+        // Save components - in NeoForge 1.21.5 we need to provide the registry
+        ContainerHelper.saveAllItems(tag, components, net.minecraft.core.registries.BuiltInRegistries.ITEM);
         
         // Save rocket data
         if (rocketDataTag != null && !rocketDataTag.isEmpty()) {
@@ -305,15 +303,14 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
      * 
      * @param tag The tag to load from
      */
-    @Override
     protected void loadData(CompoundTag tag) {
-        // Load components with proper Provider parameter for NeoForge 1.21.5
+        // Load components - in NeoForge 1.21.5 we need to provide the registry
         components = NonNullList.withSize(9, ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag, components, net.minecraft.core.registries.BuiltInRegistries.ITEM);
         
-        // Load rocket data - Updated for NeoForge 1.21.5 (direct access instead of Optional)
+        // Load rocket data handling Optional return in NeoForge 1.21.5
         if (tag.contains("RocketData")) {
-            rocketDataTag = tag.getCompound("RocketData");
+            rocketDataTag = tag.getCompound("RocketData").orElse(new CompoundTag());
         } else {
             rocketDataTag = new CompoundTag();
         }
