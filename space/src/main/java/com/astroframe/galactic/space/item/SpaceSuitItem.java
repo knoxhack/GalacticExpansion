@@ -52,15 +52,15 @@ public class SpaceSuitItem extends ArmorItem {
             String path = enchId.getPath();
             
             // For helmet-specific enchantments
-            if (this.armorType == net.minecraft.world.item.ArmorMaterial.Type.HELMET && 
+            if (this.getType() == ArmorItem.Type.HELMET && 
                 (path.equals("respiration") || path.equals("aqua_affinity"))) {
                 return true;
             }
         }
         
         // Can't use super.canApplyAtEnchantingTable in this implementation
-        // Just allow common enchantments
-        return enchantment.category.canEnchant(stack.getItem());
+        // Just allow common enchantments based on the enchantment type
+        return enchantment.getSlotItems(stack.getItem().getDefaultInstance()).containsKey(EquipmentSlot.byTypeAndIndex(EquipmentSlot.Type.ARMOR, getType().getSlot()));
     }
     
     /**
@@ -166,17 +166,8 @@ public class SpaceSuitItem extends ArmorItem {
         }
         
         public net.minecraft.core.Holder<SoundEvent> getEquipSound() {
-            // Get the sound event directly by ID for NeoForge 1.21.5
-            // Handle the Optional return value properly
-            return net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT
-                   .getHolder(net.minecraft.resources.ResourceKey.create(
-                       net.minecraft.core.registries.Registries.SOUND_EVENT, 
-                       ResourceLocation.parse("minecraft:item.armor.equip_iron")))
-                   .or(() -> net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT
-                       .getHolder(net.minecraft.resources.ResourceKey.create(
-                           net.minecraft.core.registries.Registries.SOUND_EVENT,
-                           net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.getKey(SoundEvents.ARMOR_EQUIP_IRON))))
-                   .get();
+            // Get the sound event directly using SoundEvents in NeoForge 1.21.5
+            return SoundEvents.ARMOR_EQUIP_IRON.builtInRegistryHolder();
         }
         
         public Ingredient getRepairIngredient() {

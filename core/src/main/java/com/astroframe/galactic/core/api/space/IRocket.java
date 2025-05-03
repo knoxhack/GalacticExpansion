@@ -1,5 +1,8 @@
 package com.astroframe.galactic.core.api.space;
 
+import java.util.List;
+import net.minecraft.nbt.CompoundTag;
+
 /**
  * Interface for rocket objects.
  * Defines methods to access rocket properties and capabilities.
@@ -63,4 +66,61 @@ public interface IRocket {
      * @return The time to orbit in seconds, or -1 if orbit cannot be reached
      */
     float getTimeToOrbit();
+    
+    /**
+     * Gets the current fuel level as an alias for getFuel()
+     * 
+     * @return The current fuel level
+     */
+    default float getFuelLevel() {
+        return getFuel();
+    }
+    
+    /**
+     * Sets the current fuel level
+     * 
+     * @param fuelLevel The new fuel level
+     */
+    default void setFuelLevel(float fuelLevel) {
+        // Default implementation does nothing
+    }
+    
+    /**
+     * Checks if the rocket has a specific component
+     * 
+     * @param type The component type to check
+     * @return true if the rocket has this component
+     */
+    default boolean hasComponent(RocketComponentType type) {
+        return false;
+    }
+    
+    /**
+     * Gets all components in this rocket
+     * 
+     * @return List of all rocket components
+     */
+    default List<RocketComponent> getAllComponents() {
+        return List.of();
+    }
+    
+    /**
+     * Saves the rocket data to an NBT tag
+     * 
+     * @param tag The tag to save to
+     * @return The updated tag
+     */
+    default CompoundTag saveToTag(CompoundTag tag) {
+        if (tag == null) {
+            tag = new CompoundTag();
+        }
+        
+        tag.putInt("tier", getTier());
+        tag.putFloat("fuel", getFuel());
+        tag.putFloat("fuelCapacity", getFuelCapacity());
+        tag.putFloat("mass", getMass());
+        tag.putFloat("thrust", getThrust());
+        
+        return tag;
+    }
 }
