@@ -13,6 +13,9 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.resources.ResourceLocation;
 import java.util.Optional;
+import java.util.UUID;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.common.util.Lazy;
@@ -50,7 +53,7 @@ public class SpaceSuitItem extends ArmorItem {
         // In NeoForge 1.21.5, access the enchantment registry using BuiltInRegistries and ResourceKey
         ResourceLocation enchLocation = null;
         try {
-            // In NeoForge 1.21.5, use BuiltInRegistries to get the key from the registry
+            // In NeoForge 1.21.5, use Registry.ENCHANTMENT to access the registry
             enchLocation = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
         } catch (Exception e) {
             // If all else fails, just return default value
@@ -173,8 +176,8 @@ public class SpaceSuitItem extends ArmorItem {
             return 15;
         }
         
-        public net.minecraft.core.Holder.Reference<SoundEvent> getEquipSound() {
-            // In NeoForge 1.21.5, we need to return a Holder.Reference, not the SoundEvent itself
+        public Holder<SoundEvent> getEquipSound() {
+            // In NeoForge 1.21.5, SoundEvents are stored as Holders
             return SoundEvents.ARMOR_EQUIP_IRON;
         }
         
