@@ -282,6 +282,60 @@ public class ItemStackHelper {
      */
     
     /**
+     * Gets the tag from an ItemStack.
+     * This provides a compatibility method for NeoForge 1.21.5 where the method is called getData().
+     * 
+     * @param stack The ItemStack
+     * @return The tag or null if none
+     */
+    public static CompoundTag getTag(ItemStack stack) {
+        if (stack == null || stack.isEmpty()) {
+            return null;
+        }
+        
+        try {
+            // In NeoForge 1.21.5, use getData() instead of getTag()
+            return stack.getData();
+        } catch (Exception e) {
+            // Fall back to our tag cache system
+            UUID stackId = stackIds.get(stack);
+            if (stackId == null) {
+                return null;
+            }
+            return tagCache.get(stackId);
+        }
+    }
+    
+    /**
+     * Sets the tag for an ItemStack.
+     * This provides a compatibility method for NeoForge 1.21.5 where the method is called setData().
+     * 
+     * @param stack The ItemStack
+     * @param tag The tag to set
+     */
+    public static void setTag(ItemStack stack, CompoundTag tag) {
+        if (stack == null || stack.isEmpty()) {
+            return;
+        }
+        
+        try {
+            // In NeoForge 1.21.5, use setData() instead of setTag()
+            stack.setData(tag);
+        } catch (Exception e) {
+            // Fall back to our tag cache system
+            if (tag == null) {
+                UUID stackId = stackIds.remove(stack);
+                if (stackId != null) {
+                    tagCache.remove(stackId);
+                }
+            } else {
+                UUID stackId = stackIds.computeIfAbsent(stack, k -> UUID.randomUUID());
+                tagCache.put(stackId, tag);
+            }
+        }
+    }
+    
+    /**
      * Checks if an ItemStack has a tag.
      * This is a compatibility method for handling API differences between Minecraft versions.
      * 

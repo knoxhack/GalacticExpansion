@@ -19,9 +19,10 @@ public class SpaceBlockEntities {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, GalacticSpace.MOD_ID);
     
     // Register the rocket assembly table block entity
+    // In NeoForge 1.21.5, BlockEntityType.Builder.of() should be used instead of builder()
     public static final Supplier<BlockEntityType<RocketAssemblyTableBlockEntity>> ROCKET_ASSEMBLY_TABLE = 
             BLOCK_ENTITIES.register("rocket_assembly_table", 
-                    () -> net.minecraft.world.level.block.entity.BlockEntityType.builder(
+                    () -> BlockEntityType.Builder.of(
                             RocketAssemblyTableBlockEntity::new, 
                             SpaceBlocks.ROCKET_ASSEMBLY_TABLE.get()
                     ).build(null));

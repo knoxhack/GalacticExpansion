@@ -12,11 +12,11 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.Registry;
 import java.util.Optional;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.common.util.Lazy;
+import net.neoforged.neoforge.registries.ForgeRegistries;
 
 /**
  * Space suit armor item with special properties for space survival.
@@ -52,7 +52,7 @@ public class SpaceSuitItem extends ArmorItem {
         try {
             // In NeoForge 1.21.5, use the correct registry reference
             // ForgeRegistries should be used for mod-related registries
-            enchLocation = net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
+            enchLocation = ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
         } catch (Exception e) {
             // If all else fails, just return default value
             return false;
@@ -104,7 +104,7 @@ public class SpaceSuitItem extends ArmorItem {
         
         Item item = stack.getItem();
         // In NeoForge 1.21.5, use ForgeRegistries for item registry lookups
-        ResourceLocation itemId = net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(item);
+        ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(item);
         return itemId != null && itemId.getPath().contains("space_suit");
     }
     

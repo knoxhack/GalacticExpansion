@@ -9,6 +9,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.neoforged.neoforge.registries.ForgeRegistries;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import java.util.function.BiFunction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -268,8 +270,8 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
                     CompoundTag componentTag = new CompoundTag();
                     componentTag.putString("id", BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
                     componentTag.putByte("Count", (byte)stack.getCount());
-                    // In NeoForge 1.21.5, use stack.getTag() to get the tag data
-                    CompoundTag stackTag = stack.getTag();
+                    // In NeoForge 1.21.5, use ItemStackHelper to handle API differences
+                    CompoundTag stackTag = com.astroframe.galactic.space.items.ItemStackHelper.getTag(stack);
                     if (stackTag != null) {
                         componentTag.put("tag", stackTag.copy());
                     }
@@ -306,8 +308,8 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putString("id", BuiltInRegistries.ITEM.getKey(components.get(i).getItem()).toString());
                 itemTag.putByte("Count", (byte)components.get(i).getCount());
-                // In NeoForge 1.21.5, use stack.getTag() to get the tag data
-                CompoundTag compTag = components.get(i).getTag();
+                // In NeoForge 1.21.5, use ItemStackHelper to handle API differences
+                CompoundTag compTag = com.astroframe.galactic.space.items.ItemStackHelper.getTag(components.get(i));
                 if (compTag != null) {
                     itemTag.put("tag", compTag.copy());
                 }
