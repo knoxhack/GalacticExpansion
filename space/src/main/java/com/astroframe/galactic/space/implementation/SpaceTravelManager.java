@@ -164,7 +164,6 @@ public class SpaceTravelManager implements ISpaceTravelManager {
      * @param destination The destination celestial body
      * @return Travel time in milliseconds
      */
-    @Override
     public long calculateTravelTime(IRocket rocket, ICelestialBody destination) {
         if (rocket == null || destination == null) {
             return 0;
@@ -190,7 +189,6 @@ public class SpaceTravelManager implements ISpaceTravelManager {
      * @param player The player whose travel to cancel
      * @return True if travel was canceled
      */
-    @Override
     public boolean cancelTravel(Player player) {
         if (player == null || !isPlayerTraveling(player)) {
             return false;
@@ -211,7 +209,6 @@ public class SpaceTravelManager implements ISpaceTravelManager {
      * @param player The player whose travel to complete
      * @return True if travel was completed
      */
-    @Override
     public boolean completeTravel(Player player) {
         if (player == null || !isPlayerTraveling(player)) {
             return false;
@@ -304,7 +301,6 @@ public class SpaceTravelManager implements ISpaceTravelManager {
      * @param destination The celestial body to travel to
      * @return true if the journey was successfully started
      */
-    @Override
     public boolean travelTo(ServerPlayer player, ICelestialBody destination) {
         if (player == null || destination == null) {
             return false;
@@ -440,7 +436,7 @@ public class SpaceTravelManager implements ISpaceTravelManager {
         
         // Default to Earth if in overworld
         if (player.level().dimension() == net.minecraft.world.level.Level.OVERWORLD) {
-            return SpaceBodies.EARTH.get();
+            return SpaceBodies.EARTH;
         }
         
         // Return null for other dimensions
