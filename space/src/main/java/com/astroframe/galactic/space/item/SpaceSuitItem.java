@@ -51,8 +51,8 @@ public class SpaceSuitItem extends ArmorItem {
         ResourceLocation enchLocation = null;
         try {
             // Get the location directly from the registry in NeoForge 1.21.5
-            // For NeoForge 1.21.5, we need to use ForgeRegistries since BuiltInRegistries.ENCHANTMENT doesn't exist
-            enchLocation = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+            // In NeoForge 1.21.5, get key directly from the enchantment object
+            enchLocation = enchantment.getRegistryName();
         } catch (Exception e) {
             // If all else fails, just return default value
             return false;

@@ -267,7 +267,8 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
                     CompoundTag componentTag = new CompoundTag();
                     componentTag.putString("id", BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
                     componentTag.putByte("Count", (byte)stack.getCount());
-                    CompoundTag stackTag = stack.getTag();
+                    // In NeoForge 1.21.5, use stack.getOrCreateTag() instead of getTag()
+                    CompoundTag stackTag = stack.getData();
                     if (stackTag != null) {
                         componentTag.put("tag", stackTag.copy());
                     }
@@ -304,7 +305,8 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putString("id", BuiltInRegistries.ITEM.getKey(components.get(i).getItem()).toString());
                 itemTag.putByte("Count", (byte)components.get(i).getCount());
-                CompoundTag compTag = components.get(i).getTag();
+                // In NeoForge 1.21.5, use stack.getData() instead of getTag()
+                CompoundTag compTag = components.get(i).getData();
                 if (compTag != null) {
                     itemTag.put("tag", compTag.copy());
                 }
@@ -344,16 +346,17 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
                     int count = itemTag.getByte("Count");
                     ItemStack stack = new ItemStack(item, count);
                     if (itemTag.contains("tag")) {
-                        stack.setTag(itemTag.getCompound("tag"));
+                        // In NeoForge 1.21.5, setTag is replaced with setData
+                        stack.setData(itemTag.getCompound("tag"));
                     }
                     components.set(i, stack);
                 }
             }
         }
         
-        // Load rocket data - in NeoForge 1.21.5 getCompound returns Optional<CompoundTag>
+        // Load rocket data - in NeoForge 1.21.5 getCompound returns CompoundTag directly
         if (tag.contains("RocketData")) {
-            rocketDataTag = tag.getCompound("RocketData").orElse(new CompoundTag());
+            rocketDataTag = tag.getCompound("RocketData");
         } else {
             rocketDataTag = new CompoundTag();
         }

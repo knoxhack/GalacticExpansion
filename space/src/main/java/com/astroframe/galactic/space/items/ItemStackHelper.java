@@ -118,8 +118,8 @@ public class ItemStackHelper {
      */
     public static ItemStack createStack(ResourceLocation location, int count) {
         try {
-            // In NeoForge 1.21.5, we need to use BuiltInRegistries instead of ForgeRegistries
-            Item item = BuiltInRegistries.ITEMS.get(location);
+            // In NeoForge 1.21.5, we need to use BuiltInRegistries.ITEM (not ITEMS)
+            Item item = BuiltInRegistries.ITEM.get(location);
             
             if (item == Items.AIR) {
                 return ItemStack.EMPTY;
