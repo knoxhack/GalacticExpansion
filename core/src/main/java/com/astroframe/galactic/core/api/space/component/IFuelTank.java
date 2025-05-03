@@ -1,6 +1,5 @@
 package com.astroframe.galactic.core.api.space.component;
 
-import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 
 /**
  * Interface for rocket fuel tanks.

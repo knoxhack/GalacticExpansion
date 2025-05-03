@@ -1,7 +1,6 @@
 package com.astroframe.galactic.core.api.space.component;
 
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
-import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 
 import java.util.List;
 

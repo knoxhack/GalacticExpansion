@@ -117,4 +117,38 @@ public class TagHelper {
             return false;
         }
     }
+    
+    /**
+     * Gets a double from a compound tag safely.
+     *
+     * @param tag The parent tag
+     * @param key The key to get
+     * @return The double, or 0.0 if not found
+     */
+    public static double getDouble(CompoundTag tag, String key) {
+        try {
+            return tag.getDouble(key);
+        } catch (Exception e) {
+            return 0.0;
+        }
+    }
+    
+    /**
+     * Gets a double from a compound tag safely with a default value.
+     *
+     * @param tag The parent tag
+     * @param key The key to get
+     * @param defaultValue The default value to return if not found
+     * @return The double, or defaultValue if not found
+     */
+    public static double getDouble(CompoundTag tag, String key, double defaultValue) {
+        try {
+            if (tag.contains(key)) {
+                return tag.getDouble(key);
+            }
+            return defaultValue;
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
 }
