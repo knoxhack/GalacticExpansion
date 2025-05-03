@@ -49,7 +49,8 @@ public class TagHelper {
     public static int getIntValue(CompoundTag tag, String key) {
         if (tag.contains(key)) {
             try {
-                return tag.getInt(key);
+                // In NeoForge 1.21.5, the getInt method returns an Optional<Integer>
+                return tag.getInt(key).orElse(0);
             } catch (Exception e) {
                 GalacticSpace.LOGGER.warn("Failed to get int value from tag: " + e.getMessage());
             }
@@ -66,7 +67,8 @@ public class TagHelper {
     public static boolean getBooleanValue(CompoundTag tag, String key) {
         if (tag.contains(key)) {
             try {
-                return tag.getBoolean(key);
+                // In NeoForge 1.21.5, the getBoolean method returns an Optional<Boolean>
+                return tag.getBoolean(key).orElse(false);
             } catch (Exception e) {
                 GalacticSpace.LOGGER.warn("Failed to get boolean value from tag: " + e.getMessage());
             }
@@ -83,7 +85,8 @@ public class TagHelper {
     public static double getDoubleValue(CompoundTag tag, String key) {
         if (tag.contains(key)) {
             try {
-                return tag.getDouble(key);
+                // In NeoForge 1.21.5, the getDouble method returns an Optional<Double>
+                return tag.getDouble(key).orElse(0.0);
             } catch (Exception e) {
                 GalacticSpace.LOGGER.warn("Failed to get double value from tag: " + e.getMessage());
             }
@@ -100,7 +103,8 @@ public class TagHelper {
     public static long getLongValue(CompoundTag tag, String key) {
         if (tag.contains(key)) {
             try {
-                return tag.getLong(key);
+                // In NeoForge 1.21.5, the getLong method returns an Optional<Long>
+                return tag.getLong(key).orElse(0L);
             } catch (Exception e) {
                 GalacticSpace.LOGGER.warn("Failed to get long value from tag: " + e.getMessage());
             }
@@ -117,7 +121,8 @@ public class TagHelper {
     public static float getFloatValue(CompoundTag tag, String key) {
         if (tag.contains(key)) {
             try {
-                return tag.getFloat(key);
+                // In NeoForge 1.21.5, the getFloat method returns an Optional<Float>
+                return tag.getFloat(key).orElse(0.0f);
             } catch (Exception e) {
                 GalacticSpace.LOGGER.warn("Failed to get float value from tag: " + e.getMessage());
             }
@@ -134,7 +139,8 @@ public class TagHelper {
     public static byte getByteValue(CompoundTag tag, String key) {
         if (tag.contains(key)) {
             try {
-                return tag.getByte(key);
+                // In NeoForge 1.21.5, the getByte method returns an Optional<Byte>
+                return tag.getByte(key).orElse((byte)0);
             } catch (Exception e) {
                 GalacticSpace.LOGGER.warn("Failed to get byte value from tag: " + e.getMessage());
             }
@@ -151,7 +157,8 @@ public class TagHelper {
     public static short getShortValue(CompoundTag tag, String key) {
         if (tag.contains(key)) {
             try {
-                return tag.getShort(key);
+                // In NeoForge 1.21.5, the getShort method returns an Optional<Short>
+                return tag.getShort(key).orElse((short)0);
             } catch (Exception e) {
                 GalacticSpace.LOGGER.warn("Failed to get short value from tag: " + e.getMessage());
             }
