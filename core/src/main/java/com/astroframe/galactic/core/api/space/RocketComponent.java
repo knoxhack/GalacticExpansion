@@ -240,33 +240,34 @@ public class RocketComponent {
         }
         
         if (tag.contains("type")) {
-            this.type = RocketComponentType.getById(tag.getString("type"));
+            String typeStr = tag.getString("type").orElse("engine");
+            this.type = RocketComponentType.getById(typeStr);
         }
         
         if (tag.contains("tier")) {
-            this.tier = tag.getInt("tier");
+            this.tier = tag.getInt("tier").orElse(1);
         }
         
         if (tag.contains("mass")) {
-            this.mass = tag.getFloat("mass");
+            this.mass = tag.getFloat("mass").orElse(calculateMass());
         } else {
             this.mass = calculateMass();
         }
         
         if (tag.contains("durability")) {
-            this.durability = tag.getFloat("durability");
+            this.durability = tag.getFloat("durability").orElse(calculateDurability());
         } else {
             this.durability = calculateDurability();
         }
         
         if (tag.contains("maxDurability")) {
-            this.maxDurability = tag.getFloat("maxDurability");
+            this.maxDurability = tag.getFloat("maxDurability").orElse(calculateDurability());
         } else {
             this.maxDurability = calculateDurability();
         }
         
         if (tag.contains("efficiency")) {
-            this.efficiency = tag.getFloat("efficiency");
+            this.efficiency = tag.getFloat("efficiency").orElse(calculateEfficiency());
         } else {
             this.efficiency = calculateEfficiency();
         }

@@ -220,13 +220,21 @@ public class ModularRocket implements IRocket {
         // Load components
         components.clear();
         
-        if (tag.contains("components", net.minecraft.nbt.Tag.TAG_LIST)) {
-            net.minecraft.nbt.ListTag componentsList = tag.getList("components", net.minecraft.nbt.Tag.TAG_COMPOUND);
-            
-            for (int i = 0; i < componentsList.size(); i++) {
-                CompoundTag componentTag = componentsList.getCompound(i);
-                RocketComponent component = RocketComponent.fromTag(componentTag);
-                components.add(component);
+        // In NeoForge 1.21.5, contains only takes a string parameter
+        if (tag.contains("components")) {
+            // Check if this is indeed a list tag first
+            if (tag.get("components") instanceof net.minecraft.nbt.ListTag) {
+                net.minecraft.nbt.ListTag componentsList = (net.minecraft.nbt.ListTag) tag.get("components");
+                
+                for (int i = 0; i < componentsList.size(); i++) {
+                    // In NeoForge 1.21.5, getCompound returns Optional<CompoundTag>
+                    net.minecraft.nbt.Tag rawTag = componentsList.get(i);
+                    if (rawTag instanceof CompoundTag) {
+                        CompoundTag componentTag = (CompoundTag) rawTag;
+                        RocketComponent component = RocketComponent.fromTag(componentTag);
+                        components.add(component);
+                    }
+                }
             }
         }
     }

@@ -165,8 +165,11 @@ public class SpaceSuitItem extends ArmorItem {
         }
         
         public net.minecraft.core.Holder<SoundEvent> getEquipSound() {
-            // Get the sound event directly using SoundEvents in NeoForge 1.21.5
-            return SoundEvents.ARMOR_EQUIP_IRON.builtInRegistryHolder();
+            // Get the sound event from registry in NeoForge 1.21.5
+            ResourceLocation soundId = new ResourceLocation("minecraft:item.armor.equip_iron");
+            return net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.getHolder(
+                net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.SOUND_EVENT, soundId)
+            ).orElseThrow();
         }
         
         public Ingredient getRepairIngredient() {
