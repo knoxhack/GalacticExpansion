@@ -190,6 +190,14 @@ public class FuelTankImpl implements IFuelTank {
             this.currentFuelLevel = tag.getInt("CurrentFuelLevel");
         }
         
+        // Load position if present - direct approach for NeoForge 1.21.5
+        if (tag.contains("PosX") && tag.contains("PosY") && tag.contains("PosZ")) {
+            double x = tag.getDouble("PosX");
+            double y = tag.getDouble("PosY");
+            double z = tag.getDouble("PosZ");
+            this.position = new Vec3(x, y, z);
+        }
+        
         // We don't need to load constants like maxFuelCapacity, leakResistance, etc.
         // as they are already set in the constructor
     }

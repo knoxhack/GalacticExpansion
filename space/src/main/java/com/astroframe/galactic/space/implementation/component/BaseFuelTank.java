@@ -31,6 +31,7 @@ public class BaseFuelTank implements IFuelTank {
     private final float explosionResistance;
     private final boolean isInsulated;
     private final float pressureRating;
+    private Vec3 position;
     
     private BaseFuelTank(Builder builder) {
         this.id = builder.id;
@@ -47,6 +48,7 @@ public class BaseFuelTank implements IFuelTank {
         this.explosionResistance = builder.explosionResistance;
         this.isInsulated = builder.isInsulated;
         this.pressureRating = builder.pressureRating;
+        this.position = new Vec3(0, 0, 0);
     }
     
     @Override
@@ -155,6 +157,58 @@ public class BaseFuelTank implements IFuelTank {
     @Override
     public float getExplosionResistance() {
         return explosionResistance;
+    }
+    
+    @Override
+    public Vec3 getPosition() {
+        return position;
+    }
+    
+    @Override
+    public void setPosition(Vec3 position) {
+        this.position = position;
+    }
+    
+    @Override
+    public void save(CompoundTag tag) {
+        // Call the parent implementation to save common properties
+        super.save(tag);
+        
+        // Save fuel tank specific properties
+        tag.putInt("CurrentFuelLevel", currentFuelLevel);
+        tag.putInt("MaxFuelCapacity", maxFuelCapacity);
+        tag.putFloat("LeakResistance", leakResistance);
+        tag.putFloat("ExplosionResistance", explosionResistance);
+        tag.putString("FuelType", fuelType.name());
+        tag.putBoolean("Insulated", isInsulated);
+        tag.putFloat("PressureRating", pressureRating);
+        
+        // Save position vector
+        tag.putDouble("PosX", position.x());
+        tag.putDouble("PosY", position.y());
+        tag.putDouble("PosZ", position.z());
+    }
+    
+    @Override
+    public void load(CompoundTag tag) {
+        // Call the parent implementation to load common properties
+        super.load(tag);
+        
+        // Load fuel tank specific properties
+        if (tag.contains("CurrentFuelLevel")) {
+            this.currentFuelLevel = tag.getInt("CurrentFuelLevel");
+        }
+        
+        // Load position if present - direct approach for NeoForge 1.21.5
+        if (tag.contains("PosX") && tag.contains("PosY") && tag.contains("PosZ")) {
+            double x = tag.getDouble("PosX");
+            double y = tag.getDouble("PosY");
+            double z = tag.getDouble("PosZ");
+            this.position = new Vec3(x, y, z);
+        }
+        
+        // Note: We don't need to load constants like maxFuelCapacity, leakResistance, etc.
+        // as they are already set in the constructor
     }
     
     /**
