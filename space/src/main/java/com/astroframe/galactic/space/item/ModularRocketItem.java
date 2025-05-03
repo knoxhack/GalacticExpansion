@@ -178,8 +178,48 @@ public class ModularRocketItem extends Item {
             }
             
             if (tag.contains("rocket")) {
-                CompoundTag rocketTag = tag.getCompound("rocket").orElse(new CompoundTag());
-                return ModularRocket.fromTag(rocketTag);
+                try {
+                    // Use reflection to get the compound tag
+                    CompoundTag rocketTag = null;
+                    
+                    // First try the direct getCompound method if available
+                    try {
+                        java.lang.reflect.Method getCompoundMethod = tag.getClass().getMethod("getCompound", String.class);
+                        getCompoundMethod.setAccessible(true);
+                        Object result = getCompoundMethod.invoke(tag, "rocket");
+                        
+                        // Handle potential Optional wrapping in newer versions
+                        if (result instanceof CompoundTag) {
+                            rocketTag = (CompoundTag)result;
+                        } else if (result.getClass().getName().contains("Optional")) {
+                            // Try to extract from Optional
+                            java.lang.reflect.Method orElseMethod = result.getClass().getMethod("orElse", Object.class);
+                            orElseMethod.setAccessible(true);
+                            Object unwrapped = orElseMethod.invoke(result, new CompoundTag());
+                            if (unwrapped instanceof CompoundTag) {
+                                rocketTag = (CompoundTag)unwrapped;
+                            }
+                        }
+                    } catch (Exception ex) {
+                        // Try alternative method
+                        java.lang.reflect.Method getMethod = tag.getClass().getMethod("get", String.class);
+                        getMethod.setAccessible(true);
+                        Object result = getMethod.invoke(tag, "rocket");
+                        
+                        if (result instanceof CompoundTag) {
+                            rocketTag = (CompoundTag)result;
+                        }
+                    }
+                    
+                    if (rocketTag == null) {
+                        return null;
+                    }
+                    
+                    return ModularRocket.fromTag(rocketTag);
+                } catch (Exception ex) {
+                    System.err.println("Error retrieving rocket data: " + ex.getMessage());
+                    return null;
+                }
             }
         }
         

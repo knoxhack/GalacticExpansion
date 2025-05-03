@@ -511,10 +511,41 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                 java.lang.reflect.Method consumerMethod = newStack.getClass().getMethod("setTagElement", String.class, Tag.class);
                 if (consumerMethod != null) {
                     // If there's a tag, iterate through its keys and add each element
-                    for (String key : tag.getAllKeys()) {
-                        Tag value = tag.get(key);
-                        if (value != null) {
-                            consumerMethod.invoke(newStack, key, value);
+                    try {
+                        // Use getAllKeys method if available
+                        java.lang.reflect.Method getAllKeysMethod = tag.getClass().getMethod("getAllKeys");
+                        getAllKeysMethod.setAccessible(true);
+                        Set<String> keys = (Set<String>)getAllKeysMethod.invoke(tag);
+                        
+                        for (String key : keys) {
+                            // Get the tag value by key
+                            java.lang.reflect.Method getTagMethod = tag.getClass().getMethod("get", String.class);
+                            getTagMethod.setAccessible(true);
+                            Object tagValue = getTagMethod.invoke(tag, key);
+                            
+                            if (tagValue instanceof Tag) {
+                                consumerMethod.invoke(newStack, key, (Tag)tagValue);
+                            }
+                        }
+                    } catch (Exception ex) {
+                        // If getAllKeys is not available, try getKeys instead
+                        try {
+                            java.lang.reflect.Method getKeysMethod = tag.getClass().getMethod("getKeys");
+                            getKeysMethod.setAccessible(true);
+                            Set<String> keys = (Set<String>)getKeysMethod.invoke(tag);
+                            
+                            for (String key : keys) {
+                                // Get the tag value by key
+                                java.lang.reflect.Method getTagMethod = tag.getClass().getMethod("get", String.class);
+                                getTagMethod.setAccessible(true);
+                                Object tagValue = getTagMethod.invoke(tag, key);
+                                
+                                if (tagValue instanceof Tag) {
+                                    consumerMethod.invoke(newStack, key, (Tag)tagValue);
+                                }
+                            }
+                        } catch (Exception innerEx) {
+                            System.err.println("Failed to get keys from tag: " + innerEx.getMessage());
                         }
                     }
                 }
