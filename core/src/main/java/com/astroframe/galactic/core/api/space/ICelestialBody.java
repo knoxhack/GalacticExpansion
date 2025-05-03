@@ -62,4 +62,40 @@ public interface ICelestialBody {
      * @return The temperature in degrees Celsius
      */
     float getTemperature();
+    
+    /**
+     * Checks if this celestial body has a breathable atmosphere.
+     * 
+     * @return true if the atmosphere is breathable
+     */
+    default boolean hasBreathableAtmosphere() {
+        return hasAtmosphere() && getAtmosphericPressure() >= 0.7f && getAtmosphericPressure() <= 1.3f;
+    }
+    
+    /**
+     * Gets the required rocket tier as an alternative method name.
+     * 
+     * @return The required rocket tier (1-5)
+     */
+    default int getRocketTierRequired() {
+        return getRequiredTier();
+    }
+    
+    /**
+     * Gets the distance from Earth (home) as an alternative method name.
+     * 
+     * @return The distance in AU
+     */
+    default float getDistanceFromHome() {
+        return getDistance();
+    }
+    
+    /**
+     * Checks if this celestial body has unique resources that cannot be found elsewhere.
+     * 
+     * @return true if it has unique resources
+     */
+    default boolean hasUniqueResources() {
+        return true; // Default implementation assumes all celestial bodies have unique resources
+    }
 }

@@ -23,17 +23,17 @@ import net.neoforged.neoforge.common.util.Lazy;
 public class SpaceSuitItem extends ArmorItem {
     
     private static final CustomArmorMaterial MATERIAL = new CustomArmorMaterial();
-    private final EquipmentSlot slot;
+    private final Type type;
     
     /**
      * Create a new space suit item.
      *
-     * @param slot The equipment slot this armor occupies
+     * @param type The armor type (helmet, chestplate, etc.)
      * @param properties The item properties
      */
-    public SpaceSuitItem(EquipmentSlot slot, Properties properties) {
-        super(MATERIAL, slot, properties);
-        this.slot = slot;
+    public SpaceSuitItem(Type type, Properties properties) {
+        super(MATERIAL, type, properties);
+        this.type = type;
     }
     
     // Enchantment behavior methods
@@ -65,7 +65,7 @@ public class SpaceSuitItem extends ArmorItem {
             String path = enchLocation.getPath();
             
             // For helmet-specific enchantments
-            if (this.slot == EquipmentSlot.HEAD && 
+            if (this.type == Type.HELMET && 
                 (path.equals("respiration") || path.equals("aqua_affinity"))) {
                 return true;
             }
@@ -165,12 +165,12 @@ public class SpaceSuitItem extends ArmorItem {
         private static final int[] PROTECTION_PER_SLOT = new int[]{3, 6, 8, 3};
         private final Lazy<Ingredient> repairMaterial = Lazy.of(() -> Ingredient.of(Items.IRON_INGOT));
         
-        public int getDurabilityForType(EquipmentSlot slot) {
-            return DURABILITY_PER_SLOT[slot.getIndex()] * 25;
+        public int getDurabilityForType(Type type) {
+            return DURABILITY_PER_SLOT[type.getSlot().getIndex()] * 25;
         }
         
-        public int getDefenseForType(EquipmentSlot slot) {
-            return PROTECTION_PER_SLOT[slot.getIndex()];
+        public int getDefenseForType(Type type) {
+            return PROTECTION_PER_SLOT[type.getSlot().getIndex()];
         }
         
         public int getEnchantmentValue() {
@@ -178,8 +178,10 @@ public class SpaceSuitItem extends ArmorItem {
         }
         
         public net.minecraft.core.Holder<SoundEvent> getEquipSound() {
-            // For NeoForge 1.21.5, we need to return the sound event directly
-            return net.minecraft.core.Holder.direct((SoundEvent)SoundEvents.ARMOR_EQUIP_IRON);
+            // For NeoForge 1.21.5, we need to get a reference to the actual SoundEvent
+            SoundEvent sound = net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_IRON;
+            // Then create a holder for it
+            return net.minecraft.core.Holder.direct(sound);
         }
         
         public Ingredient getRepairIngredient() {
