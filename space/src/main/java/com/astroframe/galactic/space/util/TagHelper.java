@@ -47,7 +47,7 @@ public class TagHelper {
      * @return The integer value, or 0 if not found or not an integer
      */
     public static int getIntValue(CompoundTag tag, String key) {
-        if (tag.contains(key, Tag.TAG_INT)) {
+        if (tag.contains(key)) {
             try {
                 return tag.getInt(key);
             } catch (Exception e) {
@@ -64,7 +64,7 @@ public class TagHelper {
      * @return The boolean value, or false if not found or not a boolean
      */
     public static boolean getBooleanValue(CompoundTag tag, String key) {
-        if (tag.contains(key, Tag.TAG_BYTE)) {
+        if (tag.contains(key)) {
             try {
                 return tag.getBoolean(key);
             } catch (Exception e) {
@@ -81,7 +81,7 @@ public class TagHelper {
      * @return The double value, or 0.0 if not found or not a double
      */
     public static double getDoubleValue(CompoundTag tag, String key) {
-        if (tag.contains(key, Tag.TAG_DOUBLE)) {
+        if (tag.contains(key)) {
             try {
                 return tag.getDouble(key);
             } catch (Exception e) {
@@ -98,7 +98,7 @@ public class TagHelper {
      * @return The long value, or 0 if not found or not a long
      */
     public static long getLongValue(CompoundTag tag, String key) {
-        if (tag.contains(key, Tag.TAG_LONG)) {
+        if (tag.contains(key)) {
             try {
                 return tag.getLong(key);
             } catch (Exception e) {
@@ -115,7 +115,7 @@ public class TagHelper {
      * @return The float value, or 0.0f if not found or not a float
      */
     public static float getFloatValue(CompoundTag tag, String key) {
-        if (tag.contains(key, Tag.TAG_FLOAT)) {
+        if (tag.contains(key)) {
             try {
                 return tag.getFloat(key);
             } catch (Exception e) {
@@ -132,7 +132,7 @@ public class TagHelper {
      * @return The byte value, or 0 if not found or not a byte
      */
     public static byte getByteValue(CompoundTag tag, String key) {
-        if (tag.contains(key, Tag.TAG_BYTE)) {
+        if (tag.contains(key)) {
             try {
                 return tag.getByte(key);
             } catch (Exception e) {
@@ -149,7 +149,7 @@ public class TagHelper {
      * @return The short value, or 0 if not found or not a short
      */
     public static short getShortValue(CompoundTag tag, String key) {
-        if (tag.contains(key, Tag.TAG_SHORT)) {
+        if (tag.contains(key)) {
             try {
                 return tag.getShort(key);
             } catch (Exception e) {
