@@ -46,26 +46,21 @@ public class SpaceSuitItem extends ArmorItem {
     }
     
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        // In NeoForge 1.21.5, access the enchantment registry indirectly
+        // In NeoForge 1.21.5, access the enchantment registry using BuiltInRegistries
         ResourceLocation enchLocation = null;
         try {
-            // Try to get the registry key directly
-            enchLocation = net.minecraft.core.Registry.ENCHANTMENT.getKey(enchantment);
+            // Get the registry key from BuiltInRegistries
+            enchLocation = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
         } catch (Exception e) {
-            // Fallback to getting from built-in registries if available
-            try {
-                enchLocation = net.minecraft.world.item.enchantment.Enchantment.getEnchantmentId(enchantment);
-            } catch (Exception ex) {
-                // If all else fails, just return default value
-                return false;
-            }
+            // If all else fails, just return default value
+            return false;
         }
         
         if (enchLocation != null) {
             String path = enchLocation.getPath();
             
             // For helmet-specific enchantments
-            if (this.type == Type.HELMET && 
+            if (this.type == ArmorItem.Type.HELMET && 
                 (path.equals("respiration") || path.equals("aqua_affinity"))) {
                 return true;
             }
@@ -178,10 +173,8 @@ public class SpaceSuitItem extends ArmorItem {
         }
         
         public net.minecraft.core.Holder<SoundEvent> getEquipSound() {
-            // For NeoForge 1.21.5, we need to get a reference to the actual SoundEvent
-            SoundEvent sound = net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_IRON;
-            // Then create a holder for it
-            return net.minecraft.core.Holder.direct(sound);
+            // In NeoForge 1.21.5, SoundEvents are already Holders so we need to extract and rewrap
+            return net.minecraft.core.Holder.direct(SoundEvents.ARMOR_EQUIP_IRON.value());
         }
         
         public Ingredient getRepairIngredient() {
