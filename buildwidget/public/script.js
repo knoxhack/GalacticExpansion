@@ -981,71 +981,120 @@ function updateCheckpointStatus(status) {
     }
 }
 
-// Update short commits
-function updateShortCommits(commits) {
-    console.log('Updating short commits:', commits);
+// Update checkpoint details
+function updateCheckpointDetails(checkpoint) {
+    console.log('Updating checkpoint details:', checkpoint);
     
-    const commitList = document.getElementById('commitList');
-    if (!commitList) return;
+    const checkpointDetails = document.getElementById('checkpointDetails');
+    if (!checkpointDetails) return;
     
     // Clear existing content
-    commitList.innerHTML = '';
+    checkpointDetails.innerHTML = '';
     
-    // Check if we have commits
-    if (!commits || commits.length === 0) {
+    // Check if we have checkpoint data
+    if (!checkpoint) {
         const emptyMessage = document.createElement('div');
-        emptyMessage.className = 'loading-commits';
-        emptyMessage.textContent = 'No recent commits found';
-        commitList.appendChild(emptyMessage);
+        emptyMessage.className = 'loading-checkpoint';
+        emptyMessage.textContent = 'No checkpoint information available';
+        checkpointDetails.appendChild(emptyMessage);
         return;
     }
     
-    // Add each commit to the list
-    commits.forEach(commit => {
-        const commitItem = document.createElement('div');
-        commitItem.className = 'commit-item';
-        
-        const message = document.createElement('div');
-        message.className = 'commit-message';
-        message.textContent = commit.message || 'No message';
-        
-        const details = document.createElement('div');
-        details.className = 'commit-details';
-        
-        // Only add author if available
-        if (commit.author) {
-            const author = document.createElement('span');
-            author.className = 'commit-author';
-            author.textContent = commit.author;
-            details.appendChild(author);
-        }
-        
-        // Add date if available
-        if (commit.date) {
-            const date = document.createElement('span');
-            date.className = 'commit-date';
-            date.textContent = getRelativeTime(new Date(commit.date));
-            details.appendChild(date);
-        }
-        
-        commitItem.appendChild(message);
-        commitItem.appendChild(details);
-        commitList.appendChild(commitItem);
-    });
+    // Create checkpoint details
+    const container = document.createElement('div');
+    container.className = 'checkpoint-info-container';
     
-    // Add event listener to refresh button
-    const refreshBtn = document.getElementById('refreshCommits');
-    if (refreshBtn) {
-        refreshBtn.addEventListener('click', () => {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'requestShortCommits',
-                    limit: 10
-                }));
-                
-                // Show loading indicator
-                commitList.innerHTML = '<div class="loading-commits">Loading commit history...</div>';
+    // Add checkpoint name
+    const name = document.createElement('div');
+    name.className = 'checkpoint-name';
+    name.textContent = checkpoint.name || 'Unnamed Checkpoint';
+    container.appendChild(name);
+    
+    // Add checkpoint description if available
+    if (checkpoint.description) {
+        const description = document.createElement('div');
+        description.className = 'checkpoint-description';
+        description.textContent = checkpoint.description;
+        container.appendChild(description);
+    }
+    
+    // Add timestamp if available
+    if (checkpoint.timestamp) {
+        const timestamp = document.createElement('div');
+        timestamp.className = 'checkpoint-timestamp';
+        timestamp.textContent = `Created ${getRelativeTime(new Date(checkpoint.timestamp))}`;
+        container.appendChild(timestamp);
+    }
+    
+    // Add build number if available
+    if (checkpoint.buildNumber) {
+        const buildNumber = document.createElement('div');
+        buildNumber.className = 'checkpoint-build-number';
+        buildNumber.textContent = `Build #${checkpoint.buildNumber}`;
+        container.appendChild(buildNumber);
+    }
+    
+    checkpointDetails.appendChild(container);
+    
+    // Add event listener to create checkpoint button
+    const createCheckpointBtn = document.getElementById('createCheckpointBtn');
+    if (createCheckpointBtn) {
+        createCheckpointBtn.addEventListener('click', () => {
+            // Show a modal dialog for checkpoint information
+            const checkpointName = prompt('Enter checkpoint name (required):', `Checkpoint ${new Date().toLocaleDateString()}`);
+            
+            if (!checkpointName) {
+                // User canceled or didn't provide a name
+                return;
             }
+            
+            const description = prompt('Enter checkpoint description (optional):', 'Automated checkpoint with build and release');
+            
+            // Disable the button while processing
+            createCheckpointBtn.disabled = true;
+            createCheckpointBtn.textContent = 'Processing Checkpoint...';
+            
+            // Add checkpoint message to output
+            const checkpointMessage = document.createElement('span');
+            checkpointMessage.className = 'output-info';
+            checkpointMessage.textContent = `[Checkpoint] Creating checkpoint "${checkpointName}"...`;
+            outputText.appendChild(checkpointMessage);
+            outputText.appendChild(document.createElement('br'));
+            
+            // Auto-scroll to bottom
+            if (autoScrollCheckbox.checked) {
+                outputText.parentElement.scrollTop = outputText.parentElement.scrollHeight;
+            }
+            
+            // Call the API to create a checkpoint
+            fetch('/api/checkpoint', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: checkpointName,
+                    description: description || ''
+                })
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      showNotification('Checkpoint Created', `Checkpoint "${checkpointName}" created successfully`, 'success');
+                  } else {
+                      showNotification('Checkpoint Failed', data.message || 'Failed to create checkpoint', 'error');
+                  }
+                  
+                  // Re-enable the button
+                  createCheckpointBtn.disabled = false;
+                  createCheckpointBtn.textContent = 'Create New Checkpoint';
+              })
+              .catch(error => {
+                  showNotification('Error', `Failed to create checkpoint: ${error.message}`, 'error');
+                  
+                  // Re-enable the button
+                  createCheckpointBtn.disabled = false;
+                  createCheckpointBtn.textContent = 'Create New Checkpoint';
+              });
         });
     }
 }

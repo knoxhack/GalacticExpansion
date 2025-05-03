@@ -21,7 +21,8 @@ const {
   handleCheckpoint,
   saveVersionHistory,
   saveChangelogHistory,
-  getShortCommitChanges
+  getShortCommitChanges,
+  getLastCheckpoint
 } = require('./build-and-release');
 
 // Initialize express app
@@ -211,6 +212,9 @@ app.post('/api/checkpoint', async (req, res) => {
     // Broadcast the notification to all clients
     broadcastNotifications();
     
+    // Broadcast checkpoint update to all clients
+    broadcastCheckpointUpdate();
+    
     res.json({
       success: true,
       message: 'Checkpoint created and build started',
@@ -221,6 +225,34 @@ app.post('/api/checkpoint', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to create checkpoint',
+      error: error.message
+    });
+  }
+});
+
+// Endpoint for getting the last checkpoint
+app.get('/api/last-checkpoint', (req, res) => {
+  try {
+    const lastCheckpoint = getLastCheckpoint();
+    
+    if (!lastCheckpoint) {
+      return res.json({
+        success: true,
+        hasCheckpoint: false,
+        message: 'No checkpoint data available'
+      });
+    }
+    
+    res.json({
+      success: true,
+      hasCheckpoint: true,
+      checkpoint: lastCheckpoint
+    });
+  } catch (error) {
+    console.error('Error getting last checkpoint:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve checkpoint data',
       error: error.message
     });
   }
@@ -991,6 +1023,25 @@ function getNotificationIcon(type) {
     case 'warning': return '⚠️';
     default: return 'ℹ️';
   }
+}
+
+// Broadcast last checkpoint data to all clients
+function broadcastCheckpointUpdate() {
+  // Get the last checkpoint
+  const lastCheckpoint = getLastCheckpoint();
+  
+  // Don't broadcast if no checkpoint exists
+  if (!lastCheckpoint) return;
+  
+  // Broadcast to all clients
+  clients.forEach((handlers, client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify({
+        type: 'lastCheckpoint',
+        data: lastCheckpoint
+      }));
+    }
+  });
 }
 
 // Broadcast build metrics to all clients
