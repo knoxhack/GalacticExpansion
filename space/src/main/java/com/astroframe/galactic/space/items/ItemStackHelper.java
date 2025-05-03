@@ -283,7 +283,7 @@ public class ItemStackHelper {
     
     /**
      * Gets the tag from an ItemStack.
-     * This provides a compatibility method for NeoForge 1.21.5 where the method is called getData().
+     * This provides a compatibility method for NeoForge 1.21.5 where the method is called getNbt().
      * 
      * @param stack The ItemStack
      * @return The tag or null if none
@@ -294,8 +294,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, use getData() instead of getTag()
-            return stack.getData();
+            // Check for the getNbt method which is the correct name in NeoForge 1.21.5
+            return stack.getNbt();
         } catch (Exception e) {
             // Fall back to our tag cache system
             UUID stackId = stackIds.get(stack);
@@ -308,7 +308,7 @@ public class ItemStackHelper {
     
     /**
      * Sets the tag for an ItemStack.
-     * This provides a compatibility method for NeoForge 1.21.5 where the method is called setData().
+     * This provides a compatibility method for NeoForge 1.21.5 where the method is called setNbt().
      * 
      * @param stack The ItemStack
      * @param tag The tag to set
@@ -319,8 +319,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, use setData() instead of setTag()
-            stack.setData(tag);
+            // In NeoForge 1.21.5, use setNbt() instead of setTag()
+            stack.setNbt(tag);
         } catch (Exception e) {
             // Fall back to our tag cache system
             if (tag == null) {

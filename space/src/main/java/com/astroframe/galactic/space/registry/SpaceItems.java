@@ -47,6 +47,7 @@ public class SpaceItems {
             () -> new Item(new Item.Properties()));
     
     // Space suit items
+    // In NeoForge 1.21.5, need to use ArmorItem.Type
     public static final Supplier<Item> SPACE_SUIT_HELMET = ITEMS.register("space_suit_helmet",
             () -> new SpaceSuitItem(ArmorItem.Type.HELMET, new Item.Properties().stacksTo(1)));
     

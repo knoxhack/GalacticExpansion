@@ -356,8 +356,8 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
                         // In NeoForge 1.21.5, get the compound tag via our helper
                         CompoundTag dataTag = com.astroframe.galactic.space.items.ItemStackHelper.getCompound(itemTag, "tag");
                         if (dataTag != null) {
-                            // In NeoForge 1.21.5, use setData instead of setTag
-                            stack.setData(dataTag);
+                            // In NeoForge 1.21.5, use our helper to handle API differences
+                            com.astroframe.galactic.space.items.ItemStackHelper.setTag(stack, dataTag);
                         }
                     }
                     components.set(i, stack);
