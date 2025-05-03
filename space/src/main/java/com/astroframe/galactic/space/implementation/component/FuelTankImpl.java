@@ -5,6 +5,8 @@ import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.nbt.CompoundTag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,7 @@ public class FuelTankImpl implements IFuelTank {
     private final float leakResistance;
     private final float explosionResistance;
     private final FuelType fuelType;
+    private Vec3 position;
     
     /**
      * Creates a new fuel tank.
@@ -52,6 +55,7 @@ public class FuelTankImpl implements IFuelTank {
         this.leakResistance = leakResistance;
         this.explosionResistance = explosionResistance;
         this.fuelType = fuelType;
+        this.position = new Vec3(0, 0, 0);
     }
 
     @Override
@@ -151,6 +155,43 @@ public class FuelTankImpl implements IFuelTank {
     @Override
     public float getExplosionResistance() {
         return explosionResistance;
+    }
+    
+    @Override
+    public Vec3 getPosition() {
+        return position;
+    }
+    
+    @Override
+    public void setPosition(Vec3 position) {
+        this.position = position;
+    }
+    
+    @Override
+    public void save(CompoundTag tag) {
+        // Call the parent implementation to save common properties
+        super.save(tag);
+        
+        // Save fuel tank specific properties
+        tag.putInt("CurrentFuelLevel", currentFuelLevel);
+        tag.putInt("MaxFuelCapacity", maxFuelCapacity);
+        tag.putFloat("LeakResistance", leakResistance);
+        tag.putFloat("ExplosionResistance", explosionResistance);
+        tag.putString("FuelType", fuelType.name());
+    }
+    
+    @Override
+    public void load(CompoundTag tag) {
+        // Call the parent implementation to load common properties
+        super.load(tag);
+        
+        // Load fuel tank specific properties
+        if (tag.contains("CurrentFuelLevel")) {
+            this.currentFuelLevel = tag.getInt("CurrentFuelLevel");
+        }
+        
+        // We don't need to load constants like maxFuelCapacity, leakResistance, etc.
+        // as they are already set in the constructor
     }
 
     /**
