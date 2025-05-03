@@ -7,6 +7,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -191,14 +192,16 @@ public class ItemStackHelper {
             // In NeoForge 1.21.5, we should use BuiltInRegistries instead of Registries
             Registry<Item> registry = BuiltInRegistries.ITEM;
             
-            // Try to get the item directly from the registry
-            Item item = registry.get(location);
-            if (item != null) {
-                return item;
+            // In NeoForge 1.21.5, registry.get() returns Optional<T>, so we need to handle it
+            Optional<Item> itemOpt = registry.getOptional(location);
+            if (itemOpt.isPresent()) {
+                return itemOpt.get();
             }
             
             // If direct lookup failed, try to get via Holder
-            Optional<Holder<Item>> holderOpt = registry.getHolder(ResourceLocation.createFromKey(location));
+            // In NeoForge 1.21.5, we need to get the Holder reference through the registry key
+            Optional<ResourceKey<Item>> resourceKey = ResourceKey.createRegistryKey(Registry.ITEM_REGISTRY, location);
+            Optional<Holder.Reference<Item>> holderOpt = resourceKey.flatMap(registry::getHolder);
             if (holderOpt.isPresent()) {
                 return holderOpt.get().value();
             }
@@ -256,7 +259,8 @@ public class ItemStackHelper {
         }
         
         try {
-            return tag.getString(key);
+            Optional<String> result = tag.getString(key);
+            return result.orElse("");
         } catch (Exception e) {
             return "";
         }
@@ -275,7 +279,8 @@ public class ItemStackHelper {
         }
         
         try {
-            return tag.getInt(key);
+            Optional<Integer> result = tag.getInt(key);
+            return result.orElse(0);
         } catch (Exception e) {
             return 0;
         }
@@ -295,7 +300,9 @@ public class ItemStackHelper {
         }
         
         try {
-            return tag.getList(key, type);
+            // In NeoForge 1.21.5, getList no longer takes a type parameter
+            Optional<ListTag> result = tag.getList(key);
+            return result.orElse(null);
         } catch (Exception ex) {
             // Try to get the raw tag and cast it as fallback
             try {
@@ -323,7 +330,8 @@ public class ItemStackHelper {
         }
         
         try {
-            return listTag.getCompound(index);
+            Optional<CompoundTag> result = listTag.getCompound(index);
+            return result.orElse(null);
         } catch (Exception e) {
             // Try to get the raw tag and cast it as fallback
             try {
@@ -351,7 +359,8 @@ public class ItemStackHelper {
         }
         
         try {
-            return tag.getCompound(key);
+            Optional<CompoundTag> result = tag.getCompound(key);
+            return result.orElse(null);
         } catch (Exception e) {
             // Try to get the raw tag and cast it as fallback
             try {

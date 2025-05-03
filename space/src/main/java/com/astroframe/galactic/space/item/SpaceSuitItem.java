@@ -57,7 +57,7 @@ public class SpaceSuitItem extends Item {
         ResourceLocation enchLocation = null;
         try {
             // In NeoForge 1.21.5, access enchantment registry through BuiltInRegistries
-            enchLocation = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+            enchLocation = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
             if (enchLocation == null) {
                 // If not in registry, try getting from class name as fallback
                 String simpleName = enchantment.getClass().getSimpleName().toLowerCase();
@@ -113,7 +113,7 @@ public class SpaceSuitItem extends Item {
         if (stack.isEmpty()) return false;
         
         Item item = stack.getItem();
-        ResourceLocation itemId = net.minecraft.core.BuiltInRegistries.ITEM.getKey(item);
+        ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item);
         return itemId != null && itemId.getPath().contains("space_suit");
     }
     

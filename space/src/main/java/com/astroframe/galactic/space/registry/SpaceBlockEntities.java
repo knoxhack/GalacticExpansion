@@ -24,8 +24,8 @@ public class SpaceBlockEntities {
     public static final Supplier<BlockEntityType<RocketAssemblyTableBlockEntity>> ROCKET_ASSEMBLY_TABLE = 
             BLOCK_ENTITIES.register("rocket_assembly_table", 
                     () -> {
-                        // In NeoForge 1.21.5, we should create the type directly
-                        return new BlockEntityType<>(
+                        // In NeoForge 1.21.5, we should create the type directly with explicit generic type
+                        return new BlockEntityType<RocketAssemblyTableBlockEntity>(
                             RocketAssemblyTableBlockEntity::new, 
                             Set.of(SpaceBlocks.ROCKET_ASSEMBLY_TABLE.get()), 
                             null
