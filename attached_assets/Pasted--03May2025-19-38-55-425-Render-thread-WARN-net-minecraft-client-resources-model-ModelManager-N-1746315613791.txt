@@ -1,0 +1,45 @@
+[03May2025 19:38:55.425] [Render thread/WARN][net.minecraft.client.resources.model.ModelManager/]: No model loaded for default item model ID galacticmachinery:extractor of galacticmachinery:extractor
+[03May2025 19:38:55.425] [Render thread/WARN][net.minecraft.client.resources.model.ModelManager/]: No model loaded for default item model ID galacticmachinery:centrifuge of galacticmachinery:centrifuge
+[03May2025 19:38:55.425] [Render thread/WARN][net.minecraft.client.resources.model.ModelManager/]: No model loaded for default item model ID galacticmachinery:assembler of galacticmachinery:assembler
+[03May2025 19:38:55.427] [Render thread/INFO][net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 64x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[03May2025 19:38:55.569] [Render thread/INFO][net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[03May2025 19:38:55.570] [Render thread/INFO][net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[03May2025 19:38:55.570] [Render thread/INFO][net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x128x0 minecraft:textures/atlas/mob_effects.png-atlas
+[03May2025 19:38:55.571] [Render thread/INFO][net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x512x0 minecraft:textures/atlas/gui.png-atlas
+[03May2025 19:38:55.574] [Render thread/INFO][net.neoforged.neoforge.client.entity.animation.json.AnimationLoader/]: Loaded 0 entity animations
+[03May2025 19:39:33.122] [Worker-Main-6/INFO][galacticspace/]: Registering Galactic Space commands
+[03May2025 19:39:33.123] [Worker-Main-6/INFO][galacticspace/]: Registering space travel commands
+[03May2025 19:39:33.363] [Render thread/INFO][net.minecraft.world.item.crafting.RecipeManager/]: Loaded 1373 recipes
+[03May2025 19:39:33.375] [Render thread/INFO][net.minecraft.advancements.AdvancementTree/]: Loaded 1484 advancements
+[03May2025 19:39:33.377] [Render thread/INFO][net.neoforged.neoforge.common.crafting.RecipePriorityManager/]: Loaded 0 recipe priority overrides
+[03May2025 19:39:33.550] [Server thread/INFO][net.minecraft.client.server.IntegratedServer/]: Starting integrated minecraft server version 1.21.5
+[03May2025 19:39:33.550] [Server thread/INFO][net.minecraft.server.MinecraftServer/]: Generating keypair
+[03May2025 19:39:33.954] [Server thread/INFO][net.minecraft.server.MinecraftServer/]: Preparing start region for dimension minecraft:overworld
+[03May2025 19:39:34.780] [Render thread/INFO][net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 0%
+[03May2025 19:39:34.780] [Render thread/INFO][net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 0%
+[03May2025 19:39:34.924] [Render thread/INFO][net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Time elapsed: 930 ms
+[03May2025 19:39:34.926] [Server thread/INFO][net.neoforged.neoforge.server.permission.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[03May2025 19:39:34.926] [Server thread/INFO][galacticspace/]: Galactic Space module detected server start
+[03May2025 19:39:34.926] [Server thread/INFO][galacticspace/]: Scheduling server tick task for Galactic Space
+[03May2025 19:39:35.009] [Server thread/INFO][net.minecraft.client.server.IntegratedServer/]: Changing view distance to 12, from 10
+[03May2025 19:39:35.009] [Server thread/INFO][net.minecraft.client.server.IntegratedServer/]: Changing simulation distance to 12, from 0
+[03May2025 19:39:35.767] [Server thread/INFO][net.minecraft.server.players.PlayerList/]: knoxhack[local:E:cc53a17a] logged in with entity id 63 at (-53.5, 70.0, 49.5)
+[03May2025 19:39:35.810] [Server thread/INFO][net.minecraft.server.MinecraftServer/]: knoxhack joined the game
+[03May2025 19:39:35.823] [Server thread/INFO][galacticspace/]: Testing attachment system for player: knoxhack
+[03May2025 19:39:35.823] [Server thread/INFO][galacticspace/]: Successfully retrieved player space data attachment
+[03May2025 19:39:35.824] [Server thread/INFO][galacticspace/]: Experience test: 600 -> 700
+[03May2025 19:39:35.824] [Server thread/INFO][galacticspace/]: Space state test: true -> false
+[03May2025 19:39:35.824] [Server thread/INFO][galacticspace/]: Rocket ID test: true
+[03May2025 19:39:35.824] [Server thread/INFO][galacticspace/]: Dimension test: true
+[03May2025 19:39:35.824] [Server thread/INFO][galacticspace/]: Serialization test results:
+[03May2025 19:39:35.824] [Server thread/INFO][galacticspace/]: - Experience match: true
+[03May2025 19:39:35.824] [Server thread/INFO][galacticspace/]: - In space match: true
+[03May2025 19:39:35.824] [Server thread/INFO][galacticspace/]: - Rocket ID match: true
+[03May2025 19:39:35.825] [Server thread/INFO][galacticspace/]: - Dimension match: true
+[03May2025 19:39:35.825] [Server thread/INFO][galacticspace/]: Attachment system tests completed
+[03May2025 19:39:35.906] [Render thread/INFO][net.minecraft.advancements.AdvancementTree/]: Loaded 2 advancements
+[03May2025 19:39:47.078] [Server thread/INFO][net.minecraft.client.server.IntegratedServer/]: Saving and pausing game...
+[03May2025 19:39:47.095] [Server thread/INFO][net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[03May2025 19:39:47.128] [Server thread/INFO][net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[03May2025 19:39:47.129] [Server thread/INFO][net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[03May2025 19:39:47.130] [Server thread/INFO][net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/galactic-space:space_statio
