@@ -3,12 +3,12 @@ package com.astroframe.galactic.space.item;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.EquipmentSlot.Type;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -63,10 +63,10 @@ public class SpaceSuitItem extends ArmorItem {
     public static boolean hasFullSpaceSuit(Player player) {
         // Check each armor slot
         for (EquipmentSlot slot : EquipmentSlot.values()) {
-            if (slot.getType() != Type.ARMOR) continue;
+            if (slot.getType() != EquipmentSlot.Type.ARMOR) continue;
             
             ItemStack stack = player.getItemBySlot(slot);
-            if (stack.isEmpty() || !(stack.getItem() instanceof SpaceSuitItem)) {
+            if (stack.isEmpty() || !(stack.getItem().getClass().equals(SpaceSuitItem.class))) {
                 return false;
             }
         }
@@ -86,10 +86,10 @@ public class SpaceSuitItem extends ArmorItem {
         
         // Check each armor slot
         for (EquipmentSlot slot : EquipmentSlot.values()) {
-            if (slot.getType() != Type.ARMOR) continue;
+            if (slot.getType() != EquipmentSlot.Type.ARMOR) continue;
             
             ItemStack stack = player.getItemBySlot(slot);
-            if (!stack.isEmpty() && stack.getItem() instanceof SpaceSuitItem) {
+            if (!stack.isEmpty() && stack.getItem().getClass().equals(SpaceSuitItem.class)) {
                 hasSuit = true;
                 int tier = 1; // Default to tier 1
                 minTier = Math.min(minTier, tier);
@@ -111,10 +111,10 @@ public class SpaceSuitItem extends ArmorItem {
     public static boolean isFullSpaceSuit(ItemStack helmet, ItemStack chestplate, 
             ItemStack leggings, ItemStack boots) {
         
-        return !helmet.isEmpty() && helmet.getItem() instanceof SpaceSuitItem && 
-                !chestplate.isEmpty() && chestplate.getItem() instanceof SpaceSuitItem &&
-                !leggings.isEmpty() && leggings.getItem() instanceof SpaceSuitItem && 
-                !boots.isEmpty() && boots.getItem() instanceof SpaceSuitItem;
+        return !helmet.isEmpty() && helmet.getItem().getClass().equals(SpaceSuitItem.class) && 
+                !chestplate.isEmpty() && chestplate.getItem().getClass().equals(SpaceSuitItem.class) &&
+                !leggings.isEmpty() && leggings.getItem().getClass().equals(SpaceSuitItem.class) && 
+                !boots.isEmpty() && boots.getItem().getClass().equals(SpaceSuitItem.class);
     }
     
     /**
@@ -124,7 +124,7 @@ public class SpaceSuitItem extends ArmorItem {
         
         private static final int[] DURABILITY_PER_SLOT = new int[]{13, 15, 16, 11};
         private static final int[] PROTECTION_PER_SLOT = new int[]{3, 6, 8, 3};
-        private final Lazy<Ingredient> repairMaterial = Lazy.of(() -> Ingredient.ofItems(Item.byId(1)));
+        private final Lazy<Ingredient> repairMaterial = Lazy.of(() -> Ingredient.of(Items.IRON_INGOT));
         
         public int getDurabilityForType(ArmorItem.Type type) {
             return DURABILITY_PER_SLOT[type.getSlot().getIndex()] * 25;
@@ -139,7 +139,11 @@ public class SpaceSuitItem extends ArmorItem {
         }
         
         public net.minecraft.core.Holder<SoundEvent> getEquipSound() {
-            return net.minecraft.core.Holder.direct(SoundEvents.ARMOR_EQUIP_IRON);
+            return net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.getHolder(
+                   net.minecraft.resources.ResourceKey.create(
+                        net.minecraft.core.registries.Registries.SOUND_EVENT, 
+                        SoundEvents.ARMOR_EQUIP_IRON.getLocation()))
+                   .orElseThrow();
         }
         
         public Ingredient getRepairIngredient() {
