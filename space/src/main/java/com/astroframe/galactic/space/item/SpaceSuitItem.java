@@ -7,7 +7,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -22,26 +21,17 @@ import java.util.UUID;
  */
 public class SpaceSuitItem extends Item {
     
-    private final ArmorItem.Type armorType;
+    private final EquipmentSlot slot;
     
     /**
      * Create a new space suit item.
      *
-     * @param armorType The armor type (helmet, chestplate, etc.)
+     * @param slot The equipment slot (helmet, chestplate, etc.)
      * @param properties The item properties
      */
-    public SpaceSuitItem(ArmorItem.Type armorType, Properties properties) {
+    public SpaceSuitItem(EquipmentSlot slot, Properties properties) {
         super(properties);
-        this.armorType = armorType;
-    }
-    
-    /**
-     * Get the armor type this suit is for.
-     * 
-     * @return The armor type
-     */
-    public ArmorItem.Type getArmorType() {
-        return this.armorType;
+        this.slot = slot;
     }
     
     /**
@@ -50,7 +40,7 @@ public class SpaceSuitItem extends Item {
      * @return The equipment slot
      */
     public EquipmentSlot getSlot() {
-        return this.armorType.getSlot();
+        return this.slot;
     }
     
     // Enchantment behavior methods
@@ -116,7 +106,7 @@ public class SpaceSuitItem extends Item {
             String path = enchLocation.getPath();
             
             // For helmet-specific enchantments
-            if (this.armorType == ArmorItem.Type.HELMET && 
+            if (this.slot == EquipmentSlot.HEAD && 
                 (path.contains("respiration") || path.contains("aqua_affinity"))) {
                 return true;
             }

@@ -6,7 +6,6 @@ import com.astroframe.galactic.space.item.SpaceSuitItem;
 import com.astroframe.galactic.space.items.RocketItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -54,18 +53,18 @@ public class SpaceItems {
     private static final Item.Properties SINGLE_STACK_PROPS = new Item.Properties().stacksTo(1);
     
     // Space suit items
-    // In NeoForge 1.21.5, use ArmorItem.Type instead of EquipmentSlot
+    // In NeoForge 1.21.5, use EquipmentSlot directly
     public static final Supplier<Item> SPACE_SUIT_HELMET = ITEMS.register("space_suit_helmet",
-            () -> new SpaceSuitItem(ArmorItem.Type.HELMET, SINGLE_STACK_PROPS));
+            () -> new SpaceSuitItem(EquipmentSlot.HEAD, SINGLE_STACK_PROPS));
     
     public static final Supplier<Item> SPACE_SUIT_CHESTPLATE = ITEMS.register("space_suit_chestplate",
-            () -> new SpaceSuitItem(ArmorItem.Type.CHESTPLATE, SINGLE_STACK_PROPS));
+            () -> new SpaceSuitItem(EquipmentSlot.CHEST, SINGLE_STACK_PROPS));
     
     public static final Supplier<Item> SPACE_SUIT_LEGGINGS = ITEMS.register("space_suit_leggings",
-            () -> new SpaceSuitItem(ArmorItem.Type.LEGGINGS, SINGLE_STACK_PROPS));
+            () -> new SpaceSuitItem(EquipmentSlot.LEGS, SINGLE_STACK_PROPS));
     
     public static final Supplier<Item> SPACE_SUIT_BOOTS = ITEMS.register("space_suit_boots",
-            () -> new SpaceSuitItem(ArmorItem.Type.BOOTS, SINGLE_STACK_PROPS));
+            () -> new SpaceSuitItem(EquipmentSlot.FEET, SINGLE_STACK_PROPS));
     
     // Rocket items
     public static final Supplier<Item> TIER_1_ROCKET = ITEMS.register("tier_1_rocket",
