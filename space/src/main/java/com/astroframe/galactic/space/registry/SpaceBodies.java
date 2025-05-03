@@ -41,7 +41,7 @@ public class SpaceBodies {
      */
     private static ICelestialBody createCelestialBody(String id, String name, boolean hasAtmosphere, boolean hasUniqueResources) {
         ICelestialBody body = new CelestialBody(
-                new ResourceLocation(GalacticSpace.MOD_ID, id),
+                ResourceLocation.parse(GalacticSpace.MOD_ID + ":" + id),
                 name,
                 hasAtmosphere,
                 hasUniqueResources
@@ -83,7 +83,7 @@ public class SpaceBodies {
         }
         
         ResourceLocation dimensionId = level.dimension().location();
-        if (dimensionId.equals(new ResourceLocation(GalacticSpace.MOD_ID, "space_station"))) {
+        if (dimensionId.equals(ResourceLocation.parse(GalacticSpace.MOD_ID + ":" + "space_station"))) {
             return SPACE_STATION;
         }
         

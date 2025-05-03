@@ -18,23 +18,19 @@ public class ResourceLocationHelper {
      * @return The ResourceLocation
      */
     public static ResourceLocation parse(String resourceString) {
-        // Split the string into namespace and path
-        String namespace;
-        String path;
-        
-        int colonIndex = resourceString.indexOf(':');
-        if (colonIndex >= 0) {
-            // String contains a namespace
-            namespace = resourceString.substring(0, colonIndex);
-            path = resourceString.substring(colonIndex + 1);
-        } else {
-            // No namespace specified, use minecraft as default
-            namespace = "minecraft";
-            path = resourceString;
-        }
-        
-        // In NeoForge 1.21.5, we need to use the two-argument constructor
-        return new ResourceLocation(namespace, path);
+        // In NeoForge 1.21.5, we can use the static parse method
+        return ResourceLocation.parse(resourceString);
+    }
+    
+    /**
+     * Create a ResourceLocation from a namespace and path.
+     *
+     * @param namespace The namespace
+     * @param path The path
+     * @return The ResourceLocation
+     */
+    public static ResourceLocation create(String namespace, String path) {
+        return ResourceLocation.parse(namespace + ":" + path);
     }
     
     /**
