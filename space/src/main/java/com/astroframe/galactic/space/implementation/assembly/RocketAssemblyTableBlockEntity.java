@@ -260,11 +260,9 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
             ListTag componentsTag = new ListTag();
             for (ItemStack stack : components) {
                 if (!stack.isEmpty()) {
-                    // In NeoForge 1.21.5, we need to use the adapter pattern to save stacks
+                    // In NeoForge 1.21.5, we need to directly save the ItemStack to a tag
                     CompoundTag componentTag = new CompoundTag();
-                    // Create a container with just this stack and save it
-                    net.minecraft.world.SimpleContainer singleItemContainer = new net.minecraft.world.SimpleContainer(stack);
-                    net.minecraft.world.ContainerHelper.saveAllItems(componentTag, singleItemContainer, 0, 1);
+                    stack.save(componentTag);
                     componentsTag.add(componentTag);
                 }
             }
@@ -290,11 +288,15 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
      * @param tag The tag to save to
      */
     protected void saveData(CompoundTag tag) {
-        // Save components - in NeoForge 1.21.5, we need to use direct container methods
-        // rather than ContainerHelper with registry
-        net.minecraft.world.Container container = new net.minecraft.world.SimpleContainer(components.toArray(new ItemStack[0]));
-        // Use the world.ContainerHelper class, not inventory.ContainerHelper
-        net.minecraft.world.ContainerHelper.saveAllItems(tag, container);
+        // Save components - in NeoForge 1.21.5, we need to manually save each item
+        // since ContainerHelper API has changed
+        for (int i = 0; i < components.size(); i++) {
+            if (!components.get(i).isEmpty()) {
+                CompoundTag itemTag = new CompoundTag();
+                components.get(i).save(itemTag);
+                tag.put("Item" + i, itemTag);
+            }
+        }
         
         // Save rocket data
         if (rocketDataTag != null && !rocketDataTag.isEmpty()) {
@@ -309,19 +311,21 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
      * @param tag The tag to load from
      */
     protected void loadData(CompoundTag tag) {
-        // Load components - in NeoForge 1.21.5, we need to use a SimpleContainer as intermediary
+        // Load components - in NeoForge 1.21.5, we need to manually load each item
+        // since ContainerHelper API has changed
         components = NonNullList.withSize(9, ItemStack.EMPTY);
-        net.minecraft.world.SimpleContainer container = new net.minecraft.world.SimpleContainer(9);
-        net.minecraft.world.ContainerHelper.loadAllItems(tag, container);
         
-        // Copy items from container back to our components list
-        for (int i = 0; i < container.getContainerSize(); i++) {
-            components.set(i, container.getItem(i));
+        // Manually load each item from its individual tag
+        for (int i = 0; i < 9; i++) {
+            if (tag.contains("Item" + i, net.minecraft.nbt.Tag.TAG_COMPOUND)) {
+                CompoundTag itemTag = tag.getCompound("Item" + i);
+                components.set(i, ItemStack.of(itemTag));
+            }
         }
         
-        // Load rocket data handling Optional return in NeoForge 1.21.5
+        // Load rocket data - in NeoForge 1.21.5 getCompound returns directly without Optional
         if (tag.contains("RocketData")) {
-            rocketDataTag = tag.getCompound("RocketData").orElse(new CompoundTag());
+            rocketDataTag = tag.getCompound("RocketData");
         } else {
             rocketDataTag = new CompoundTag();
         }

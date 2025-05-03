@@ -117,9 +117,8 @@ public class ItemStackHelper {
      */
     public static ItemStack createStack(ResourceLocation location, int count) {
         try {
-            // In NeoForge 1.21.5, we need to lookup the item by its registry key and handle the Optional return
-            Optional<net.minecraft.core.Holder<Item>> holder = net.minecraft.core.registries.BuiltInRegistries.ITEM.getHolder(location);
-            Item item = holder.map(net.minecraft.core.Holder::value).orElse(Items.AIR);
+            // In NeoForge 1.21.5, we need to use the direct lookup method instead of getHolder
+            Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(location);
             
             if (item == Items.AIR) {
                 return ItemStack.EMPTY;

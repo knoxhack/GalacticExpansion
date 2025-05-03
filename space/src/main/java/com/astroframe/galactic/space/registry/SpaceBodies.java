@@ -136,8 +136,13 @@ public class SpaceBodies {
         }
         
         @Override
-        public int getDistanceFromHome() {
-            return 0; // Default distance
+        public float getDistanceFromHome() {
+            return 0.0f; // Default distance
+        }
+        
+        @Override
+        public float getTemperature() {
+            return 20.0f; // Default temperature in Celsius
         }
         
         @Override
