@@ -2,7 +2,7 @@ modules = ["java", "java-21", "nodejs-20"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["unzip", "jdk21_headless", "wget", "imagemagick", "jq"]
+packages = ["unzip", "jdk21_headless", "wget", "imagemagick", "jq", "zip"]
 
 [workflows]
 runButton = "Project"
