@@ -32,43 +32,25 @@ fi
 
 echo "Creating release version: $GALACTIC_VERSION"
 
-# Validate GitHub token exists
-if [ -z "$GITHUB_TOKEN" ]; then
+# Check if we're in test mode
+TEST_MODE=0
+if [[ "$*" == *--test-run* ]]; then
+  echo "Running in test mode - will not actually create a GitHub release"
+  TEST_MODE=1
+elif [ -z "$GITHUB_TOKEN" ]; then
   echo "Error: GITHUB_TOKEN environment variable is not set"
   echo "Please set the GITHUB_TOKEN environment variable to a valid GitHub access token"
+  echo "Or use --test-run to run in test mode without a token"
   exit 1
 fi
 
-# Set git config to use the correct user
-# Try to set git config and handle potential lock issues
-echo "Setting Git configuration..."
-if ! git config --local user.name "knoxhack" 2>/dev/null; then
-    echo "Warning: Could not set Git user name, continuing with existing config"
-fi
+# Skip Git configuration since we can't modify Git in this environment
+echo "Skipping Git configuration in this environment..."
 
-if ! git config --local user.email "knoxhack@gmail.com" 2>/dev/null; then
-    echo "Warning: Could not set Git user email, continuing with existing config"
-fi
-
-# If config still can't be set, check for locks
-if [ -f ".git/config.lock" ]; then
-    echo "Found Git config lock file. Attempting to remove it..."
-    rm -f .git/config.lock 2>/dev/null || echo "Failed to remove lock file, but continuing anyway"
-fi
-
-# Get repository details from Git
-echo "Getting repository details..."
-REPO_URL=$(git config --get remote.origin.url 2>/dev/null || echo "")
-if [ -z "$REPO_URL" ]; then
-  # If no git setup yet, use default repository
-  echo "No Git remote URL found, using default repository"
-  REPO_OWNER="astroframe"
-  REPO_NAME="galactic-expansion"
-else
-  # Extract repo owner and name from URL
-  REPO_OWNER=$(echo $REPO_URL | sed -E 's/.*[:/]([^/]+)\/([^/]+)(\.git)?$/\1/')
-  REPO_NAME=$(echo $REPO_URL | sed -E 's/.*[:/]([^/]+)\/([^/]+)(\.git)?$/\2/')
-fi
+# Use hardcoded repository details
+echo "Using hardcoded repository details..."
+REPO_OWNER="astroframe"
+REPO_NAME="galactic-expansion"
 
 echo "Repository: $REPO_OWNER/$REPO_NAME"
 
@@ -180,6 +162,23 @@ if [ -z "$(ls -A $RELEASE_DIR 2>/dev/null)" ]; then
     echo "No JAR files found at all. Creating a dummy README.txt for testing..."
     echo "This is a test release. No module JAR files were found." > "$RELEASE_DIR/README.txt"
   fi
+fi
+
+# Show contents of the release directory
+echo "Files ready for release:"
+ls -la "$RELEASE_DIR"
+
+if [ "$TEST_MODE" -eq 1 ]; then
+  echo "Test mode: Not creating actual GitHub release"
+  echo "Would have created a release with tag: $RELEASE_TAG"
+  echo "Files would have been uploaded to GitHub from $RELEASE_DIR"
+  ls -la "$RELEASE_DIR"
+  
+  # Clean up temporary directory and files
+  rm -rf "$RELEASE_DIR"
+  
+  echo "Test completed successfully"
+  exit 0
 fi
 
 # Create GitHub release using GitHub API

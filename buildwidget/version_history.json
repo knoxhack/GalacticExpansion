@@ -1,81 +1,81 @@
 [
   {
     "version": "0.1.0.b1-20250503",
-    "date": "2025-05-03T22:24:29.847Z",
+    "date": "2025-05-03T22:37:19.183Z",
     "buildNumber": 1,
     "buildMetrics": {
       "result": "success",
-      "duration": 68,
+      "duration": 15204,
       "moduleStatuses": {
         "core": {
-          "status": "success",
-          "lastUpdate": "2025-05-03T22:24:29.215Z",
-          "lastBuild": "2025-05-03T22:24:29.511Z",
+          "status": "building",
+          "lastUpdate": "2025-05-03T22:37:18.849Z",
+          "lastBuild": "2025-05-03T22:37:18.758Z",
           "lastTask": ":core:jar",
-          "currentTask": "compileJava"
+          "currentTask": "jar"
         },
         "power": {
           "status": "building",
-          "lastUpdate": "2025-05-03T22:24:29.513Z",
-          "lastBuild": "2025-05-03T22:24:29.402Z",
+          "lastUpdate": "2025-05-03T22:37:18.650Z",
+          "lastBuild": "2025-05-03T22:37:18.579Z",
           "lastTask": ":power:jar",
           "currentTask": "jar"
         },
         "machinery": {
           "status": "success",
-          "lastUpdate": "2025-05-03T22:24:06.139Z",
-          "lastBuild": "2025-05-03T22:24:06.185Z",
+          "lastUpdate": "2025-05-03T22:36:50.246Z",
+          "lastBuild": "2025-05-03T22:36:50.944Z",
           "lastTask": ":machinery:jar",
-          "currentTask": "compileJava"
+          "currentTask": "processResources"
         },
         "biotech": {
           "status": "building",
-          "lastUpdate": "2025-05-03T22:23:21.717Z",
-          "lastBuild": "2025-05-03T22:23:21.668Z",
+          "lastUpdate": "2025-05-03T22:36:00.483Z",
+          "lastBuild": "2025-05-03T22:36:00.405Z",
           "lastTask": ":biotech:build",
-          "currentTask": "testClasses"
+          "currentTask": "build"
         },
         "construction": {
           "status": "building",
-          "lastUpdate": "2025-05-03T22:23:37.849Z",
-          "lastBuild": "2025-05-03T22:23:37.754Z",
+          "lastUpdate": "2025-05-03T22:36:20.749Z",
+          "lastBuild": "2025-05-03T22:36:20.656Z",
           "lastTask": ":construction:build",
           "currentTask": "build"
         },
         "robotics": {
           "status": "building",
-          "lastUpdate": "2025-05-03T22:24:29.620Z",
-          "lastBuild": "2025-05-03T22:24:29.546Z",
+          "lastUpdate": "2025-05-03T22:37:18.851Z",
+          "lastBuild": "2025-05-03T22:37:18.794Z",
           "lastTask": ":robotics:build",
-          "currentTask": "build"
+          "currentTask": "check"
         },
         "space": {
           "status": "building",
-          "lastUpdate": "2025-05-03T22:23:48.612Z",
-          "lastBuild": "2025-05-03T22:23:48.537Z",
+          "lastUpdate": "2025-05-03T22:36:30.325Z",
+          "lastBuild": "2025-05-03T22:36:30.258Z",
           "lastTask": ":space:build",
-          "currentTask": "test"
+          "currentTask": "check"
         },
         "utilities": {
           "status": "success",
-          "lastUpdate": "2025-05-03T22:23:57.772Z",
-          "lastBuild": "2025-05-03T22:23:57.825Z",
+          "lastUpdate": "2025-05-03T22:36:39.908Z",
+          "lastBuild": "2025-05-03T22:36:39.920Z",
           "lastTask": ":utilities:build",
           "currentTask": "assemble"
         },
         "vehicles": {
           "status": "building",
-          "lastUpdate": "2025-05-03T22:24:06.240Z",
-          "lastBuild": "2025-05-03T22:24:06.205Z",
+          "lastUpdate": "2025-05-03T22:36:51.143Z",
+          "lastBuild": "2025-05-03T22:36:51.036Z",
           "lastTask": ":vehicles:build",
-          "currentTask": "jar"
+          "currentTask": "build"
         },
         "weaponry": {
           "status": "building",
-          "lastUpdate": "2025-05-03T22:24:18.306Z",
-          "lastBuild": "2025-05-03T22:24:18.241Z",
+          "lastUpdate": "2025-05-03T22:37:02.485Z",
+          "lastBuild": "2025-05-03T22:37:02.436Z",
           "lastTask": ":weaponry:build",
-          "currentTask": "test"
+          "currentTask": "build"
         }
       }
     }
