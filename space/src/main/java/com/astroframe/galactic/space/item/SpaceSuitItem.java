@@ -56,17 +56,29 @@ public class SpaceSuitItem extends Item {
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         ResourceLocation enchLocation = null;
         try {
-            // In NeoForge 1.21.5, need to get the registry key directly from the enchantment
-            enchLocation = enchantment.getRegistryName();
-            // If that fails, fallback to class name as a last resort
-            if (enchLocation == null) {
-                try {
-                    // Try to use reflection to get the ID from registry directly
-                    java.lang.reflect.Method method = net.minecraft.core.Registry.class.getMethod("getKey", Object.class);
-                    enchLocation = (ResourceLocation) method.invoke(net.minecraft.core.registries.BuiltInRegistries.ITEM, enchantment);
-                } catch (Exception ex) {
-                    // Ignore reflection errors, will use fallback
+            // In NeoForge 1.21.5, we need to get it directly using reflection for compatibility
+            try {
+                // Try direct method to get registry key for the enchantment
+                // Looking up the registry path first by inspecting the class name
+                String className = enchantment.getClass().getName();
+                // Get the registry name from common registry paths
+                if (className.contains("minecraft")) {
+                    // Check for built-in enchantments
+                    try {
+                        // Try to use reflection to find the ENCHANTMENT registry
+                        java.lang.reflect.Field field = net.minecraft.core.registries.BuiltInRegistries.class.getDeclaredField("ENCHANTMENT");
+                        field.setAccessible(true);
+                        net.minecraft.core.Registry<?> registry = (net.minecraft.core.Registry<?>) field.get(null);
+                        
+                        // Now try to call getKey method on the registry
+                        java.lang.reflect.Method getKeyMethod = registry.getClass().getMethod("getKey", Object.class);
+                        enchLocation = (ResourceLocation) getKeyMethod.invoke(registry, enchantment);
+                    } catch (Exception ex) {
+                        // Fallback below if reflection fails
+                    }
                 }
+            } catch (Exception ex) {
+                // Reflection failed, will use fallback below
             }
             if (enchLocation == null) {
                 // If not in registry, try getting from class name as fallback

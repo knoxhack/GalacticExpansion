@@ -3,6 +3,7 @@ package com.astroframe.galactic.space.registry;
 import com.astroframe.galactic.space.GalacticSpace;
 import com.astroframe.galactic.space.implementation.assembly.RocketAssemblyTableBlockEntity;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -27,11 +28,12 @@ public class SpaceBlockEntities {
                         // In NeoForge 1.21.5, we need to create it directly without a builder
                         // Create a set of valid blocks for this entity type
                         Set<Block> validBlocks = Set.of(SpaceBlocks.ROCKET_ASSEMBLY_TABLE.get());
-                        // Create the block entity type directly
-                        return new BlockEntityType<>(
+                        // Create the block entity type directly with explicit type parameter
+                        // In NeoForge 1.21.5, the constructor takes a boolean for dataSaver instead of null
+                        return new BlockEntityType<RocketAssemblyTableBlockEntity>(
                             RocketAssemblyTableBlockEntity::new, 
                             validBlocks,
-                            null
+                            false // false for dataSaver parameter
                         );
                     });
     
