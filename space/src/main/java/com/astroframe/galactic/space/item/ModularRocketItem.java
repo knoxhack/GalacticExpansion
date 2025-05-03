@@ -183,18 +183,29 @@ public class ModularRocketItem extends Item {
                     // Use reflection to get the compound tag
                     CompoundTag rocketTag = null;
                     
-                    // In NeoForge 1.21.5, we can directly get the compound tag
+                    // In NeoForge 1.21.5, getCompound returns an Optional<CompoundTag>
                     try {
-                        // The getCompound method now returns CompoundTag directly
-                        rocketTag = tag.getCompound("rocket");
+                        // The getCompound method now returns Optional<CompoundTag>
+                        rocketTag = tag.getCompound("rocket").orElse(null);
                     } catch (Exception ex) {
                         // Fall back to alternative method if the direct approach fails
-                        java.lang.reflect.Method getMethod = tag.getClass().getMethod("get", String.class);
-                        getMethod.setAccessible(true);
-                        Object result = getMethod.invoke(tag, "rocket");
-                        
-                        if (result instanceof CompoundTag) {
-                            rocketTag = (CompoundTag)result;
+                        try {
+                            // Try using the get method directly
+                            Object rawTag = tag.get("rocket");
+                            if (rawTag instanceof CompoundTag) {
+                                rocketTag = (CompoundTag)rawTag;
+                            } else {
+                                // Last resort: reflection
+                                java.lang.reflect.Method getMethod = tag.getClass().getMethod("get", String.class);
+                                getMethod.setAccessible(true);
+                                Object result = getMethod.invoke(tag, "rocket");
+                                
+                                if (result instanceof CompoundTag) {
+                                    rocketTag = (CompoundTag)result;
+                                }
+                            }
+                        } catch (Exception e) {
+                            GalacticSpace.LOGGER.error("Failed to get rocket tag: {}", e.getMessage());
                         }
                     }
                     

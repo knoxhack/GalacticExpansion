@@ -68,7 +68,7 @@ public class CommandModuleImpl implements ICommandModule {
     
     @Override
     public RocketComponentType getType() {
-        return RocketComponentType.COCKPIT;
+        return RocketComponentType.COMMAND_MODULE;
     }
     
     @Override
