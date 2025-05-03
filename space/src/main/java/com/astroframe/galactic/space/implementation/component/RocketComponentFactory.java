@@ -925,10 +925,10 @@ public class RocketComponentFactory {
                             .description(description)
                             .tier(tier)
                             .mass(mass)
-                            .maxFuelCapacity(tag.contains("MaxFuelCapacity") ? tag.getInt("MaxFuelCapacity") : 1000)
-                            .fuelType(FuelType.valueOf(tag.contains("FuelType") ? tag.getString("FuelType") : "CHEMICAL"))
-                            .leakResistance(tag.contains("LeakResistance") ? tag.getFloat("LeakResistance") : 0.0f)
-                            .explosionResistance(tag.contains("ExplosionResistance") ? tag.getFloat("ExplosionResistance") : 0.0f)
+                            .maxFuelCapacity(tag.contains("MaxFuelCapacity") ? TagHelper.getIntValue(tag, "MaxFuelCapacity") : 1000)
+                            .fuelType(FuelType.valueOf(tag.contains("FuelType") ? TagHelper.getStringValue(tag, "FuelType") : "CHEMICAL"))
+                            .leakResistance(tag.contains("LeakResistance") ? TagHelper.getFloatValue(tag, "LeakResistance") : 0.0f)
+                            .explosionResistance(tag.contains("ExplosionResistance") ? TagHelper.getFloatValue(tag, "ExplosionResistance") : 0.0f)
                             .build();
                             
                 case STORAGE:
@@ -937,10 +937,10 @@ public class RocketComponentFactory {
                             .description(description)
                             .tier(tier)
                             .mass(mass)
-                            .storageCapacity(tag.contains("StorageCapacity") ? tag.getInt("StorageCapacity") : 8)
-                            .vacuumSeal(tag.contains("VacuumSeal") ? tag.getBoolean("VacuumSeal") : false)
-                            .temperatureRegulation(tag.contains("TemperatureRegulation") ? tag.getBoolean("TemperatureRegulation") : false)
-                            .radiationShielding(tag.contains("RadiationShielding") ? tag.getBoolean("RadiationShielding") : false)
+                            .storageCapacity(tag.contains("StorageCapacity") ? TagHelper.getIntValue(tag, "StorageCapacity") : 8)
+                            .vacuumSeal(tag.contains("VacuumSeal") ? TagHelper.getBooleanValue(tag, "VacuumSeal") : false)
+                            .temperatureRegulation(tag.contains("TemperatureRegulation") ? TagHelper.getBooleanValue(tag, "TemperatureRegulation") : false)
+                            .radiationShielding(tag.contains("RadiationShielding") ? TagHelper.getBooleanValue(tag, "RadiationShielding") : false)
                             .build();
                             
                 case PASSENGER_COMPARTMENT:

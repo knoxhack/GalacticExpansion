@@ -263,9 +263,9 @@ public class ModularRocketItem extends Item {
         }
         
         ResourceLocation cmdModRes = ResourceLocationHelper.of(commandModuleId);
-        Optional<IRocketComponent> commandModuleOpt = RocketComponentRegistry.getComponent(cmdModRes);
-        if (commandModuleOpt.isPresent() && commandModuleOpt.get() instanceof ICommandModule) {
-            builder.commandModule((ICommandModule) commandModuleOpt.get());
+        IRocketComponent commandModuleComp = RocketComponentRegistry.getComponent(cmdModRes).orElse(null);
+        if (commandModuleComp != null && commandModuleComp instanceof ICommandModule) {
+            builder.commandModule((ICommandModule) commandModuleComp);
         } else {
             return null;
         }
@@ -284,9 +284,9 @@ public class ModularRocketItem extends Item {
             
             if (!engineId.isEmpty()) {
                 ResourceLocation engineRes = ResourceLocationHelper.of(engineId);
-                Optional<IRocketComponent> engineOpt = RocketComponentRegistry.getComponent(engineRes);
-                if (engineOpt.isPresent() && engineOpt.get() instanceof IRocketEngine) {
-                    builder.addEngine((IRocketEngine) engineOpt.get());
+                IRocketComponent engineComp = RocketComponentRegistry.getComponent(engineRes).orElse(null);
+                if (engineComp != null && engineComp instanceof IRocketEngine) {
+                    builder.addEngine((IRocketEngine) engineComp);
                 }
             }
         }
@@ -305,9 +305,9 @@ public class ModularRocketItem extends Item {
             
             if (!fuelTankId.isEmpty()) {
                 ResourceLocation fuelTankRes = ResourceLocationHelper.of(fuelTankId);
-                Optional<IRocketComponent> fuelTankOpt = RocketComponentRegistry.getComponent(fuelTankRes);
-                if (fuelTankOpt.isPresent() && fuelTankOpt.get() instanceof IFuelTank) {
-                    builder.addFuelTank((IFuelTank) fuelTankOpt.get());
+                IRocketComponent fuelTankComp = RocketComponentRegistry.getComponent(fuelTankRes).orElse(null);
+                if (fuelTankComp != null && fuelTankComp instanceof IFuelTank) {
+                    builder.addFuelTank((IFuelTank) fuelTankComp);
                 }
             }
         }
@@ -326,9 +326,9 @@ public class ModularRocketItem extends Item {
             
             if (!cargoBayId.isEmpty()) {
                 ResourceLocation cargoBayRes = ResourceLocationHelper.of(cargoBayId);
-                Optional<IRocketComponent> cargoBayOpt = RocketComponentRegistry.getComponent(cargoBayRes);
-                if (cargoBayOpt.isPresent() && cargoBayOpt.get() instanceof ICargoBay) {
-                    builder.addCargoBay((ICargoBay) cargoBayOpt.get());
+                IRocketComponent cargoBayComp = RocketComponentRegistry.getComponent(cargoBayRes).orElse(null);
+                if (cargoBayComp != null && cargoBayComp instanceof ICargoBay) {
+                    builder.addCargoBay((ICargoBay) cargoBayComp);
                 }
             }
         }
@@ -347,9 +347,9 @@ public class ModularRocketItem extends Item {
             
             if (!compartmentId.isEmpty()) {
                 ResourceLocation compartmentRes = ResourceLocationHelper.of(compartmentId);
-                Optional<IRocketComponent> compartmentOpt = RocketComponentRegistry.getComponent(compartmentRes);
-                if (compartmentOpt.isPresent() && compartmentOpt.get() instanceof IPassengerCompartment) {
-                    builder.addPassengerCompartment((IPassengerCompartment) compartmentOpt.get());
+                IRocketComponent compartmentComp = RocketComponentRegistry.getComponent(compartmentRes).orElse(null);
+                if (compartmentComp != null && compartmentComp instanceof IPassengerCompartment) {
+                    builder.addPassengerCompartment((IPassengerCompartment) compartmentComp);
                 }
             }
         }
@@ -368,9 +368,9 @@ public class ModularRocketItem extends Item {
             
             if (!shieldId.isEmpty()) {
                 ResourceLocation shieldRes = ResourceLocationHelper.of(shieldId);
-                Optional<IRocketComponent> shieldOpt = RocketComponentRegistry.getComponent(shieldRes);
-                if (shieldOpt.isPresent() && shieldOpt.get() instanceof IShield) {
-                    builder.addShield((IShield) shieldOpt.get());
+                IRocketComponent shieldComp = RocketComponentRegistry.getComponent(shieldRes).orElse(null);
+                if (shieldComp != null && shieldComp instanceof IShield) {
+                    builder.addShield((IShield) shieldComp);
                 }
             }
         }
@@ -389,9 +389,9 @@ public class ModularRocketItem extends Item {
             
             if (!lifeSupportId.isEmpty()) {
                 ResourceLocation lifeSupportRes = ResourceLocationHelper.of(lifeSupportId);
-                Optional<IRocketComponent> lifeSupportOpt = RocketComponentRegistry.getComponent(lifeSupportRes);
-                if (lifeSupportOpt.isPresent() && lifeSupportOpt.get() instanceof ILifeSupport) {
-                    builder.addLifeSupport((ILifeSupport) lifeSupportOpt.get());
+                IRocketComponent lifeSupportComp = RocketComponentRegistry.getComponent(lifeSupportRes).orElse(null);
+                if (lifeSupportComp != null && lifeSupportComp instanceof ILifeSupport) {
+                    builder.addLifeSupport((ILifeSupport) lifeSupportComp);
                 }
             }
         }
