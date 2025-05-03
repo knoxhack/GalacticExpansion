@@ -160,9 +160,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getString returns an Optional<String>
-            Optional<String> value = tag.getString(key);
-            return value.orElse("");
+            // In NeoForge 1.21.5, getString returns a String directly
+            return tag.getString(key);
         } catch (Exception e) {
             return "";
         }
@@ -181,9 +180,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getInt returns an Optional<Integer>
-            Optional<Integer> value = tag.getInt(key);
-            return value.orElse(0);
+            // In NeoForge 1.21.5, getInt returns an int directly
+            return tag.getInt(key);
         } catch (Exception e) {
             return 0;
         }
@@ -203,9 +201,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getList returns an Optional<ListTag>
-            Optional<ListTag> value = tag.getList(key);
-            return value.orElse(null);
+            // In NeoForge 1.21.5, getList needs the list type parameter and returns a ListTag directly
+            return tag.getList(key, Tag.TAG_COMPOUND);
         } catch (Exception e) {
             // Fallback to null on any error
             try {
@@ -235,8 +232,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getCompound returns an Optional<CompoundTag> that needs unwrapping
-            return listTag.getCompound(index).orElse(null);
+            // In NeoForge 1.21.5, getCompound returns a CompoundTag directly
+            return listTag.getCompound(index);
         } catch (Exception e) {
             // Try alternate approach
             try {
@@ -382,9 +379,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getFloat returns an Optional<Float>
-            Optional<Float> value = tag.getFloat(key);
-            return value.orElse(0.0f);
+            // In NeoForge 1.21.5, getFloat returns a float directly
+            return tag.getFloat(key);
         } catch (Exception e) {
             return 0.0f;
         }

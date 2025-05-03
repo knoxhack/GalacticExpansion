@@ -17,7 +17,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.neoforged.neoforge.common.util.Lazy;
-import net.neoforged.neoforge.registries.ForgeRegistries;
+// ForgeRegistries no longer used in NeoForge 1.21.5, we use BuiltInRegistries instead
 import java.util.Optional;
 import java.util.UUID;
 
