@@ -1,5 +1,7 @@
 package com.astroframe.galactic.core.api.space;
 
+import net.minecraft.network.chat.Component;
+
 /**
  * Represents temperature ranges for celestial bodies.
  * Used for categorizing planets and moons by their surface temperatures.
@@ -46,5 +48,64 @@ public enum TemperatureRange {
             }
         }
         return temp < FREEZING.minTemp ? FREEZING : EXTREME;
+    }
+    
+    /**
+     * Converts the temperature range to a displayable component
+     * 
+     * @return A text component containing the formatted name
+     */
+    public Component getDisplayComponent() {
+        return Component.literal(getName());
+    }
+    
+    /**
+     * Checks if this temperature range is habitable for humans without special equipment
+     * 
+     * @return True if humans can survive in this temperature range
+     */
+    public boolean isHabitable() {
+        return this == TEMPERATE || this == COLD;
+    }
+    
+    /**
+     * Gets the average temperature in this range.
+     * 
+     * @return The average temperature in Celsius
+     */
+    public float getAverageTemperature() {
+        return (minTemp + maxTemp) / 2.0f;
+    }
+    
+    /**
+     * Gets the appropriate temperature range from an ordinal value, with bounds checking.
+     * 
+     * @param ordinal The ordinal value to convert
+     * @return The temperature range, or TEMPERATE if the ordinal is invalid
+     */
+    public static TemperatureRange fromOrdinal(int ordinal) {
+        if (ordinal < 0 || ordinal >= values().length) {
+            return TEMPERATE; // Default to temperate if out of range
+        }
+        return values()[ordinal];
+    }
+    
+    /**
+     * Gets a temperature range from a string name.
+     * 
+     * @param name The name to convert
+     * @return The temperature range, or TEMPERATE if not found
+     */
+    public static TemperatureRange fromName(String name) {
+        if (name == null || name.isEmpty()) {
+            return TEMPERATE;
+        }
+        
+        for (TemperatureRange range : values()) {
+            if (range.getName().equalsIgnoreCase(name)) {
+                return range;
+            }
+        }
+        return TEMPERATE;
     }
 }

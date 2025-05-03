@@ -1,8 +1,8 @@
 package com.astroframe.galactic.space.items;
 
 import com.astroframe.galactic.space.util.ResourceLocationHelper;
-import net.minecraft.core.Reference;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -10,7 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -120,11 +119,20 @@ public class ItemStackHelper {
      */
     public static Item resolveItemFromRegistry(ResourceLocation location) {
         try {
-            // In NeoForge 1.21.5, registry lookups return Optional<Reference<Type>>
-            Object result = BuiltInRegistries.ITEM.get(location);
+            // In NeoForge 1.21.5, registry lookups return Holder<Type> 
+            Object result = Registries.ITEM.get(location);
             
-            // Handle Optional<Reference<Item>> case
-            if (result instanceof Optional) {
+            // Handle Holder<Item> case for NeoForge 1.21.5
+            if (result instanceof Holder) {
+                Holder<?> holder = (Holder<?>) result;
+                Object value = holder.value();
+                if (value instanceof Item) {
+                    return (Item) value;
+                }
+                return Items.AIR;
+            }
+            // Handle Optional<Reference<Item>> case for backward compatibility
+            else if (result instanceof Optional) {
                 Optional<?> optional = (Optional<?>) result;
                 if (optional.isPresent()) {
                     Object reference = optional.get();
