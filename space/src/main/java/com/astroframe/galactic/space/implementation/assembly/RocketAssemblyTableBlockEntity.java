@@ -186,8 +186,7 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                         
                         // Make sure Slot exists and is an integer
                         if (compoundTag.contains("Slot")) {
-                            java.util.Optional<Integer> slotOpt = compoundTag.getInt("Slot");
-                            int slot = slotOpt.orElse(-1);
+                            int slot = compoundTag.getInt("Slot");
                             
                             if (slot >= 0 && slot < components.size()) {
                                 // Create ItemStack from CompoundTag for NeoForge 1.21.5
@@ -196,8 +195,7 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                                 
                                 // Get the item identifier
                                 if (compoundTag.contains("id")) {
-                                    java.util.Optional<String> idOpt = compoundTag.getString("id");
-                                    String itemId = idOpt.orElse("");
+                                    String itemId = compoundTag.getString("id");
                                     
                                     if (!itemId.isEmpty()) {
                                         // Parse namespace and path for NeoForge 1.21.5
@@ -210,8 +208,7 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                                             // Create the stack with a valid item
                                             if (item != null && item != net.minecraft.world.item.Items.AIR) {
                                                 // Get count from tag
-                                                java.util.Optional<Integer> countOpt = compoundTag.getInt("Count");
-                                                int count = countOpt.orElse(1);
+                                                int count = compoundTag.getInt("Count");
                                                 
                                                 // Create the stack with the item and count
                                                 stack = new ItemStack(item, count);
@@ -269,14 +266,10 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                     if (posTag != null && posTag.getType() == Tag.TAG_COMPOUND) {
                         CompoundTag posCompound = (CompoundTag) posTag;
                         
-                        // Extract coordinates safely with Optional handling
-                        java.util.Optional<Integer> xOpt = posCompound.getInt("X");
-                        java.util.Optional<Integer> yOpt = posCompound.getInt("Y");
-                        java.util.Optional<Integer> zOpt = posCompound.getInt("Z");
-                        
-                        int x = xOpt.orElse(0);
-                        int y = yOpt.orElse(0);
-                        int z = zOpt.orElse(0);
+                        // Extract coordinates directly in NeoForge 1.21.5
+                        int x = posCompound.getInt("X");
+                        int y = posCompound.getInt("Y");
+                        int z = posCompound.getInt("Z");
                         
                         linkedProjectors.add(new BlockPos(x, y, z));
                     }
