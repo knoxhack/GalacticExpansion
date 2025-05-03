@@ -698,60 +698,7 @@ function getModuleDependencies() {
     };
 }
 
-/**
- * Handle a checkpoint event
- * @param {string} checkpointName Name of the checkpoint
- * @param {string} description Description of the checkpoint
- * @returns {Promise<object>} Operation result
- */
-async function handleCheckpoint(checkpointName, description) {
-    console.log(`Processing checkpoint: ${checkpointName}`);
-    
-    try {
-        // 1. Create a Git commit for the checkpoint
-        console.log('Creating Git commit for checkpoint...');
-        const commitMessage = `Checkpoint: ${checkpointName}\n\n${description}`;
-        
-        // Add all changes
-        const addResult = await runCommand('git add .');
-        if (!addResult.success) {
-            return { 
-                success: false, 
-                message: 'Failed to add files for commit', 
-                output: addResult.output 
-            };
-        }
-        
-        // Create commit
-        const commitResult = await runCommand(`git commit -m "${commitMessage}"`);
-        if (!commitResult.success) {
-            return { 
-                success: false, 
-                message: 'Failed to create commit', 
-                output: commitResult.output 
-            };
-        }
-        
-        console.log('Commit created successfully');
-        
-        // 2. Trigger build and release process
-        console.log('Triggering build and release process...');
-        const buildResult = await buildAndRelease();
-        
-        // 3. Return combined result
-        return {
-            success: buildResult.success,
-            commitSuccess: true,
-            message: buildResult.success ? 'Checkpoint processed successfully' : 'Build failed after commit',
-            version: buildResult.version,
-            commitMessage,
-            buildOutput: buildResult.output
-        };
-    } catch (error) {
-        console.error('Error handling checkpoint:', error);
-        return { success: false, message: 'Error processing checkpoint', error: error.toString() };
-    }
-}
+// Removed duplicate handleCheckpoint function
 
 /**
  * Handle a checkpoint event
