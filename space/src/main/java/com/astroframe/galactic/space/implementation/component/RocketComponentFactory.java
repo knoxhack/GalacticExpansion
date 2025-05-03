@@ -812,8 +812,8 @@ public class RocketComponentFactory {
      * @return The created component, or null if creation failed
      */
     public static IRocketComponent createComponentFromTag(ResourceLocation id, net.minecraft.nbt.CompoundTag tag) {
-        // Check the component type - direct access for NeoForge 1.21.5
-        String typeString = tag.contains("Type") ? tag.getString("Type") : "";
+        // Check the component type - direct access for NeoForge 1.21.5 using TagHelper
+        String typeString = tag.contains("Type") ? TagHelper.getStringValue(tag, "Type") : "";
         if (typeString.isEmpty()) {
             GalacticSpace.LOGGER.error("Missing component type for component: {}", id);
             return null;

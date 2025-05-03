@@ -3,6 +3,7 @@ package com.astroframe.galactic.space.implementation.component.command;
 import com.astroframe.galactic.core.api.space.component.ICommandModule;
 import com.astroframe.galactic.core.api.space.component.IRocketComponent;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
+import com.astroframe.galactic.space.util.TagHelper;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -267,35 +268,35 @@ public class BasicCommandModule implements ICommandModule {
     public void load(CompoundTag tag) {
         // No need to call super.setPosition since ICommandModule doesn't have a parent with setPosition
         
-        // Load common properties for NeoForge 1.21.5 compatibility - using direct value access
+        // Load common properties for NeoForge 1.21.5 compatibility - using TagHelper for direct value access
         if (tag.contains("PosX") && tag.contains("PosY") && tag.contains("PosZ")) {
-            double x = tag.getDouble("PosX");
-            double y = tag.getDouble("PosY");
-            double z = tag.getDouble("PosZ");
+            double x = TagHelper.getDoubleValue(tag, "PosX");
+            double y = TagHelper.getDoubleValue(tag, "PosY");
+            double z = TagHelper.getDoubleValue(tag, "PosZ");
             setPosition(new Vec3(x, y, z));
         }
         
-        // Load command module specific properties with direct access for NeoForge 1.21.5
+        // Load command module specific properties with TagHelper for NeoForge 1.21.5
         if (tag.contains("ComputingPower")) {
-            this.computingPower = tag.getInt("ComputingPower");
+            this.computingPower = TagHelper.getIntValue(tag, "ComputingPower");
         }
         if (tag.contains("SensorStrength")) {
-            this.sensorStrength = tag.getInt("SensorStrength");
+            this.sensorStrength = TagHelper.getIntValue(tag, "SensorStrength");
         }
         if (tag.contains("NavigationAccuracy")) {
-            this.navigationAccuracy = tag.getFloat("NavigationAccuracy");
+            this.navigationAccuracy = TagHelper.getFloatValue(tag, "NavigationAccuracy");
         }
         if (tag.contains("CrewCapacity")) {
-            this.crewCapacity = tag.getInt("CrewCapacity");
+            this.crewCapacity = TagHelper.getIntValue(tag, "CrewCapacity");
         }
         if (tag.contains("AdvancedLifeSupport")) {
-            this.advancedLifeSupport = tag.getBoolean("AdvancedLifeSupport");
+            this.advancedLifeSupport = TagHelper.getBooleanValue(tag, "AdvancedLifeSupport");
         }
         if (tag.contains("AutomatedLanding")) {
-            this.automatedLanding = tag.getBoolean("AutomatedLanding");
+            this.automatedLanding = TagHelper.getBooleanValue(tag, "AutomatedLanding");
         }
         if (tag.contains("EmergencyEvacuation")) {
-            this.emergencyEvacuation = tag.getBoolean("EmergencyEvacuation");
+            this.emergencyEvacuation = TagHelper.getBooleanValue(tag, "EmergencyEvacuation");
         }
     }
 }
