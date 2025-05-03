@@ -158,8 +158,13 @@ public class SpaceBodies {
         }
         
         @Override
-        public float getRelativeGravity() {
+        public float getGravity() {
             return 1.0f; // Earth-like gravity by default
+        }
+        
+        @Override
+        public float getRelativeGravity() {
+            return getGravity(); // Use getGravity as per the interface
         }
         
         @Override

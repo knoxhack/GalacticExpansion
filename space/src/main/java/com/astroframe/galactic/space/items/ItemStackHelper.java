@@ -220,9 +220,8 @@ public class ItemStackHelper {
             return null;
         }
         
+        // In NeoForge 1.21.5, getList method may have changed
         try {
-            // In NeoForge 1.21.5, getList method may have changed
-            try {
                 // First try getting without type parameter
                 java.lang.reflect.Method method = tag.getClass().getMethod("getList", String.class);
                 Object result = method.invoke(tag, key);
@@ -301,9 +300,19 @@ public class ItemStackHelper {
             } catch (Exception ex) {
                 // Ignore nested exception
             }
+            return null;
+        } catch (Exception e) {
+            // Fall back to direct approach if getCompound fails
+            try {
+                Tag tag = listTag.get(index);
+                if (tag instanceof CompoundTag) {
+                    return (CompoundTag) tag;
+                }
+            } catch (Exception ex) {
+                // Ignore nested exception
+            }
+            return null;
         }
-        
-        return null;
     }
     
     /**
@@ -319,9 +328,16 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getCompound returns a CompoundTag directly
-            return tag.getCompound(key);
-        } catch (Exception e) {
+            // In NeoForge 1.21.5, getCompound might return an Optional<CompoundTag>
+            Object result = tag.getCompound(key);
+            if (result instanceof CompoundTag) {
+                return (CompoundTag) result;
+            } else if (result instanceof Optional) {
+                Optional<?> opt = (Optional<?>) result;
+                if (opt.isPresent() && opt.get() instanceof CompoundTag) {
+                    return (CompoundTag) opt.get();
+                }
+            }
             // Try to get the raw tag and cast it
             try {
                 Tag innerTag = tag.get(key);
@@ -331,9 +347,19 @@ public class ItemStackHelper {
             } catch (Exception ex) {
                 // Ignore nested exception
             }
+            return null;
+        } catch (Exception e) {
+            // Fall back to direct approach if getCompound fails
+            try {
+                Tag innerTag = tag.get(key);
+                if (innerTag instanceof CompoundTag) {
+                    return (CompoundTag) innerTag;
+                }
+            } catch (Exception ex) {
+                // Ignore nested exception
+            }
+            return null;
         }
-        
-        return null;
     }
     
     /**
