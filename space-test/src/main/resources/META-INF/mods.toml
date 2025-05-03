@@ -1,0 +1,10 @@
+# Minimal test mod config
+modLoader="javafml"
+loaderVersion="[47,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="spacetest"
+version="0.1.0"
+displayName="Space Test"
+
