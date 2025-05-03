@@ -183,10 +183,12 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                     Tag itemTag = listTag.get(i);
                     if (itemTag != null && itemTag.getType() == Tag.TAG_COMPOUND) {
                         CompoundTag compoundTag = (CompoundTag)itemTag;
+                        
                         // Make sure Slot exists and is an integer
                         if (compoundTag.contains("Slot")) {
                             java.util.Optional<Integer> slotOpt = compoundTag.getInt("Slot");
                             int slot = slotOpt.orElse(-1);
+                            
                             if (slot >= 0 && slot < components.size()) {
                                 // Create ItemStack from CompoundTag for NeoForge 1.21.5
                                 // Use a different approach as ItemStack.of() may not be available
@@ -194,99 +196,88 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                                 
                                 // Get the item identifier
                                 if (compoundTag.contains("id")) {
-                                    // Get the item from the registry using the ID
                                     java.util.Optional<String> idOpt = compoundTag.getString("id");
-                                    if (idOpt.isPresent()) {
-                                        String itemId = idOpt.get();
+                                    String itemId = idOpt.orElse("");
+                                    
+                                    if (!itemId.isEmpty()) {
                                         // Parse namespace and path for NeoForge 1.21.5
-                                        String namespace = "minecraft";
-                                        String path = itemId;
-                                        if (itemId.contains(":")) {
-                                            String[] parts = itemId.split(":", 2);
-                                            namespace = parts[0];
-                                            path = parts[1];
-                                        }
-                                        // In NeoForge 1.21.5, we need to use a different approach for ResourceLocation
-                                        // Try using valueOf instead which parses a full resource path
-                                        net.minecraft.resources.ResourceLocation itemRL = 
-                                            net.minecraft.resources.ResourceLocation.tryParse(namespace + ":" + path);
-                                        // BuiltInRegistries.ITEM.get returns an Optional<Reference<Item>> in NeoForge 1.21.5
-                                        // We need to map it to get the actual Item
-                                        java.util.Optional<net.minecraft.world.item.Item> itemOpt = 
-                                            net.minecraft.core.registries.BuiltInRegistries.ITEM.get(itemRL).map(ref -> ref.value());
-                                        if (itemOpt.isPresent()) {
-                                            net.minecraft.world.item.Item item = itemOpt.get();
+                                        ResourceLocation itemRL = ResourceLocation.tryParse(itemId);
+                                        
+                                        if (itemRL != null) {
+                                            // Get the item from the registry
+                                            net.minecraft.world.item.Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(itemRL);
                                             
-                                            // Create the stack and set its count
-                                            stack = new ItemStack(item);
-                                            compoundTag.getInt("Count").ifPresent(stack::setCount);
-                                            
-                                            // Handle any tag data
-                                            if (compoundTag.contains("tag")) {
-                                                compoundTag.getCompound("tag").ifPresent(nbtTag -> {
-                                                    // In NeoForge 1.21.5, we need to use a different approach
-                                                    // Since direct tag manipulation is not available, create a new stack
+                                            // Create the stack with a valid item
+                                            if (item != null && item != net.minecraft.world.item.Items.AIR) {
+                                                // Get count from tag
+                                                java.util.Optional<Integer> countOpt = compoundTag.getInt("Count");
+                                                int count = countOpt.orElse(1);
+                                                
+                                                // Create the stack with the item and count
+                                                stack = new ItemStack(item, count);
+                                                
+                                                // Handle any tag data
+                                                if (compoundTag.contains("tag")) {
+                                                    // Get tag data as a raw Tag first
+                                                    Tag rawTagData = compoundTag.get("tag");
                                                     
-                                                    // Make stack effectively final by copying to final variables
-                                                    final net.minecraft.world.item.Item finalItem = stack.getItem();
-                                                    final int finalCount = stack.getCount();
-                                                    
-                                                    // First, create a basic stack with the same item and count
-                                                    ItemStack newStack = new ItemStack(finalItem, finalCount);
-                                                    
-                                                    // Then make a compound tag to hold the tag data
-                                                    CompoundTag tagData = new CompoundTag();
-                                                    
-                                                    // Add the NBT data that was passed in
-                                                    tagData.merge(nbtTag);
-                                                    
-                                                    // Use the setter for the tag on the new stack
-                                                    // This uses a direct call to the vanilla method without references to tags
-                                                    ItemStack finalStack = setTagForStack(newStack, tagData);
-                                                    
-                                                    // Replace the stack in the components list
-                                                    components.set(slot, finalStack);
-                                                });
-                                            } else {
-                                                // If there's no tag data, just set the stack directly
+                                                    if (rawTagData != null && rawTagData.getType() == Tag.TAG_COMPOUND) {
+                                                        CompoundTag nbtTag = (CompoundTag) rawTagData;
+                                                        
+                                                        // Use reflection to set tag data on the stack
+                                                        setTagForStack(stack, nbtTag);
+                                                    }
+                                                }
+                                                
+                                                // Store the stack in the components list
                                                 components.set(slot, stack);
                                             }
                                         }
                                     }
                                 }
                             }
-                        });
-                    });
+                        }
+                    }
                 }
-            });
+            }
         }
         
-        // Load the rocket data - add a saveToTag method instead of load
+        // Load the rocket data
         if (tag.contains("RocketData")) {
-            // In NeoForge 1.21.5, getCompound returns an Optional<CompoundTag>
-            tag.getCompound("RocketData").ifPresent(rocketTag -> {
-                // Instead of a load method, call our own deserialization logic
-                // This is a workaround since the ModularRocket class may not be available
-                deserializeRocketData(rocketTag);
-            });
+            // Get the rocket tag data safely
+            Tag rocketTag = tag.get("RocketData");
+            
+            if (rocketTag != null && rocketTag.getType() == Tag.TAG_COMPOUND) {
+                // Deserialize the rocket data
+                deserializeRocketData((CompoundTag) rocketTag);
+            }
         }
         
-        // Load linked projectors - in NeoForge 1.21.5, contains() takes only one parameter
+        // Load linked projectors
         if (tag.contains("LinkedProjectors")) {
-            // In NeoForge 1.21.5, call getList with the key parameter only
-            java.util.Optional<ListTag> listOpt = tag.getList("LinkedProjectors");
-            if (listOpt.isPresent()) {
-                ListTag projectorList = listOpt.get();
+            // Get the projector list tag safely
+            Tag projListTag = tag.get("LinkedProjectors");
+            
+            if (projListTag != null && projListTag.getType() == Tag.TAG_LIST) {
+                ListTag projectorList = (ListTag) projListTag;
                 linkedProjectors.clear();
                 
                 for (int i = 0; i < projectorList.size(); i++) {
-                    // In NeoForge 1.21.5, getCompound returns an Optional<CompoundTag>
-                    java.util.Optional<CompoundTag> posTagOpt = projectorList.getCompound(i);
-                    if (posTagOpt.isPresent()) {
-                        CompoundTag posTag = posTagOpt.get();
-                        int x = posTag.getInt("X").orElse(0);
-                        int y = posTag.getInt("Y").orElse(0);
-                        int z = posTag.getInt("Z").orElse(0);
+                    // Get the position tag safely
+                    Tag posTag = projectorList.get(i);
+                    
+                    if (posTag != null && posTag.getType() == Tag.TAG_COMPOUND) {
+                        CompoundTag posCompound = (CompoundTag) posTag;
+                        
+                        // Extract coordinates safely with Optional handling
+                        java.util.Optional<Integer> xOpt = posCompound.getInt("X");
+                        java.util.Optional<Integer> yOpt = posCompound.getInt("Y");
+                        java.util.Optional<Integer> zOpt = posCompound.getInt("Z");
+                        
+                        int x = xOpt.orElse(0);
+                        int y = yOpt.orElse(0);
+                        int z = zOpt.orElse(0);
+                        
                         linkedProjectors.add(new BlockPos(x, y, z));
                     }
                 }
@@ -322,6 +313,55 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                 System.err.println("Failed to deserialize rocket data: " + e.getMessage());
                 e.printStackTrace();
             }
+        }
+    }
+    
+    /**
+     * Extracts and saves tag data from an ItemStack to a CompoundTag.
+     * This is a workaround for NeoForge 1.21.5 where ItemStack.getTag() is not directly available.
+     * 
+     * @param stack The ItemStack to extract tag data from
+     * @param itemTag The CompoundTag to save the tag data to
+     */
+    private void extractAndSaveItemStackTag(ItemStack stack, CompoundTag itemTag) {
+        try {
+            // Use a safer approach using reflection to check if the ItemStack has tag data
+            // In NeoForge 1.21.5, we need to use reflection since access to tag data is different
+            
+            // First, try the more modern approach with the getTagElement method if available
+            try {
+                java.lang.reflect.Method hasTagMethod = stack.getClass().getMethod("hasTag");
+                hasTagMethod.setAccessible(true);
+                boolean hasTag = (boolean) hasTagMethod.invoke(stack);
+                
+                if (hasTag) {
+                    // Get the tag if present
+                    java.lang.reflect.Method getTagMethod = stack.getClass().getMethod("getTag");
+                    getTagMethod.setAccessible(true);
+                    Object tagObj = getTagMethod.invoke(stack);
+                    
+                    if (tagObj instanceof CompoundTag) {
+                        CompoundTag stackTag = (CompoundTag) tagObj;
+                        // Save this tag data to our itemTag
+                        itemTag.put("tag", stackTag);
+                    }
+                }
+            } catch (Exception e) {
+                // Fallback to using vanilla API
+                // For example, check if the stack has custom name or other visible attributes
+                if (stack.hasCustomHoverName()) {
+                    CompoundTag tagData = new CompoundTag();
+                    
+                    // Save display name
+                    CompoundTag displayTag = new CompoundTag();
+                    displayTag.putString("Name", Component.Serializer.toJson(stack.getHoverName()));
+                    tagData.put("display", displayTag);
+                    
+                    itemTag.put("tag", tagData);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to extract item stack tag: " + e.getMessage());
         }
     }
     
