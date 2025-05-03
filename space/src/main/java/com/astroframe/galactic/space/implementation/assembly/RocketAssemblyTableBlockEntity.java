@@ -8,7 +8,7 @@ import com.astroframe.galactic.space.registry.SpaceBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.neoforged.neoforge.registries.ForgeRegistries;
+// Import removed - using BuiltInRegistries instead of ForgeRegistries in NeoForge 1.21.5
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import java.util.function.BiFunction;
 import net.minecraft.nbt.CompoundTag;

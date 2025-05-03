@@ -113,7 +113,7 @@ public class SpaceSuitItem extends Item {
         if (stack.isEmpty()) return false;
         
         Item item = stack.getItem();
-        ResourceLocation itemId = net.minecraft.core.registries.Registries.ITEM.getKey(item);
+        ResourceLocation itemId = net.minecraft.core.BuiltInRegistries.ITEM.getKey(item);
         return itemId != null && itemId.getPath().contains("space_suit");
     }
     
