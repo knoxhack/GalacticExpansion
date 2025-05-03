@@ -182,26 +182,12 @@ public class ModularRocketItem extends Item {
                     // Use reflection to get the compound tag
                     CompoundTag rocketTag = null;
                     
-                    // First try the direct getCompound method if available
+                    // In NeoForge 1.21.5, we can directly get the compound tag
                     try {
-                        java.lang.reflect.Method getCompoundMethod = tag.getClass().getMethod("getCompound", String.class);
-                        getCompoundMethod.setAccessible(true);
-                        Object result = getCompoundMethod.invoke(tag, "rocket");
-                        
-                        // Handle potential Optional wrapping in newer versions
-                        if (result instanceof CompoundTag) {
-                            rocketTag = (CompoundTag)result;
-                        } else if (result.getClass().getName().contains("Optional")) {
-                            // Try to extract from Optional
-                            java.lang.reflect.Method orElseMethod = result.getClass().getMethod("orElse", Object.class);
-                            orElseMethod.setAccessible(true);
-                            Object unwrapped = orElseMethod.invoke(result, new CompoundTag());
-                            if (unwrapped instanceof CompoundTag) {
-                                rocketTag = (CompoundTag)unwrapped;
-                            }
-                        }
+                        // The getCompound method now returns CompoundTag directly
+                        rocketTag = tag.getCompound("rocket");
                     } catch (Exception ex) {
-                        // Try alternative method
+                        // Fall back to alternative method if the direct approach fails
                         java.lang.reflect.Method getMethod = tag.getClass().getMethod("get", String.class);
                         getMethod.setAccessible(true);
                         Object result = getMethod.invoke(tag, "rocket");

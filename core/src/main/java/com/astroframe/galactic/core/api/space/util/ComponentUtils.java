@@ -39,9 +39,9 @@ public class ComponentUtils {
          * 
          * @param id The component ID
          * @param tag The tag data
-         * @return The created component, or empty if creation failed
+         * @return The created component, or null if creation failed
          */
-        Optional<IRocketComponent> createFromTag(ResourceLocation id, CompoundTag tag);
+        IRocketComponent createFromTag(ResourceLocation id, CompoundTag tag);
         
         /**
          * Checks if this factory can create components for a given ID.
@@ -80,9 +80,9 @@ public class ComponentUtils {
     public static IRocketComponent createComponentFromTag(ResourceLocation id, CompoundTag tag) {
         for (ComponentFactory factory : getFactories()) {
             if (factory.canHandle(id)) {
-                Optional<IRocketComponent> component = factory.createFromTag(id, tag);
-                if (component.isPresent()) {
-                    return component.get();
+                IRocketComponent component = factory.createFromTag(id, tag);
+                if (component != null) {
+                    return component;
                 }
             }
         }

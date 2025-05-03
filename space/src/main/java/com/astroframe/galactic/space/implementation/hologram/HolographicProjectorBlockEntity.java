@@ -97,10 +97,10 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
                     linkedTag.contains("Y") && 
                     linkedTag.contains("Z")) {
                     
-                    // Direct access in NeoForge 1.21.5
-                    int x = linkedTag.getInt("X");
-                    int y = linkedTag.getInt("Y");
-                    int z = linkedTag.getInt("Z");
+                    // For NeoForge 1.21.5, handle int values
+                    int x = linkedTag.contains("X") ? linkedTag.getInt("X") : 0;
+                    int y = linkedTag.contains("Y") ? linkedTag.getInt("Y") : 0;
+                    int z = linkedTag.contains("Z") ? linkedTag.getInt("Z") : 0;
                     
                     linkedTablePos = new BlockPos(x, y, z);
                 } else {
