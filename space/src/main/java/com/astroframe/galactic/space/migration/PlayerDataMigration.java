@@ -31,7 +31,7 @@ public class PlayerDataMigration {
     public static boolean isPlayerMigrated(Player player) {
         CompoundTag persistedData = player.getPersistentData();
         if (persistedData.contains("PlayerPersisted")) {
-            CompoundTag playerPersisted = persistedData.getCompound("PlayerPersisted").orElse(new CompoundTag());
+            CompoundTag playerPersisted = persistedData.getCompound("PlayerPersisted");
             return TagHelper.getBooleanValue(playerPersisted, MIGRATION_MARKER);
         }
         return false;
@@ -45,7 +45,7 @@ public class PlayerDataMigration {
         CompoundTag persistedData = player.getPersistentData();
         CompoundTag playerPersisted;
         if (persistedData.contains("PlayerPersisted")) {
-            playerPersisted = persistedData.getCompound("PlayerPersisted").orElse(new CompoundTag());
+            playerPersisted = persistedData.getCompound("PlayerPersisted");
         } else {
             playerPersisted = new CompoundTag();
         }
