@@ -156,8 +156,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getString returns an Optional<String>
-            return tag.getString(key).orElse("");
+            // In NeoForge 1.21.5, getString returns the string directly, not an Optional<String>
+            return tag.getString(key);
         } catch (Exception e) {
             return "";
         }
@@ -176,8 +176,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getInt returns an Optional<Integer>
-            return tag.getInt(key).orElse(0);
+            // In NeoForge 1.21.5, getInt returns the int directly, not an Optional<Integer>
+            return tag.getInt(key);
         } catch (Exception e) {
             return 0;
         }
@@ -197,8 +197,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getList returns an Optional<ListTag>
-            return tag.getList(key).orElse(null);
+            // In NeoForge 1.21.5, getList returns ListTag directly, not an Optional<ListTag>
+            return tag.getList(key);
         } catch (Exception e) {
             // Fallback to null on any error
             try {
@@ -228,8 +228,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getCompound returns an Optional<CompoundTag>
-            return listTag.getCompound(index).orElse(null);
+            // In NeoForge 1.21.5, getCompound returns CompoundTag directly
+            return listTag.getCompound(index);
         } catch (Exception e) {
             // Try alternate approach
             try {
@@ -258,8 +258,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getCompound returns an Optional<CompoundTag>
-            return tag.getCompound(key).orElse(null);
+            // In NeoForge 1.21.5, getCompound returns CompoundTag directly
+            return tag.getCompound(key);
         } catch (Exception e) {
             // Try to get the raw tag and cast it
             try {
@@ -316,8 +316,8 @@ public class ItemStackHelper {
         }
         
         try {
-            // In NeoForge 1.21.5, getFloat returns an Optional<Float>
-            return tag.getFloat(key).orElse(0.0f);
+            // In NeoForge 1.21.5, getFloat returns the value directly
+            return tag.getFloat(key);
         } catch (Exception e) {
             return 0.0f;
         }
