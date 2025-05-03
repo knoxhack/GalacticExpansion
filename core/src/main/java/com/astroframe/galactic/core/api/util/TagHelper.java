@@ -3,8 +3,8 @@ package com.astroframe.galactic.core.api.util;
 import net.minecraft.nbt.CompoundTag;
 
 /**
- * Utility class to handle the transition from Optional-wrapped tag getters in older versions
- * to direct value returns in NeoForge 1.21.5.
+ * Utility class to handle NBT tag operations in a safe manner for NeoForge 1.21.5.
+ * Uses direct access methods instead of handling Optional types.
  */
 public class TagHelper {
 
@@ -17,11 +17,17 @@ public class TagHelper {
      * @return The string value or fallback
      */
     public static String getString(CompoundTag tag, String key, String fallback) {
-        if (tag != null && tag.contains(key)) {
-            String value = tag.getString(key);
-            return value != null && !value.isEmpty() ? value : fallback;
+        if (tag == null || !tag.contains(key)) {
+            return fallback;
         }
-        return fallback;
+        
+        // Use direct tag access method in NeoForge 1.21.5
+        try {
+            String value = tag.getAsString(key);
+            return value != null && !value.isEmpty() ? value : fallback;
+        } catch (Exception e) {
+            return fallback;
+        }
     }
     
     /**
@@ -33,7 +39,15 @@ public class TagHelper {
      * @return The integer value or fallback
      */
     public static int getInt(CompoundTag tag, String key, int fallback) {
-        return tag != null && tag.contains(key) ? tag.getInt(key) : fallback;
+        if (tag == null || !tag.contains(key)) {
+            return fallback;
+        }
+        
+        try {
+            return tag.getAsInt(key);
+        } catch (Exception e) {
+            return fallback;
+        }
     }
     
     /**
@@ -45,7 +59,15 @@ public class TagHelper {
      * @return The float value or fallback
      */
     public static float getFloat(CompoundTag tag, String key, float fallback) {
-        return tag != null && tag.contains(key) ? tag.getFloat(key) : fallback;
+        if (tag == null || !tag.contains(key)) {
+            return fallback;
+        }
+        
+        try {
+            return tag.getAsFloat(key);
+        } catch (Exception e) {
+            return fallback;
+        }
     }
     
     /**
@@ -57,7 +79,15 @@ public class TagHelper {
      * @return The boolean value or fallback
      */
     public static boolean getBoolean(CompoundTag tag, String key, boolean fallback) {
-        return tag != null && tag.contains(key) ? tag.getBoolean(key) : fallback;
+        if (tag == null || !tag.contains(key)) {
+            return fallback;
+        }
+        
+        try {
+            return tag.getAsBoolean(key);
+        } catch (Exception e) {
+            return fallback;
+        }
     }
     
     /**
@@ -69,7 +99,15 @@ public class TagHelper {
      * @return The double value or fallback
      */
     public static double getDouble(CompoundTag tag, String key, double fallback) {
-        return tag != null && tag.contains(key) ? tag.getDouble(key) : fallback;
+        if (tag == null || !tag.contains(key)) {
+            return fallback;
+        }
+        
+        try {
+            return tag.getAsDouble(key);
+        } catch (Exception e) {
+            return fallback;
+        }
     }
     
     /**
@@ -81,7 +119,15 @@ public class TagHelper {
      * @return The long value or fallback
      */
     public static long getLong(CompoundTag tag, String key, long fallback) {
-        return tag != null && tag.contains(key) ? tag.getLong(key) : fallback;
+        if (tag == null || !tag.contains(key)) {
+            return fallback;
+        }
+        
+        try {
+            return tag.getAsLong(key);
+        } catch (Exception e) {
+            return fallback;
+        }
     }
     
     /**
@@ -92,9 +138,15 @@ public class TagHelper {
      * @return The compound tag or a new empty tag if not found
      */
     public static CompoundTag getCompound(CompoundTag tag, String key) {
-        if (tag != null && tag.contains(key)) {
-            return tag.getCompound(key);
+        if (tag == null || !tag.contains(key)) {
+            return new CompoundTag();
         }
-        return new CompoundTag();
+        
+        try {
+            CompoundTag compoundTag = tag.getCompound(key);
+            return compoundTag != null ? compoundTag : new CompoundTag();
+        } catch (Exception e) {
+            return new CompoundTag();
+        }
     }
 }
