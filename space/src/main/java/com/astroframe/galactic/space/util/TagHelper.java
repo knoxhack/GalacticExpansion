@@ -8,6 +8,8 @@ import net.minecraft.nbt.Tag;
 /**
  * Utility class for working with NBT tags in a NeoForge 1.21.5 compatible way.
  * Provides standardized methods for getting values from tags with proper type checking.
+ * 
+ * This class handles the transition from direct returns to Optional<T> returns in NeoForge 1.21.5.
  */
 public class TagHelper {
     
@@ -200,5 +202,71 @@ public class TagHelper {
             }
         }
         return null;
+    }
+    
+    /**
+     * Get a string value from a compound tag with a default value.
+     * @param tag The compound tag
+     * @param key The key
+     * @param defaultValue The default value to return if the key is not found
+     * @return The string value, or the default value if not found or not a string
+     */
+    public static String getString(CompoundTag tag, String key, String defaultValue) {
+        String value = getStringValue(tag, key);
+        return value.isEmpty() ? defaultValue : value;
+    }
+    
+    /**
+     * Get an integer value from a compound tag with a default value.
+     * @param tag The compound tag
+     * @param key The key
+     * @param defaultValue The default value to return if the key is not found
+     * @return The integer value, or the default value if not found or not an integer
+     */
+    public static int getInt(CompoundTag tag, String key, int defaultValue) {
+        if (tag.contains(key)) {
+            try {
+                return tag.getInt(key).orElse(defaultValue);
+            } catch (Exception e) {
+                GalacticSpace.LOGGER.warn("Failed to get int value from tag: " + e.getMessage());
+            }
+        }
+        return defaultValue;
+    }
+    
+    /**
+     * Get a float value from a compound tag with a default value.
+     * @param tag The compound tag
+     * @param key The key
+     * @param defaultValue The default value to return if the key is not found
+     * @return The float value, or the default value if not found or not a float
+     */
+    public static float getFloat(CompoundTag tag, String key, float defaultValue) {
+        if (tag.contains(key)) {
+            try {
+                return tag.getFloat(key).orElse(defaultValue);
+            } catch (Exception e) {
+                GalacticSpace.LOGGER.warn("Failed to get float value from tag: " + e.getMessage());
+            }
+        }
+        return defaultValue;
+    }
+    
+    /**
+     * Get a boolean value from a compound tag with a default value.
+     * @param tag The compound tag
+     * @param key The key
+     * @param defaultValue The default value to return if the key is not found
+     * @return The boolean value, or the default value if not found or not a boolean
+     */
+    public static boolean getBoolean(CompoundTag tag, String key, boolean defaultValue) {
+        if (tag.contains(key)) {
+            try {
+                return tag.getBoolean(key).orElse(defaultValue);
+            } catch (Exception e) {
+                GalacticSpace.LOGGER.warn("Failed to get boolean value from tag: " + e.getMessage());
+            }
+        }
+        return defaultValue;
     }
 }

@@ -243,14 +243,14 @@ public class RocketEngineImpl implements IRocketEngine {
     public void load(net.minecraft.nbt.CompoundTag tag) {
         // Load durability (other properties are final)
         if (tag.contains("CurrentDurability")) {
-            this.currentDurability = com.astroframe.galactic.space.util.TagHelper.getIntValue(tag, "CurrentDurability");
+            this.currentDurability = tag.getInt("CurrentDurability").orElse(this.maxDurability);
         }
         
         // Load position if saved
         if (tag.contains("PosX") && tag.contains("PosY") && tag.contains("PosZ")) {
-            double x = com.astroframe.galactic.space.util.TagHelper.getDoubleValue(tag, "PosX");
-            double y = com.astroframe.galactic.space.util.TagHelper.getDoubleValue(tag, "PosY");
-            double z = com.astroframe.galactic.space.util.TagHelper.getDoubleValue(tag, "PosZ");
+            double x = tag.getDouble("PosX").orElse(0.0);
+            double y = tag.getDouble("PosY").orElse(0.0);
+            double z = tag.getDouble("PosZ").orElse(0.0);
             setPosition(new net.minecraft.world.phys.Vec3(x, y, z));
         }
     }

@@ -26,7 +26,7 @@ public class SpaceModuleComponentFactory implements ComponentUtils.ComponentFact
     @Override
     public IRocketComponent createFromTag(ResourceLocation id, CompoundTag tag) {
         // Check if this is a rocket component type
-        String typeStr = TagHelper.getString(tag, "Type", "");
+        String typeStr = TagHelper.getStringValue(tag, "Type");
         if (typeStr.isEmpty()) {
             return null;
         }
