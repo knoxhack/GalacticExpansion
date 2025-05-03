@@ -979,3 +979,72 @@ function updateCheckpointStatus(status) {
         createCheckpointBtn.textContent = 'Create Checkpoint';
     }
 }
+
+// Update short commits
+function updateShortCommits(commits) {
+    console.log('Updating short commits:', commits);
+    
+    const commitList = document.getElementById('commitList');
+    if (!commitList) return;
+    
+    // Clear existing content
+    commitList.innerHTML = '';
+    
+    // Check if we have commits
+    if (!commits || commits.length === 0) {
+        const emptyMessage = document.createElement('div');
+        emptyMessage.className = 'loading-commits';
+        emptyMessage.textContent = 'No recent commits found';
+        commitList.appendChild(emptyMessage);
+        return;
+    }
+    
+    // Add each commit to the list
+    commits.forEach(commit => {
+        const commitItem = document.createElement('div');
+        commitItem.className = 'commit-item';
+        
+        const message = document.createElement('div');
+        message.className = 'commit-message';
+        message.textContent = commit.message || 'No message';
+        
+        const details = document.createElement('div');
+        details.className = 'commit-details';
+        
+        // Only add author if available
+        if (commit.author) {
+            const author = document.createElement('span');
+            author.className = 'commit-author';
+            author.textContent = commit.author;
+            details.appendChild(author);
+        }
+        
+        // Add date if available
+        if (commit.date) {
+            const date = document.createElement('span');
+            date.className = 'commit-date';
+            date.textContent = getRelativeTime(new Date(commit.date));
+            details.appendChild(date);
+        }
+        
+        commitItem.appendChild(message);
+        commitItem.appendChild(details);
+        commitList.appendChild(commitItem);
+    });
+    
+    // Add event listener to refresh button
+    const refreshBtn = document.getElementById('refreshCommits');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    type: 'requestShortCommits',
+                    limit: 10
+                }));
+                
+                // Show loading indicator
+                commitList.innerHTML = '<div class="loading-commits">Loading commit history...</div>';
+            }
+        });
+    }
+}
