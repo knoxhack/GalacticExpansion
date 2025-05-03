@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Specification-Title: Galactic Space Frontier
+Specification-Vendor: AstroFrame Team
+Specification-Version: 1
+Implementation-Title: space
+Implementation-Version: 0.1.0
+Implementation-Vendor: AstroFrame Team
+Implementation-Timestamp: 2025-05-03T22:36:28+0000
+
