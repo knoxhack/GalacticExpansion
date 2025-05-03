@@ -3,7 +3,6 @@ package com.astroframe.galactic.space.implementation.hologram;
 import com.astroframe.galactic.core.api.block.BlockEntityBase;
 import com.astroframe.galactic.core.api.space.IRocket;
 import com.astroframe.galactic.space.SpaceModule;
-import com.astroframe.galactic.space.implementation.assembly.RocketAssemblyTableBlockEntity;
 import com.astroframe.galactic.space.implementation.common.RocketDataProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
