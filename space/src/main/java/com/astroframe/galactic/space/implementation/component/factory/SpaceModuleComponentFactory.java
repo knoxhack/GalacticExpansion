@@ -59,7 +59,7 @@ public class SpaceModuleComponentFactory implements ComponentUtils.ComponentFact
      */
     private IRocketComponent createEngine(ResourceLocation id, CompoundTag tag) {
         // Get engine type
-        String engineTypeStr = TagHelper.getString(tag, "EngineType", "");
+        String engineTypeStr = TagHelper.getStringValue(tag, "EngineType");
         if (engineTypeStr.isEmpty()) {
             return null;
         }
@@ -97,7 +97,7 @@ public class SpaceModuleComponentFactory implements ComponentUtils.ComponentFact
      */
     private IRocketComponent createFuelTank(ResourceLocation id, CompoundTag tag) {
         // Get fuel type
-        String fuelTypeStr = TagHelper.getString(tag, "FuelType", "");
+        String fuelTypeStr = TagHelper.getStringValue(tag, "FuelType");
         if (fuelTypeStr.isEmpty()) {
             return null;
         }

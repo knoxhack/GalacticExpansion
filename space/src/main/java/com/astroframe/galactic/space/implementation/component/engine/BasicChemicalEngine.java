@@ -248,16 +248,16 @@ public class BasicChemicalEngine implements IRocketEngine {
         
         // Load position - handle NeoForge 1.21.5 compatible way
         if (tag.contains("PosX") && tag.contains("PosY") && tag.contains("PosZ")) {
-            double x = tag.contains("PosX") ? tag.getDouble("PosX") : 0.0;
-            double y = tag.contains("PosY") ? tag.getDouble("PosY") : 0.0;
-            double z = tag.contains("PosZ") ? tag.getDouble("PosZ") : 0.0;
+            double x = tag.getDouble("PosX").orElse(0.0);
+            double y = tag.getDouble("PosY").orElse(0.0);
+            double z = tag.getDouble("PosZ").orElse(0.0);
             position = new Vec3(x, y, z);
         }
         
         // Load durability - handle NeoForge 1.21.5 compatible way
         if (tag.contains("CurrentDurability")) {
             // Get the int value safely
-            currentDurability = tag.contains("CurrentDurability") ? tag.getInt("CurrentDurability") : maxDurability;
+            currentDurability = tag.getInt("CurrentDurability").orElse(maxDurability);
             // Ensure it's within valid range
             currentDurability = Math.max(0, Math.min(maxDurability, currentDurability));
         }
