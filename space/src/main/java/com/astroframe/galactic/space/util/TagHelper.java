@@ -47,9 +47,9 @@ public class TagHelper {
      * @return The integer value, or 0 if not found or not an integer
      */
     public static int getIntValue(CompoundTag tag, String key) {
-        if (tag.contains(key)) {
+        if (tag.contains(key, Tag.TAG_INT)) {
             try {
-                return tag.getInt(key).orElse(0);
+                return tag.getInt(key);
             } catch (Exception e) {
                 GalacticSpace.LOGGER.warn("Failed to get int value from tag: " + e.getMessage());
             }
@@ -64,9 +64,9 @@ public class TagHelper {
      * @return The boolean value, or false if not found or not a boolean
      */
     public static boolean getBooleanValue(CompoundTag tag, String key) {
-        if (tag.contains(key)) {
+        if (tag.contains(key, Tag.TAG_BYTE)) {
             try {
-                return tag.getBoolean(key).orElse(false);
+                return tag.getBoolean(key);
             } catch (Exception e) {
                 GalacticSpace.LOGGER.warn("Failed to get boolean value from tag: " + e.getMessage());
             }
@@ -81,9 +81,9 @@ public class TagHelper {
      * @return The double value, or 0.0 if not found or not a double
      */
     public static double getDoubleValue(CompoundTag tag, String key) {
-        if (tag.contains(key)) {
+        if (tag.contains(key, Tag.TAG_DOUBLE)) {
             try {
-                return tag.getDouble(key).orElse(0.0);
+                return tag.getDouble(key);
             } catch (Exception e) {
                 GalacticSpace.LOGGER.warn("Failed to get double value from tag: " + e.getMessage());
             }
@@ -98,9 +98,9 @@ public class TagHelper {
      * @return The long value, or 0 if not found or not a long
      */
     public static long getLongValue(CompoundTag tag, String key) {
-        if (tag.contains(key)) {
+        if (tag.contains(key, Tag.TAG_LONG)) {
             try {
-                return tag.getLong(key).orElse(0L);
+                return tag.getLong(key);
             } catch (Exception e) {
                 GalacticSpace.LOGGER.warn("Failed to get long value from tag: " + e.getMessage());
             }
@@ -115,9 +115,9 @@ public class TagHelper {
      * @return The float value, or 0.0f if not found or not a float
      */
     public static float getFloatValue(CompoundTag tag, String key) {
-        if (tag.contains(key)) {
+        if (tag.contains(key, Tag.TAG_FLOAT)) {
             try {
-                return tag.getFloat(key).orElse(0.0f);
+                return tag.getFloat(key);
             } catch (Exception e) {
                 GalacticSpace.LOGGER.warn("Failed to get float value from tag: " + e.getMessage());
             }
@@ -132,9 +132,9 @@ public class TagHelper {
      * @return The byte value, or 0 if not found or not a byte
      */
     public static byte getByteValue(CompoundTag tag, String key) {
-        if (tag.contains(key)) {
+        if (tag.contains(key, Tag.TAG_BYTE)) {
             try {
-                return tag.getByte(key).orElse((byte)0);
+                return tag.getByte(key);
             } catch (Exception e) {
                 GalacticSpace.LOGGER.warn("Failed to get byte value from tag: " + e.getMessage());
             }
@@ -149,9 +149,9 @@ public class TagHelper {
      * @return The short value, or 0 if not found or not a short
      */
     public static short getShortValue(CompoundTag tag, String key) {
-        if (tag.contains(key)) {
+        if (tag.contains(key, Tag.TAG_SHORT)) {
             try {
-                return tag.getShort(key).orElse((short)0);
+                return tag.getShort(key);
             } catch (Exception e) {
                 GalacticSpace.LOGGER.warn("Failed to get short value from tag: " + e.getMessage());
             }
