@@ -267,35 +267,35 @@ public class BasicCommandModule implements ICommandModule {
     public void load(CompoundTag tag) {
         // No need to call super.setPosition since ICommandModule doesn't have a parent with setPosition
         
-        // Load common properties manually
+        // Load common properties for NeoForge 1.21.5 compatibility - using direct value access
         if (tag.contains("PosX") && tag.contains("PosY") && tag.contains("PosZ")) {
-            double x = tag.getDouble("PosX").orElse(0.0);
-            double y = tag.getDouble("PosY").orElse(0.0);
-            double z = tag.getDouble("PosZ").orElse(0.0);
+            double x = tag.getDouble("PosX");
+            double y = tag.getDouble("PosY");
+            double z = tag.getDouble("PosZ");
             setPosition(new Vec3(x, y, z));
         }
         
-        // Load command module specific properties
+        // Load command module specific properties with direct access for NeoForge 1.21.5
         if (tag.contains("ComputingPower")) {
-            this.computingPower = tag.getInt("ComputingPower").orElse(DEFAULT_COMPUTING_POWER);
+            this.computingPower = tag.getInt("ComputingPower");
         }
         if (tag.contains("SensorStrength")) {
-            this.sensorStrength = tag.getInt("SensorStrength").orElse(DEFAULT_SENSOR_STRENGTH);
+            this.sensorStrength = tag.getInt("SensorStrength");
         }
         if (tag.contains("NavigationAccuracy")) {
-            this.navigationAccuracy = tag.getFloat("NavigationAccuracy").orElse(DEFAULT_NAVIGATION_ACCURACY);
+            this.navigationAccuracy = tag.getFloat("NavigationAccuracy");
         }
         if (tag.contains("CrewCapacity")) {
-            this.crewCapacity = tag.getInt("CrewCapacity").orElse(DEFAULT_CREW_CAPACITY);
+            this.crewCapacity = tag.getInt("CrewCapacity");
         }
         if (tag.contains("AdvancedLifeSupport")) {
-            this.advancedLifeSupport = tag.getBoolean("AdvancedLifeSupport").orElse(false);
+            this.advancedLifeSupport = tag.getBoolean("AdvancedLifeSupport");
         }
         if (tag.contains("AutomatedLanding")) {
-            this.automatedLanding = tag.getBoolean("AutomatedLanding").orElse(false);
+            this.automatedLanding = tag.getBoolean("AutomatedLanding");
         }
         if (tag.contains("EmergencyEvacuation")) {
-            this.emergencyEvacuation = tag.getBoolean("EmergencyEvacuation").orElse(false);
+            this.emergencyEvacuation = tag.getBoolean("EmergencyEvacuation");
         }
     }
 }
