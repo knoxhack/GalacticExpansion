@@ -1,0 +1,42 @@
+# This is a configuration file for NeoForge
+modLoader="javafml" 
+loaderVersion="[47,)" # Updated to work with NeoForge 1.21.5 which requires javafml 47 or higher
+license="All Rights Reserved"
+issueTrackerURL="https://github.com/AstroFrame/GalacticExpansion/issues"
+
+[[mods]]
+modId="galacticpower"
+version="0.1.0"
+displayName="Galactic Power"
+displayURL="https://github.com/AstroFrame/GalacticExpansion"
+credits="The AstroFrame Team"
+authors="AstroFrame"
+description='''
+The Power module of the Galactic Framework, providing energy generation and distribution.
+
+Generate, store and transmit power across your galactic network!
+'''
+
+# NeoForge dependency for 1.21.5
+[[dependencies.galacticpower]]
+    modId="neoforge"
+    type="required"
+    versionRange="[21.5,)"  # Requires NeoForge 21.5 or later
+    ordering="NONE"
+    side="BOTH"
+
+# Minecraft dependency for 1.21.5
+[[dependencies.galacticpower]]
+    modId="minecraft"
+    type="required"
+    versionRange="[1.21.5,1.22)"  # Requires Minecraft 1.21.5 but less than 1.22
+    ordering="NONE"
+    side="BOTH"
+    
+# Core module dependency
+[[dependencies.galacticpower]]
+    modId="galacticcore"
+    type="required"
+    versionRange="[0.1.0,)"
+    ordering="AFTER"
+    side="BOTH"
