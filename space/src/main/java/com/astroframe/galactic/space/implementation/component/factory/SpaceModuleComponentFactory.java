@@ -14,8 +14,6 @@ import com.astroframe.galactic.space.implementation.component.fueltank.StandardF
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.Optional;
-
 /**
  * Factory for creating components from the space module.
  * Implements the ComponentFactory interface to integrate with the core component system.
@@ -26,18 +24,18 @@ public class SpaceModuleComponentFactory implements ComponentUtils.ComponentFact
     private static final String NAMESPACE = "galactic_space";
     
     @Override
-    public Optional<IRocketComponent> createFromTag(ResourceLocation id, CompoundTag tag) {
+    public IRocketComponent createFromTag(ResourceLocation id, CompoundTag tag) {
         // Check if this is a rocket component type
         String typeStr = TagHelper.getString(tag, "Type", "");
         if (typeStr.isEmpty()) {
-            return Optional.empty();
+            return null;
         }
         
         RocketComponentType type;
         try {
             type = RocketComponentType.valueOf(typeStr);
         } catch (IllegalArgumentException e) {
-            return Optional.empty();
+            return null;
         }
         
         // Create appropriate component based on type
@@ -52,25 +50,25 @@ public class SpaceModuleComponentFactory implements ComponentUtils.ComponentFact
             case STORAGE: // Handle alias for backward compatibility
                 return createCargoBay(id, tag);
             default:
-                return Optional.empty();
+                return null;
         }
     }
     
     /**
      * Creates an engine component from tag data.
      */
-    private Optional<IRocketComponent> createEngine(ResourceLocation id, CompoundTag tag) {
+    private IRocketComponent createEngine(ResourceLocation id, CompoundTag tag) {
         // Get engine type
         String engineTypeStr = TagHelper.getString(tag, "EngineType", "");
         if (engineTypeStr.isEmpty()) {
-            return Optional.empty();
+            return null;
         }
         
         EngineType engineType;
         try {
             engineType = EngineType.valueOf(engineTypeStr);
         } catch (IllegalArgumentException e) {
-            return Optional.empty();
+            return null;
         }
         
         // Extract common properties
@@ -85,30 +83,30 @@ public class SpaceModuleComponentFactory implements ComponentUtils.ComponentFact
                 engine = new BasicChemicalEngine(id, tier, name, description);
                 break;
             default:
-                return Optional.empty();
+                return null;
         }
         
         // Load saved state
         engine.load(tag);
         
-        return Optional.of(engine);
+        return engine;
     }
     
     /**
      * Creates a fuel tank component from tag data.
      */
-    private Optional<IRocketComponent> createFuelTank(ResourceLocation id, CompoundTag tag) {
+    private IRocketComponent createFuelTank(ResourceLocation id, CompoundTag tag) {
         // Get fuel type
         String fuelTypeStr = TagHelper.getString(tag, "FuelType", "");
         if (fuelTypeStr.isEmpty()) {
-            return Optional.empty();
+            return null;
         }
         
         FuelType fuelType;
         try {
             fuelType = FuelType.valueOf(fuelTypeStr);
         } catch (IllegalArgumentException e) {
-            return Optional.empty();
+            return null;
         }
         
         // Extract common properties
@@ -130,13 +128,13 @@ public class SpaceModuleComponentFactory implements ComponentUtils.ComponentFact
         // Load saved state
         fuelTank.load(tag);
         
-        return Optional.of(fuelTank);
+        return fuelTank;
     }
     
     /**
      * Creates a command module component from tag data.
      */
-    private Optional<IRocketComponent> createCommandModule(ResourceLocation id, CompoundTag tag) {
+    private IRocketComponent createCommandModule(ResourceLocation id, CompoundTag tag) {
         // Extract common properties
         String name = TagHelper.getString(tag, "Name", "Basic Command Module");
         String description = TagHelper.getString(tag, "Description", "A basic command module.");
@@ -148,13 +146,13 @@ public class SpaceModuleComponentFactory implements ComponentUtils.ComponentFact
         // Load saved state
         commandModule.load(tag);
         
-        return Optional.of(commandModule);
+        return commandModule;
     }
     
     /**
      * Creates a cargo bay component from tag data.
      */
-    private Optional<IRocketComponent> createCargoBay(ResourceLocation id, CompoundTag tag) {
+    private IRocketComponent createCargoBay(ResourceLocation id, CompoundTag tag) {
         // Extract common properties
         String name = TagHelper.getString(tag, "Name", "Standard Cargo Bay");
         String description = TagHelper.getString(tag, "Description", "A standard cargo bay.");
@@ -174,7 +172,7 @@ public class SpaceModuleComponentFactory implements ComponentUtils.ComponentFact
         // Load saved state
         cargoBay.load(tag);
         
-        return Optional.of(cargoBay);
+        return cargoBay;
     }
     
     @Override

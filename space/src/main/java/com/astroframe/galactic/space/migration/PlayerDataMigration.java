@@ -144,9 +144,9 @@ public class PlayerDataMigration {
         
         CompoundTag persistedData = player.getPersistentData();
         if (persistedData.contains("ForgeCaps")) {
-            CompoundTag forgeCaps = persistedData.getCompound("ForgeCaps").orElse(new CompoundTag());
+            CompoundTag forgeCaps = persistedData.getCompound("ForgeCaps");
             if (forgeCaps.contains(LEGACY_CAPABILITY_ID)) {
-                return forgeCaps.getCompound(LEGACY_CAPABILITY_ID).orElse(null);
+                return forgeCaps.getCompound(LEGACY_CAPABILITY_ID);
             }
         }
         
