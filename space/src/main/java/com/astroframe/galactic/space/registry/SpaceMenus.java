@@ -1,34 +1,36 @@
 package com.astroframe.galactic.space.registry;
 
-import com.astroframe.galactic.space.SpaceModule;
+import com.astroframe.galactic.space.GalacticSpace;
 import com.astroframe.galactic.space.implementation.assembly.menu.RocketAssemblyMenu;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.function.Supplier;
+
 /**
- * Registry for all menus in the Space module.
+ * Registry for all menu types in the Space module
  */
 public class SpaceMenus {
-
-    // Registry for menus - using Registries.MENU_TYPE directly in NeoForge 1.21.5
-    public static final DeferredRegister<MenuType<?>> MENUS = 
-            DeferredRegister.create(Registries.MENU, SpaceModule.MODID);
     
-    // Menu type for rocket assembly
-    public static final DeferredHolder<MenuType<?>, MenuType<RocketAssemblyMenu>> ROCKET_ASSEMBLY_MENU =
+    // Create a deferred register for menu types
+    public static final DeferredRegister<MenuType<?>> MENUS = 
+            DeferredRegister.create(Registries.MENU, GalacticSpace.MOD_ID);
+    
+    // Register the rocket assembly menu
+    public static final Supplier<MenuType<RocketAssemblyMenu>> ROCKET_ASSEMBLY = 
             MENUS.register("rocket_assembly", 
-                    () -> IMenuTypeExtension.create(
-                        (windowId, inv, data) -> new RocketAssemblyMenu(windowId, inv, data)));
+                    () -> IMenuTypeExtension.create(RocketAssemblyMenu::new));
     
     /**
      * Register the menu registry with the event bus.
+     *
+     * @param eventBus The event bus to register with
      */
-    public static void register() {
-        // Registration happens automatically via DeferredRegister
-        // We don't need to do anything extra here
+    public static void initialize(IEventBus eventBus) {
+        MENUS.register(eventBus);
     }
 }
