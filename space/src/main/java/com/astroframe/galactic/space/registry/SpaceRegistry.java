@@ -2,6 +2,7 @@ package com.astroframe.galactic.space.registry;
 
 import com.astroframe.galactic.space.GalacticSpace;
 import net.minecraft.resources.ResourceLocation;
+import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
 import net.neoforged.bus.api.IEventBus;
 
 /**

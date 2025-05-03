@@ -5,6 +5,7 @@ import com.astroframe.galactic.core.api.space.component.enums.ShieldType;
 import com.astroframe.galactic.space.GalacticSpace;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
 
 /**
  * Factory for creating standard shield components.

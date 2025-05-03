@@ -9,6 +9,7 @@ import com.astroframe.galactic.space.implementation.component.engine.RocketEngin
 import com.astroframe.galactic.space.util.TagHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
@@ -885,11 +886,18 @@ public class RocketComponentFactory {
         
         // If we couldn't find the component in the registry, try to recreate it from the tag
         try {
-            // Extract common properties - direct access for NeoForge 1.21.5
-            int tier = tag.contains("Tier") ? tag.getInt("Tier") : 1;
-            int mass = tag.contains("Mass") ? tag.getInt("Mass") : 100;
-            String name = tag.contains("Name") ? tag.getString("Name") : "Unknown Component";
-            String description = tag.contains("Description") ? tag.getString("Description") : "No description";
+            // Extract common properties using TagHelper for NeoForge 1.21.5 compatibility
+            int tier = TagHelper.getIntValue(tag, "Tier");
+            if (tier == 0) tier = 1; // Default to tier 1 if not found
+            
+            int mass = TagHelper.getIntValue(tag, "Mass");
+            if (mass == 0) mass = 100; // Default to 100 if not found
+            
+            String name = TagHelper.getStringValue(tag, "Name");
+            if (name.isEmpty()) name = "Unknown Component";
+            
+            String description = TagHelper.getStringValue(tag, "Description");
+            if (description.isEmpty()) description = "No description";
             
             // Create a new component based on type
             switch (type) {
@@ -899,10 +907,10 @@ public class RocketComponentFactory {
                             .description(description)
                             .tier(tier)
                             .mass(mass)
-                            .crewCapacity(tag.contains("CrewCapacity") ? tag.getInt("CrewCapacity") : 1)
-                            .computingPower(tag.contains("ComputingPower") ? tag.getInt("ComputingPower") : 50)
-                            .sensorStrength(tag.contains("SensorStrength") ? tag.getInt("SensorStrength") : 40)
-                            .navigationAccuracy(tag.contains("NavigationAccuracy") ? tag.getFloat("NavigationAccuracy") : 0.6f)
+                            .crewCapacity(TagHelper.getIntValue(tag, "CrewCapacity") > 0 ? TagHelper.getIntValue(tag, "CrewCapacity") : 1)
+                            .computingPower(TagHelper.getIntValue(tag, "ComputingPower") > 0 ? TagHelper.getIntValue(tag, "ComputingPower") : 50)
+                            .sensorStrength(TagHelper.getIntValue(tag, "SensorStrength") > 0 ? TagHelper.getIntValue(tag, "SensorStrength") : 40)
+                            .navigationAccuracy(TagHelper.getFloatValue(tag, "NavigationAccuracy") > 0 ? TagHelper.getFloatValue(tag, "NavigationAccuracy") : 0.6f)
                             .build();
                             
                 case ENGINE:
@@ -911,13 +919,13 @@ public class RocketComponentFactory {
                             .description(description)
                             .tier(tier)
                             .mass(mass)
-                            .thrust(tag.contains("Thrust") ? tag.getInt("Thrust") : 100)
-                            .efficiency(tag.contains("Efficiency") ? tag.getFloat("Efficiency") : 0.75f)
-                            .fuelConsumptionRate(tag.contains("FuelConsumptionRate") ? tag.getInt("FuelConsumptionRate") : 10)
-                            .fuelType(FuelType.valueOf(tag.contains("FuelType") ? tag.getString("FuelType") : "CHEMICAL"))
-                            .atmosphereCapable(tag.contains("AtmosphereCapable") ? tag.getBoolean("AtmosphereCapable") : true)
-                            .spaceCapable(tag.contains("SpaceCapable") ? tag.getBoolean("SpaceCapable") : true)
-                            .engineType(EngineType.valueOf(tag.contains("EngineType") ? tag.getString("EngineType") : "CHEMICAL"))
+                            .thrust(TagHelper.getIntValue(tag, "Thrust") > 0 ? TagHelper.getIntValue(tag, "Thrust") : 100)
+                            .efficiency(TagHelper.getFloatValue(tag, "Efficiency") > 0 ? TagHelper.getFloatValue(tag, "Efficiency") : 0.75f)
+                            .fuelConsumptionRate(TagHelper.getIntValue(tag, "FuelConsumptionRate") > 0 ? TagHelper.getIntValue(tag, "FuelConsumptionRate") : 10)
+                            .fuelType(FuelType.valueOf(TagHelper.getStringValue(tag, "FuelType").isEmpty() ? "CHEMICAL" : TagHelper.getStringValue(tag, "FuelType")))
+                            .atmosphereCapable(TagHelper.getBooleanValue(tag, "AtmosphereCapable"))
+                            .spaceCapable(TagHelper.getBooleanValue(tag, "SpaceCapable"))
+                            .engineType(EngineType.valueOf(TagHelper.getStringValue(tag, "EngineType").isEmpty() ? "CHEMICAL" : TagHelper.getStringValue(tag, "EngineType")))
                             .build();
                             
                 case FUEL_TANK:
@@ -926,10 +934,10 @@ public class RocketComponentFactory {
                             .description(description)
                             .tier(tier)
                             .mass(mass)
-                            .maxFuelCapacity(tag.contains("MaxFuelCapacity") ? TagHelper.getIntValue(tag, "MaxFuelCapacity") : 1000)
-                            .fuelType(FuelType.valueOf(tag.contains("FuelType") ? TagHelper.getStringValue(tag, "FuelType") : "CHEMICAL"))
-                            .leakResistance(tag.contains("LeakResistance") ? TagHelper.getFloatValue(tag, "LeakResistance") : 0.0f)
-                            .explosionResistance(tag.contains("ExplosionResistance") ? TagHelper.getFloatValue(tag, "ExplosionResistance") : 0.0f)
+                            .maxFuelCapacity(TagHelper.getIntValue(tag, "MaxFuelCapacity") > 0 ? TagHelper.getIntValue(tag, "MaxFuelCapacity") : 1000)
+                            .fuelType(FuelType.valueOf(TagHelper.getStringValue(tag, "FuelType").isEmpty() ? "CHEMICAL" : TagHelper.getStringValue(tag, "FuelType")))
+                            .leakResistance(TagHelper.getFloatValue(tag, "LeakResistance"))
+                            .explosionResistance(TagHelper.getFloatValue(tag, "ExplosionResistance"))
                             .build();
                             
                 case STORAGE:
@@ -938,10 +946,10 @@ public class RocketComponentFactory {
                             .description(description)
                             .tier(tier)
                             .mass(mass)
-                            .storageCapacity(tag.contains("StorageCapacity") ? TagHelper.getIntValue(tag, "StorageCapacity") : 8)
-                            .vacuumSeal(tag.contains("VacuumSeal") ? TagHelper.getBooleanValue(tag, "VacuumSeal") : false)
-                            .temperatureRegulation(tag.contains("TemperatureRegulation") ? TagHelper.getBooleanValue(tag, "TemperatureRegulation") : false)
-                            .radiationShielding(tag.contains("RadiationShielding") ? TagHelper.getBooleanValue(tag, "RadiationShielding") : false)
+                            .storageCapacity(TagHelper.getIntValue(tag, "StorageCapacity") > 0 ? TagHelper.getIntValue(tag, "StorageCapacity") : 8)
+                            .vacuumSeal(TagHelper.getBooleanValue(tag, "VacuumSeal"))
+                            .temperatureRegulation(TagHelper.getBooleanValue(tag, "TemperatureRegulation"))
+                            .radiationShielding(TagHelper.getBooleanValue(tag, "RadiationShielding"))
                             .build();
                             
                 case PASSENGER_COMPARTMENT:
@@ -950,10 +958,10 @@ public class RocketComponentFactory {
                             .description(description)
                             .tier(tier)
                             .mass(mass)
-                            .passengerCapacity(tag.contains("PassengerCapacity") ? TagHelper.getIntValue(tag, "PassengerCapacity") : 2)
-                            .comfortLevel(tag.contains("ComfortLevel") ? TagHelper.getIntValue(tag, "ComfortLevel") : 1)
-                            .lifeSupport(tag.contains("LifeSupport") ? TagHelper.getBooleanValue(tag, "LifeSupport") : false)
-                            .radiationShielding(tag.contains("RadiationShielding") ? TagHelper.getBooleanValue(tag, "RadiationShielding") : false)
+                            .passengerCapacity(TagHelper.getIntValue(tag, "PassengerCapacity") > 0 ? TagHelper.getIntValue(tag, "PassengerCapacity") : 2)
+                            .comfortLevel(TagHelper.getIntValue(tag, "ComfortLevel") > 0 ? TagHelper.getIntValue(tag, "ComfortLevel") : 1)
+                            .lifeSupport(TagHelper.getBooleanValue(tag, "LifeSupport"))
+                            .radiationShielding(TagHelper.getBooleanValue(tag, "RadiationShielding"))
                             .build();
                             
                 case SHIELDING:
@@ -962,10 +970,10 @@ public class RocketComponentFactory {
                             .description(description)
                             .tier(tier)
                             .mass(mass)
-                            .maxDurability(tag.contains("MaxDurability") ? TagHelper.getIntValue(tag, "MaxDurability") : 1000)
-                            .impactResistance(tag.contains("ImpactResistance") ? TagHelper.getIntValue(tag, "ImpactResistance") : 50)
-                            .shieldStrength(tag.contains("ShieldStrength") ? TagHelper.getIntValue(tag, "ShieldStrength") : 100)
-                            .meteorResistance(tag.contains("MeteorResistance") ? TagHelper.getBooleanValue(tag, "MeteorResistance") : false)
+                            .maxDurability(TagHelper.getIntValue(tag, "MaxDurability") > 0 ? TagHelper.getIntValue(tag, "MaxDurability") : 1000)
+                            .impactResistance(TagHelper.getIntValue(tag, "ImpactResistance") > 0 ? TagHelper.getIntValue(tag, "ImpactResistance") : 50)
+                            .shieldStrength(TagHelper.getIntValue(tag, "ShieldStrength") > 0 ? TagHelper.getIntValue(tag, "ShieldStrength") : 100)
+                            .meteorResistance(TagHelper.getBooleanValue(tag, "MeteorResistance"))
                             .build();
                             
                 case LIFE_SUPPORT:
@@ -973,12 +981,12 @@ public class RocketComponentFactory {
                             .description(description)
                             .tier(tier)
                             .mass(mass)
-                            .maxCrewCapacity(tag.contains("MaxCrewCapacity") ? TagHelper.getIntValue(tag, "MaxCrewCapacity") : 4)
-                            .oxygenGenerationRate(tag.contains("OxygenGenerationRate") ? TagHelper.getIntValue(tag, "OxygenGenerationRate") : 10)
-                            .waterRecyclingEfficiency(tag.contains("WaterRecyclingEfficiency") ? TagHelper.getFloatValue(tag, "WaterRecyclingEfficiency") : 0.8f)
-                            .foodProductionRate(tag.contains("FoodProductionRate") ? TagHelper.getIntValue(tag, "FoodProductionRate") : 0)
-                            .wasteManagementEfficiency(tag.contains("WasteManagementEfficiency") ? TagHelper.getFloatValue(tag, "WasteManagementEfficiency") : 0.0f)
-                            .backupSystems(tag.contains("BackupSystems") ? TagHelper.getBooleanValue(tag, "BackupSystems") : false)
+                            .maxCrewCapacity(TagHelper.getIntValue(tag, "MaxCrewCapacity") > 0 ? TagHelper.getIntValue(tag, "MaxCrewCapacity") : 4)
+                            .oxygenGenerationRate(TagHelper.getIntValue(tag, "OxygenGenerationRate") > 0 ? TagHelper.getIntValue(tag, "OxygenGenerationRate") : 10)
+                            .waterRecyclingEfficiency(TagHelper.getFloatValue(tag, "WaterRecyclingEfficiency") > 0 ? TagHelper.getFloatValue(tag, "WaterRecyclingEfficiency") : 0.8f)
+                            .foodProductionRate(TagHelper.getIntValue(tag, "FoodProductionRate"))
+                            .wasteManagementEfficiency(TagHelper.getFloatValue(tag, "WasteManagementEfficiency"))
+                            .backupSystems(TagHelper.getBooleanValue(tag, "BackupSystems"))
                             .build();
                             
                 default:
