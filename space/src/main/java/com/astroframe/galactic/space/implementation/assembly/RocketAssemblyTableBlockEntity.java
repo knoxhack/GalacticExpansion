@@ -484,6 +484,75 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
     }
     
     /**
+     * Helper method to set a tag on an ItemStack for NeoForge 1.21.5
+     * 
+     * @param stack The ItemStack to set the tag on
+     * @param tag The tag to set
+     * @return The ItemStack with the tag set
+     */
+    private ItemStack setTagForStack(ItemStack stack, CompoundTag tag) {
+        // For NeoForge 1.21.5, we need to use reflection to get tag data
+        // This is a workaround since the original ItemStack.getTag() is not available
+        try {
+            // In NeoForge 1.21.5, use a Consumer to set the tag
+            stack.setTag(tag);
+            return stack;
+        } catch (Exception e) {
+            System.err.println("Failed to set tag on ItemStack: " + e.getMessage());
+            return stack; // Return original stack if tag setting fails
+        }
+    }
+    
+    /**
+     * Helper method to extract and save an ItemStack's tag data
+     * 
+     * @param stack The ItemStack to extract tag data from
+     * @param targetTag The CompoundTag to save the data to
+     */
+    private void extractAndSaveItemStackTag(ItemStack stack, CompoundTag targetTag) {
+        // For NeoForge 1.21.5, we need to use reflection to get tag data
+        // This is a workaround since the original ItemStack.getTag() is not available
+        try {
+            // Try to get the tag through reflection
+            CompoundTag tag = null;
+            
+            // Use reflection to get the tag method
+            java.lang.reflect.Method getTagMethod = stack.getClass().getMethod("getTag");
+            getTagMethod.setAccessible(true);
+            Object stackTag = getTagMethod.invoke(stack);
+            
+            if (stackTag != null) {
+                // If there's a tag, create a new "tag" compound tag in the target
+                CompoundTag tagCompound = new CompoundTag();
+                
+                // Get all keys from the stack's tag
+                java.lang.reflect.Method getKeysMethod = stackTag.getClass().getMethod("getAllKeys");
+                getKeysMethod.setAccessible(true);
+                Set<String> keys = (Set<String>)getKeysMethod.invoke(stackTag);
+                
+                // Copy each key to the new tag compound
+                for (String key : keys) {
+                    // Get the tag at the key
+                    java.lang.reflect.Method getMethod = stackTag.getClass().getMethod("get", String.class);
+                    getMethod.setAccessible(true);
+                    Object tagValue = getMethod.invoke(stackTag, key);
+                    
+                    if (tagValue instanceof Tag) {
+                        tagCompound.put(key, (Tag)tagValue);
+                    }
+                }
+                
+                // Add the tag compound to the target tag
+                if (!tagCompound.isEmpty()) {
+                    targetTag.put("tag", tagCompound);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to extract tag from ItemStack: " + e.getMessage());
+        }
+    }
+    
+    /**
      * Sets the rocket data.
      * 
      * @param rocket The new rocket data
@@ -601,103 +670,7 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
         }
     }
     
-    /**
-     * Helper method to apply a CompoundTag to an ItemStack.
-     * This is a workaround for NeoForge 1.21.5 where we can't directly use setTag.
-     * 
-     * @param stack The stack to modify
-     * @param tag The tag to apply
-     * @return The modified stack
-     */
-    private ItemStack setTagForStack(ItemStack stack, CompoundTag tag) {
-        // In NeoForge 1.21.5, we can't directly set tags on an ItemStack
-        // Instead, we need to create a new ItemStack with the same item and count
-        ItemStack result = stack.copy();
-        
-        // Create a complete CompoundTag for serialization
-        CompoundTag fullTag = new CompoundTag();
-        fullTag.putString("id", net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(result.getItem()).toString());
-        fullTag.putInt("Count", result.getCount());
-        fullTag.put("tag", tag);
-        
-        // Use reflection to set the tag if necessary
-        // This is a last resort approach
-        try {
-            // Try calling a method through reflection to apply the tag
-            java.lang.reflect.Method setTagMethod = net.minecraft.world.item.ItemStack.class.getDeclaredMethod("setTag", net.minecraft.nbt.CompoundTag.class);
-            setTagMethod.setAccessible(true);
-            setTagMethod.invoke(result, tag);
-        } catch (Exception e) {
-            // If that fails, create a new ItemStack with the complete tag
-            // This might involve manual work
-            System.err.println("Warning: Failed to set tag data on ItemStack: " + e.getMessage());
-        }
-        
-        return result;
-    }
-    
-    /**
-     * Helper method to extract tag data from an ItemStack and save it to a CompoundTag.
-     * This is a workaround for NeoForge 1.21.5 where we can't directly use getTag.
-     * 
-     * @param stack The stack to extract from
-     * @param targetTag The tag to save to
-     */
-    private void extractAndSaveItemStackTag(ItemStack stack, CompoundTag targetTag) {
-        // Create a temporary tag to hold the complete stack data
-        CompoundTag tempTag = new CompoundTag();
-        
-        // In NeoForge 1.21.5, we need a different approach for extracting tag data
-        // Let's use reflection to extract the tag data since the API has changed
-        try {
-            // Try to access the tag field via reflection
-            java.lang.reflect.Method getTagMethod = net.minecraft.world.item.ItemStack.class.getDeclaredMethod("getTag");
-            getTagMethod.setAccessible(true);
-            Object tagObject = getTagMethod.invoke(stack);
-            
-            if (tagObject instanceof CompoundTag) {
-                CompoundTag stackTag = (CompoundTag) tagObject;
-                
-                // In NeoForge 1.21.5, getAllKeys() might not be available
-                // Try to get all keys directly from the tag object
-                try {
-                    // Use reflection to get the key set
-                    java.lang.reflect.Method getKeysMethod = CompoundTag.class.getDeclaredMethod("getKeys");
-                    getKeysMethod.setAccessible(true);
-                    Set<String> keys = (Set<String>)getKeysMethod.invoke(stackTag);
-                    
-                    // Copy each key-value pair
-                    for (String key : keys) {
-                        tempTag.put(key, stackTag.get(key).copy());
-                    }
-                } catch (Exception e) {
-                    // Fallback to known keys if we can't get all keys
-                    System.err.println("Failed to get all keys from tag: " + e.getMessage());
-                    // Just copy the main data we know about
-                    tempTag.putString("id", stackTag.getString("id").orElse("minecraft:air"));
-                    tempTag.putInt("Count", stackTag.getInt("Count").orElse(1));
-                    if (stackTag.contains("tag")) {
-                        stackTag.getCompound("tag").ifPresent(subTag -> tempTag.put("tag", subTag.copy()));
-                    }
-                }
-            }
-        } catch (Exception e) {
-            // If reflection fails, use a best-effort approach
-            System.err.println("Warning: Failed to extract tag data from ItemStack: " + e.getMessage());
-            
-            // Manually add known fields that might exist
-            tempTag.putString("id", net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
-            tempTag.putInt("Count", stack.getCount());
-        }
-        
-        // If the stack had tag data, copy it
-        if (tempTag.contains("tag")) {
-            tempTag.getCompound("tag").ifPresent(tagData -> {
-                // Copy the tag data to the target
-                targetTag.put("tag", tagData.copy());
-            });
-        }
-    }
+
     
     /**
      * Component inventory that wraps the component list and provides custom functionality.
