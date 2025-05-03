@@ -6,7 +6,7 @@ import com.astroframe.galactic.space.GalacticSpace;
 import com.astroframe.galactic.space.implementation.RocketEntitySpawner;
 import com.astroframe.galactic.space.implementation.component.RocketComponentFactory;
 import com.astroframe.galactic.space.implementation.component.ShieldFactory;
-import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
+import com.astroframe.galactic.space.util.ResourceLocationHelper;
 import com.astroframe.galactic.space.util.TagHelper;
 import static com.astroframe.galactic.space.items.ItemStackHelper.getOrCreateTag;
 import net.minecraft.ChatFormatting;

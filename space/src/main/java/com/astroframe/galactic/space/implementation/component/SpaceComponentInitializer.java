@@ -9,7 +9,7 @@ import com.astroframe.galactic.core.api.space.component.enums.LifeSupportType;
 import com.astroframe.galactic.core.api.space.component.enums.ShieldType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
-import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
+import com.astroframe.galactic.space.util.ResourceLocationHelper;
 
 /**
  * Initializes default rocket components for the Space module.

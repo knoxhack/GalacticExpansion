@@ -9,7 +9,7 @@ import com.astroframe.galactic.space.implementation.component.engine.RocketEngin
 import com.astroframe.galactic.space.util.TagHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
+import com.astroframe.galactic.space.util.ResourceLocationHelper;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;

@@ -6,7 +6,7 @@ import com.astroframe.galactic.core.api.space.component.RocketComponentType;
 import com.astroframe.galactic.space.GalacticSpace;
 import com.astroframe.galactic.space.implementation.RocketLaunchController;
 import com.astroframe.galactic.space.implementation.component.RocketComponentFactory;
-import com.astroframe.galactic.space.implementation.component.ResourceLocationHelper;
+import com.astroframe.galactic.space.util.ResourceLocationHelper;
 import com.astroframe.galactic.space.util.TagHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
