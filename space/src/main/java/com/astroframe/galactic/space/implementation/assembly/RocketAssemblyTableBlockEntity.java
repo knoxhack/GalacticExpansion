@@ -267,9 +267,9 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
                         CompoundTag posCompound = (CompoundTag) posTag;
                         
                         // Extract coordinates directly in NeoForge 1.21.5
-                        int x = posCompound.getInt("X");
-                        int y = posCompound.getInt("Y");
-                        int z = posCompound.getInt("Z");
+                        int x = posCompound.getInt("X").orElse(0);
+                        int y = posCompound.getInt("Y").orElse(0);
+                        int z = posCompound.getInt("Z").orElse(0);
                         
                         linkedProjectors.add(new BlockPos(x, y, z));
                     }
@@ -342,15 +342,22 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
             } catch (Exception e) {
                 // Fallback to using vanilla API
                 // For example, check if the stack has custom name or other visible attributes
-                if (stack.hasCustomHoverName()) {
-                    CompoundTag tagData = new CompoundTag();
+                // In NeoForge 1.21.5, we need to use a different approach to check custom names
+                try {
+                    // Either the stack has a getDisplayName or getHoverName method that we can check
+                    Component name = stack.getHoverName();
+                    boolean hasCustomName = !name.equals(Component.translatable(stack.getDescriptionId()));
                     
-                    // Save display name
-                    CompoundTag displayTag = new CompoundTag();
-                    displayTag.putString("Name", Component.Serializer.toJson(stack.getHoverName()));
-                    tagData.put("display", displayTag);
-                    
-                    itemTag.put("tag", tagData);
+                    if (hasCustomName) {
+                        CompoundTag tagData = new CompoundTag();
+                        
+                        // Save display name - in NeoForge 1.21.5, Component.Serializer.toJson requires a Provider parameter
+                        CompoundTag displayTag = new CompoundTag();
+                        // Use the StringRepresentable interface to get JSON string (workaround)
+                        displayTag.putString("Name", net.minecraft.network.chat.Component.Serializer.toJson(name, null));
+                        tagData.put("display", displayTag);
+                        itemTag.put("tag", tagData);
+                    }
                 }
             }
         } catch (Exception e) {

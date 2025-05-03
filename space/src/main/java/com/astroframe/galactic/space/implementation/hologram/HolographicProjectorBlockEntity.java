@@ -74,21 +74,22 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
     protected void loadData(CompoundTag tag) {
         // Load active state - updated for NeoForge 1.21.5 compatibility
         if (tag.contains("Active")) {
-            // Get boolean value directly in NeoForge 1.21.5
-            active = tag.getBoolean("Active");
+            // Get boolean value with Optional handling in NeoForge 1.21.5
+            active = tag.getBoolean("Active").orElse(false);
         }
         
         // Load rotation angle - updated for NeoForge 1.21.5 compatibility
         if (tag.contains("RotationAngle")) {
-            // Get float value directly in NeoForge 1.21.5
-            rotationAngle = tag.getFloat("RotationAngle");
+            // Get float value with Optional handling in NeoForge 1.21.5
+            rotationAngle = tag.getFloat("RotationAngle").orElse(0.0f);
         }
         
         // Load linked table position if it exists - updated approach for NeoForge 1.21.5
         if (tag.contains("LinkedTable")) {
             // Must get the tag as a generic Tag first and check its type
             Tag rawTag = tag.get("LinkedTable");
-            if (rawTag != null && rawTag.getType() == Tag.TAG_COMPOUND) {
+            // In NeoForge 1.21.5, we need to check if it's a CompoundTag by instanceof
+            if (rawTag != null && rawTag instanceof CompoundTag) {
                 // Now we can safely cast to CompoundTag
                 CompoundTag linkedTag = (CompoundTag) rawTag;
                 
