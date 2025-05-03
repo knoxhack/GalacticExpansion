@@ -182,7 +182,7 @@ public abstract class BaseMachine implements Machine {
     
     @Override
     public com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit getEnergyUnit() {
-        return com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit.GALACTIC_ENERGY_UNIT;
+        return com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit.GEU;
     }
     
     @Override
@@ -198,13 +198,13 @@ public abstract class BaseMachine implements Machine {
     }
     
     @Override
-    public int getEnergyStored() {
+    public int getEnergy() {
         if (energyStorage == null) return 0;
         return energyStorage.getEnergy();
     }
     
     @Override
-    public int getMaxEnergyCapacity() {
+    public int getMaxEnergy() {
         if (energyStorage == null) return 0;
         return energyStorage.getMaxEnergy();
     }

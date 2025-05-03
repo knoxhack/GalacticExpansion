@@ -299,13 +299,11 @@ public abstract class MachineBlockEntity extends BlockEntityBase implements Mach
         return energyStorage.extractEnergy(maxExtract, simulate);
     }
     
-    @Override
-    public int getEnergyStored() {
+    public int getEnergy() {
         return energyStorage.getEnergy();
     }
     
-    @Override
-    public int getMaxEnergyCapacity() {
+    public int getMaxEnergy() {
         return energyStorage.getMaxEnergy();
     }
     
@@ -321,7 +319,7 @@ public abstract class MachineBlockEntity extends BlockEntityBase implements Mach
     
     @Override
     public EnergyUnit getEnergyUnit() {
-        return EnergyUnit.GALACTIC_ENERGY_UNIT;
+        return EnergyUnit.GEU;
     }
     
     /**

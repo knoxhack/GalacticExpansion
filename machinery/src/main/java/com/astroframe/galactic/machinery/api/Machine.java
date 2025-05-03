@@ -74,7 +74,7 @@ public interface Machine extends IEnergyHandler {
      * @return True if the machine has sufficient energy
      */
     default boolean hasSufficientEnergy() {
-        return getEnergyStored() >= getEnergyConsumption();
+        return getEnergy() >= getEnergyConsumption();
     }
     
     /**
