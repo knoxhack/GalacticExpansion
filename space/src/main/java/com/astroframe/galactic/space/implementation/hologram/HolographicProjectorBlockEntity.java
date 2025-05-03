@@ -73,29 +73,49 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
     @Override
     protected void loadData(CompoundTag tag) {
         // Load active state - updated for NeoForge 1.21.5 compatibility
-        if (tag.contains("Active", Tag.TAG_BYTE)) {
-            // Get boolean value directly from the tag
-            active = tag.getBoolean("Active");
+        if (tag.contains("Active")) {
+            // Get boolean value handling Optional return
+            java.util.Optional<Boolean> activeOpt = tag.getBoolean("Active");
+            active = activeOpt.orElse(false);
         }
         
         // Load rotation angle - updated for NeoForge 1.21.5 compatibility
-        if (tag.contains("RotationAngle", Tag.TAG_FLOAT)) {
-            // Get float value directly from the tag
-            rotationAngle = tag.getFloat("RotationAngle");
+        if (tag.contains("RotationAngle")) {
+            // Get float value handling Optional return
+            java.util.Optional<Float> rotationOpt = tag.getFloat("RotationAngle");
+            rotationAngle = rotationOpt.orElse(0.0F);
         }
         
-        // Load linked table position if it exists - updated approach
-        if (tag.contains("LinkedTable", Tag.TAG_COMPOUND)) {
-            CompoundTag linkedTag = tag.getCompound("LinkedTable");
-            if (!linkedTag.isEmpty() &&
-                linkedTag.contains("X", Tag.TAG_INT) && 
-                linkedTag.contains("Y", Tag.TAG_INT) && 
-                linkedTag.contains("Z", Tag.TAG_INT)) {
-                // Extract coordinates directly
-                int x = linkedTag.getInt("X");
-                int y = linkedTag.getInt("Y"); 
-                int z = linkedTag.getInt("Z");
-                linkedTablePos = new BlockPos(x, y, z);
+        // Load linked table position if it exists - updated approach for NeoForge 1.21.5
+        if (tag.contains("LinkedTable")) {
+            // Must get the tag as a generic Tag first and check its type
+            Tag rawTag = tag.get("LinkedTable");
+            if (rawTag != null && rawTag.getType() == Tag.TAG_COMPOUND) {
+                // Now we can safely cast to CompoundTag
+                CompoundTag linkedTag = (CompoundTag) rawTag;
+                
+                if (!linkedTag.isEmpty() &&
+                    linkedTag.contains("X") && 
+                    linkedTag.contains("Y") && 
+                    linkedTag.contains("Z")) {
+                    
+                    // For NeoForge 1.21.5, we need to handle Optional returns
+                    int x = 0, y = 0, z = 0;
+                    
+                    // Use the Optional API directly
+                    java.util.Optional<Integer> xOpt = linkedTag.getInt("X");
+                    java.util.Optional<Integer> yOpt = linkedTag.getInt("Y");
+                    java.util.Optional<Integer> zOpt = linkedTag.getInt("Z");
+                    
+                    // Extract values safely
+                    x = xOpt.orElse(0);
+                    y = yOpt.orElse(0);
+                    z = zOpt.orElse(0);
+                    
+                    linkedTablePos = new BlockPos(x, y, z);
+                } else {
+                    linkedTablePos = null;
+                }
             } else {
                 linkedTablePos = null;
             }

@@ -174,13 +174,19 @@ public class RocketAssemblyTableBlockEntity extends BlockEntityBase
         // Load the component inventory - use custom implementation for NeoForge 1.21.5
         // Instead of ContainerHelper which has API changes
         if (tag.contains("Items")) {
-            // Get list tag directly - in NeoForge 1.21.5, getList only takes the key parameter
-            tag.getList("Items").ifPresent(listTag -> {
+            // Get list tag directly using get() and type checking - safer approach for NeoForge 1.21.5
+            Tag itemsTag = tag.get("Items");
+            if (itemsTag != null && itemsTag.getType() == Tag.TAG_LIST) {
+                ListTag listTag = (ListTag)itemsTag;
                 for (int i = 0; i < listTag.size(); i++) {
-                    // In NeoForge 1.21.5, getCompound returns an Optional<CompoundTag>
-                    listTag.getCompound(i).ifPresent(compoundTag -> {
-                        // In NeoForge 1.21.5, getInt returns an Optional<Integer>
-                        compoundTag.getInt("Slot").ifPresent(slot -> {
+                    // Get the tag and check if it's a compound tag
+                    Tag itemTag = listTag.get(i);
+                    if (itemTag != null && itemTag.getType() == Tag.TAG_COMPOUND) {
+                        CompoundTag compoundTag = (CompoundTag)itemTag;
+                        // Make sure Slot exists and is an integer
+                        if (compoundTag.contains("Slot")) {
+                            java.util.Optional<Integer> slotOpt = compoundTag.getInt("Slot");
+                            int slot = slotOpt.orElse(-1);
                             if (slot >= 0 && slot < components.size()) {
                                 // Create ItemStack from CompoundTag for NeoForge 1.21.5
                                 // Use a different approach as ItemStack.of() may not be available
