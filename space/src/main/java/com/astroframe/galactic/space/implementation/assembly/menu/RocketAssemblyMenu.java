@@ -65,6 +65,7 @@ public class RocketAssemblyMenu extends AbstractContainerMenu {
                               ContainerLevelAccess access) {
         super(SpaceMenus.ROCKET_ASSEMBLY_MENU.get(), containerId);
         this.blockEntity = blockEntity;
+        this.rocketDataProvider = blockEntity; // Cast to interface
         this.access = access;
         this.tempInventory = null;
         this.validator = new ComponentValidator();
@@ -93,6 +94,7 @@ public class RocketAssemblyMenu extends AbstractContainerMenu {
         // Get block entity from world
         this.tempInventory = new SimpleContainer(COMPONENT_SLOTS);
         this.blockEntity = getBlockEntity(playerInventory, data);
+        this.rocketDataProvider = this.blockEntity; // Cast to interface
         this.access = this.blockEntity != null ? 
                 ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()) : 
                 ContainerLevelAccess.NULL;
@@ -176,7 +178,7 @@ public class RocketAssemblyMenu extends AbstractContainerMenu {
      * @return True if the rocket is valid
      */
     public boolean validateRocket() {
-        if (blockEntity == null) {
+        if (rocketDataProvider == null) {
             return false;
         }
         
@@ -185,14 +187,16 @@ public class RocketAssemblyMenu extends AbstractContainerMenu {
         
         // We'd normally extract components from items here
         // For now, use the components in the rocket data
-        components.addAll(blockEntity.getRocketData().getAllComponents());
+        components.addAll(rocketDataProvider.getRocketData().getAllComponents());
         
         // Validate components using the validator
         List<String> errors = new ArrayList<>();
         boolean valid = validator.validateComponents(components, errors);
         
-        // Update the block entity
-        blockEntity.setValidationStatus(valid, errors);
+        // Update the validation status
+        if (blockEntity != null) {
+            blockEntity.setValidationStatus(valid, errors);
+        }
         
         return valid;
     }
@@ -297,6 +301,15 @@ public class RocketAssemblyMenu extends AbstractContainerMenu {
      */
     public RocketAssemblyTableBlockEntity getBlockEntity() {
         return blockEntity;
+    }
+    
+    /**
+     * Gets the rocket data provider.
+     * 
+     * @return The rocket data provider
+     */
+    public RocketDataProvider getRocketDataProvider() {
+        return rocketDataProvider;
     }
     
     /**
