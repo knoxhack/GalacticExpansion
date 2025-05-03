@@ -2,6 +2,32 @@
 
 This guide provides steps for migrating Minecraft mods to NeoForge 1.21.5 from older Forge versions. 
 
+## Mod ID Consistency
+
+One of the most critical changes in NeoForge 1.21.5 is the strict enforcement of mod ID consistency:
+
+1. **Mod ID Format**:
+   - Do not use underscores in mod IDs (use `modname` instead of `mod_name`)
+   - Keep mod IDs lowercase and alphanumeric
+   - Make sure the mod ID is consistent between code and configuration
+
+2. **Update @Mod Annotation**:
+   ```java
+   // Change this:
+   @Mod("my_mod_id")
+   
+   // To this:
+   @Mod("mymodid")
+   ```
+
+3. **Update Configuration Files**:
+   - In `mods.toml` or `neoforge.mods.toml`, ensure the `modId` value matches exactly
+   - Update all dependency references to use the new format
+
+4. **Check MODID Constants**:
+   - Update any `public static final String MODID = "my_mod_id"` constants
+   - Ensure all registry object registrations use the updated mod ID
+
 ## Dependencies and Environment
 
 1. **Java Version**: Ensure you're using Java 21 for NeoForge 1.21.5 development.

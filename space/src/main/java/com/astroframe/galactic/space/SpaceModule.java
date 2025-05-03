@@ -22,11 +22,11 @@ import org.slf4j.LoggerFactory;
  * Main class for the Space module of the Galactic mod.
  * Handles registration of blocks, items, and block entities related to space exploration.
  */
-@Mod("galactic_space")
+@Mod("galacticspace")
 public class SpaceModule {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(SpaceModule.class);
-    public static final String MODID = "galactic_space";
+    public static final String MODID = "galacticspace";
     
     // Registry for blocks
     public static final DeferredRegister<Block> BLOCKS = 

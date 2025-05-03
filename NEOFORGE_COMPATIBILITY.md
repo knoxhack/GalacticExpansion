@@ -4,6 +4,27 @@
 
 This document summarizes the changes made to adapt the Galactic Expansion mod to NeoForge 1.21.5 from older Forge versions. The update involved addressing API changes and handling new patterns for registry access, tag manipulation, and resource handling.
 
+## Critical Mod ID Changes
+
+NeoForge 1.21.5 has stricter requirements for mod IDs. All mod IDs must:
+- Match exactly between `@Mod` annotation and configuration files
+- Avoid using underscores (use "galacticspace" instead of "galactic_space")
+- Be consistent across all references in code and configuration files
+
+```java
+// Old code
+@Mod("galactic_space")
+public class SpaceModule {
+    public static final String MODID = "galactic_space";
+}
+
+// New code for NeoForge 1.21.5
+@Mod("galacticspace")
+public class SpaceModule {
+    public static final String MODID = "galacticspace";
+}
+```
+
 ## Key Changes
 
 ### Registry Access
