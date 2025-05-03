@@ -8,6 +8,7 @@ import com.astroframe.galactic.space.registry.SpaceBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -345,7 +346,7 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
                 if (itemId != null && !itemId.isEmpty()) {
                     ResourceLocation itemLocation = ResourceLocation.parse(itemId);
                     // Need to use ForgeRegistries for direct registry lookup
-                    Item item = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(itemLocation);
+                    Item item = ForgeRegistries.ITEMS.getValue(itemLocation);
                     // In NeoForge 1.21.5, getByte returns byte primitive, no need for .byteValue()
                     int count = itemTag.contains("Count") ? itemTag.getByte("Count") : 1;
                     ItemStack stack = new ItemStack(item, count);
