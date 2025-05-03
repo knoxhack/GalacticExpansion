@@ -2,8 +2,11 @@ package com.astroframe.galactic.space.implementation.component;
 
 import com.astroframe.galactic.core.api.space.component.ICommandModule;
 import com.astroframe.galactic.core.api.space.component.RocketComponentType;
+import com.astroframe.galactic.space.util.TagHelper;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,7 @@ public class CommandModuleImpl implements ICommandModule {
     private final boolean hasAdvancedLifeSupport;
     private final boolean hasAutomatedLanding;
     private final boolean hasEmergencyEvacuation;
+    private Vec3 position;
     
     private CommandModuleImpl(Builder builder) {
         this.id = builder.id;
@@ -44,6 +48,7 @@ public class CommandModuleImpl implements ICommandModule {
         this.hasAdvancedLifeSupport = builder.hasAdvancedLifeSupport;
         this.hasAutomatedLanding = builder.hasAutomatedLanding;
         this.hasEmergencyEvacuation = builder.hasEmergencyEvacuation;
+        this.position = new Vec3(0, 0, 0);
     }
     
     @Override
@@ -129,6 +134,62 @@ public class CommandModuleImpl implements ICommandModule {
     @Override
     public boolean hasEmergencyEvacuation() {
         return hasEmergencyEvacuation;
+    }
+    
+    @Override
+    public Vec3 getPosition() {
+        return position;
+    }
+    
+    @Override
+    public void setPosition(Vec3 position) {
+        this.position = position;
+    }
+    
+    @Override
+    public void save(CompoundTag tag) {
+        // Save basic component properties
+        tag.putString("ID", getId().toString());
+        tag.putString("Type", getType().name());
+        tag.putString("Name", getName());
+        tag.putString("Description", getDescription());
+        tag.putInt("Tier", getTier());
+        tag.putInt("Mass", getMass());
+        tag.putInt("MaxDurability", getMaxDurability());
+        tag.putInt("CurrentDurability", getCurrentDurability());
+        
+        // Save position if component has a non-default position
+        Vec3 pos = getPosition();
+        if (pos.x != 0 || pos.y != 0 || pos.z != 0) {
+            tag.putDouble("PosX", pos.x);
+            tag.putDouble("PosY", pos.y);
+            tag.putDouble("PosZ", pos.z);
+        }
+        
+        // Save command module specific properties
+        tag.putInt("ComputingPower", getComputingPower());
+        tag.putInt("SensorStrength", getSensorStrength());
+        tag.putFloat("NavigationAccuracy", getNavigationAccuracy());
+        tag.putInt("CrewCapacity", getCrewCapacity());
+        tag.putBoolean("AdvancedLifeSupport", hasAdvancedLifeSupport());
+        tag.putBoolean("AutomatedLanding", hasAutomatedLanding());
+        tag.putBoolean("EmergencyEvacuation", hasEmergencyEvacuation());
+    }
+    
+    @Override
+    public void load(CompoundTag tag) {
+        // Load position if saved
+        if (tag.contains("PosX") && tag.contains("PosY") && tag.contains("PosZ")) {
+            double x = TagHelper.getDoubleValue(tag, "PosX");
+            double y = TagHelper.getDoubleValue(tag, "PosY");
+            double z = TagHelper.getDoubleValue(tag, "PosZ");
+            setPosition(new Vec3(x, y, z));
+        }
+        
+        // Load durability (other properties are final)
+        if (tag.contains("CurrentDurability")) {
+            this.currentDurability = TagHelper.getIntValue(tag, "CurrentDurability");
+        }
     }
     
     /**
