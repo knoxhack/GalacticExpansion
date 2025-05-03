@@ -260,9 +260,8 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
             ListTag componentsTag = new ListTag();
             for (ItemStack stack : components) {
                 if (!stack.isEmpty()) {
-                    // In NeoForge 1.21.5, we need to directly save the ItemStack to a tag
-                    CompoundTag componentTag = new CompoundTag();
-                    stack.save(componentTag);
+                    // In NeoForge 1.21.5, ItemStack.save takes a CompoundTag rather than Provider
+                    CompoundTag componentTag = stack.save(new CompoundTag());
                     componentsTag.add(componentTag);
                 }
             }
@@ -292,8 +291,8 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
         // since ContainerHelper API has changed
         for (int i = 0; i < components.size(); i++) {
             if (!components.get(i).isEmpty()) {
-                CompoundTag itemTag = new CompoundTag();
-                components.get(i).save(itemTag);
+                // In NeoForge 1.21.5, ItemStack.save returns the tag instead of void
+                CompoundTag itemTag = components.get(i).save(new CompoundTag());
                 tag.put("Item" + i, itemTag);
             }
         }

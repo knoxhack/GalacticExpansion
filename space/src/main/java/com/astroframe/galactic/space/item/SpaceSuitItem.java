@@ -51,7 +51,8 @@ public class SpaceSuitItem extends ArmorItem {
         ResourceLocation enchLocation = null;
         try {
             // Get the location directly from the registry in NeoForge 1.21.5
-            enchLocation = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+            // For NeoForge 1.21.5, we need to use ForgeRegistries since BuiltInRegistries.ENCHANTMENT doesn't exist
+            enchLocation = net.neoforged.neoforge.registries.ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
         } catch (Exception e) {
             // If all else fails, just return default value
             return false;
@@ -102,8 +103,8 @@ public class SpaceSuitItem extends ArmorItem {
         if (stack.isEmpty()) return false;
         
         Item item = stack.getItem();
-        // In NeoForge 1.21.5, we use getKey instead of getHolder to get resource location
-        ResourceLocation itemId = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item);
+        // In NeoForge 1.21.5, we use ForgeRegistries instead of BuiltInRegistries for consistency
+        ResourceLocation itemId = net.neoforged.neoforge.registries.ForgeRegistries.ITEMS.getKey(item);
         return itemId != null && itemId.getPath().contains("space_suit");
     }
     

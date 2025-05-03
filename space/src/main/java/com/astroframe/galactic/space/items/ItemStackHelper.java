@@ -117,8 +117,8 @@ public class ItemStackHelper {
      */
     public static ItemStack createStack(ResourceLocation location, int count) {
         try {
-            // In NeoForge 1.21.5, we need to use the direct lookup method instead of getHolder
-            Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(location);
+            // In NeoForge 1.21.5, we need to use ForgeRegistries instead of BuiltInRegistries
+            Item item = net.neoforged.neoforge.registries.ForgeRegistries.ITEMS.getValue(location);
             
             if (item == Items.AIR) {
                 return ItemStack.EMPTY;

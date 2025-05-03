@@ -136,9 +136,16 @@ public class SpaceBodies {
         }
         
         @Override
-        public float getDistanceFromHome() {
+        public float getDistance() {
             return 0.0f; // Default distance
         }
+        
+        // This method is now provided by the default implementation
+        // in ICelestialBody which calls getDistance()
+        // @Override
+        // public float getDistanceFromHome() {
+        //     return getDistance();
+        // }
         
         @Override
         public float getTemperature() {
@@ -156,8 +163,13 @@ public class SpaceBodies {
         }
         
         @Override
-        public float getAtmosphereDensity() {
+        public float getAtmosphericPressure() {
             return hasAtmosphere ? 1.0f : 0.0f;
+        }
+        
+        @Override
+        public float getAtmosphereDensity() {
+            return getAtmosphericPressure();
         }
         
         @Override
@@ -171,9 +183,16 @@ public class SpaceBodies {
         }
         
         @Override
-        public int getRocketTierRequired() {
+        public int getRequiredTier() {
             return 1; // Basic rocket tier by default
         }
+        
+        // This method is now provided by the default implementation
+        // in ICelestialBody which calls getRequiredTier()
+        // @Override
+        // public int getRocketTierRequired() {
+        //     return getRequiredTier();
+        // }
         
         @Override
         public boolean hasBreathableAtmosphere() {
