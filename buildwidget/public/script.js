@@ -107,9 +107,21 @@ function connectWebSocket() {
             statusIndicator.title = 'Connected to build server';
         }
         
-        // Request initial status update and short commits
+        // Request initial status update, short commits, and fetch checkpoint data
         socket.send(JSON.stringify({ type: 'requestShortCommits', limit: 10 }));
         socket.send(JSON.stringify({ type: 'requestStatus' }));
+        
+        // Fetch the last checkpoint data
+        fetch('/api/last-checkpoint')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.hasCheckpoint) {
+                    updateCheckpointDetails(data.checkpoint);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching checkpoint data:', error);
+            });
     });
     
     // Handle message event
@@ -205,6 +217,9 @@ function connectWebSocket() {
                 case 'versionHistory':
                 case 'versionInfo':
                     updateVersionInfo(data);
+                    break;
+                case 'lastCheckpoint':
+                    updateCheckpointDetails(data);
                     break;
                 case 'error':
                     showNotification('Error', data.message || String(data), 'error');
