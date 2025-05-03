@@ -765,14 +765,34 @@ function saveLastCheckpoint(checkpoint) {
         // Ensure directory exists
         const fs = require('fs');
         const path = require('path');
-        const dataDir = path.resolve('./buildwidget/data');
         
-        if (!fs.existsSync(dataDir)) {
+        // Try different paths for the data directory
+        const possibleDataDirs = [
+            path.resolve('./buildwidget/data'),
+            path.resolve(__dirname, './data'),
+            path.resolve(__dirname, 'data')
+        ];
+        
+        // Use the first possible path or create it
+        let dataDir;
+        for (const dir of possibleDataDirs) {
+            if (fs.existsSync(dir)) {
+                dataDir = dir;
+                break;
+            }
+        }
+        
+        // If no directory exists, create the first one
+        if (!dataDir) {
+            dataDir = possibleDataDirs[0];
             fs.mkdirSync(dataDir, { recursive: true });
+            console.log('Created checkpoint data directory at:', dataDir);
         }
         
         const checkpointData = JSON.stringify(checkpoint, null, 2);
-        fs.writeFileSync(path.join(dataDir, 'last-checkpoint.json'), checkpointData);
+        const filePath = path.join(dataDir, 'last-checkpoint.json');
+        fs.writeFileSync(filePath, checkpointData);
+        console.log('Saved checkpoint data to:', filePath);
         console.log('Last checkpoint data saved');
     } catch (error) {
         console.error('Error saving last checkpoint data:', error);
@@ -787,10 +807,19 @@ function getLastCheckpoint() {
     try {
         const fs = require('fs');
         const path = require('path');
-        const filePath = path.resolve('./buildwidget/data/last-checkpoint.json');
+        // Try multiple paths to find the file
+        const possiblePaths = [
+            path.resolve('./buildwidget/data/last-checkpoint.json'),
+            path.resolve(__dirname, './data/last-checkpoint.json'),
+            path.resolve(__dirname, 'data/last-checkpoint.json')
+        ];
         
-        // Check if file exists
-        if (!fs.existsSync(filePath)) {
+        // Find the first path that exists
+        const filePath = possiblePaths.find(p => fs.existsSync(p));
+        
+        // If no path exists, return null
+        if (!filePath) {
+            console.log('Checkpoint file not found in any of the expected locations:', possiblePaths);
             return null;
         }
         
