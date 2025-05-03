@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.registries.ForgeRegistries;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -119,7 +120,7 @@ public class ItemStackHelper {
     public static ItemStack createStack(ResourceLocation location, int count) {
         try {
             // In NeoForge 1.21.5, use ForgeRegistries for direct registry lookup
-            Item item = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(location);
+            Item item = ForgeRegistries.ITEMS.getValue(location);
             
             if (item == Items.AIR) {
                 return ItemStack.EMPTY;

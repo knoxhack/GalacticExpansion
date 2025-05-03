@@ -268,8 +268,8 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
                     CompoundTag componentTag = new CompoundTag();
                     componentTag.putString("id", BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
                     componentTag.putByte("Count", (byte)stack.getCount());
-                    // In NeoForge 1.21.5, use stack.getOrCreateTag() instead of getTag()
-                    CompoundTag stackTag = stack.getData();
+                    // In NeoForge 1.21.5, use stack.getTag() to get the tag data
+                    CompoundTag stackTag = stack.getTag();
                     if (stackTag != null) {
                         componentTag.put("tag", stackTag.copy());
                     }
@@ -306,8 +306,8 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putString("id", BuiltInRegistries.ITEM.getKey(components.get(i).getItem()).toString());
                 itemTag.putByte("Count", (byte)components.get(i).getCount());
-                // In NeoForge 1.21.5, use stack.getData() instead of getTag()
-                CompoundTag compTag = components.get(i).getData();
+                // In NeoForge 1.21.5, use stack.getTag() to get the tag data
+                CompoundTag compTag = components.get(i).getTag();
                 if (compTag != null) {
                     itemTag.put("tag", compTag.copy());
                 }
@@ -347,15 +347,15 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
                     ResourceLocation itemLocation = ResourceLocation.parse(itemId);
                     // Need to use ForgeRegistries for direct registry lookup
                     Item item = ForgeRegistries.ITEMS.getValue(itemLocation);
-                    // In NeoForge 1.21.5, getByte returns byte primitive, no need for .byteValue()
-                    int count = itemTag.contains("Count") ? itemTag.getByte("Count") : 1;
+                    // In NeoForge 1.21.5, getByte returns an Optional<Byte> that needs unwrapping
+                    int count = itemTag.contains("Count") ? itemTag.getByte("Count").orElse((byte)1) : 1;
                     ItemStack stack = new ItemStack(item, count);
                     if (itemTag.contains("tag")) {
                         // In NeoForge 1.21.5, get the compound tag via our helper
                         CompoundTag dataTag = com.astroframe.galactic.space.items.ItemStackHelper.getCompound(itemTag, "tag");
                         if (dataTag != null) {
-                            // In NeoForge 1.21.5, continue using setTag
-                            stack.setTag(dataTag);
+                            // In NeoForge 1.21.5, use setData instead of setTag
+                            stack.setData(dataTag);
                         }
                     }
                     components.set(i, stack);
