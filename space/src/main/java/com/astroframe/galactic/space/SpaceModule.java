@@ -58,7 +58,7 @@ public class SpaceModule {
         MENUS.register(eventBus);
         
         // Register custom menu registry
-        SpaceMenus.register();
+        SpaceMenus.initialize(eventBus);
         
         // Register event handlers
         eventBus.addListener(this::onCommonSetup);

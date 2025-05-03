@@ -47,18 +47,20 @@ public class SpaceSuitItem extends ArmorItem {
     
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         // In NeoForge 1.21.5, we need to check registry IDs directly
-        ResourceLocation enchId = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+        ResourceLocation enchId = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
         if (enchId != null) {
             String path = enchId.getPath();
             
             // For helmet-specific enchantments
-            if (this.armorType == net.minecraft.world.item.ArmorItem.Type.HELMET && 
+            if (this.armorType == net.minecraft.world.item.ArmorMaterial.Type.HELMET && 
                 (path.equals("respiration") || path.equals("aqua_affinity"))) {
                 return true;
             }
         }
         
-        return super.canApplyAtEnchantingTable(stack, enchantment);
+        // Can't use super.canApplyAtEnchantingTable in this implementation
+        // Just allow common enchantments
+        return enchantment.category.canEnchant(stack.getItem());
     }
     
     /**
@@ -165,9 +167,16 @@ public class SpaceSuitItem extends ArmorItem {
         
         public net.minecraft.core.Holder<SoundEvent> getEquipSound() {
             // Get the sound event directly by ID for NeoForge 1.21.5
-            ResourceLocation soundId = ResourceLocation.parse("minecraft:item.armor.equip_iron");
-            SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.get(soundId);
-            return BuiltInRegistries.SOUND_EVENT.wrapAsHolder(soundEvent != null ? soundEvent : SoundEvents.ARMOR_EQUIP_IRON);
+            // Handle the Optional return value properly
+            return net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT
+                   .getHolder(net.minecraft.resources.ResourceKey.create(
+                       net.minecraft.core.registries.Registries.SOUND_EVENT, 
+                       ResourceLocation.parse("minecraft:item.armor.equip_iron")))
+                   .or(() -> net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT
+                       .getHolder(net.minecraft.resources.ResourceKey.create(
+                           net.minecraft.core.registries.Registries.SOUND_EVENT,
+                           net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.getKey(SoundEvents.ARMOR_EQUIP_IRON))))
+                   .get();
         }
         
         public Ingredient getRepairIngredient() {

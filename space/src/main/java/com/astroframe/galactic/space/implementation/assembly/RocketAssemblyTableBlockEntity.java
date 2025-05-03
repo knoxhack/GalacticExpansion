@@ -304,11 +304,12 @@ public class RocketAssemblyTableBlockEntity extends BlockEntity
         
         // Load components
         components = NonNullList.withSize(9, ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(tag, components);
+        // Use Provider lambda for NeoForge 1.21.5 compatibility
+        ContainerHelper.loadAllItems(tag, components, () -> NonNullList.withSize(9, ItemStack.EMPTY));
         
         // Load rocket data
         if (tag.contains("RocketData")) {
-            rocketDataTag = tag.getCompound("RocketData");
+            rocketDataTag = tag.getCompound("RocketData").orElse(new CompoundTag());
         } else {
             rocketDataTag = new CompoundTag();
         }

@@ -116,8 +116,11 @@ public class ItemStackHelper {
      */
     public static ItemStack createStack(ResourceLocation location, int count) {
         try {
-            // In NeoForge 1.21.5, get the item directly by ID
-            Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(location);
+            // In NeoForge 1.21.5, get the item via ResourceKey and handle the Optional
+            Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM
+                .getHolder(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, location))
+                .map(net.minecraft.core.Holder::value)
+                .orElse(Items.AIR);
             
             if (item == Items.AIR) {
                 return ItemStack.EMPTY;
