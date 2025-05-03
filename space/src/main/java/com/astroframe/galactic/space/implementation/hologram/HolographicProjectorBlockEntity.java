@@ -74,14 +74,14 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
     protected void loadData(CompoundTag tag) {
         // Load active state - updated for NeoForge 1.21.5 compatibility
         if (tag.contains("Active")) {
-            // Get boolean value with Optional handling in NeoForge 1.21.5
-            active = tag.getBoolean("Active").orElse(false);
+            // Get boolean value directly in NeoForge 1.21.5
+            active = tag.getBoolean("Active");
         }
         
         // Load rotation angle - updated for NeoForge 1.21.5 compatibility
         if (tag.contains("RotationAngle")) {
-            // Get float value with Optional handling in NeoForge 1.21.5
-            rotationAngle = tag.getFloat("RotationAngle").orElse(0.0f);
+            // Get float value directly in NeoForge 1.21.5
+            rotationAngle = tag.getFloat("RotationAngle");
         }
         
         // Load linked table position if it exists - updated approach for NeoForge 1.21.5
@@ -98,10 +98,10 @@ public class HolographicProjectorBlockEntity extends BlockEntityBase {
                     linkedTag.contains("Y") && 
                     linkedTag.contains("Z")) {
                     
-                    // For NeoForge 1.21.5, handle int values with Optional
-                    int x = linkedTag.getInt("X").orElse(0);
-                    int y = linkedTag.getInt("Y").orElse(0);
-                    int z = linkedTag.getInt("Z").orElse(0);
+                    // For NeoForge 1.21.5, get int values directly
+                    int x = linkedTag.getInt("X");
+                    int y = linkedTag.getInt("Y");
+                    int z = linkedTag.getInt("Z");
                     
                     linkedTablePos = new BlockPos(x, y, z);
                 } else {
