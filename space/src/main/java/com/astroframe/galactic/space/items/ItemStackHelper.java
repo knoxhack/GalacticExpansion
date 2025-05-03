@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.registries.ForgeRegistries;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -120,14 +121,11 @@ public class ItemStackHelper {
      */
     public static ItemStack createStack(ResourceLocation location, int count) {
         try {
-            // In NeoForge 1.21.5, the registry returns the item directly
-            Item item = BuiltInRegistries.ITEM.get(location);
-            // If no item is found, return AIR
-            if (item == null) {
-                item = Items.AIR;
-            }
+            // In NeoForge 1.21.5, the registry returns an Optional<Reference<Item>>
+            Item item = resolveItemFromRegistry(location);
             
-            if (item == Items.AIR) {
+            // If no item is found, return AIR
+            if (item == null || item == Items.AIR) {
                 return ItemStack.EMPTY;
             }
             return createStack(item, count);

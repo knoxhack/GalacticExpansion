@@ -44,26 +44,25 @@ public class SpaceSuitItem extends Item {
     }
     
     // Enchantment behavior methods
-    @Override
+    // These methods are from Item class so they are valid overrides
     public boolean isEnchantable(ItemStack stack) {
         return true;
     }
     
-    @Override
     public int getEnchantmentValue() {
         return 15;
     }
     
-    @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         ResourceLocation enchLocation = null;
         try {
-            // Try to get the enchantment resource location
-            enchLocation = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+            // In NeoForge 1.21.5, get registry key from enchantment via registries
+            enchLocation = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
             if (enchLocation == null) {
-                // Fallback to class name if not found in registry
-                enchLocation = new ResourceLocation("minecraft", 
-                    enchantment.getClass().getSimpleName().toLowerCase());
+                // If not in registry, try getting from class name as fallback
+                String simpleName = enchantment.getClass().getSimpleName().toLowerCase();
+                // Use ResourceLocation.of() instead of constructor in NeoForge 1.21.5
+                enchLocation = ResourceLocation.parse("minecraft:" + simpleName);
             }
         } catch (Exception e) {
             return false;
