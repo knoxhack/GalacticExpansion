@@ -4,7 +4,6 @@ import com.astroframe.galactic.core.TagHelper;
 import com.astroframe.galactic.core.api.space.component.*;
 import com.astroframe.galactic.core.api.space.component.enums.CompartmentType;
 import com.astroframe.galactic.core.api.space.component.enums.EngineType;
-import com.astroframe.galactic.core.api.space.component.enums.FuelType;
 import com.astroframe.galactic.core.api.space.component.enums.LifeSupportType;
 import com.astroframe.galactic.core.api.space.component.enums.ShieldType;
 import com.astroframe.galactic.core.api.common.ItemStack;
@@ -323,8 +322,8 @@ public class ComponentUtils {
         private final boolean atmosphereCapable;
         private final boolean spaceCapable;
         private final EngineType engineType;
-        private final FuelType fuelType;
-        private final List<FuelType> compatibleFuels = new ArrayList<>();
+        private final com.astroframe.galactic.core.api.space.component.FuelType fuelType;
+        private final List<com.astroframe.galactic.core.api.space.component.FuelType> compatibleFuels = new ArrayList<>();
         
         public DefaultRocketEngine(ResourceLocation id, int tier, int mass, double thrust, double efficiency, 
                                  boolean atmosphereCapable, boolean spaceCapable, EngineType engineType) {
@@ -339,15 +338,14 @@ public class ComponentUtils {
             
             // Determine fuel type based on engine type
             if (engineType == EngineType.ANTIMATTER) {
-                this.fuelType = FuelType.ANTIMATTER;
-                this.compatibleFuels.add(FuelType.ANTIMATTER);
+                this.fuelType = com.astroframe.galactic.core.api.space.component.FuelType.ANTIMATTER;
+                this.compatibleFuels.add(com.astroframe.galactic.core.api.space.component.FuelType.ANTIMATTER);
             } else if (engineType == EngineType.ION) {
-                this.fuelType = FuelType.ELECTRIC;
-                this.compatibleFuels.add(FuelType.ELECTRIC);
+                this.fuelType = com.astroframe.galactic.core.api.space.component.FuelType.ION;
+                this.compatibleFuels.add(com.astroframe.galactic.core.api.space.component.FuelType.ION);
             } else {
-                this.fuelType = FuelType.CHEMICAL;
-                this.compatibleFuels.add(FuelType.CHEMICAL);
-                this.compatibleFuels.add(FuelType.LIQUID);
+                this.fuelType = com.astroframe.galactic.core.api.space.component.FuelType.CHEMICAL;
+                this.compatibleFuels.add(com.astroframe.galactic.core.api.space.component.FuelType.CHEMICAL);
             }
         }
         
@@ -367,7 +365,7 @@ public class ComponentUtils {
         }
         
         @Override
-        public FuelType getFuelType() {
+        public com.astroframe.galactic.core.api.space.component.FuelType getFuelType() {
             return fuelType;
         }
         
@@ -387,7 +385,7 @@ public class ComponentUtils {
         }
         
         @Override
-        public List<FuelType> getCompatibleFuels() {
+        public List<com.astroframe.galactic.core.api.space.component.FuelType> getCompatibleFuels() {
             return new ArrayList<>(compatibleFuels);
         }
         
@@ -423,7 +421,7 @@ public class ComponentUtils {
     private static class DefaultFuelTank extends AbstractRocketComponent implements IFuelTank {
         private final int capacity;
         private int currentFuel;
-        private final FuelType fuelType;
+        private final com.astroframe.galactic.core.api.space.component.FuelType fuelType;
         private final float leakResistance;
         private final float explosionResistance;
         
@@ -431,7 +429,7 @@ public class ComponentUtils {
             super(id, RocketComponentType.FUEL_TANK, tier, mass);
             this.capacity = capacity;
             this.currentFuel = 0;
-            this.fuelType = FuelType.CHEMICAL; // Default fuel type
+            this.fuelType = com.astroframe.galactic.core.api.space.component.FuelType.CHEMICAL; // Default fuel type
             this.leakResistance = 0.8f * tier;
             this.explosionResistance = 0.7f * tier;
         }
@@ -462,7 +460,7 @@ public class ComponentUtils {
         }
         
         @Override
-        public FuelType getFuelType() {
+        public com.astroframe.galactic.core.api.space.component.FuelType getFuelType() {
             return fuelType;
         }
         
