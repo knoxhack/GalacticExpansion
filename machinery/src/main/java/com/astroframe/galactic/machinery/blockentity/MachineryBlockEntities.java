@@ -50,11 +50,12 @@ public class MachineryBlockEntities {
                     Set<Block> validBlocks = Set.of(assemblerBlock);
                     
                     // Create block entity type with explicit factory and type parameter
-                    // In NeoForge 1.21.5, the third parameter is a boolean for dataSaver (not null)
-                    ASSEMBLER_TYPE = BlockEntityType.Builder.<AssemblerBlockEntity>of(
-                        factory::apply, 
-                        assemblerBlock
-                    ).build(null);
+                    // In NeoForge 1.21.5, use direct constructor with boolean false for dataSaver
+                    ASSEMBLER_TYPE = new BlockEntityType<>(
+                        factory::apply,
+                        Set.of(assemblerBlock),
+                        false
+                    );
                 } catch (Exception e) {
                     GalacticMachinery.LOGGER.error("Error creating assembler block entity", e);
                     // Create a fallback version with an empty set of blocks

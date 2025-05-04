@@ -1,14 +1,17 @@
 package com.astroframe.galactic.machinery.blocks.custom;
 
 import com.astroframe.galactic.machinery.GalacticMachinery;
+import com.astroframe.galactic.machinery.blockentity.AssemblerBlockEntity;
+import com.astroframe.galactic.machinery.blockentity.MachineryBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -18,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The assembler block for creating modular machines.
  */
-public class AssemblerBlock extends Block {
+public class AssemblerBlock extends Block implements EntityBlock {
 
     // State properties
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
@@ -53,5 +56,28 @@ public class AssemblerBlock extends Block {
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return this.defaultBlockState()
             .setValue(POWERED, false);
+    }
+    
+    /**
+     * Create a block entity for this block
+     */
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new AssemblerBlockEntity(pos, state);
+    }
+    
+    /**
+     * Get the ticker for the block entity
+     */
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
+        return blockEntityType == MachineryBlockEntities.getAssemblerType() ? 
+            (lvl, pos, blockState, blockEntity) -> {
+                if (blockEntity instanceof AssemblerBlockEntity assemblerEntity) {
+                    assemblerEntity.serverTick(lvl, pos, blockState);
+                }
+            } : null;
     }
 }
