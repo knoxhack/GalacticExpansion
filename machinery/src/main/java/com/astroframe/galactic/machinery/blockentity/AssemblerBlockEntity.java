@@ -58,13 +58,10 @@ public class AssemblerBlockEntity extends MachineBlockEntity {
     /**
      * Process an item in this machine.
      * This is the main processing logic for the machine.
-     *
-     * @return The result of processing or ItemStack.EMPTY if no processing was done
      */
     @Override
-    public ItemStack processItem() {
+    public void processItem() {
         // No processing logic yet
-        return ItemStack.EMPTY;
     }
     
     /**
@@ -135,5 +132,16 @@ public class AssemblerBlockEntity extends MachineBlockEntity {
     @Override
     public MachineType getMachineType() {
         return MachineType.PROCESSOR;
+    }
+    
+    /**
+     * Checks if the machine can process its current inputs.
+     *
+     * @return True if the machine can process
+     */
+    @Override
+    public boolean canProcess() {
+        // Basic implementation - we'll expand this later
+        return true;
     }
 }

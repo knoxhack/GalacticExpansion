@@ -23,8 +23,8 @@ public class MachineryBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AssemblerBlockEntity>> ASSEMBLER = 
         BLOCK_ENTITIES.register(
             "assembler", 
-            () -> BlockEntityType.Builder.of(
-                (pos, state) -> new AssemblerBlockEntity(pos, state), 
+            () -> BlockEntityType.builder(
+                AssemblerBlockEntity::new, 
                 MachineryBlocks.ASSEMBLER.get()
             ).build(null)
         );
