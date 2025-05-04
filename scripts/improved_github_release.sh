@@ -89,7 +89,49 @@ echo "Creating release directory at: $RELEASE_DIR"
 rm -rf "$RELEASE_DIR"  # Clean up any existing directory first
 mkdir -p "$RELEASE_DIR"
 
-# Package JAR files with consistent naming
+# Check for all-in-one JAR first
+ALL_IN_ONE_JAR="./combined-jar/GalacticExpansion-all-in-one-0.1.0.jar"
+if [ -f "$ALL_IN_ONE_JAR" ]; then
+  # Copy the all-in-one JAR with Minecraft-compatible naming
+  DEST_FILE="$RELEASE_DIR/galacticexpansion_all-in-one-0.1.0.jar"
+  echo "Found all-in-one JAR: $ALL_IN_ONE_JAR"
+  echo "Copying to $DEST_FILE"
+  cp "$ALL_IN_ONE_JAR" "$DEST_FILE"
+  
+  if [ -f "$DEST_FILE" ]; then
+    echo "Successfully copied all-in-one JAR!"
+  else
+    echo "Error: Failed to copy all-in-one JAR"
+  fi
+else
+  echo "All-in-one JAR not found at $ALL_IN_ONE_JAR"
+  
+  # Try to create it if the script exists
+  if [ -f "./package-all-in-one.sh" ]; then
+    echo "Attempting to create all-in-one JAR using package-all-in-one.sh..."
+    bash ./package-all-in-one.sh
+    
+    # Check if creation was successful
+    if [ -f "$ALL_IN_ONE_JAR" ]; then
+      # Copy the newly created all-in-one JAR
+      DEST_FILE="$RELEASE_DIR/galacticexpansion_all-in-one-0.1.0.jar"
+      echo "Successfully created all-in-one JAR. Copying to $DEST_FILE"
+      cp "$ALL_IN_ONE_JAR" "$DEST_FILE"
+    else
+      echo "Failed to create all-in-one JAR"
+    fi
+  else
+    echo "package-all-in-one.sh script not found"
+  fi
+fi
+
+# Also include the README file if available
+if [ -f "JARS_README.md" ]; then
+  echo "Including JARS_README.md in the release"
+  cp "JARS_README.md" "$RELEASE_DIR/README.md"
+fi
+
+# Package individual module JAR files with consistent naming
 for module in "${MODULES[@]}"; do
   echo "Processing module: $module"
   
@@ -124,11 +166,12 @@ for module in "${MODULES[@]}"; do
   fi
 done
 
-# Create a ZIP file of all JAR files
+# Create a ZIP file of all JAR files and README
 echo "Creating combined ZIP file..."
 RELEASE_ZIP="$RELEASE_DIR/galactic-expansion-v$GALACTIC_VERSION-neoforge-1.21.5.zip"
 if command -v zip >/dev/null 2>&1; then
-  (cd "$RELEASE_DIR" && zip -r "../$(basename $RELEASE_ZIP)" *.jar)
+  # Include all JARs and README file in the ZIP
+  (cd "$RELEASE_DIR" && zip -r "../$(basename $RELEASE_ZIP)" *.jar README.md 2>/dev/null)
   if [ -f "$(dirname $RELEASE_DIR)/$(basename $RELEASE_ZIP)" ]; then
     echo "Successfully created ZIP file: $(dirname $RELEASE_DIR)/$(basename $RELEASE_ZIP)"
     # Add the ZIP file to the release files
