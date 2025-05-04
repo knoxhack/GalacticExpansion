@@ -1,5 +1,5 @@
 {
-    "variants": {
-        "": { "model": "galacticmachinery:block/assembler_block" }
-    }
+  "variants": {
+    "": { "model": "galacticmachinery:block/assembler_block" }
+  }
 }
