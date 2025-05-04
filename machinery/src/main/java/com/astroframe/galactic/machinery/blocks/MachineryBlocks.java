@@ -42,46 +42,45 @@ public class MachineryBlocks {
     public static final Supplier<Block> ASSEMBLER = BLOCKS.register(
         "assembler_block", 
         () -> {
-            GalacticMachinery.LOGGER.debug("Creating basic assembler block with ID: galacticmachinery:assembler_block");
+            GalacticMachinery.LOGGER.debug("Creating disabled assembler block with ID: galacticmachinery:assembler_block");
             ResourceLocation id = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "assembler_block");
-            return new Block(createStandardProperties()) {
-                @Override
-                public String toString() {
-                    return "AssemblerBlock(basic):" + id;
-                }
-            };
+            return new DisabledMachineBlock(createStandardProperties(), "assembler", id);
         }
     );
 
     public static final Supplier<Block> CRUSHER = BLOCKS.register(
         "crusher_block", 
         () -> {
-            GalacticMachinery.LOGGER.debug("Creating crusher block with ID: galacticmachinery:crusher_block");
-            return new Block(createStandardProperties());
+            GalacticMachinery.LOGGER.debug("Creating disabled crusher block with ID: galacticmachinery:crusher_block");
+            ResourceLocation id = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "crusher_block");
+            return new DisabledMachineBlock(createStandardProperties(), "crusher", id);
         }
     );
 
     public static final Supplier<Block> CENTRIFUGE = BLOCKS.register(
         "centrifuge_block", 
         () -> {
-            GalacticMachinery.LOGGER.debug("Creating centrifuge block with ID: galacticmachinery:centrifuge_block");
-            return new Block(createStandardProperties());
+            GalacticMachinery.LOGGER.debug("Creating disabled centrifuge block with ID: galacticmachinery:centrifuge_block");
+            ResourceLocation id = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "centrifuge_block");
+            return new DisabledMachineBlock(createStandardProperties(), "centrifuge", id);
         }
     );
 
     public static final Supplier<Block> SMELTER = BLOCKS.register(
         "smelter_block", 
         () -> {
-            GalacticMachinery.LOGGER.debug("Creating smelter block with ID: galacticmachinery:smelter_block");
-            return new Block(createStandardProperties());
+            GalacticMachinery.LOGGER.debug("Creating disabled smelter block with ID: galacticmachinery:smelter_block");
+            ResourceLocation id = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "smelter_block");
+            return new DisabledMachineBlock(createStandardProperties(), "smelter", id);
         }
     );
 
     public static final Supplier<Block> EXTRACTOR = BLOCKS.register(
         "extractor_block", 
         () -> {
-            GalacticMachinery.LOGGER.debug("Creating extractor block with ID: galacticmachinery:extractor_block");
-            return new Block(createStandardProperties());
+            GalacticMachinery.LOGGER.debug("Creating disabled extractor block with ID: galacticmachinery:extractor_block");
+            ResourceLocation id = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "extractor_block");
+            return new DisabledMachineBlock(createStandardProperties(), "extractor", id);
         }
     );
 

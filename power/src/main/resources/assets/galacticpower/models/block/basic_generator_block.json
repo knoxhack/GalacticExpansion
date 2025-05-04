@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "galacticpower:block/basic_generator_block"
+  }
+}
