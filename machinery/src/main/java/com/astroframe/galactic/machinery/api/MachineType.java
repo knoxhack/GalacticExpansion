@@ -1,52 +1,42 @@
 package com.astroframe.galactic.machinery.api;
 
 /**
- * Enumeration of machine types in the Galactic Expansion mod.
- * Used to categorize machines by their function and capabilities.
+ * Defines the different types of machines in the mod.
+ * This allows for specialized behavior based on machine category.
  */
 public enum MachineType {
     /**
-     * Machines that generate energy.
+     * Machines that generate energy from fuel or other sources.
      */
-    GENERATOR("generator"),
+    GENERATOR,
     
     /**
-     * Machines that process items.
+     * Machines that process materials (crushing, smelting, etc.).
      */
-    PROCESSOR("processor"),
+    PROCESSOR,
     
     /**
      * Machines that store energy.
      */
-    BATTERY("battery"),
+    STORAGE,
     
     /**
-     * Machines that transfer energy.
+     * Machines that transmit energy.
      */
-    CONDUIT("conduit"),
+    TRANSMISSION,
     
     /**
-     * Machines that manipulate fluids.
+     * Specialized machinery for automated assembly.
      */
-    FLUID_HANDLER("fluid_handler"),
+    ASSEMBLY,
     
     /**
-     * Utility machines with specialized functions.
+     * Specialized machinery for resource extraction.
      */
-    UTILITY("utility");
-    
-    private final String id;
-    
-    MachineType(String id) {
-        this.id = id;
-    }
+    EXTRACTOR,
     
     /**
-     * Gets the unique ID for this machine type.
-     * 
-     * @return The machine type ID
+     * Specialized machinery for research and development.
      */
-    public String getId() {
-        return id;
-    }
+    RESEARCH;
 }

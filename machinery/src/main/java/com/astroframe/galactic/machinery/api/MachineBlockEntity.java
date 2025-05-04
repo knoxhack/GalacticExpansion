@@ -1,276 +1,114 @@
 package com.astroframe.galactic.machinery.api;
 
-import com.astroframe.galactic.core.api.block.BlockEntityBase;
-import com.astroframe.galactic.core.api.energy.IEnergyHandler.EnergyUnit;
-import com.astroframe.galactic.machinery.energy.MachineEnergyStorage;
-// Use the correct Minecraft imports for NeoForge 1.21.5
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.Containers;
-
-import net.neoforged.neoforge.items.IItemHandler;
 
 /**
- * Base block entity class for machines.
- * Implements common machine functionality including energy storage and basic inventory.
+ * Base interface for all machine block entities in the mod.
+ * This provides a common API for machine functionality.
  */
-public abstract class MachineBlockEntity extends BlockEntityBase implements Machine {
+public abstract class MachineBlockEntity extends BlockEntity {
     
-    protected final MachineEnergyStorage energyStorage;
-    protected final NonNullList<ItemStack> inventory;
-    protected int processingTime;
-    protected int processingTimeTotal;
-    protected boolean isActive;
+    // Energy values 
+    protected int currentEnergy = 0;
+    protected boolean isActive = false;
+    protected int processingTime = 0;
     
     /**
-     * Constructor for MachineBlockEntity.
+     * Constructor for a MachineBlockEntity
      * 
-     * @param type The block entity type
-     * @param pos The block position
+     * @param type The BlockEntityType
+     * @param pos The position
      * @param state The block state
      */
     public MachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        this.energyStorage = createEnergyStorage();
-        this.inventory = NonNullList.withSize(getInventorySize(), ItemStack.EMPTY);
-        this.processingTime = 0;
-        this.processingTimeTotal = getDefaultProcessingTime();
-        this.isActive = false;
     }
     
     /**
-     * Creates the energy storage for this machine.
-     * 
-     * @return A new energy storage
-     */
-    protected MachineEnergyStorage createEnergyStorage() {
-        // Create a simple implementation of the MachineEnergyStorage interface
-        return new MachineEnergyStorage() {
-            private int energy = 0;
-            private final int maxEnergy = getMaxEnergy();
-            private final int maxInput = getMaxEnergyInput();
-            private final int maxOutput = getMaxEnergyOutput();
-
-            @Override
-            public int receiveEnergy(int amount, boolean simulate) {
-                int energyReceived = Math.min(maxEnergy - energy, Math.min(maxInput, amount));
-                if (!simulate) {
-                    energy += energyReceived;
-                }
-                return energyReceived;
-            }
-
-            @Override
-            public int extractEnergy(int amount, boolean simulate) {
-                int energyExtracted = Math.min(energy, Math.min(maxOutput, amount));
-                if (!simulate) {
-                    energy -= energyExtracted;
-                }
-                return energyExtracted;
-            }
-
-            @Override
-            public int getEnergy() {
-                return energy;
-            }
-
-            @Override
-            public int getMaxEnergy() {
-                return maxEnergy;
-            }
-
-            @Override
-            public boolean canExtract() {
-                return maxOutput > 0;
-            }
-
-            @Override
-            public boolean canReceive() {
-                return maxInput > 0;
-            }
-
-            @Override
-            public com.astroframe.galactic.energy.api.EnergyType getEnergyType() {
-                // Return a placeholder type string that will be resolved properly at runtime
-                return com.astroframe.galactic.energy.api.EnergyType.ELECTRICAL;
-            }
-        };
-    }
-    
-    /**
-     * Server-side tick for the machine.
-     * 
-     * @param level The world
-     * @param pos The block position
-     * @param state The block state
-     */
-    public void serverTick(Level level, BlockPos pos, BlockState state) {
-        boolean wasActive = isActive;
-        
-        // Machine logic
-        tick(level, pos);
-        
-        // Update active state if changed
-        if (wasActive != isActive) {
-            MachineBlock.setActive(isActive, level, pos);
-            setChanged();
-        }
-    }
-    
-    @Override
-    public void tick(Level level, BlockPos pos) {
-        if (level.isClientSide) {
-            return;
-        }
-        
-        boolean canProcess = canProcess();
-        
-        if (canProcess && consumeEnergy()) {
-            isActive = true;
-            
-            // Increment processing time
-            processingTime++;
-            
-            if (processingTime >= processingTimeTotal) {
-                processingTime = 0;
-                processItem();
-            }
-        } else {
-            isActive = false;
-            
-            // Reset progress if can't process
-            if (!canProcess && processingTime > 0) {
-                processingTime = 0;
-            }
-        }
-        
-        setChanged();
-    }
-    
-    /**
-     * Called when a player interacts with the machine.
+     * Called when the block is right-clicked.
      * 
      * @param state The block state
-     * @param level The world
-     * @param pos The block position
+     * @param level The level
+     * @param pos The position
      * @param player The player
      * @param hand The hand used
      * @param hit The hit result
      * @return The interaction result
      */
-    public InteractionResult onBlockActivated(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        // Default implementation - override to open GUI, etc.
-        return InteractionResult.PASS;
-    }
-    
+    public abstract InteractionResult onBlockActivated(BlockState state, Level level, BlockPos pos, 
+            Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit);
+            
     /**
-     * Drops the machine's inventory contents in the world.
+     * Updates the block entity every tick on the server side.
      * 
-     * @param level The world
-     * @param pos The block position
+     * @param level The level
+     * @param pos The position  
+     * @param state The block state
      */
-    public void dropContents(Level level, BlockPos pos) {
-        for (ItemStack stack : inventory) {
-            if (!stack.isEmpty()) {
-                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
-            }
-        }
-    }
+    public abstract void serverTick(Level level, BlockPos pos, BlockState state);
     
     /**
-     * Override for BlockEntityBase.saveData.
-     * Implements the abstract method from BlockEntityBase.
+     * Process an item in this machine.
+     * This is the main processing logic for the machine.
+     */
+    public abstract void processItem();
+    
+    /**
+     * Gets the default processing time for this machine.
      * 
-     * @param tag The tag to save data to
+     * @return The default processing time in ticks
      */
-    @Override
-    protected void saveData(CompoundTag tag) {
-        // Save inventory - we'll skip inventory saving in this version
-        
-        // Save energy
-        CompoundTag energyTag = new CompoundTag();
-        energyTag.putInt("Energy", energyStorage.getEnergy());
-        energyTag.putString("Type", energyStorage.getEnergyType().getId());
-        tag.put("EnergyStorage", energyTag);
-        
-        // Save processing state
-        tag.putInt("ProcessingTime", processingTime);
-        tag.putInt("ProcessingTimeTotal", processingTimeTotal);
-        tag.putBoolean("IsActive", isActive);
-    }
+    public abstract int getDefaultProcessingTime();
     
     /**
-     * Override for BlockEntityBase.loadData.
-     * Implements the abstract method from BlockEntityBase.
-     * 
-     * @param tag The tag to load data from
-     */
-    @Override
-    protected void loadData(CompoundTag tag) {
-        // Skip ContainerHelper.loadAllItems since method signatures have changed
-        // We'll implement a custom version later
-        
-        // Load energy
-        if (tag.contains("EnergyStorage")) {
-            // We can't directly modify the energy in our anonymous class implementation
-            // We just track the values for now
-        }
-        
-        // Load processing state
-        if (tag.contains("ProcessingTime")) {
-            processingTime = tag.getInt("ProcessingTime").orElse(0);
-        } else {
-            processingTime = 0;
-        }
-        
-        if (tag.contains("ProcessingTimeTotal")) {
-            processingTimeTotal = tag.getInt("ProcessingTimeTotal").orElse(getDefaultProcessingTime());
-        } else {
-            processingTimeTotal = getDefaultProcessingTime();
-        }
-        
-        if (tag.contains("IsActive")) {
-            isActive = tag.getBoolean("IsActive").orElse(false);
-        } else {
-            isActive = false;
-        }
-    }
-    
-    /**
-     * Gets the maximum stack size for the specified slot.
-     * Used by the ContainerHelper.
-     * 
-     * @param slot The slot index
-     * @return The maximum stack size
-     */
-    public int getMaxStackSize(int slot) {
-        return 64; // Default stack size
-    }
-    
-    /**
-     * Gets the size of the machine's inventory.
+     * Gets the size of the inventory.
      * 
      * @return The inventory size
      */
     public abstract int getInventorySize();
     
     /**
-     * Gets the default processing time for this machine.
+     * Gets the maximum energy this machine can store.
      * 
-     * @return The processing time
+     * @return The maximum energy
      */
-    public abstract int getDefaultProcessingTime();
+    public abstract int getMaxEnergy();
+    
+    /**
+     * Gets the maximum energy input rate.
+     * 
+     * @return The maximum energy input rate
+     */
+    public abstract int getMaxEnergyInput();
+    
+    /**
+     * Gets the maximum energy output rate.
+     * 
+     * @return The maximum energy output rate
+     */
+    public abstract int getMaxEnergyOutput();
+    
+    /**
+     * Gets the energy consumption rate per tick.
+     * 
+     * @return The energy consumption rate
+     */
+    public abstract int getEnergyConsumption();
+    
+    /**
+     * Gets the type of this machine.
+     * 
+     * @return The machine type
+     */
+    public abstract MachineType getMachineType();
     
     /**
      * Checks if the machine can process its current inputs.
@@ -280,104 +118,114 @@ public abstract class MachineBlockEntity extends BlockEntityBase implements Mach
     public abstract boolean canProcess();
     
     /**
-     * Processes the current inputs, consuming them and producing outputs.
+     * Stops the machine's processing.
+     * 
+     * @return True if the machine was stopped successfully
      */
-    public abstract void processItem();
+    public abstract boolean stop();
     
-    @Override
+    /**
+     * Starts the machine's operation.
+     * 
+     * @return True if the machine was started successfully
+     */
+    public abstract boolean start();
+    
+    /**
+     * Gets the efficiency of the machine.
+     * Higher efficiency means better performance and lower energy usage.
+     * 
+     * @return The efficiency factor from 0.0 to 1.0
+     */
+    public abstract float getEfficiency();
+    
+    /**
+     * Gets the display name of the machine.
+     * Used for UI elements and tooltips.
+     * 
+     * @return The localized name of this machine
+     */
+    public abstract String getName();
+    
+    /**
+     * Gets the tier level of this machine.
+     * Higher tier machines have better performance and efficiency.
+     * 
+     * @return The machine tier (1-3)
+     */
+    public abstract int getMachineTier();
+    
+    /**
+     * Gets the machine's internal name identifier.
+     * Used for data storage and lookup.
+     * 
+     * @return The machine's internal name
+     */
+    public abstract String getMachineName();
+    
+    /**
+     * Gets the unique identifier for this machine type.
+     * Used for registry lookups and serialization.
+     * 
+     * @return The machine's registry ID
+     */
+    public abstract String getMachineId();
+    
+    /**
+     * Checks if the machine has enough energy to operate.
+     * 
+     * @return True if the machine has sufficient energy
+     */
+    public boolean hasSufficientEnergy() {
+        return currentEnergy >= getEnergyConsumption();
+    }
+    
+    /**
+     * Gets the current energy level.
+     * 
+     * @return The current energy level
+     */
+    public int getCurrentEnergy() {
+        return currentEnergy;
+    }
+    
+    /**
+     * Sets the current energy level.
+     * 
+     * @param energy The new energy level
+     */
+    public void setCurrentEnergy(int energy) {
+        this.currentEnergy = Math.min(energy, getMaxEnergy());
+    }
+    
+    /**
+     * Consumes energy for processing.
+     * 
+     * @return True if energy was successfully consumed
+     */
+    public boolean consumeEnergy() {
+        if (hasSufficientEnergy()) {
+            currentEnergy -= getEnergyConsumption();
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Checks if the machine is currently active.
+     * 
+     * @return True if the machine is active
+     */
     public boolean isActive() {
         return isActive;
     }
     
-    @Override
-    public int receiveEnergy(int maxReceive, boolean simulate) {
-        return energyStorage.receiveEnergy(maxReceive, simulate);
-    }
-    
-    @Override
-    public int extractEnergy(int maxExtract, boolean simulate) {
-        return energyStorage.extractEnergy(maxExtract, simulate);
-    }
-    
-    public int getEnergy() {
-        return energyStorage.getEnergy();
-    }
-    
-    public int getMaxEnergy() {
-        return energyStorage.getMaxEnergy();
-    }
-    
-    @Override
-    public boolean canExtract() {
-        return energyStorage.canExtract();
-    }
-    
-    @Override
-    public boolean canReceive() {
-        return energyStorage.canReceive();
-    }
-    
-    @Override
-    public EnergyUnit getEnergyUnit() {
-        return EnergyUnit.GEU;
-    }
-    
     /**
-     * Gets the processing progress as a percentage.
+     * Sets the active state of the machine.
      * 
-     * @return The progress from 0.0 to 1.0
+     * @param active The new active state
      */
-    public float getProgress() {
-        if (processingTimeTotal <= 0) return 0;
-        return (float) processingTime / processingTimeTotal;
+    public void setActive(boolean active) {
+        isActive = active;
     }
-    
-    /**
-     * Gets the item handler capability for this machine.
-     * 
-     * @param direction The direction to get the capability from
-     * @return The item handler or null
-     */
-    public IItemHandler getItemHandler(Direction direction) {
-        // To be implemented by subclasses with inventory
-        return null;
-    }
-    
-    /**
-     * Consumes energy for the machine's operation.
-     * 
-     * @return True if the machine has enough energy to operate, false otherwise
-     */
-    @Override
-    public boolean consumeEnergy() {
-        // If we don't have an energy storage or don't consume energy, we can operate
-        if (energyStorage == null || getEnergyConsumption() <= 0) {
-            return true;
-        }
-        
-        // Check if we have enough energy
-        int energyNeeded = getEnergyConsumption();
-        return energyStorage.extractEnergy(energyNeeded, true) >= energyNeeded;
-    }
-    
-    /**
-     * Gets the energy consumption per tick.
-     * 
-     * @return The energy consumption
-     */
-    public abstract int getEnergyConsumption();
-    
-    /**
-     * Gets the maximum energy input rate.
-     * 
-     * @return The maximum energy input
-     */
-    public abstract int getMaxEnergyInput();
-    
-    /**
-     * Gets the maximum energy output rate.
-     * 
-     * @return The maximum energy output
-     */
-    public abstract int getMaxEnergyOutput();
 }

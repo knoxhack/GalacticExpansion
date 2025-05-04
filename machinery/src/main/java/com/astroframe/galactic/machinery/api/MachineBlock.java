@@ -1,150 +1,66 @@
 package com.astroframe.galactic.machinery.api;
 
-// Use the correct Minecraft imports for NeoForge 1.21.5
-import com.astroframe.galactic.machinery.GalacticMachinery;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-
-import net.minecraft.world.phys.BlockHitResult;
-
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 /**
- * Base block class for all machines.
- * Handles common machine block functionality like facing direction and active state.
+ * Base class for all machine blocks in the mod.
+ * This provides common functionality for machines.
  */
-public abstract class MachineBlock extends Block implements EntityBlock {
-    // Use the FACING property directly from HorizontalDirectionalBlock
-    public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
+public abstract class MachineBlock extends net.minecraft.world.level.block.Block implements EntityBlock {
     
-    private final Supplier<BlockEntityType<? extends MachineBlockEntity>> blockEntityType;
+    private final Supplier<BlockEntityType<?>> blockEntityTypeSupplier;
     
     /**
-     * Constructor for MachineBlock.
-     * 
+     * Creates a new MachineBlock with the specified properties.
+     *
      * @param properties The block properties
-     * @param blockEntityType The block entity type supplier
+     * @param blockEntityTypeSupplier Supplier for the BlockEntityType
      */
-    public MachineBlock(Properties properties, Supplier<BlockEntityType<? extends MachineBlockEntity>> blockEntityType) {
+    public MachineBlock(Properties properties, Supplier<BlockEntityType<?>> blockEntityTypeSupplier) {
         super(properties);
-        this.blockEntityType = blockEntityType;
-        
-        // Debug the block registration to track down the issue
-        // For NeoForge 1.21.5, even when no explicit ID is provided, we'll try to infer it
-        if (getRegistryName() == null) {
-            GalacticMachinery.LOGGER.warn("Warning: Block ID not set for " + this.getClass().getSimpleName());
-        }
-        
-        // Set default state with horizontal direction
-        registerDefaultState(stateDefinition.any()
-                .setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH)
-                .setValue(ACTIVE, false));
+        this.blockEntityTypeSupplier = blockEntityTypeSupplier;
     }
     
     /**
-     * Gets the registry name for this block.
-     * In NeoForge 1.21.5, we need to get this from the registry.
-     * 
-     * @return The registry name or null if not registered
+     * Creates a new MachineBlock with the specified properties.
+     *
+     * @param properties The block properties
      */
-    public ResourceLocation getRegistryName() {
-        return BuiltInRegistries.BLOCK.getKey(this);
-    }
-    
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder);
-        builder.add(HorizontalDirectionalBlock.FACING, ACTIVE);
-    }
-    
-    @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState()
-                .setValue(HorizontalDirectionalBlock.FACING, context.getHorizontalDirection().getOpposite());
-    }
-    
-    // This method implements Block.use
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (level.isClientSide) {
-            return InteractionResult.SUCCESS;
-        }
-        
-        if (level.getBlockEntity(pos) instanceof MachineBlockEntity machine) {
-            return machine.onBlockActivated(state, level, pos, player, hand, hit);
-        }
-        
-        return InteractionResult.PASS;
-    }
-    
-    // Method name might have changed in NeoForge 1.21.5
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
-        if (!state.is(newState.getBlock())) {
-            if (level.getBlockEntity(pos) instanceof MachineBlockEntity machine) {
-                machine.dropContents(level, pos);
-            }
-            
-            // In NeoForge 1.21.5, we'll just remove block entities directly
-            // Instead of calling parent methods that may have changed signature
-            level.removeBlockEntity(pos);
-        }
+    public MachineBlock(BlockBehaviour.Properties properties) {
+        super(properties);
+        this.blockEntityTypeSupplier = () -> null;
     }
     
     /**
-     * Creates a ticker for the machine block entity.
-     * 
-     * @param level The world
+     * Helper method to create a ticker for machine block entities.
+     * This handles the casting required.
+     *
+     * @param <T> The BlockEntity type
+     * @param level The level
      * @param state The block state
-     * @param type The block entity type
-     * @param <T> The block entity type parameter
-     * @return A ticker for the block entity
+     * @param blockEntityType The block entity type
+     * @return The ticker or null if the types don't match
      */
-    protected <T extends BlockEntity> BlockEntityTicker<T> createMachineTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide 
-                ? null 
-                : (lvl, pos, blockState, blockEntity) -> {
-                    if (blockEntity instanceof MachineBlockEntity machine) {
-                        machine.serverTick(lvl, pos, blockState);
-                    }
-                };
-    }
-    
-    /**
-     * Updates the active state of a machine.
-     * 
-     * @param active Whether the machine is active
-     * @param level The world
-     * @param pos The block position
-     */
-    public static void setActive(boolean active, Level level, BlockPos pos) {
-        BlockState state = level.getBlockState(pos);
-        if (state.getValue(ACTIVE) != active) {
-            level.setBlock(pos, state.setValue(ACTIVE, active), 3);
+    @Nullable
+    protected <T extends BlockEntity> BlockEntityTicker<T> createMachineTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
+        if (level.isClientSide()) {
+            return null;
         }
-    }
-    
-    /**
-     * Gets the block entity type for this machine.
-     * 
-     * @return The block entity type
-     */
-    public BlockEntityType<? extends MachineBlockEntity> getBlockEntityType() {
-        return blockEntityType.get();
+        
+        return (world, pos, blockState, blockEntity) -> {
+            if (blockEntity instanceof MachineBlockEntity machineEntity) {
+                machineEntity.serverTick(world, pos, blockState);
+            }
+        };
     }
 }

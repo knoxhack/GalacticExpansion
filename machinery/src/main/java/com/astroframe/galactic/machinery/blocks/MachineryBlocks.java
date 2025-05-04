@@ -43,7 +43,7 @@ public class MachineryBlocks {
         "assembler_block", 
         () -> {
             GalacticMachinery.LOGGER.debug("Creating basic assembler block with ID: galacticmachinery:assembler_block");
-            ResourceLocation id = new ResourceLocation(GalacticMachinery.MOD_ID, "assembler_block");
+            ResourceLocation id = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "assembler_block");
             return new Block(createStandardProperties()) {
                 @Override
                 public String toString() {

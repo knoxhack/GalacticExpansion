@@ -73,11 +73,15 @@ public class AssemblerBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return blockEntityType == MachineryBlockEntities.getAssemblerType() ? 
-            (lvl, pos, blockState, blockEntity) -> {
+        // As we're temporarily disabling block entities, this needs to be safer
+        // and avoid potential null pointer exceptions
+        if (blockEntityType == MachineryBlockEntities.getAssemblerType() && MachineryBlockEntities.getAssemblerType() != null) {
+            return (lvl, pos, blockState, blockEntity) -> {
                 if (blockEntity instanceof AssemblerBlockEntity assemblerEntity) {
                     assemblerEntity.serverTick(lvl, pos, blockState);
                 }
-            } : null;
+            };
+        }
+        return null;
     }
 }
