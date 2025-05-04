@@ -7,6 +7,8 @@ import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.function.Supplier;
+
 /**
  * Registry class for all items in the Utilities module.
  */
@@ -15,20 +17,20 @@ public class UtilitiesItems {
             BuiltInRegistries.ITEM, GalacticUtilities.MOD_ID);
 
     // Register block items
-    public static final DeferredRegister.ItemHelper<Item> SIMPLE_UTILITY_BLOCK_ITEM = ITEMS.registerSimpleItem(
+    public static final Supplier<Item> SIMPLE_UTILITY_BLOCK_ITEM = ITEMS.register(
             "simple_utility_block", 
             () -> new BlockItem(UtilitiesBlocks.SIMPLE_UTILITY_BLOCK.get(), new Item.Properties()));
     
-    public static final DeferredRegister.ItemHelper<Item> DATA_LOGGER_ITEM = ITEMS.registerSimpleItem(
+    public static final Supplier<Item> DATA_LOGGER_ITEM = ITEMS.register(
             "data_logger", 
             () -> new BlockItem(UtilitiesBlocks.DATA_LOGGER.get(), new Item.Properties()));
     
     // Register regular items
-    public static final DeferredRegister.ItemHelper<Item> HAND_SCANNER = ITEMS.registerSimpleItem(
+    public static final Supplier<Item> HAND_SCANNER = ITEMS.register(
             "hand_scanner", 
             () -> new Item(new Item.Properties().stacksTo(1)));
     
-    public static final DeferredRegister.ItemHelper<Item> CIRCUIT_BOARD = ITEMS.registerSimpleItem(
+    public static final Supplier<Item> CIRCUIT_BOARD = ITEMS.register(
             "circuit_board", 
             () -> new Item(new Item.Properties()));
     

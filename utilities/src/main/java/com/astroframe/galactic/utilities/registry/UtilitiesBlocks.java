@@ -10,6 +10,8 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.function.Supplier;
+
 /**
  * Registry class for all blocks in the Utilities module.
  */
@@ -18,11 +20,11 @@ public class UtilitiesBlocks {
             BuiltInRegistries.BLOCK, GalacticUtilities.MOD_ID);
 
     // Register the simple utility block
-    public static final DeferredRegister.BlockHelper<Block> SIMPLE_UTILITY_BLOCK = BLOCKS.registerSimpleBlock(
+    public static final Supplier<SimpleUtilityBlock> SIMPLE_UTILITY_BLOCK = BLOCKS.register(
             "simple_utility_block", SimpleUtilityBlock::new);
     
     // Register the data logger block
-    public static final DeferredRegister.BlockHelper<Block> DATA_LOGGER = BLOCKS.registerSimpleBlock(
+    public static final Supplier<DataLoggerBlock> DATA_LOGGER = BLOCKS.register(
             "data_logger", DataLoggerBlock::new);
     
     /**

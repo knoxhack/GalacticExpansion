@@ -17,7 +17,8 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 public class RoverBlock extends HorizontalDirectionalBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     
-    public static final MapCodec<RoverBlock> CODEC = simpleCodec(RoverBlock::new);
+    public static final MapCodec<RoverBlock> CODEC = simpleCodec(
+        props -> new RoverBlock());
     
     @Override
     protected MapCodec<? extends HorizontalDirectionalBlock> codec() {

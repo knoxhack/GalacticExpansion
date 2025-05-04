@@ -10,6 +10,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.MapColor;
 
+import java.util.function.Function;
+
 /**
  * A simple vehicle block that faces in a direction.
  * This is a placeholder block without complex functionality.
@@ -17,7 +19,8 @@ import net.minecraft.world.level.material.MapColor;
 public class SimpleVehicleBlock extends HorizontalDirectionalBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     
-    public static final MapCodec<SimpleVehicleBlock> CODEC = simpleCodec(SimpleVehicleBlock::new);
+    public static final MapCodec<SimpleVehicleBlock> CODEC = simpleCodec(
+        props -> new SimpleVehicleBlock());
     
     @Override
     protected MapCodec<? extends HorizontalDirectionalBlock> codec() {

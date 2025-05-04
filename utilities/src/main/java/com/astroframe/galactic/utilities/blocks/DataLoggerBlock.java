@@ -1,5 +1,6 @@
 package com.astroframe.galactic.utilities.blocks;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -8,14 +9,20 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 
-import java.util.Random;
-
 /**
  * A specialized utility block for logging data in the Galactic mod.
  * This is a placeholder implementation that will be enhanced with
  * actual data recording functionality in the future.
  */
 public class DataLoggerBlock extends Block {
+    
+    public static final MapCodec<DataLoggerBlock> CODEC = simpleCodec(
+        props -> new DataLoggerBlock());
+    
+    @Override
+    protected MapCodec<? extends Block> codec() {
+        return CODEC;
+    }
     
     /**
      * Constructor for DataLoggerBlock.

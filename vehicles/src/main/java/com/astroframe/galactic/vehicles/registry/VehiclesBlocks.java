@@ -8,6 +8,8 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.function.Supplier;
+
 /**
  * Registry class for all blocks in the Vehicles module.
  */
@@ -16,11 +18,11 @@ public class VehiclesBlocks {
             BuiltInRegistries.BLOCK, GalacticVehicles.MOD_ID);
 
     // Register the simple vehicle block
-    public static final DeferredRegister.BlockHelper<Block> SIMPLE_VEHICLE_BLOCK = BLOCKS.registerSimpleBlock(
+    public static final Supplier<SimpleVehicleBlock> SIMPLE_VEHICLE_BLOCK = BLOCKS.register(
             "simple_vehicle_block", SimpleVehicleBlock::new);
     
     // Register the rover block
-    public static final DeferredRegister.BlockHelper<Block> ROVER = BLOCKS.registerSimpleBlock(
+    public static final Supplier<RoverBlock> ROVER = BLOCKS.register(
             "rover", RoverBlock::new);
     
     /**
