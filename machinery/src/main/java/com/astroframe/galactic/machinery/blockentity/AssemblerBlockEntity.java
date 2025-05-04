@@ -144,4 +144,15 @@ public class AssemblerBlockEntity extends MachineBlockEntity {
         // Basic implementation - we'll expand this later
         return true;
     }
+    
+    /**
+     * Stops the machine's processing.
+     * Required by the Machine interface.
+     */
+    @Override
+    public void stop() {
+        // Stop processing
+        this.isActive = false;
+        this.processingTime = 0;
+    }
 }
