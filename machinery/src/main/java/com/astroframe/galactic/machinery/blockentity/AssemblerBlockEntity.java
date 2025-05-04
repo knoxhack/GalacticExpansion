@@ -184,4 +184,52 @@ public class AssemblerBlockEntity extends MachineBlockEntity {
         // Basic implementation - tier 1 assembler has moderate efficiency
         return 0.75f;
     }
+    
+    /**
+     * Gets the display name of the machine.
+     * Used for UI elements and tooltips.
+     * 
+     * @return The localized name of this machine
+     */
+    @Override
+    public String getName() {
+        // Return the translated name of the block
+        return "block.galacticmachinery.assembler";
+    }
+    
+    /**
+     * Gets the tier level of this machine.
+     * Higher tier machines have better performance and efficiency.
+     * 
+     * @return The machine tier (1-3)
+     */
+    @Override
+    public int getMachineTier() {
+        // Basic assembler is tier 1
+        return 1;
+    }
+    
+    /**
+     * Gets the machine's internal name identifier.
+     * Used for data storage and lookup.
+     * 
+     * @return The machine's internal name
+     */
+    @Override
+    public String getMachineName() {
+        // Return a machine identifier for internal use
+        return "assembler";
+    }
+    
+    /**
+     * Gets the unique identifier for this machine type.
+     * Used for registry lookups and serialization.
+     * 
+     * @return The machine's registry ID
+     */
+    @Override
+    public String getMachineId() {
+        // Return the registry ID for this machine
+        return "galacticmachinery:assembler";
+    }
 }
