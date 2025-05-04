@@ -39,6 +39,34 @@ for jar in "${module_jars[@]}"; do
   (cd temp-extraction && jar xf "../$jar")
 done
 
+# Process all module directories
+echo "Processing module files..."
+
+# First, fix any JSON and other configuration files that might reference module-specific modids
+echo "Fixing configuration files..."
+
+# Use a more efficient approach to replace all module IDs at once
+json_files=$(find temp-extraction -name "*.json" -type f 2>/dev/null | grep -v META-INF)
+echo "Found $(echo "$json_files" | wc -l) JSON files to fix"
+
+# Use a more efficient approach with a single sed command for all replacements
+for pat in galacticcore galacticpower galacticspace galacticmachinery galacticbiotech \
+           galacticenergy galacticconstruction galacticrobotics galacticrobots \
+           galacticutilities galacticvehicles galacticweaponry; do
+    echo "Replacing $pat with galacticexpansion globally..."
+    find temp-extraction -type f \( -name "*.json" -o -name "*.toml" -o -name "*.class" \) \
+      -exec sed -i "s/$pat/galacticexpansion/g" {} \; 2>/dev/null
+done
+
+# Also handle the hyphenated versions
+for pat in galactic-core galactic-power galactic-space galactic-machinery galactic-biotech \
+           galactic-energy galactic-construction galactic-robotics galactic-robots \
+           galactic-utilities galactic-vehicles galactic-weaponry; do
+    echo "Replacing $pat with galacticexpansion globally..."
+    find temp-extraction -type f \( -name "*.json" -o -name "*.toml" \) \
+      -exec sed -i "s/$pat/galacticexpansion/g" {} \; 2>/dev/null
+done
+
 # Remove or rename all individual module mods.toml files
 echo "Removing individual module mods.toml files..."
 find temp-extraction -name "mods.toml" | while read toml_file; do
@@ -49,6 +77,13 @@ find temp-extraction -name "mods.toml" | while read toml_file; do
   
   # Rename the file to prevent it from being loaded
   mv "$toml_file" "${toml_file}.disabled"
+done
+
+# Remove or rename ModProvider class files that might cause issues
+echo "Removing ModProvider class files..."
+find temp-extraction -name "*ModProvider*.class" | while read class_file; do
+  echo "Removing $class_file"
+  rm "$class_file"
 done
 
 # Create unified mods.toml file at the root META-INF directory

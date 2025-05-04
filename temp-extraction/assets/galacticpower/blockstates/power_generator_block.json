@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "galacticpower:block/power_generator_block" }
+  }
+}

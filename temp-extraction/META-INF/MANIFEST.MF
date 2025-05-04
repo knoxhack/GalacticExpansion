@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Specification-Title: Galactic Weaponry Systems
+Specification-Vendor: AstroFrame Team
+Specification-Version: 1
+Implementation-Title: weaponry
+Implementation-Version: 0.1.0
+Implementation-Vendor: AstroFrame Team
+Implementation-Timestamp: 2025-05-04T11:09:13+0000
+

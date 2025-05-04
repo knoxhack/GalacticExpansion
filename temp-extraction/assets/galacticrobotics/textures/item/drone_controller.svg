@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <!-- Transparent background -->
+  <rect width="16" height="16" fill="#0A192F" fill-opacity="0" />
+  
+  <!-- Remote controller body -->
+  <rect x="3" y="3" width="10" height="10" rx="1" ry="1" fill="#0B2B5B" stroke="#4299E1" stroke-width="0.4" />
+  
+  <!-- Controller screen -->
+  <rect x="4" y="4" width="8" height="4" rx="0.5" ry="0.5" fill="#1A365D" stroke="#4299E1" stroke-width="0.2" />
+  
+  <!-- Screen glow -->
+  <rect x="4.5" y="4.5" width="7" height="3" rx="0.3" ry="0.3" fill="#0BC5EA" fill-opacity="0.2" />
+  
+  <!-- Flight HUD elements -->
+  <path d="M8,5 L8,7 M6,6 L10,6" stroke="#0BC5EA" stroke-width="0.15" />
+  <circle cx="8" cy="6" r="1.5" fill="none" stroke="#0BC5EA" stroke-width="0.1" stroke-dasharray="0.2,0.1" />
+  
+  <!-- Control joystick -->
+  <circle cx="8" cy="10" r="1.5" fill="#1A365D" stroke="#4299E1" stroke-width="0.2" />
+  <circle cx="8" cy="10" r="0.8" fill="#0B2B5B" stroke="#4299E1" stroke-width="0.2" />
+  <circle cx="8" cy="10" r="0.3" fill="#0BC5EA" opacity="0.9" />
+  
+  <!-- Control buttons -->
+  <circle cx="5" cy="9" r="0.5" fill="#1A365D" stroke="#4299E1" stroke-width="0.15" />
+  <circle cx="5" cy="9" r="0.25" fill="#0BC5EA" opacity="0.9" />
+  
+  <circle cx="5" cy="11" r="0.5" fill="#1A365D" stroke="#4299E1" stroke-width="0.15" />
+  <circle cx="5" cy="11" r="0.25" fill="#0BC5EA" opacity="0.9" />
+  
+  <circle cx="11" cy="9" r="0.5" fill="#1A365D" stroke="#4299E1" stroke-width="0.15" />
+  <circle cx="11" cy="9" r="0.25" fill="#0BC5EA" opacity="0.9" />
+  
+  <circle cx="11" cy="11" r="0.5" fill="#1A365D" stroke="#4299E1" stroke-width="0.15" />
+  <circle cx="11" cy="11" r="0.25" fill="#0BC5EA" opacity="0.9" />
+  
+  <!-- Antenna -->
+  <line x1="11" y1="1.5" x2="11" y2="3" stroke="#4299E1" stroke-width="0.3" />
+  <circle cx="11" cy="1.5" r="0.3" fill="#0BC5EA" />
+</svg>

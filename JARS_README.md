@@ -30,11 +30,13 @@ This all-in-one JAR exposes a unified modid `galacticexpansion` which replaces t
 
 The all-in-one JAR has been designed to avoid conflicts between modules by:
 - Using a single unified modid `galacticexpansion` instead of individual module IDs
-- Disabling individual module mods.toml files
+- Removing or disabling individual module mods.toml files
+- Removing ModProvider class files that could cause conflicts
+- Updating JSON configuration files to reference the unified ModID
 - Creating a unified configuration at the JAR root level
 - Providing proper asset paths for all modules
 
-This approach eliminates dependency errors that would occur if modules tried to reference each other.
+This approach eliminates dependency errors that would occur if modules tried to reference each other. The packaging script automatically handles all necessary transformations to ensure a properly unified JAR.
 
 ## Installation
 
@@ -58,3 +60,13 @@ This approach eliminates dependency errors that would occur if modules tried to 
 - **DO NOT** mix the all-in-one JAR with individual module JARs. This will cause conflicts.
 - Choose either the all-in-one JAR *OR* the individual module JARs approach, not both.
 - If you were previously using individual module JARs, remove them all before installing the all-in-one JAR.
+
+## Recent Fixes
+In version 0.1.0.b64 (May 4, 2025), we resolved the following issues:
+- Fixed module dependency errors in the all-in-one JAR
+- Consolidated all module dependencies into a single `galacticexpansion` modid
+- Eliminated conflicts between modules by removing module-specific providers
+- Corrected resource references to use the unified modid
+- Updated packaging script for more reliable JAR generation
+
+If you were experiencing crashes related to missing modules like "Mod galacticspace requires galacticcore", the latest version should now work correctly.
