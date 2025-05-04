@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "galacticspace:item/tier_2_rocket"
+    "layer0": "galactic-space:item/tier_2_rocket"
   }
 }

@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "galacticspace:item/moon_dust"
+    "layer0": "galactic-space:item/moon_dust"
   }
 }
