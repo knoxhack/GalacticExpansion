@@ -29,13 +29,13 @@ public class MachineryBlocks {
         "assembler", 
         () -> {
             BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
-                .strength(3.5f)
-                .requiresCorrectToolForDrops();
+                .mapColor(MapColor.METAL)
+                .requiresCorrectToolForDrops()
+                .strength(5.0F, 6.0F)
+                .sound(SoundType.METAL);
                 
             return new AssemblerBlock(properties);
-
-            // Use this more verbose approach to ensure the block ID is properly set
-            BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
+        }
                 .mapColor(MapColor.METAL)
                 .requiresCorrectToolForDrops()
                 .strength(5.0F, 6.0F)
