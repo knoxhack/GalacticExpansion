@@ -43,10 +43,11 @@ public class MachineryBlockEntities {
                 
                 // Create block entity type with explicit factory and type parameter
                 // In NeoForge 1.21.5, the third parameter is a boolean for dataSaver (not null)
-                return BlockEntityType.Builder.of(
+                return new BlockEntityType<>(
                     factory::apply, 
-                    assemblerBlock
-                ).build(null); // Using builder pattern which handles dataSaver correctly
+                    validBlocks,
+                    false // false for dataSaver parameter (was null in older versions)
+                );
             }
         );
     

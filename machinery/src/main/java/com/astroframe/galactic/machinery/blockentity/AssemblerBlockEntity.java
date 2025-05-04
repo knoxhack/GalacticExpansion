@@ -194,7 +194,7 @@ public class AssemblerBlockEntity extends MachineBlockEntity {
     @Override
     public String getName() {
         // Return the translated name of the block
-        return "block.galacticmachinery.assembler";
+        return "block.galacticmachinery.assembler_block";
     }
     
     /**
@@ -218,7 +218,7 @@ public class AssemblerBlockEntity extends MachineBlockEntity {
     @Override
     public String getMachineName() {
         // Return a machine identifier for internal use
-        return "assembler";
+        return "assembler_block";
     }
     
     /**
@@ -230,6 +230,6 @@ public class AssemblerBlockEntity extends MachineBlockEntity {
     @Override
     public String getMachineId() {
         // Return the registry ID for this machine
-        return "galacticmachinery:assembler";
+        return "galacticmachinery:assembler_block";
     }
 }
