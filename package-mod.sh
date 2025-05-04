@@ -11,6 +11,9 @@ mkdir -p packaged-jars
 # Remove any old JAR files in the packaged-jars directory
 rm -f packaged-jars/*.jar
 
+# Remove previous zip package if it exists
+rm -f galactic-expansion-v0.1.0-neoforge-1.21.5.zip
+
 # Copy all module JAR files to the packaged-jars directory
 echo "Copying module JAR files..."
 
