@@ -1,69 +1,59 @@
 package com.astroframe.galactic.energy.registry;
 
 import com.astroframe.galactic.energy.GalacticEnergy;
+import com.astroframe.galactic.energy.blocks.EnergyBlocks;
+import com.astroframe.galactic.energy.items.EnergyItems;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
-
-// Commented out imports temporarily to resolve build issues
-// import net.minecraft.core.Registry;
-// import net.minecraft.resources.ResourceKey;
-// import net.minecraft.resources.ResourceLocation;
-// import net.minecraft.world.item.BlockItem;
-// import net.minecraft.world.item.Item;
-// import net.minecraft.world.level.block.Block;
-// import net.neoforged.neoforge.registries.DeferredRegister;
-// import net.minecraft.core.registries.BuiltInRegistries;
-
-/**
- * Import for Neoforge registry handling
- */
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * Registry handler for the Energy module.
- * Manages registration of blocks, items, and other game objects.
+ * Coordinates registration of all blocks, items, and other registry entries for this module.
  */
 public class EnergyRegistry {
-    
-    // Deferred registers - simplified to avoid import errors
-    // We will use static references to registries for now
-    // These will be properly initialized during the mod setup phase
+
+    // Deferred Register for items
+    public static final DeferredRegister<Item> ITEMS = 
+        DeferredRegister.create(Registries.ITEM, GalacticEnergy.MOD_ID);
     
     /**
-     * Registers all registry objects with the provided event bus.
-     *
-     * @param eventBus The mod event bus to register with
+     * Initialize the registry by registering all blocks, items, and other objects.
+     * @param eventBus The event bus to register on
      */
-    public static void register(IEventBus eventBus) {
-        // Register all deferred registers
-        // Commented out until proper initialization
-        // BLOCKS.register(eventBus);
-        // ITEMS.register(eventBus);
+    public static void init(IEventBus eventBus) {
+        GalacticEnergy.LOGGER.info("Initializing Energy registry");
         
-        // Register blocks and items
-        registerBlocks();
-        registerItems();
+        // Register blocks
+        EnergyBlocks.init(eventBus);
+        
+        // Register items
+        EnergyItems.init(eventBus);
+        
+        // Register block items
+        EnergyBlocks.registerBlockItems();
+        
+        // Register this module's registries to the event bus
+        ITEMS.register(eventBus);
+    }
+
+    /**
+     * Create a standard item properties builder.
+     * @return Item Properties builder
+     */
+    public static Item.Properties createStandardItemProperties() {
+        return new Item.Properties();
     }
     
     /**
-     * Registers blocks for the Energy module.
+     * Create a standard block item.
+     * @param name Block name
+     * @param blockSupplier Block supplier
+     * @return BlockItem for the given block
      */
-    private static void registerBlocks() {
-        // Register energy-related blocks here
-    }
-    
-    /**
-     * Registers items for the Energy module.
-     */
-    private static void registerItems() {
-        // Register energy-related items here
-    }
-    
-    /**
-     * Creates a resource location in the Galactic Energy namespace.
-     *
-     * @param path The path for the resource location
-     * @return A new resource location with the Galactic Energy namespace and provided path
-     */
-    public static String locationStr(String path) {
-        return GalacticEnergy.MOD_ID + ":" + path;
+    public static BlockItem createBlockItem(String name, java.util.function.Supplier<net.minecraft.world.level.block.Block> blockSupplier) {
+        return new BlockItem(blockSupplier.get(), createStandardItemProperties());
     }
 }
