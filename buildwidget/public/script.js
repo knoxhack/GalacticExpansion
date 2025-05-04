@@ -12,6 +12,7 @@ const createReleaseBtn = document.getElementById('createRelease');
 const buildCommandSelect = document.getElementById('buildCommand');
 const clearOutputBtn = document.getElementById('clearOutput');
 const autoScrollCheckbox = document.getElementById('autoScroll');
+const themeToggleBtn = document.getElementById('themeToggle');
 
 // Version information elements
 const currentVersionElement = document.getElementById('currentVersion');
@@ -1112,4 +1113,69 @@ function updateCheckpointDetails(checkpoint) {
               });
         });
     }
+}
+
+// Theme Toggle Functionality
+function initTheme() {
+    // Check for saved theme preference or use system preference
+    const savedTheme = localStorage.getItem('theme');
+    
+    if (savedTheme) {
+        // Apply saved theme
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    } else {
+        // Check for system dark mode preference
+        const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = prefersDarkMode ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', initialTheme);
+        localStorage.setItem('theme', initialTheme);
+    }
+}
+
+// Toggle between light and dark themes
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    // Apply the new theme
+    document.documentElement.setAttribute('data-theme', newTheme);
+    
+    // Save the theme preference
+    localStorage.setItem('theme', newTheme);
+    
+    // Update UI to reflect theme change
+    updateThemeToggleButton(newTheme);
+    
+    // Show notification
+    showNotification(
+        'Theme Updated', 
+        `Switched to ${newTheme} mode`, 
+        'info', 
+        3000
+    );
+}
+
+// Update the theme toggle button appearance
+function updateThemeToggleButton(theme) {
+    if (!themeToggleBtn) return;
+    
+    // Update icon
+    const icon = themeToggleBtn.querySelector('.theme-toggle-icon');
+    if (icon) {
+        icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+    
+    // Update title
+    themeToggleBtn.title = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+}
+
+// Initialize theme
+initTheme();
+
+// Update initial button state
+updateThemeToggleButton(document.documentElement.getAttribute('data-theme'));
+
+// Add theme toggle event listener
+if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', toggleTheme);
 }
