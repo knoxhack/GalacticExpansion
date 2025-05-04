@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "galacticmachinery:block/assembler_block"
+    "all": "galacticpower:block/power_generator_block"
   }
 }
