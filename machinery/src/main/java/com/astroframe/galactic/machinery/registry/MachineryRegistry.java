@@ -8,6 +8,7 @@ import com.astroframe.galactic.machinery.items.MachineryItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.event.RegisterEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**

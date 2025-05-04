@@ -4,6 +4,7 @@ import com.astroframe.galactic.machinery.GalacticMachinery;
 import com.astroframe.galactic.machinery.api.MachineBlock;
 import com.astroframe.galactic.machinery.implementation.AssemblerBlock;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
