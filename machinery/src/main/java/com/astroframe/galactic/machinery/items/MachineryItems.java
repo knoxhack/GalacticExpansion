@@ -3,6 +3,7 @@ package com.astroframe.galactic.machinery.items;
 import com.astroframe.galactic.machinery.GalacticMachinery;
 import com.astroframe.galactic.machinery.registry.MachineryRegistry;
 import net.minecraft.world.item.Item;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -46,8 +47,12 @@ public class MachineryItems {
     /**
      * Initializes the items registry.
      * Called during the module's registry phase.
+     * 
+     * @param eventBus The event bus to register with
      */
-    public static void init() {
+    public static void init(IEventBus eventBus) {
+        GalacticMachinery.LOGGER.info("Initializing machinery items");
+        
         // Class is initialized and items are registered when the class is loaded
         // Validate that important items are registered correctly
         if (CRUSHER == null || SMELTER == null || ASSEMBLER == null) {
@@ -55,6 +60,8 @@ public class MachineryItems {
         }
         
         // Register our Items DeferredRegister to the event bus
-        ITEMS_HELPER.register(GalacticMachinery.MOD_EVENT_BUS);
+        ITEMS_HELPER.register(eventBus);
+        
+        GalacticMachinery.LOGGER.info("Machinery items initialized");
     }
 }

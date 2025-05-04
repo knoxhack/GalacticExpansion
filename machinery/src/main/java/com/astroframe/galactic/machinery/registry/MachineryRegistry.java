@@ -42,12 +42,11 @@ public class MachineryRegistry {
             
             // 2. Then register items
             GalacticMachinery.LOGGER.info("Step 2: Registering machinery items");
-            MachineryItems.init();
-            ITEMS.register(eventBus);
+            MachineryItems.init(eventBus);
             
-            // 3. Wait until blocks are registered before creating block items
+            // 3. Register block items (after blocks are registered)
             GalacticMachinery.LOGGER.info("Step 3: Registering machinery block items");
-            MachineryItemBlocks.init();
+            MachineryItemBlocks.init(eventBus);
             
             // 4. Finally register block entities (which depend on blocks)
             GalacticMachinery.LOGGER.info("Step 4: Registering machinery block entities");
@@ -74,6 +73,10 @@ public class MachineryRegistry {
         // When block registry is active, verify that blocks have proper IDs
         if (event.getRegistryKey().equals(Registries.BLOCK)) {
             GalacticMachinery.LOGGER.debug("Verifying block IDs during block registration");
+        }
+        // Make sure block items are registered after blocks
+        else if (event.getRegistryKey().equals(Registries.ITEM)) {
+            GalacticMachinery.LOGGER.debug("Registering items during item registration phase");
         }
         // Make sure block entities reference blocks that are already registered
         else if (event.getRegistryKey().equals(Registries.BLOCK_ENTITY_TYPE)) {

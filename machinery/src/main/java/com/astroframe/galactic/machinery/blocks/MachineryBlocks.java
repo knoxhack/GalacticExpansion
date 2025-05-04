@@ -25,85 +25,67 @@ public class MachineryBlocks {
     // Deferred Register for blocks - use simple create method instead of createBlocks
     private static final DeferredRegister<Block> BLOCKS = 
         DeferredRegister.create(Registries.BLOCK, GalacticMachinery.MOD_ID);
+    
+    /**
+     * Create standard machinery block properties
+     * @return Properties for machinery blocks
+     */
+    private static BlockBehaviour.Properties createStandardProperties() {
+        return BlockBehaviour.Properties.of()
+            .mapColor(MapColor.METAL)
+            .requiresCorrectToolForDrops()
+            .strength(5.0F) 
+            .sound(SoundType.METAL);
+    }
 
     // Machinery Blocks with deferred holders - must match resource file names
     public static final Supplier<Block> ASSEMBLER = BLOCKS.register(
         "assembler_block", 
         () -> {
-            // Create default properties for the assembler block
-            BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
-                .mapColor(MapColor.METAL)
-                .strength(3.5f)
-                .requiresCorrectToolForDrops()
-                .sound(SoundType.METAL);
-                
-            GalacticMachinery.LOGGER.debug("Creating assembler block with ID: " + GalacticMachinery.MOD_ID + ":assembler_block");
+            ResourceLocation blockId = new ResourceLocation(GalacticMachinery.MOD_ID, "assembler_block");
+            GalacticMachinery.LOGGER.debug("Creating assembler block with ID: " + blockId);
             
-            return new AssemblerBlock(properties);
+            return new AssemblerBlock(createStandardProperties());
         }
     );
 
     public static final Supplier<Block> CRUSHER = BLOCKS.register(
         "crusher_block", 
         () -> {
-            // Create default properties for the crusher block
-            BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
-                .mapColor(MapColor.METAL)
-                .requiresCorrectToolForDrops()
-                .strength(5.0F, 6.0F)
-                .sound(SoundType.METAL);
-                
-            GalacticMachinery.LOGGER.debug("Creating crusher block with ID: " + GalacticMachinery.MOD_ID + ":crusher_block");
+            ResourceLocation blockId = new ResourceLocation(GalacticMachinery.MOD_ID, "crusher_block");
+            GalacticMachinery.LOGGER.debug("Creating crusher block with ID: " + blockId);
             
-            return new Block(properties);
+            return new Block(createStandardProperties());
         }
     );
 
     public static final Supplier<Block> CENTRIFUGE = BLOCKS.register(
         "centrifuge_block", 
         () -> {
-            // Create default properties for the centrifuge block
-            BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
-                .mapColor(MapColor.METAL)
-                .requiresCorrectToolForDrops()
-                .strength(5.0F, 6.0F)
-                .sound(SoundType.METAL);
-                
-            GalacticMachinery.LOGGER.debug("Creating centrifuge block with ID: " + GalacticMachinery.MOD_ID + ":centrifuge_block");
+            ResourceLocation blockId = new ResourceLocation(GalacticMachinery.MOD_ID, "centrifuge_block");
+            GalacticMachinery.LOGGER.debug("Creating centrifuge block with ID: " + blockId);
             
-            return new Block(properties);
+            return new Block(createStandardProperties());
         }
     );
 
     public static final Supplier<Block> SMELTER = BLOCKS.register(
         "smelter_block", 
         () -> {
-            // Create default properties for the smelter block
-            BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
-                .mapColor(MapColor.METAL)
-                .requiresCorrectToolForDrops()
-                .strength(5.0F, 6.0F)
-                .sound(SoundType.METAL);
-                
-            GalacticMachinery.LOGGER.debug("Creating smelter block with ID: " + GalacticMachinery.MOD_ID + ":smelter_block");
+            ResourceLocation blockId = new ResourceLocation(GalacticMachinery.MOD_ID, "smelter_block");
+            GalacticMachinery.LOGGER.debug("Creating smelter block with ID: " + blockId);
             
-            return new Block(properties);
+            return new Block(createStandardProperties());
         }
     );
 
     public static final Supplier<Block> EXTRACTOR = BLOCKS.register(
         "extractor_block", 
         () -> {
-            // Create default properties for the extractor block
-            BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
-                .mapColor(MapColor.METAL)
-                .requiresCorrectToolForDrops()
-                .strength(5.0F, 6.0F)
-                .sound(SoundType.METAL);
-                
-            GalacticMachinery.LOGGER.debug("Creating extractor block with ID: " + GalacticMachinery.MOD_ID + ":extractor_block");
+            ResourceLocation blockId = new ResourceLocation(GalacticMachinery.MOD_ID, "extractor_block");
+            GalacticMachinery.LOGGER.debug("Creating extractor block with ID: " + blockId);
             
-            return new Block(properties);
+            return new Block(createStandardProperties());
         }
     );
 
