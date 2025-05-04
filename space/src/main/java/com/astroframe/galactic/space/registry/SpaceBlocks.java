@@ -24,20 +24,28 @@ public class SpaceBlocks {
     public static final DeferredRegister<Item> BLOCK_ITEMS = 
             DeferredRegister.create(Registries.ITEM, GalacticSpace.MOD_ID);
     
-    // Register the rocket assembly table with a simplified implementation
-    // Using SimpleRocketAssemblyTable instead of the complex implementation to avoid errors
+    // DISABLED: Rocket assembly table block is temporarily disabled to prevent crashes
+    // We'll keep the code commented for future reference
+    /*
     public static final Supplier<Block> ROCKET_ASSEMBLY_TABLE = 
             BLOCKS.register("rocket_assembly_table", () -> {
-                return new SimpleRocketAssemblyTable(Block.Properties.of().strength(3.5F).requiresCorrectToolForDrops());
+                Block.Properties props = Block.Properties.of()
+                    .mapColor(net.minecraft.world.level.material.MapColor.COLOR_BLUE)
+                    .strength(3.5F)
+                    .requiresCorrectToolForDrops();
+                return new SimpleRocketAssemblyTable(props);
             });
     
     // Register the rocket assembly table item
-    static {
-        registerBlockItem("rocket_assembly_table", ROCKET_ASSEMBLY_TABLE);
-    }
+    public static final Supplier<Item> ROCKET_ASSEMBLY_TABLE_ITEM = 
+            BLOCK_ITEMS.register("rocket_assembly_table", 
+                () -> new BlockItem(ROCKET_ASSEMBLY_TABLE.get(), new Item.Properties()));
+    */
     
     /**
      * Helper method to register a block item.
+     * Note: The rocket assembly table block has been temporarily disabled 
+     * to prevent crashes related to unbound values.
      *
      * @param name The name of the block
      * @param blockSupplier The block supplier
