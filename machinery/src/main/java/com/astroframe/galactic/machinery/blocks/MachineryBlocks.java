@@ -1,6 +1,7 @@
 package com.astroframe.galactic.machinery.blocks;
 
 import com.astroframe.galactic.machinery.GalacticMachinery;
+import com.astroframe.galactic.machinery.blocks.DisabledMachineBlock;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;

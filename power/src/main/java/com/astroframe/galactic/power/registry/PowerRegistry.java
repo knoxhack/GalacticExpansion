@@ -3,39 +3,28 @@ package com.astroframe.galactic.power.registry;
 import com.astroframe.galactic.power.GalacticPower;
 import com.astroframe.galactic.power.blocks.PowerBlocks;
 import com.astroframe.galactic.power.items.PowerItems;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * Registry handler for the Power module.
- * This centralizes all registrations for the module.
+ * Initializes all registries for blocks, items, block entities, etc.
  */
 public class PowerRegistry {
-
-    // Deferred Registers
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, GalacticPower.MOD_ID);
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, GalacticPower.MOD_ID);
-
+    
     /**
-     * Registers all registry objects with the given event bus.
-     *
-     * @param eventBus The mod event bus to register with
+     * Initialize all registries for this module
+     * @param eventBus The mod event bus
      */
     public static void register(IEventBus eventBus) {
-        GalacticPower.LOGGER.info("Registering Power module objects");
+        GalacticPower.LOGGER.info("Initializing Power module registries");
         
-        // Initialize items
-        PowerItems.init();
-        
-        // Initialize blocks (placeholder versions)
+        // Register blocks
         PowerBlocks.init(eventBus);
         
-        // Register objects
-        ITEMS.register(eventBus);
+        // Register items
+        PowerItems.init(eventBus);
         
-        GalacticPower.LOGGER.info("Power module registration complete");
+        // Register block items after blocks and items are set up
+        PowerBlocks.registerBlockItems();
     }
 }

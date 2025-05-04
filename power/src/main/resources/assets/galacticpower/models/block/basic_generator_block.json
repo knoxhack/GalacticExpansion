@@ -1,6 +1,12 @@
 {
-  "parent": "block/cube_all",
+  "parent": "minecraft:block/cube",
   "textures": {
-    "all": "galacticpower:block/basic_generator_block"
+    "particle": "galacticpower:block/basic_generator_block",
+    "north": "galacticpower:block/basic_generator_block",
+    "south": "galacticpower:block/basic_generator_block",
+    "east": "galacticpower:block/basic_generator_block",
+    "west": "galacticpower:block/basic_generator_block",
+    "up": "galacticpower:block/basic_generator_block",
+    "down": "galacticpower:block/basic_generator_block"
   }
 }
