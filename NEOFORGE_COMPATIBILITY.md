@@ -113,21 +113,36 @@ if (itemStack.hasTag()) {
 ### BlockEntityType Registration
 
 - Updated BlockEntityType instantiation with proper type parameters
-- Added required boolean parameter in BlockEntityType.Builder
+- Added required boolean parameter for dataSaver (instead of null in older versions)
 - Fixed factory reference handling for block entity registration
+- Changed Set<Block> handling in the constructor
 
 ```java
-// Old code
+// Old code (Pre-NeoForge 1.21.5)
 BlockEntityType<MyBlockEntity> type = BlockEntityType.Builder.of(
     MyBlockEntity::new, 
     myBlock
 ).build(null);
 
-// New code
+// Old direct constructor (Pre-NeoForge 1.21.5)
+return new BlockEntityType<MyBlockEntity>(
+    factory::apply, 
+    Set.of(myBlock),
+    null  // Third parameter was null in older versions
+);
+
+// New code for NeoForge 1.21.5 with Builder
 BlockEntityType<MyBlockEntity> type = BlockEntityType.Builder.of(
     MyBlockEntity::new, 
     myBlock
-).build(true);
+).build(false);  // boolean instead of null
+
+// New direct constructor for NeoForge 1.21.5
+return new BlockEntityType<MyBlockEntity>(
+    factory::apply, 
+    Set.of(myBlock),
+    false  // In NeoForge 1.21.5, this is a boolean for dataSaver (not null)
+);
 ```
 
 ### Enchantment Handling
@@ -145,6 +160,7 @@ BlockEntityType<MyBlockEntity> type = BlockEntityType.Builder.of(
 
 - Core module: API interfaces and common utility classes updated
 - Space module: Implementation classes updated to handle registry and tag changes
+- Machinery module: Fixed BlockEntityType registration with proper boolean parameter
 - All modules: Registry access patterns standardized
 
 ## Testing
