@@ -1,79 +1,79 @@
 [
   {
     "version": "0.1.0.b1-20250504",
-    "date": "2025-05-04T10:20:53.438Z",
+    "date": "2025-05-04T10:33:33.899Z",
     "buildNumber": 1,
     "buildMetrics": {
       "result": "success",
-      "duration": 8746,
+      "duration": 8449,
       "moduleStatuses": {
         "core": {
           "status": "success",
-          "lastUpdate": "2025-05-04T10:20:52.667Z",
-          "lastBuild": "2025-05-04T10:20:53.018Z",
+          "lastUpdate": "2025-05-04T10:33:33.255Z",
+          "lastBuild": "2025-05-04T10:33:33.590Z",
           "lastTask": ":core:jar",
-          "currentTask": "classes"
+          "currentTask": "processResources"
         },
         "power": {
           "status": "success",
-          "lastUpdate": "2025-05-04T10:20:52.861Z",
-          "lastBuild": "2025-05-04T10:20:52.962Z",
+          "lastUpdate": "2025-05-04T10:33:33.465Z",
+          "lastBuild": "2025-05-04T10:33:33.555Z",
           "lastTask": ":power:jar",
           "currentTask": "classes"
         },
         "machinery": {
           "status": "success",
-          "lastUpdate": "2025-05-04T10:20:34.097Z",
-          "lastBuild": "2025-05-04T10:20:34.199Z",
+          "lastUpdate": "2025-05-04T10:33:15.689Z",
+          "lastBuild": "2025-05-04T10:33:15.818Z",
           "lastTask": ":machinery:jar",
           "currentTask": "compileJava"
         },
         "biotech": {
           "status": "building",
-          "lastUpdate": "2025-05-04T10:19:46.863Z",
-          "lastBuild": "2025-05-04T10:19:46.772Z",
+          "lastUpdate": "2025-05-04T10:32:28.045Z",
+          "lastBuild": "2025-05-04T10:32:27.963Z",
           "lastTask": ":biotech:build",
-          "currentTask": "build"
+          "currentTask": "test"
         },
         "construction": {
           "status": "building",
-          "lastUpdate": "2025-05-04T10:20:07.175Z",
-          "lastBuild": "2025-05-04T10:20:07.091Z",
+          "lastUpdate": "2025-05-04T10:32:46.190Z",
+          "lastBuild": "2025-05-04T10:32:46.125Z",
           "lastTask": ":construction:build",
-          "currentTask": "build"
+          "currentTask": "check"
         },
         "robotics": {
-          "status": "building",
-          "lastUpdate": "2025-05-04T10:20:53.177Z",
-          "lastBuild": "2025-05-04T10:20:53.070Z",
+          "status": "success",
+          "lastUpdate": "2025-05-04T10:33:33.160Z",
+          "lastBuild": "2025-05-04T10:33:33.628Z",
           "lastTask": ":robotics:build",
-          "currentTask": "check"
+          "currentTask": "jarJar"
         },
         "space": {
           "status": "building",
-          "lastUpdate": "2025-05-04T10:20:16.660Z",
-          "lastBuild": "2025-05-04T10:20:16.604Z",
+          "lastUpdate": "2025-05-04T10:32:56.527Z",
+          "lastBuild": "2025-05-04T10:32:56.511Z",
           "lastTask": ":space:build",
           "currentTask": "test"
         },
         "utilities": {
           "status": "building",
-          "lastUpdate": "2025-05-04T10:20:25.101Z",
-          "lastBuild": "2025-05-04T10:20:25.040Z",
+          "lastUpdate": "2025-05-04T10:33:06.614Z",
+          "lastBuild": "2025-05-04T10:33:06.524Z",
           "lastTask": ":utilities:build",
-          "currentTask": "build"
+          "currentTask": "check"
         },
         "vehicles": {
-          "status": "building",
-          "lastUpdate": "2025-05-04T10:20:34.302Z",
-          "lastBuild": "2025-05-04T10:20:34.234Z",
+          "status": "success",
+          "lastUpdate": "2025-05-04T10:33:15.790Z",
+          "lastBuild": "2025-05-04T10:33:15.836Z",
           "lastTask": ":vehicles:build",
-          "currentTask": "assemble"
+          "currentTask": "classes"
         },
         "weaponry": {
           "status": "building",
-          "lastUpdate": "2025-05-04T10:20:43.294Z",
-          "lastBuild": "2025-05-04T10:20:43.223Z",
+          "lastUpdate": "2025-05-04T10:33:24.629Z",
+          "lastBuild": "2025-05-04T10:33:24.548Z",
           "lastTask": ":weaponry:build",
           "currentTask": "compileTestJava"
         }

@@ -49,6 +49,24 @@ else
   echo "  - Main JAR not found: $main_jar"
 fi
 
+# Also include the all-in-one JAR if it exists
+all_in_one_jar="./combined-jar/GalacticExpansion-all-in-one-0.1.0.jar"
+if [ -f "$all_in_one_jar" ]; then
+  # Create Minecraft-compatible name for the all-in-one JAR
+  echo "  - Fixing all-in-one JAR: $all_in_one_jar -> ./fixed-jars/galacticexpansion_all-in-one-0.1.0.jar"
+  cp "$all_in_one_jar" "./fixed-jars/galacticexpansion_all-in-one-0.1.0.jar"
+else
+  echo "  - All-in-one JAR not found. Running package-all-in-one.sh..."
+  ./package-all-in-one.sh
+  
+  if [ -f "$all_in_one_jar" ]; then
+    echo "  - Now found all-in-one JAR, adding to fixed package"
+    cp "$all_in_one_jar" "./fixed-jars/galacticexpansion_all-in-one-0.1.0.jar"
+  else
+    echo "  - Warning: Still could not find all-in-one JAR!"
+  fi
+fi
+
 # Count how many JAR files we fixed
 jar_count=$(ls -1 fixed-jars/*.jar 2>/dev/null | wc -l)
 
