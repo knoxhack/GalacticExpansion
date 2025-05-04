@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <!-- Dark metallic background -->
+  <rect width="16" height="16" fill="#1a2837" />
+  
+  <!-- Subtle grid pattern -->
+  <path d="M0,0 L16,0 L16,16 L0,16 Z" fill="#1a2837" />
+  <path d="M0,4 L16,4 M0,8 L16,8 M0,12 L16,12 M4,0 L4,16 M8,0 L8,16 M12,0 L12,16" stroke="#223244" stroke-width="0.5" />
+  
+  <!-- Main frame border -->
+  <rect x="1" y="1" width="14" height="14" fill="none" stroke="#2c3e50" stroke-width="1" />
+  
+  <!-- Central crushing mechanism area -->
+  <rect x="3" y="3" width="10" height="10" fill="#0d1a26" />
+  
+  <!-- Crusher gears and mechanisms -->
+  <circle cx="8" cy="8" r="3.5" fill="#0f2638" />
+  <circle cx="8" cy="8" r="3" fill="#152638" />
+  <circle cx="8" cy="8" r="2.5" fill="#0a1520" stroke="#2c3e50" stroke-width="0.5" />
+  
+  <!-- Crusher teeth/gears -->
+  <path d="M8,5.5 L9,6.5 L10.5,8 L9,9.5 L8,10.5 L7,9.5 L5.5,8 L7,6.5 Z" fill="#2c3e50" />
+  <circle cx="8" cy="8" r="1" fill="#07c8f9" opacity="0.7" />
+  
+  <!-- Tech panels along the sides -->
+  <rect x="1" y="3" width="1.5" height="10" fill="#152638" />
+  <rect x="13.5" y="3" width="1.5" height="10" fill="#152638" />
+  <rect x="3" y="1" width="10" height="1.5" fill="#152638" />
+  <rect x="3" y="13.5" width="10" height="1.5" fill="#152638" />
+  
+  <!-- Crusher operator interface -->
+  <rect x="3.5" y="3.5" width="2" height="1" fill="#152638" />
+  <rect x="3.5" y="11.5" width="2" height="1" fill="#152638" />
+  <rect x="10.5" y="3.5" width="2" height="1" fill="#152638" />
+  <rect x="10.5" y="11.5" width="2" height="1" fill="#152638" />
+  
+  <!-- Tech details - corner accents -->
+  <rect x="1.5" y="1.5" width="1.5" height="1.5" fill="#152638" />
+  <rect x="13" y="1.5" width="1.5" height="1.5" fill="#152638" />
+  <rect x="1.5" y="13" width="1.5" height="1.5" fill="#152638" />
+  <rect x="13" y="13" width="1.5" height="1.5" fill="#152638" />
+  
+  <!-- Small indicator lights -->
+  <circle cx="2.5" cy="6" r="0.5" fill="#07c8f9" opacity="0.9" />
+  <circle cx="2.5" cy="10" r="0.5" fill="#07c8f9" opacity="0.7" />
+  <circle cx="13.5" cy="6" r="0.5" fill="#07c8f9" opacity="0.8" />
+  <circle cx="13.5" cy="10" r="0.5" fill="#07c8f9" opacity="1" />
+  
+  <!-- Circuit-like pattern -->
+  <path d="M4,4 L5,5 M12,4 L11,5 M4,12 L5,11 M12,12 L11,11" stroke="#07c8f9" stroke-width="0.5" opacity="0.6" />
+  
+  <!-- Crusher mechanical details - jagged teeth simulation -->
+  <path d="M5.5,8 L6,7.5 L6.5,8 L7,7.5 L7.5,8 L8,7.5 L8.5,8 L9,7.5 L9.5,8 L10,7.5 L10.5,8" 
+        stroke="#07c8f9" stroke-width="0.5" opacity="0.8" />
+  <path d="M5.5,8 L6,8.5 L6.5,8 L7,8.5 L7.5,8 L8,8.5 L8.5,8 L9,8.5 L9.5,8 L10,8.5 L10.5,8" 
+        stroke="#07c8f9" stroke-width="0.5" opacity="0.8" />
+</svg>
