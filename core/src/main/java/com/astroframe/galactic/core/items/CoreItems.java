@@ -21,7 +21,7 @@ public class CoreItems {
      */
     private static final DeferredRegister.Items ITEMS_HELPER = DeferredRegister.createItems(GalacticCore.MOD_ID);
     
-    // Core Items - using the DeferredRegister.Items.registerItem to properly set IDs
+    // Base crafting materials
     public static final DeferredHolder<Item, Item> CIRCUIT_BOARD = ITEMS_HELPER.registerItem(
             "circuit_board", 
             properties -> new Item(properties.stacksTo(64))
@@ -35,6 +35,28 @@ public class CoreItems {
     public static final DeferredHolder<Item, Item> QUANTUM_PROCESSOR = ITEMS_HELPER.registerItem(
             "quantum_processor", 
             properties -> new Item(properties.stacksTo(64))
+    );
+    
+    // Additional crafting materials
+    public static final DeferredHolder<Item, Item> NANO_WIRING = ITEMS_HELPER.registerItem(
+            "nano_wiring", 
+            properties -> new Item(properties.stacksTo(64))
+    );
+    
+    public static final DeferredHolder<Item, Item> GALACTIC_ALLOY = ITEMS_HELPER.registerItem(
+            "galactic_alloy", 
+            properties -> new Item(properties.stacksTo(64))
+    );
+    
+    // Tools
+    public static final DeferredHolder<Item, Item> PORTABLE_SCANNER = ITEMS_HELPER.registerItem(
+            "portable_scanner", 
+            properties -> new Item(properties.stacksTo(1))
+    );
+    
+    public static final DeferredHolder<Item, Item> ENGINEERS_TOOLKIT = ITEMS_HELPER.registerItem(
+            "engineers_toolkit", 
+            properties -> new Item(properties.stacksTo(1))
     );
 
     /**

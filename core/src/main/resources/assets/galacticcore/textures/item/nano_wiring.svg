@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <rect width="16" height="16" fill="none" />
+  
+  <!-- Background base -->
+  <rect x="1" y="2" width="14" height="12" fill="#121a26" />
+  
+  <!-- Wire pattern -->
+  <path d="M1,8 L15,8" stroke="#0af" stroke-width="0.7" />
+  <path d="M1,4 L15,4" stroke="#0af" stroke-width="0.5" />
+  <path d="M1,12 L15,12" stroke="#0af" stroke-width="0.5" />
+  
+  <!-- Connector nodes -->
+  <circle cx="3" cy="8" r="1" fill="#09c" />
+  <circle cx="8" cy="8" r="1" fill="#09c" />
+  <circle cx="13" cy="8" r="1" fill="#09c" />
+  
+  <!-- Thin connectors -->
+  <path d="M3,8 L3,4" stroke="#0af" stroke-width="0.5" />
+  <path d="M3,8 L3,12" stroke="#0af" stroke-width="0.5" />
+  <path d="M8,8 L8,4" stroke="#0af" stroke-width="0.5" />
+  <path d="M8,8 L8,12" stroke="#0af" stroke-width="0.5" />
+  <path d="M13,8 L13,4" stroke="#0af" stroke-width="0.5" />
+  <path d="M13,8 L13,12" stroke="#0af" stroke-width="0.5" />
+  
+  <!-- Glow effects -->
+  <circle cx="3" cy="8" r="1.5" fill="none" stroke="#0af" stroke-width="0.2" opacity="0.6" />
+  <circle cx="8" cy="8" r="1.5" fill="none" stroke="#0af" stroke-width="0.2" opacity="0.6" />
+  <circle cx="13" cy="8" r="1.5" fill="none" stroke="#0af" stroke-width="0.2" opacity="0.6" />
+</svg>
