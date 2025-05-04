@@ -6,8 +6,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.function.Supplier;
 
 /**
  * Registry for all block items in the Machinery module.
@@ -15,34 +16,35 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  */
 public class MachineryItemBlocks {
 
-    // Deferred Register for block items
-    private static final DeferredRegister.Items BLOCK_ITEMS = 
-        DeferredRegister.createItems(GalacticMachinery.MOD_ID);
+    // Deferred Register for block items - switching to create for consistency
+    private static final DeferredRegister<Item> BLOCK_ITEMS = 
+        DeferredRegister.create(Registries.ITEM, GalacticMachinery.MOD_ID);
 
     // Machinery Block Items - corresponding to blocks from MachineryBlocks
-    public static final DeferredHolder<Item, Item> ASSEMBLER_ITEM = BLOCK_ITEMS.registerItem(
-        "assembler",
-        properties -> new BlockItem(MachineryBlocks.ASSEMBLER.get(), properties)
+    // Update block item registration to match block registration IDs
+    public static final Supplier<Item> ASSEMBLER_ITEM = BLOCK_ITEMS.register(
+        "assembler_block",
+        () -> new BlockItem(MachineryBlocks.ASSEMBLER.get(), new Item.Properties())
     );
 
-    public static final DeferredHolder<Item, Item> CRUSHER_ITEM = BLOCK_ITEMS.registerItem(
-        "crusher",
-        properties -> new BlockItem(MachineryBlocks.CRUSHER.get(), properties)
+    public static final Supplier<Item> CRUSHER_ITEM = BLOCK_ITEMS.register(
+        "crusher_block",
+        () -> new BlockItem(MachineryBlocks.CRUSHER.get(), new Item.Properties())
     );
 
-    public static final DeferredHolder<Item, Item> CENTRIFUGE_ITEM = BLOCK_ITEMS.registerItem(
-        "centrifuge",
-        properties -> new BlockItem(MachineryBlocks.CENTRIFUGE.get(), properties)
+    public static final Supplier<Item> CENTRIFUGE_ITEM = BLOCK_ITEMS.register(
+        "centrifuge_block",
+        () -> new BlockItem(MachineryBlocks.CENTRIFUGE.get(), new Item.Properties())
     );
 
-    public static final DeferredHolder<Item, Item> SMELTER_ITEM = BLOCK_ITEMS.registerItem(
-        "smelter",
-        properties -> new BlockItem(MachineryBlocks.SMELTER.get(), properties)
+    public static final Supplier<Item> SMELTER_ITEM = BLOCK_ITEMS.register(
+        "smelter_block",
+        () -> new BlockItem(MachineryBlocks.SMELTER.get(), new Item.Properties())
     );
 
-    public static final DeferredHolder<Item, Item> EXTRACTOR_ITEM = BLOCK_ITEMS.registerItem(
-        "extractor",
-        properties -> new BlockItem(MachineryBlocks.EXTRACTOR.get(), properties)
+    public static final Supplier<Item> EXTRACTOR_ITEM = BLOCK_ITEMS.register(
+        "extractor_block",
+        () -> new BlockItem(MachineryBlocks.EXTRACTOR.get(), new Item.Properties())
     );
 
     /**

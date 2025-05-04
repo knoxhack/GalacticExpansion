@@ -4,15 +4,16 @@ import com.astroframe.galactic.machinery.GalacticMachinery;
 import com.astroframe.galactic.machinery.blocks.MachineryBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import java.util.Set;
 
 /**
@@ -28,7 +29,7 @@ public class MachineryBlockEntities {
     private static BlockEntityType<AssemblerBlockEntity> ASSEMBLER_TYPE = null;
     
     // Block entity types
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AssemblerBlockEntity>> ASSEMBLER = 
+    public static final Supplier<BlockEntityType<AssemblerBlockEntity>> ASSEMBLER = 
         BLOCK_ENTITIES.register(
             "assembler_block", 
             () -> {
@@ -39,18 +40,31 @@ public class MachineryBlockEntities {
                 BiFunction<BlockPos, BlockState, AssemblerBlockEntity> factory = 
                     (pos, state) -> new AssemblerBlockEntity(pos, state);
                 
-                // Create a set of valid blocks for this entity type
-                // We need to ensure MachineryBlocks is initialized before using it
-                Block assemblerBlock = MachineryBlocks.ASSEMBLER.get();
-                Set<Block> validBlocks = Set.of(assemblerBlock);
-                
-                // Create block entity type with explicit factory and type parameter
-                // In NeoForge 1.21.5, the third parameter is a boolean for dataSaver (not null)
-                ASSEMBLER_TYPE = new BlockEntityType<>(
-                    factory::apply, 
-                    validBlocks,
-                    false // false for dataSaver parameter (was null in older versions)
-                );
+                try {
+                    // Create a set of valid blocks for this entity type
+                    // We need to ensure MachineryBlocks is initialized before using it
+                    Block assemblerBlock = MachineryBlocks.ASSEMBLER.get();
+                    ResourceLocation blockId = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "assembler_block");
+                    GalacticMachinery.LOGGER.debug("Using assembler block for block entity with ID: " + blockId);
+                    
+                    Set<Block> validBlocks = Set.of(assemblerBlock);
+                    
+                    // Create block entity type with explicit factory and type parameter
+                    // In NeoForge 1.21.5, the third parameter is a boolean for dataSaver (not null)
+                    ASSEMBLER_TYPE = new BlockEntityType<>(
+                        factory::apply, 
+                        validBlocks,
+                        false // false for dataSaver parameter (was null in older versions)
+                    );
+                } catch (Exception e) {
+                    GalacticMachinery.LOGGER.error("Error creating assembler block entity", e);
+                    // Create a fallback version with an empty set of blocks
+                    ASSEMBLER_TYPE = new BlockEntityType<>(
+                        factory::apply, 
+                        Set.of(), 
+                        false
+                    );
+                }
                 
                 return ASSEMBLER_TYPE;
             }
@@ -68,7 +82,7 @@ public class MachineryBlockEntities {
             return ASSEMBLER_TYPE;
         }
         
-        // Otherwise get from the deferred holder if registered
+        // Otherwise get from the supplier if registered
         try {
             return ASSEMBLER.get();
         } catch (Exception e) {
