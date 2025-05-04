@@ -42,20 +42,12 @@ fi
 
 # Set git config to use the correct user
 # Try to set git config and handle potential lock issues
-echo "Setting Git configuration..."
-if ! git config --local user.name "knoxhack" 2>/dev/null; then
-    echo "Warning: Could not set Git user name, continuing with existing config"
-fi
+echo "Skipping Git configuration in this environment..."
 
-if ! git config --local user.email "knoxhack@gmail.com" 2>/dev/null; then
-    echo "Warning: Could not set Git user email, continuing with existing config"
-fi
-
-# If config still can't be set, check for locks
-if [ -f ".git/config.lock" ]; then
-    echo "Found Git config lock file. Attempting to remove it..."
-    rm -f .git/config.lock 2>/dev/null || echo "Failed to remove lock file, but continuing anyway"
-fi
+# Use hardcoded repository details instead of trying to get from Git
+REPO_OWNER="astroframe"
+REPO_NAME="galactic-expansion"
+echo "Using hardcoded repository details..."
 
 # Get repository details from Git
 echo "Getting repository details..."
@@ -146,6 +138,46 @@ RELEASE_DIR="$(pwd)/.release_tmp"
 echo "Creating release directory at: $RELEASE_DIR"
 rm -rf "$RELEASE_DIR"  # Clean up any existing directory first
 mkdir -p "$RELEASE_DIR"
+
+# Check for the all-in-one JAR
+ALLINONE_JAR=$(find "./combined-jar" -name "GalacticExpansion-all-in-one-*.jar" 2>/dev/null)
+if [ -n "$ALLINONE_JAR" ]; then
+  echo "Found all-in-one JAR: $ALLINONE_JAR"
+  DEST_ALLINONE="$RELEASE_DIR/galacticexpansion_all-in-one-0.1.0.jar"
+  cp -v "$ALLINONE_JAR" "$DEST_ALLINONE"
+  if [ -f "$DEST_ALLINONE" ]; then
+    echo "Successfully copied all-in-one JAR!"
+  else
+    echo "Failed to copy all-in-one JAR!"
+  fi
+else
+  echo "No all-in-one JAR found in combined-jar directory."
+  # Try to run the package script to create the jar if it doesn't exist
+  if [ -f "package-all-in-one.sh" ]; then
+    echo "Running package-all-in-one.sh to create the all-in-one JAR..."
+    bash package-all-in-one.sh
+    # Try to find it again
+    ALLINONE_JAR=$(find "./combined-jar" -name "GalacticExpansion-all-in-one-*.jar" 2>/dev/null)
+    if [ -n "$ALLINONE_JAR" ]; then
+      echo "Successfully created all-in-one JAR: $ALLINONE_JAR"
+      DEST_ALLINONE="$RELEASE_DIR/galacticexpansion_all-in-one-0.1.0.jar"
+      cp -v "$ALLINONE_JAR" "$DEST_ALLINONE"
+      if [ -f "$DEST_ALLINONE" ]; then
+        echo "Successfully copied all-in-one JAR!"
+      else
+        echo "Failed to copy all-in-one JAR!"
+      fi
+    else
+      echo "Failed to create all-in-one JAR."
+    fi
+  fi
+fi
+
+# Include JARS_README.md in the release if it exists
+if [ -f "JARS_README.md" ]; then
+  echo "Including JARS_README.md in the release"
+  cp -v "JARS_README.md" "$RELEASE_DIR/README.md"
+fi
 
 # Copy JAR files to release directory
 for jar in $JAR_FILES; do
