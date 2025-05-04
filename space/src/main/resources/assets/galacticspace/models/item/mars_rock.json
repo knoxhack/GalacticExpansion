@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "galactic-space:item/mars_rock"
+    "layer0": "galacticspace:item/mars_rock"
   }
 }

@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "galactic-space:item/space_helmet"
+    "layer0": "galacticspace:item/space_helmet"
   }
 }
