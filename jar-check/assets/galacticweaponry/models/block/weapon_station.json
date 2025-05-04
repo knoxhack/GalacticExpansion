@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "galacticweaponry:block/weapon_station",
+    "up": "galacticweaponry:block/weapon_station",
+    "north": "galacticweaponry:block/weapon_station",
+    "south": "galacticweaponry:block/weapon_station",
+    "east": "galacticweaponry:block/weapon_station",
+    "west": "galacticweaponry:block/weapon_station",
+    "particle": "galacticweaponry:block/weapon_station"
+  }
+}

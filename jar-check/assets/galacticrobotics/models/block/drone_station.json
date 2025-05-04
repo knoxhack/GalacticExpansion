@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "galacticrobotics:block/drone_station",
+    "up": "galacticrobotics:block/drone_station",
+    "north": "galacticrobotics:block/drone_station",
+    "south": "galacticrobotics:block/drone_station",
+    "east": "galacticrobotics:block/drone_station",
+    "west": "galacticrobotics:block/drone_station",
+    "particle": "galacticrobotics:block/drone_station"
+  }
+}

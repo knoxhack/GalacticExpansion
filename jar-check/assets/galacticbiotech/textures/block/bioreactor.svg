@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <!-- Bioreactor Block - Enhanced Version with Futuristic Blue Theme -->
+  
+  <!-- Background Effects -->
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="0.5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    
+    <filter id="liquidGlow">
+      <feGaussianBlur stdDeviation="0.8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    
+    <linearGradient id="liquidGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4ca5ff" stop-opacity="0.3" />
+      <stop offset="50%" stop-color="#7bc5ff" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#0f4c9e" stop-opacity="0.7" />
+    </linearGradient>
+    
+    <linearGradient id="frameGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a3578" />
+      <stop offset="50%" stop-color="#0f4c9e" />
+      <stop offset="100%" stop-color="#0a3578" />
+    </linearGradient>
+    
+    <pattern id="techPattern" patternUnits="userSpaceOnUse" width="4" height="4">
+      <rect width="4" height="4" fill="#070b18"/>
+      <path d="M0,0 L4,4" stroke="#112452" stroke-width="0.2"/>
+      <path d="M4,0 L0,4" stroke="#112452" stroke-width="0.2"/>
+    </pattern>
+  </defs>
+
+  <!-- Base Block -->
+  <rect width="16" height="16" fill="#070b18" stroke="#112452" stroke-width="0.5"/>
+  
+  <!-- Main Background with Tech Pattern -->
+  <rect x="1" y="1" width="14" height="14" fill="url(#techPattern)" stroke="#1d3b7a" stroke-width="0.3"/>
+  
+  <!-- Decorative Panel Borders -->
+  <rect x="1.5" y="1.5" width="13" height="13" fill="none" stroke="#112452" stroke-width="0.2" stroke-dasharray="1,1"/>
+  
+  <!-- Central Bioreactor Frame -->
+  <rect x="3" y="2" width="10" height="12" rx="0.5" ry="0.5" fill="#0c1a3a" stroke="#1d3b7a" stroke-width="0.3"/>
+  
+  <!-- Bioreactor Glass Tank -->
+  <rect x="3.5" y="3" width="9" height="10" rx="0.3" ry="0.3" fill="#091225" stroke="#2377de" stroke-width="0.2" opacity="0.9"/>
+  
+  <!-- Liquid in the Bioreactor -->
+  <rect x="4" y="4.5" width="8" height="7.5" rx="0.2" ry="0.2" fill="url(#liquidGradient)" filter="url(#liquidGlow)" opacity="0.9">
+    <animate attributeName="opacity" values="0.7;0.9;0.7" dur="4s" repeatCount="indefinite" />
+  </rect>
+  
+  <!-- DNA Helix Pattern in Liquid - More Prominent -->
+  <path d="M5,5.5 C5.5,6 7,5 8,5.5 C9,6 10.5,5 11,5.5" 
+        stroke="#4ca5ff" stroke-width="0.4" opacity="0.8" fill="none">
+    <animate attributeName="opacity" values="0.6;0.8;0.6" dur="3s" repeatCount="indefinite" />
+  </path>
+  <path d="M5,7 C5.5,7.5 7,6.5 8,7 C9,7.5 10.5,6.5 11,7" 
+        stroke="#4ca5ff" stroke-width="0.4" opacity="0.8" fill="none">
+    <animate attributeName="opacity" values="0.7;0.9;0.7" dur="3.3s" repeatCount="indefinite" />
+  </path>
+  <path d="M5,8.5 C5.5,9 7,8 8,8.5 C9,9 10.5,8 11,8.5" 
+        stroke="#4ca5ff" stroke-width="0.4" opacity="0.8" fill="none">
+    <animate attributeName="opacity" values="0.8;0.6;0.8" dur="3.6s" repeatCount="indefinite" />
+  </path>
+  <path d="M5,10 C5.5,10.5 7,9.5 8,10 C9,10.5 10.5,9.5 11,10" 
+        stroke="#4ca5ff" stroke-width="0.4" opacity="0.8" fill="none">
+    <animate attributeName="opacity" values="0.6;0.8;0.6" dur="3.9s" repeatCount="indefinite" />
+  </path>
+  
+  <!-- Molecular Structure Nodes -->
+  <circle cx="8" cy="5.5" r="0.3" fill="#7bc5ff" opacity="0.9">
+    <animate attributeName="opacity" values="0.7;0.9;0.7" dur="2s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="8" cy="7" r="0.3" fill="#7bc5ff" opacity="0.9">
+    <animate attributeName="opacity" values="0.9;0.7;0.9" dur="2.3s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="8" cy="8.5" r="0.3" fill="#7bc5ff" opacity="0.9">
+    <animate attributeName="opacity" values="0.7;0.9;0.7" dur="2.6s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="8" cy="10" r="0.3" fill="#7bc5ff" opacity="0.9">
+    <animate attributeName="opacity" values="0.9;0.7;0.9" dur="2.9s" repeatCount="indefinite" />
+  </circle>
+  
+  <!-- Bubbles in the Liquid -->
+  <circle cx="5.5" cy="6" r="0.2" fill="#a0d0ff" opacity="0.7">
+    <animate attributeName="cy" values="9;5;9" dur="5s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="6.5" cy="8" r="0.15" fill="#a0d0ff" opacity="0.8">
+    <animate attributeName="cy" values="11;6;11" dur="6s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="9.5" cy="7" r="0.25" fill="#a0d0ff" opacity="0.7">
+    <animate attributeName="cy" values="10;5;10" dur="5.5s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="10.5" cy="9" r="0.15" fill="#a0d0ff" opacity="0.8">
+    <animate attributeName="cy" values="11;7;11" dur="6.5s" repeatCount="indefinite" />
+  </circle>
+  
+  <!-- Top Control Panel -->
+  <rect x="4" y="2" width="8" height="1" rx="0.2" ry="0.2" fill="#0f4c9e" stroke="#2377de" stroke-width="0.2"/>
+  <rect x="7" y="1.5" width="2" height="1.5" rx="0.2" ry="0.2" fill="url(#frameGradient)" stroke="#2377de" stroke-width="0.2"/>
+  <circle cx="8" cy="2.2" r="0.4" fill="#4ca5ff" filter="url(#glow)" opacity="0.8">
+    <animate attributeName="opacity" values="0.6;0.9;0.6" dur="2s" repeatCount="indefinite" />
+  </circle>
+  
+  <!-- Side Control Panels and Equipment -->
+  <!-- Left Side -->
+  <rect x="1.5" y="4" width="1.5" height="3" rx="0.2" ry="0.2" fill="#0c1a3a" stroke="#1d3b7a" stroke-width="0.2"/>
+  <circle cx="2.25" cy="5.5" r="0.4" fill="#0f4c9e" stroke="#2377de" stroke-width="0.1"/>
+  <circle cx="2.25" cy="5.5" r="0.2" fill="#4ca5ff" opacity="0.8">
+    <animate attributeName="opacity" values="0.6;0.9;0.6" dur="1.5s" repeatCount="indefinite" />
+  </circle>
+  
+  <rect x="1.5" y="9" width="1.5" height="3" rx="0.2" ry="0.2" fill="#0c1a3a" stroke="#1d3b7a" stroke-width="0.2"/>
+  <circle cx="2.25" cy="10.5" r="0.4" fill="#0f4c9e" stroke="#2377de" stroke-width="0.1"/>
+  <circle cx="2.25" cy="10.5" r="0.2" fill="#4ca5ff" opacity="0.8">
+    <animate attributeName="opacity" values="0.6;0.9;0.6" dur="1.8s" repeatCount="indefinite" />
+  </circle>
+  
+  <!-- Right Side -->
+  <rect x="13" y="4" width="1.5" height="3" rx="0.2" ry="0.2" fill="#0c1a3a" stroke="#1d3b7a" stroke-width="0.2"/>
+  <circle cx="13.75" cy="5.5" r="0.4" fill="#0f4c9e" stroke="#2377de" stroke-width="0.1"/>
+  <circle cx="13.75" cy="5.5" r="0.2" fill="#4ca5ff" opacity="0.8">
+    <animate attributeName="opacity" values="0.6;0.9;0.6" dur="1.5s" repeatCount="indefinite" />
+  </circle>
+  
+  <rect x="13" y="9" width="1.5" height="3" rx="0.2" ry="0.2" fill="#0c1a3a" stroke="#1d3b7a" stroke-width="0.2"/>
+  <circle cx="13.75" cy="10.5" r="0.4" fill="#0f4c9e" stroke="#2377de" stroke-width="0.1"/>
+  <circle cx="13.75" cy="10.5" r="0.2" fill="#4ca5ff" opacity="0.8">
+    <animate attributeName="opacity" values="0.6;0.9;0.6" dur="1.8s" repeatCount="indefinite" />
+  </circle>
+  
+  <!-- Bottom Drain System -->
+  <rect x="7" y="13" width="2" height="1.5" rx="0.2" ry="0.2" fill="#0f4c9e" stroke="#2377de" stroke-width="0.2"/>
+  <rect x="7.5" y="13.5" width="1" height="1" rx="0.2" ry="0.2" fill="#091225" stroke="#2377de" stroke-width="0.1"/>
+  
+  <!-- Small Status Indicators -->
+  <circle cx="4.5" cy="2.5" r="0.15" fill="#7bc5ff" opacity="0.9">
+    <animate attributeName="opacity" values="0.7;1;0.7" dur="1.2s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="11.5" cy="2.5" r="0.15" fill="#7bc5ff" opacity="0.9">
+    <animate attributeName="opacity" values="1;0.7;1" dur="1.2s" repeatCount="indefinite" />
+  </circle>
+  
+  <!-- Data Readout Lines -->
+  <line x1="2" y1="4.5" x2="2.5" y2="4.5" stroke="#4ca5ff" stroke-width="0.1"/>
+  <line x1="2" y1="4.8" x2="2.5" y2="4.8" stroke="#4ca5ff" stroke-width="0.1"/>
+  <line x1="2" y1="5.1" x2="2.5" y2="5.1" stroke="#4ca5ff" stroke-width="0.1"/>
+  <line x1="2" y1="5.4" x2="2.5" y2="5.4" stroke="#4ca5ff" stroke-width="0.1"/>
+  <line x1="2" y1="9.5" x2="2.5" y2="9.5" stroke="#4ca5ff" stroke-width="0.1"/>
+  <line x1="2" y1="9.8" x2="2.5" y2="9.8" stroke="#4ca5ff" stroke-width="0.1"/>
+  <line x1="2" y1="10.1" x2="2.5" y2="10.1" stroke="#4ca5ff" stroke-width="0.1"/>
+  <line x1="2" y1="10.4" x2="2.5" y2="10.4" stroke="#4ca5ff" stroke-width="0.1"/>
+  
+  <line x1="13.5" y1="4.5" x2="14" y2="4.5" stroke="#4ca5ff" stroke-width="0.1"/>
+  <line x1="13.5" y1="4.8" x2="14" y2="4.8" stroke="#4ca5ff" stroke-width="0.1"/>
+  <line x1="13.5" y1="5.1" x2="14" y2="5.1" stroke="#4ca5ff" stroke-width="0.1"/>
+  <line x1="13.5" y1="5.4" x2="14" y2="5.4" stroke="#4ca5ff" stroke-width="0.1"/>
+  <line x1="13.5" y1="9.5" x2="14" y2="9.5" stroke="#4ca5ff" stroke-width="0.1"/>
+  <line x1="13.5" y1="9.8" x2="14" y2="9.8" stroke="#4ca5ff" stroke-width="0.1"/>
+  <line x1="13.5" y1="10.1" x2="14" y2="10.1" stroke="#4ca5ff" stroke-width="0.1"/>
+  <line x1="13.5" y1="10.4" x2="14" y2="10.4" stroke="#4ca5ff" stroke-width="0.1"/>
+</svg>

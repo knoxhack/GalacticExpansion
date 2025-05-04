@@ -141,11 +141,8 @@ fi
 # Also update the mods.toml logoFile path to match where we actually created the icon
 sed -i 's|logoFile="assets/galacticexpansion/textures/galacticexpansion.png"|logoFile="assets/galacticexpansion/textures/galacticexpansion.png"|g' temp-extraction/META-INF/mods.toml
 
-# Fix any registration classes that might have fixed modIDs
-echo "Updating module registration classes to use unified modid..."
-find temp-extraction -name "*.class" -type f -exec grep -l "galactic[a-z]*" {} \; 2>/dev/null | while read class_file; do
-  echo "Potential modid reference in $class_file"
-done
+# Skip checking all class files - this can take too long
+echo "Skipping class file inspection for efficiency..."
 
 # Create special merged manifest
 echo "Creating merged manifest..."

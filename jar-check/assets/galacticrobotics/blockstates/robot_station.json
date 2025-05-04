@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "galacticrobotics:block/robot_station"
+    }
+  }
+}

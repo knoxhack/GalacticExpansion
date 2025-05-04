@@ -1,0 +1,36 @@
+{
+  "item.galactic-space.modular_rocket": "Modular Rocket",
+  "item.galactic-space.modular_rocket.tier": "Tier %d",
+  "item.galactic-space.modular_rocket.fuel": "Fuel: %d/%d",
+  "item.galactic-space.modular_rocket.components": "Components:",
+  "item.galactic-space.modular_rocket.invalid": "Invalid rocket configuration",
+  
+  "item.galactic-space.space_suit_helmet": "Space Suit Helmet",
+  "item.galactic-space.space_suit_chestplate": "Space Suit Chestplate",
+  "item.galactic-space.space_suit_leggings": "Space Suit Leggings",
+  "item.galactic-space.space_suit_boots": "Space Suit Boots",
+  "item.galactic-space.space_suit.tier": "Tier %d",
+  "item.galactic-space.space_suit.protection": "Vacuum Protection",
+  "item.galactic-space.space_suit.radiation": "Radiation Shielding",
+  "item.galactic-space.space_suit.temperature": "Temperature Regulation",
+  
+  "item.galactic-space.moon_rock": "Moon Rock",
+  "item.galactic-space.stellar_fragment": "Stellar Fragment",
+  "item.galactic-space.lunar_dust": "Lunar Dust",
+  
+  "component.galactic-space.engine": "Engine",
+  "component.galactic-space.fuel_tank": "Fuel Tank",
+  "component.galactic-space.cockpit": "Cockpit",
+  "component.galactic-space.structure": "Reinforced Structure",
+  "component.galactic-space.navigation": "Navigation System",
+  "component.galactic-space.shielding": "Thermal Shielding",
+  "component.galactic-space.life_support": "Life Support System",
+  
+  "message.galactic-space.teleported_to.space_station": "Teleported to Space Station",
+  "message.galactic-space.teleported_to.overworld": "Teleported to Earth",
+  "message.galactic-space.teleport_failed": "Teleportation failed!",
+  "message.galactic-space.rocket_launch.countdown": "Launching in %d...",
+  "message.galactic-space.rocket_launch.starting": "Launch sequence initiated!",
+  "message.galactic-space.rocket_launch.traveling": "Traveling to destination...",
+  "message.galactic-space.resource_found": "Found %dx %s!"
+}

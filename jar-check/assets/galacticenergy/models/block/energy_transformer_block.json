@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "galacticenergy:block/energy_transformer_block"
+  }
+}

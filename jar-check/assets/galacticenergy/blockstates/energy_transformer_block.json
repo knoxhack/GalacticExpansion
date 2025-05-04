@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "galacticenergy:block/energy_transformer_block" }
+  }
+}

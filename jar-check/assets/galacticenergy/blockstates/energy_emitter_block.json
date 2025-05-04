@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "galacticenergy:block/energy_emitter_block" }
+  }
+}

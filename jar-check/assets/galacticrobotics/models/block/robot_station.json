@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "galacticrobotics:block/robot_station",
+    "up": "galacticrobotics:block/robot_station",
+    "north": "galacticrobotics:block/robot_station",
+    "south": "galacticrobotics:block/robot_station",
+    "east": "galacticrobotics:block/robot_station",
+    "west": "galacticrobotics:block/robot_station",
+    "particle": "galacticrobotics:block/robot_station"
+  }
+}
