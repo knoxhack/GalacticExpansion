@@ -4,8 +4,8 @@ import com.astroframe.galactic.utilities.registry.UtilitiesBlocks;
 import com.astroframe.galactic.utilities.registry.UtilitiesItems;
 import com.mojang.logging.LogUtils;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
 /**
@@ -21,12 +21,12 @@ public class GalacticUtilities {
      * Constructor for the Galactic Utilities module.
      * Registers blocks and items.
      */
-    public GalacticUtilities() {
+    public GalacticUtilities(IEventBus modEventBus) {
         LOGGER.info("Initializing Galactic Utilities module");
         
         // Register blocks and items
-        UtilitiesBlocks.register(FMLJavaModLoadingContext.get().getModEventBus());
-        UtilitiesItems.register(FMLJavaModLoadingContext.get().getModEventBus());
+        UtilitiesBlocks.register(modEventBus);
+        UtilitiesItems.register(modEventBus);
         
         LOGGER.info("Galactic Utilities module initialized");
     }
