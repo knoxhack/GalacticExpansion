@@ -110,8 +110,9 @@ public class RocketAssemblyMenu extends AbstractContainerMenu {
             return true; // Client side is always valid
         }
         
-        // Menu is valid if the player is close to the block
-        return stillValid(access, player, SpaceBlocks.ROCKET_ASSEMBLY_TABLE.get());
+        // Since the rocket assembly table is disabled, always return true
+        // Original code: stillValid(access, player, SpaceBlocks.ROCKET_ASSEMBLY_TABLE.get())
+        return true;
     }
     
     /**
