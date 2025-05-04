@@ -4,6 +4,7 @@ import com.astroframe.galactic.machinery.GalacticMachinery;
 import com.astroframe.galactic.machinery.blocks.custom.AssemblerBlock;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -14,59 +15,91 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.function.Supplier;
+
 /**
  * Registry for all blocks in the Machinery module.
  */
 public class MachineryBlocks {
 
-    // Deferred Register for blocks
-    private static final DeferredRegister.Blocks BLOCKS = 
-        DeferredRegister.createBlocks(GalacticMachinery.MOD_ID);
+    // Deferred Register for blocks - use simple create method instead of createBlocks
+    private static final DeferredRegister<Block> BLOCKS = 
+        DeferredRegister.create(Registries.BLOCK, GalacticMachinery.MOD_ID);
 
     // Machinery Blocks with deferred holders - must match resource file names
-    public static final DeferredHolder<Block, Block> ASSEMBLER = BLOCKS.registerBlock(
-        "assembler", 
-        () -> new AssemblerBlock(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.METAL)
-            .strength(3.5f)
-            .requiresCorrectToolForDrops()
-            .sound(SoundType.METAL))
+    public static final Supplier<Block> ASSEMBLER = BLOCKS.register(
+        "assembler_block", 
+        () -> {
+            // Create a ResourceLocation with the proper ID format
+            ResourceLocation assemblerId = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "assembler_block");
+            GalacticMachinery.LOGGER.debug("Creating assembler block with ID: " + assemblerId);
+            
+            return new AssemblerBlock(BlockBehaviour.Properties.of()
+                .mapColor(MapColor.METAL)
+                .strength(3.5f)
+                .requiresCorrectToolForDrops()
+                .sound(SoundType.METAL));
+        }
     );
 
-    public static final DeferredHolder<Block, Block> CRUSHER = BLOCKS.registerBlock(
-        "crusher", 
-        () -> new Block(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.METAL)
-            .requiresCorrectToolForDrops()
-            .strength(5.0F, 6.0F)
-            .sound(SoundType.METAL))
+    public static final Supplier<Block> CRUSHER = BLOCKS.register(
+        "crusher_block", 
+        () -> {
+            // Create a ResourceLocation with the proper ID format
+            ResourceLocation crusherId = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "crusher_block");
+            GalacticMachinery.LOGGER.debug("Creating crusher block with ID: " + crusherId);
+            
+            return new Block(BlockBehaviour.Properties.of()
+                .mapColor(MapColor.METAL)
+                .requiresCorrectToolForDrops()
+                .strength(5.0F, 6.0F)
+                .sound(SoundType.METAL));
+        }
     );
 
-    public static final DeferredHolder<Block, Block> CENTRIFUGE = BLOCKS.registerBlock(
-        "centrifuge", 
-        () -> new Block(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.METAL)
-            .requiresCorrectToolForDrops()
-            .strength(5.0F, 6.0F)
-            .sound(SoundType.METAL))
+    public static final Supplier<Block> CENTRIFUGE = BLOCKS.register(
+        "centrifuge_block", 
+        () -> {
+            // Create a ResourceLocation with the proper ID format
+            ResourceLocation centrifugeId = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "centrifuge_block");
+            GalacticMachinery.LOGGER.debug("Creating centrifuge block with ID: " + centrifugeId);
+            
+            return new Block(BlockBehaviour.Properties.of()
+                .mapColor(MapColor.METAL)
+                .requiresCorrectToolForDrops()
+                .strength(5.0F, 6.0F)
+                .sound(SoundType.METAL));
+        }
     );
 
-    public static final DeferredHolder<Block, Block> SMELTER = BLOCKS.registerBlock(
-        "smelter", 
-        () -> new Block(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.METAL)
-            .requiresCorrectToolForDrops()
-            .strength(5.0F, 6.0F)
-            .sound(SoundType.METAL))
+    public static final Supplier<Block> SMELTER = BLOCKS.register(
+        "smelter_block", 
+        () -> {
+            // Create a ResourceLocation with the proper ID format
+            ResourceLocation smelterId = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "smelter_block");
+            GalacticMachinery.LOGGER.debug("Creating smelter block with ID: " + smelterId);
+            
+            return new Block(BlockBehaviour.Properties.of()
+                .mapColor(MapColor.METAL)
+                .requiresCorrectToolForDrops()
+                .strength(5.0F, 6.0F)
+                .sound(SoundType.METAL));
+        }
     );
 
-    public static final DeferredHolder<Block, Block> EXTRACTOR = BLOCKS.registerBlock(
-        "extractor", 
-        () -> new Block(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.METAL)
-            .requiresCorrectToolForDrops()
-            .strength(5.0F, 6.0F)
-            .sound(SoundType.METAL))
+    public static final Supplier<Block> EXTRACTOR = BLOCKS.register(
+        "extractor_block", 
+        () -> {
+            // Create a ResourceLocation with the proper ID format
+            ResourceLocation extractorId = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "extractor_block");
+            GalacticMachinery.LOGGER.debug("Creating extractor block with ID: " + extractorId);
+            
+            return new Block(BlockBehaviour.Properties.of()
+                .mapColor(MapColor.METAL)
+                .requiresCorrectToolForDrops()
+                .strength(5.0F, 6.0F)
+                .sound(SoundType.METAL));
+        }
     );
 
     /**
