@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <!-- Energy Emitter Block -->
+  
+  <!-- Background Glow -->
+  <filter id="glow">
+    <feGaussianBlur stdDeviation="0.5" result="blur"/>
+    <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+  </filter>
+
+  <!-- Base Block -->
+  <rect x="1" y="1" width="14" height="14" fill="#070b18" stroke="#112452" stroke-width="0.5"/>
+  
+  <!-- Main Design -->
+  <rect x="2" y="2" width="12" height="12" fill="#0c1a3a" stroke="#1d3b7a" stroke-width="0.3"/>
+  
+  <!-- Emitter Housing -->
+  <rect x="3" y="3" width="10" height="10" rx="1" fill="#0f4c9e" stroke="#2377de" stroke-width="0.3"/>
+  
+  <!-- Emitter Dish -->
+  <circle cx="8" cy="8" r="4" fill="#0c1a3a" stroke="#2377de" stroke-width="0.5"/>
+  
+  <!-- Focus Elements -->
+  <ellipse cx="8" cy="8" rx="3" ry="1.5" fill="#0f4c9e"/>
+  
+  <!-- Emitter Lens -->
+  <circle cx="8" cy="8" r="2" fill="#4ca5ff" filter="url(#glow)" opacity="0.8"/>
+  
+  <!-- Emission Rays -->
+  <path d="M8 6L9 3M8 6L7 3" stroke="#4ca5ff" stroke-width="0.3"/>
+  <path d="M8 10L9 13M8 10L7 13" stroke="#4ca5ff" stroke-width="0.3"/>
+  <path d="M6 8L3 9M6 8L3 7" stroke="#4ca5ff" stroke-width="0.3"/>
+  <path d="M10 8L13 9M10 8L13 7" stroke="#4ca5ff" stroke-width="0.3"/>
+  
+  <!-- Control Elements -->
+  <rect x="3" y="3" width="1.5" height="1.5" fill="#070b18" stroke="#2377de" stroke-width="0.2"/>
+  <rect x="11.5" y="3" width="1.5" height="1.5" fill="#070b18" stroke="#2377de" stroke-width="0.2"/>
+  <rect x="3" y="11.5" width="1.5" height="1.5" fill="#070b18" stroke="#2377de" stroke-width="0.2"/>
+  <rect x="11.5" y="11.5" width="1.5" height="1.5" fill="#070b18" stroke="#2377de" stroke-width="0.2"/>
+  
+  <!-- Small Energy Indicators -->
+  <circle cx="3.75" cy="3.75" r="0.3" fill="#7bc5ff"/>
+  <circle cx="12.25" cy="3.75" r="0.3" fill="#7bc5ff"/>
+  <circle cx="3.75" cy="12.25" r="0.3" fill="#7bc5ff"/>
+  <circle cx="12.25" cy="12.25" r="0.3" fill="#7bc5ff"/>
+</svg>
