@@ -36,7 +36,7 @@ public class MachineryItemBlocks {
             GalacticMachinery.LOGGER.debug("Registering assembler block item");
             BLOCK_ITEMS.registerItem("assembler", props -> {
                 GalacticMachinery.LOGGER.debug("Creating assembler block item");
-                return new BlockItem(MachineryBlocks.ASSEMBLER.get(), props);
+                return new BlockItem(MachineryBlocks.ASSEMBLER.get(), new Item.Properties().stacksTo(64));
             });
 
             GalacticMachinery.LOGGER.debug("Registering crusher block item");

@@ -28,11 +28,11 @@ public class MachineryBlocks {
     public static final DeferredHolder<Block, Block> ASSEMBLER = BLOCKS.register(
         "assembler", 
         () -> {
-            // Create a ResourceLocation with the proper ID format using proper NeoForge 1.21.5 syntax
-            ResourceLocation assemblerBlockId = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":assembler");
-
-            // Create properties with explicit block ID
-            GalacticMachinery.LOGGER.debug("Creating assembler block with ID: " + assemblerBlockId);
+            BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
+                .strength(3.5f)
+                .requiresCorrectToolForDrops();
+                
+            return new AssemblerBlock(properties);
 
             // Use this more verbose approach to ensure the block ID is properly set
             BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
