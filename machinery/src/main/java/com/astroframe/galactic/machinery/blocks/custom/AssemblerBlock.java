@@ -1,4 +1,3 @@
-
 package com.astroframe.galactic.machinery.blocks.custom;
 
 import net.minecraft.core.BlockPos;
@@ -27,9 +26,10 @@ public class AssemblerBlock extends Block {
      */
     public AssemblerBlock(Properties properties) {
         super(properties);
-        // Set default state for the block
-        this.registerDefaultState(this.stateDefinition.any()
-            .setValue(POWERED, Boolean.FALSE));
+        // Make sure properties are valid before using them
+        if (properties == null) {
+            throw new IllegalArgumentException("AssemblerBlock properties cannot be null");
+        }
     }
 
     @Override
