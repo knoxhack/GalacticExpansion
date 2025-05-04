@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <rect width="16" height="16" fill="none" />
+  
+  <!-- Base crystal shape -->
+  <path d="M8,2 L13,6 L13,11 L8,14 L3,11 L3,6 Z" fill="#142436" stroke="#2a3546" stroke-width="0.5" />
+  
+  <!-- Crystal facets -->
+  <path d="M8,2 L13,6 L8,8 Z" fill="#081018" stroke="#0cf" stroke-width="0.2" />
+  <path d="M8,2 L3,6 L8,8 Z" fill="#0a1828" stroke="#0cf" stroke-width="0.2" />
+  <path d="M13,6 L13,11 L8,8 Z" fill="#0a1828" stroke="#0cf" stroke-width="0.2" />
+  <path d="M3,6 L3,11 L8,8 Z" fill="#081018" stroke="#0cf" stroke-width="0.2" />
+  <path d="M13,11 L8,14 L8,8 Z" fill="#0a1828" stroke="#0cf" stroke-width="0.2" />
+  <path d="M3,11 L8,14 L8,8 Z" fill="#081018" stroke="#0cf" stroke-width="0.2" />
+  
+  <!-- Energy glow inside crystal -->
+  <circle cx="8" cy="8" r="1.5" fill="#0cf" opacity="0.5" />
+  <circle cx="8" cy="8" r="0.7" fill="#0cf" opacity="0.8" />
+  
+  <!-- Energy pulse lines -->
+  <path d="M8,3.5 L8,5.5" stroke="#0cf" stroke-width="0.3" />
+  <path d="M8,10.5 L8,12.5" stroke="#0cf" stroke-width="0.3" />
+  <path d="M5.5,8 L3.5,8" stroke="#0cf" stroke-width="0.3" />
+  <path d="M10.5,8 L12.5,8" stroke="#0cf" stroke-width="0.3" />
+  
+  <!-- Crystal highlights -->
+  <path d="M7.5,3 L8.5,3.5 L8,4" fill="#0cf" opacity="0.3" />
+  <path d="M11.5,8 L11,7 L10.5,8" fill="#0cf" opacity="0.3" />
+  <path d="M4.5,8 L5,9 L5.5,8" fill="#0cf" opacity="0.3" />
+  <path d="M8,13 L7.5,12 L8.5,12" fill="#0cf" opacity="0.3" />
+</svg>
