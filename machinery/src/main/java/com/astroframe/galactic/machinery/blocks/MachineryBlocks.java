@@ -2,15 +2,12 @@ package com.astroframe.galactic.machinery.blocks;
 
 import com.astroframe.galactic.machinery.GalacticMachinery;
 import com.astroframe.galactic.machinery.blocks.custom.AssemblerBlock;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
@@ -20,7 +17,7 @@ import java.util.function.Supplier;
  */
 public class MachineryBlocks {
 
-    // Deferred Register for blocks - use simple create method instead of createBlocks
+    // Deferred Register for blocks
     public static final DeferredRegister<Block> BLOCKS = 
         DeferredRegister.create(Registries.BLOCK, GalacticMachinery.MOD_ID);
     
@@ -36,30 +33,45 @@ public class MachineryBlocks {
             .sound(SoundType.METAL);
     }
 
-    // Create blocks using DeferredBlock pattern which ensures proper registry ID
-    public static final DeferredBlock<Block> ASSEMBLER = BLOCKS.registerBlock(
+    // Create blocks using standard Supplier pattern with proper debugging
+    public static final Supplier<Block> ASSEMBLER = BLOCKS.register(
         "assembler_block", 
-        () -> new AssemblerBlock(createStandardProperties())
+        () -> {
+            GalacticMachinery.LOGGER.debug("Creating assembler block with ID: galacticmachinery:assembler_block");
+            return new AssemblerBlock(createStandardProperties());
+        }
     );
 
-    public static final DeferredBlock<Block> CRUSHER = BLOCKS.registerBlock(
+    public static final Supplier<Block> CRUSHER = BLOCKS.register(
         "crusher_block", 
-        () -> new Block(createStandardProperties())
+        () -> {
+            GalacticMachinery.LOGGER.debug("Creating crusher block with ID: galacticmachinery:crusher_block");
+            return new Block(createStandardProperties());
+        }
     );
 
-    public static final DeferredBlock<Block> CENTRIFUGE = BLOCKS.registerBlock(
+    public static final Supplier<Block> CENTRIFUGE = BLOCKS.register(
         "centrifuge_block", 
-        () -> new Block(createStandardProperties())
+        () -> {
+            GalacticMachinery.LOGGER.debug("Creating centrifuge block with ID: galacticmachinery:centrifuge_block");
+            return new Block(createStandardProperties());
+        }
     );
 
-    public static final DeferredBlock<Block> SMELTER = BLOCKS.registerBlock(
+    public static final Supplier<Block> SMELTER = BLOCKS.register(
         "smelter_block", 
-        () -> new Block(createStandardProperties())
+        () -> {
+            GalacticMachinery.LOGGER.debug("Creating smelter block with ID: galacticmachinery:smelter_block");
+            return new Block(createStandardProperties());
+        }
     );
 
-    public static final DeferredBlock<Block> EXTRACTOR = BLOCKS.registerBlock(
+    public static final Supplier<Block> EXTRACTOR = BLOCKS.register(
         "extractor_block", 
-        () -> new Block(createStandardProperties())
+        () -> {
+            GalacticMachinery.LOGGER.debug("Creating extractor block with ID: galacticmachinery:extractor_block");
+            return new Block(createStandardProperties());
+        }
     );
 
     /**

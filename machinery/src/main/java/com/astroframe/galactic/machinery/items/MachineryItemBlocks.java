@@ -6,8 +6,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.function.Supplier;
 
 /**
  * Registry for all block items in the Machinery module.
@@ -19,30 +20,45 @@ public class MachineryItemBlocks {
     public static final DeferredRegister<Item> BLOCK_ITEMS = 
         DeferredRegister.create(Registries.ITEM, GalacticMachinery.MOD_ID);
     
-    // Use DeferredItem for safer registration and access
-    public static final DeferredItem<BlockItem> ASSEMBLER_ITEM = BLOCK_ITEMS.registerItem(
+    // Use standard supplier pattern for item registration
+    public static final Supplier<Item> ASSEMBLER_ITEM = BLOCK_ITEMS.register(
         "assembler_block",
-        () -> new BlockItem(MachineryBlocks.ASSEMBLER.get(), new Item.Properties())
+        () -> {
+            GalacticMachinery.LOGGER.debug("Creating assembler block item");
+            return new BlockItem(MachineryBlocks.ASSEMBLER.get(), new Item.Properties());
+        }
     );
 
-    public static final DeferredItem<BlockItem> CRUSHER_ITEM = BLOCK_ITEMS.registerItem(
+    public static final Supplier<Item> CRUSHER_ITEM = BLOCK_ITEMS.register(
         "crusher_block",
-        () -> new BlockItem(MachineryBlocks.CRUSHER.get(), new Item.Properties())
+        () -> {
+            GalacticMachinery.LOGGER.debug("Creating crusher block item");
+            return new BlockItem(MachineryBlocks.CRUSHER.get(), new Item.Properties());
+        }
     );
 
-    public static final DeferredItem<BlockItem> CENTRIFUGE_ITEM = BLOCK_ITEMS.registerItem(
+    public static final Supplier<Item> CENTRIFUGE_ITEM = BLOCK_ITEMS.register(
         "centrifuge_block",
-        () -> new BlockItem(MachineryBlocks.CENTRIFUGE.get(), new Item.Properties())
+        () -> {
+            GalacticMachinery.LOGGER.debug("Creating centrifuge block item");
+            return new BlockItem(MachineryBlocks.CENTRIFUGE.get(), new Item.Properties());
+        }
     );
 
-    public static final DeferredItem<BlockItem> SMELTER_ITEM = BLOCK_ITEMS.registerItem(
+    public static final Supplier<Item> SMELTER_ITEM = BLOCK_ITEMS.register(
         "smelter_block",
-        () -> new BlockItem(MachineryBlocks.SMELTER.get(), new Item.Properties())
+        () -> {
+            GalacticMachinery.LOGGER.debug("Creating smelter block item");
+            return new BlockItem(MachineryBlocks.SMELTER.get(), new Item.Properties());
+        }
     );
 
-    public static final DeferredItem<BlockItem> EXTRACTOR_ITEM = BLOCK_ITEMS.registerItem(
+    public static final Supplier<Item> EXTRACTOR_ITEM = BLOCK_ITEMS.register(
         "extractor_block",
-        () -> new BlockItem(MachineryBlocks.EXTRACTOR.get(), new Item.Properties())
+        () -> {
+            GalacticMachinery.LOGGER.debug("Creating extractor block item");
+            return new BlockItem(MachineryBlocks.EXTRACTOR.get(), new Item.Properties());
+        }
     );
 
     /**
