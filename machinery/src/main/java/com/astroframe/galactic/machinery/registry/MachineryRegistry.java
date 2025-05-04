@@ -17,6 +17,8 @@ public class MachineryRegistry {
 
     /**
      * Registers all registry objects with the given event bus.
+     * For NeoForge 1.21.5 compatibility, we have temporarily disabled custom block entities
+     * and are using basic blocks.
      *
      * @param eventBus The mod event bus to register with
      */
@@ -24,31 +26,30 @@ public class MachineryRegistry {
         GalacticMachinery.LOGGER.info("Registering Machinery module objects");
         
         try {
-            // Set deferred state for registration events
-            GalacticMachinery.LOGGER.info("Setting up registration order for machinery module");
-            
-            // Register event listeners to make sure the order is correct
+            // Register event listeners to debug registration order
             eventBus.addListener(MachineryRegistry::onRegister);
             
-            // CRITICAL: The registration order must ensure blocks are registered before items that reference them
+            // SIMPLIFIED REGISTRATION ORDER:
+            // For NeoForge 1.21.5 compatibility, we're using a simplified registration
+            // sequence with basic blocks instead of complex block entities
             
-            // 1. First register blocks
-            GalacticMachinery.LOGGER.info("Step 1: Registering machinery blocks");
+            // 1. Register blocks
+            GalacticMachinery.LOGGER.info("Step 1: Registering machinery blocks (basic versions)");
             MachineryBlocks.init(eventBus);
             
-            // 2. Register block entities that depend on blocks
-            GalacticMachinery.LOGGER.info("Step 2: Registering machinery block entities");
-            MachineryBlockEntities.init(eventBus);
-            
-            // 3. Then register regular items
-            GalacticMachinery.LOGGER.info("Step 3: Registering machinery items");
+            // 2. Register regular items
+            GalacticMachinery.LOGGER.info("Step 2: Registering machinery items");
             MachineryItems.init(eventBus);
             
-            // 4. Finally register block items (which depend on blocks being registered)
-            GalacticMachinery.LOGGER.info("Step 4: Registering machinery block items");
+            // 3. Register block items
+            GalacticMachinery.LOGGER.info("Step 3: Registering machinery block items");
             MachineryItemBlocks.init(eventBus);
             
-            GalacticMachinery.LOGGER.info("Machinery module registration complete");
+            // 4. Register block entity stubs (empty)
+            GalacticMachinery.LOGGER.info("Step 4: Registering machinery block entity stubs");
+            MachineryBlockEntities.init(eventBus);
+            
+            GalacticMachinery.LOGGER.info("Machinery module registration complete (compatibility mode)");
         } catch (Exception e) {
             GalacticMachinery.LOGGER.error("Error during machinery registration", e);
             throw e;
@@ -57,7 +58,7 @@ public class MachineryRegistry {
     
     /**
      * Event handler for registry events to ensure proper order.
-     * This helps with circular dependencies by separating the registration phases.
+     * Provides debugging information during the registration process.
      * 
      * @param event The register event
      */
@@ -68,15 +69,11 @@ public class MachineryRegistry {
         
         // When block registry is active, verify that blocks have proper IDs
         if (event.getRegistryKey().equals(Registries.BLOCK)) {
-            GalacticMachinery.LOGGER.debug("Verifying block IDs during block registration");
+            GalacticMachinery.LOGGER.debug("Verifying block registration");
         }
         // Make sure block items are registered after blocks
         else if (event.getRegistryKey().equals(Registries.ITEM)) {
-            GalacticMachinery.LOGGER.debug("Registering items during item registration phase");
-        }
-        // Make sure block entities reference blocks that are already registered
-        else if (event.getRegistryKey().equals(Registries.BLOCK_ENTITY_TYPE)) {
-            GalacticMachinery.LOGGER.debug("Verifying blocks exist before registering block entities");
+            GalacticMachinery.LOGGER.debug("Registering items");
         }
     }
 }

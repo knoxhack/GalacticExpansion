@@ -1,0 +1,343 @@
+[23:31:56] [main/INFO]: ModLauncher running: args [--username, knoxhack, --version, neoforge-21.5.62-beta, --gameDir, C:\Users\knox\curseforge\minecraft\Instances\1, --assetsDir, C:\Users\knox\curseforge\minecraft\Install\assets, --assetIndex, 24, --uuid, 4fd9157d96e54253b259ec1f6ed42de3, --accessToken, ❄❄❄❄❄❄❄❄, --clientId, YTcwNjJmNmUtZTY4Yi00YjRiLWFlMjUtZDdjYzJiNDk3YTg4, --xuid, 2533274852942985, --userType, msa, --versionType, release, --width, 1024, --height, 768, --quickPlayPath, C:\Users\knox\curseforge\minecraft\Install\quickPlay\java\1746329514471.json, --fml.neoForgeVersion, 21.5.62-beta, --fml.fmlVersion, 7.0.10, --fml.mcVersion, 1.21.5, --fml.neoFormVersion, 20250325.162830, --launchTarget, neoforgeclient]
+[23:31:56] [main/INFO]: JVM identified as Microsoft OpenJDK 64-Bit Server VM 21.0.3+9-LTS
+[23:31:56] [main/INFO]: ModLauncher 11.0.4+main.d2e20e43 starting: java version 21.0.3 by Microsoft; OS Windows 10 arch amd64 version 10.0
+[23:31:56] [main/INFO]: Loading ImmediateWindowProvider fmlearlywindow
+[23:31:57] [main/INFO]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/C:/Users/knox/curseforge/minecraft/Install/libraries/net/fabricmc/sponge-mixin/0.15.2+mixin.0.8.7/sponge-mixin-0.15.2+mixin.0.8.7.jar%23134!/ Service=ModLauncher Env=CLIENT
+[23:31:57] [pool-2-thread-1/INFO]: GL info: NVIDIA GeForce GTX 1650 SUPER/PCIe/SSE2 GL version 3.2.0 NVIDIA 560.94, NVIDIA Corporation
+[23:31:58] [main/INFO]: Found mod file "client-1.21.5-20250325.162830-srg.jar" [locator: production client provider +net.neoforged:neoforge:21.5.62-beta:client]
+[23:31:58] [main/INFO]: Found mod file "neoforge-21.5.62-beta-universal.jar" [locator: PathBasedLocator[name=neoforge, paths=[C:\Users\knox\curseforge\minecraft\Install\libraries\net\neoforged\neoforge\21.5.62-beta\neoforge-21.5.62-beta-universal.jar]], reader: mod manifest]
+[23:31:58] [main/INFO]: Found mod file "biotech_galacticbiotech-0.1.0.jar" [locator: {mods folder locator at C:\Users\knox\curseforge\minecraft\Instances\1\mods}, reader: mod manifest]
+[23:31:58] [main/INFO]: Found mod file "core_galacticcore-0.1.0.jar" [locator: {mods folder locator at C:\Users\knox\curseforge\minecraft\Instances\1\mods}, reader: mod manifest]
+[23:31:58] [main/INFO]: Found mod file "energy_galacticenergy-0.1.0.jar" [locator: {mods folder locator at C:\Users\knox\curseforge\minecraft\Instances\1\mods}, reader: mod manifest]
+[23:31:58] [main/INFO]: Found mod file "machinery_galacticmachinery-0.1.0.jar" [locator: {mods folder locator at C:\Users\knox\curseforge\minecraft\Instances\1\mods}, reader: mod manifest]
+[23:31:58] [main/INFO]: Found mod file "power_galacticpower-0.1.0.jar" [locator: {mods folder locator at C:\Users\knox\curseforge\minecraft\Instances\1\mods}, reader: mod manifest]
+[23:31:58] [main/INFO]: Found mod file "space_galacticspace-0.1.0.jar" [locator: {mods folder locator at C:\Users\knox\curseforge\minecraft\Instances\1\mods}, reader: mod manifest]
+[23:31:58] [main/INFO]: Found 2 dependencies adding them to mods collection
+[23:31:58] [main/INFO]: Found gamelibrary file "mixinextras-neoforge-0.4.1.jar" [parent: neoforge-21.5.62-beta-universal.jar, locator: jarinjar, reader: mod manifest]
+[23:31:58] [main/INFO]: Found library file "net.neoforged.neoforge-coremods-21.5.62-beta.jar" [parent: neoforge-21.5.62-beta-universal.jar, locator: jarinjar, reader: mod manifest]
+[23:31:58] [main/INFO]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		Galactic Biotech 0.1.0 (galacticbiotech)
+		Galactic Core 0.1.0 (galacticcore)
+		Galactic Energy Systems 0.1.0 (galacticenergy)
+		Galactic Machinery 0.1.0 (galacticmachinery)
+		Galactic Power 0.1.0 (galacticpower)
+		Galactic Space 0.1.0 (galacticspace)
+		Minecraft 1.21.5 (minecraft)
+		NeoForge 21.5.62-beta (neoforge)
+[23:31:59] [main/INFO]: Launching target 'neoforgeclient' with arguments [--version, neoforge-21.5.62-beta, --gameDir, C:\Users\knox\curseforge\minecraft\Instances\1, --assetsDir, C:\Users\knox\curseforge\minecraft\Install\assets, --uuid, 4fd9157d96e54253b259ec1f6ed42de3, --username, knoxhack, --assetIndex, 24, --accessToken, ❄❄❄❄❄❄❄❄, --clientId, YTcwNjJmNmUtZTY4Yi00YjRiLWFlMjUtZDdjYzJiNDk3YTg4, --xuid, 2533274852942985, --userType, msa, --versionType, release, --width, 1024, --height, 768, --quickPlayPath, C:\Users\knox\curseforge\minecraft\Install\quickPlay\java\1746329514471.json]
+[03May2025 23:32:01.078] [pool-12-thread-1/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.4.1).
+[03May2025 23:32:01.803] [Datafixer Bootstrap/INFO] [com.mojang.datafixers.DataFixerBuilder/]: 266 Datafixer optimizations took 1450 milliseconds
+[03May2025 23:32:06.120] [modloading-worker-0/INFO] [GalacticCore/]: Initializing Galactic Core API module
+[03May2025 23:32:06.125] [modloading-worker-0/INFO] [GalacticCore/]: Registering Core module objects
+[03May2025 23:32:06.133] [modloading-worker-0/INFO] [GalacticCore/]: Core module registration complete
+[03May2025 23:32:06.133] [modloading-worker-0/INFO] [net.neoforged.neoforge.common.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.5.62-beta, for MC 1.21.5
+[03May2025 23:32:06.134] [modloading-worker-0/INFO] [GalacticCore/]: Galactic Core API module initialized
+[03May2025 23:32:06.136] [modloading-worker-0/INFO] [GalacticEnergy/]: Initializing Galactic Energy module
+[03May2025 23:32:06.136] [modloading-worker-0/INFO] [galacticspace/]: Initializing Galactic Space module
+[03May2025 23:32:06.136] [modloading-worker-0/INFO] [GalacticEnergy/]: Galactic Energy module initialized
+[03May2025 23:32:06.136] [modloading-worker-0/INFO] [GalacticBiotech/]: Initializing Galactic Biotech module
+[03May2025 23:32:06.136] [modloading-worker-0/INFO] [GalacticPower/]: Initializing Galactic Power module
+[03May2025 23:32:06.137] [modloading-worker-0/INFO] [GalacticPower/]: Registering Power module objects
+[03May2025 23:32:06.137] [modloading-worker-0/INFO] [GalacticBiotech/]: Registering Biotech module objects
+[03May2025 23:32:06.138] [modloading-worker-0/INFO] [GalacticPower/]: Power module registration complete
+[03May2025 23:32:06.139] [modloading-worker-0/INFO] [GalacticPower/]: Galactic Power module initialized
+[03May2025 23:32:06.139] [modloading-worker-0/INFO] [GalacticMachinery/]: Initializing Galactic Machinery module
+[03May2025 23:32:06.140] [modloading-worker-0/INFO] [GalacticBiotech/]: Biotech module registration complete
+[03May2025 23:32:06.140] [modloading-worker-0/INFO] [GalacticBiotech/]: Galactic Biotech module initialized
+[03May2025 23:32:06.141] [modloading-worker-0/INFO] [GalacticMachinery/]: Registering Machinery module objects
+[03May2025 23:32:06.141] [modloading-worker-0/INFO] [GalacticMachinery/]: Setting up registration order for machinery module
+[03May2025 23:32:06.141] [modloading-worker-0/INFO] [GalacticMachinery/]: Step 1: Registering machinery blocks
+[03May2025 23:32:06.149] [modloading-worker-0/INFO] [galacticspace/]: Registered player space data attachment type
+[03May2025 23:32:06.151] [modloading-worker-0/INFO] [GalacticMachinery/]: Registering machinery blocks
+[03May2025 23:32:06.151] [modloading-worker-0/INFO] [GalacticMachinery/]: Step 2: Registering machinery block entities
+[03May2025 23:32:06.156] [modloading-worker-0/INFO] [GalacticMachinery/]: Registering machinery block entities
+[03May2025 23:32:06.156] [modloading-worker-0/INFO] [GalacticMachinery/]: Step 3: Registering machinery items
+[03May2025 23:32:06.173] [modloading-worker-0/INFO] [GalacticSpace/]: Galactic Space module initializing
+[03May2025 23:32:06.173] [modloading-worker-0/INFO] [GalacticSpace/]: Galactic Space module initialized
+[03May2025 23:32:06.174] [modloading-worker-0/INFO] [GalacticMachinery/]: Initializing machinery items
+[03May2025 23:32:06.174] [modloading-worker-0/INFO] [GalacticMachinery/]: Machinery items initialized
+[03May2025 23:32:06.174] [modloading-worker-0/INFO] [GalacticMachinery/]: Step 4: Registering machinery block items
+[03May2025 23:32:06.178] [modloading-worker-0/INFO] [GalacticMachinery/]: Registering machinery block items
+[03May2025 23:32:06.178] [modloading-worker-0/INFO] [GalacticMachinery/]: Machinery module registration complete
+[03May2025 23:32:06.178] [modloading-worker-0/INFO] [GalacticMachinery/]: Galactic Machinery module initialized
+[03May2025 23:32:06.446] [modloading-sync-worker/ERROR] [net.neoforged.fml.javafmlmod.FMLModContainer/]: Exception caught during firing event: Block id not set
+	Index: 1
+	Listeners:
+		0: com.astroframe.galactic.machinery.registry.MachineryRegistry$$Lambda/0x0000000800e02498@2c500db1
+		1: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x0000000800ded8a0@5e4ce337
+		2: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x0000000800ded8a0@5d263362
+		3: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x0000000800ded8a0@3cc930fa
+		4: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x0000000800ded8a0@51c7569c
+java.lang.NullPointerException: Block id not set
+	at java.base/java.util.Objects.requireNonNull(Objects.java:259)
+	at TRANSFORMER/minecraft@1.21.5/net.minecraft.world.level.block.state.BlockBehaviour$Properties.effectiveDrops(BlockBehaviour.java:1170)
+	at TRANSFORMER/minecraft@1.21.5/net.minecraft.world.level.block.state.BlockBehaviour.<init>(BlockBehaviour.java:108)
+	at TRANSFORMER/minecraft@1.21.5/net.minecraft.world.level.block.Block.<init>(Block.java:226)
+	at TRANSFORMER/galacticmachinery@0.1.0/com.astroframe.galactic.machinery.blocks.custom.AssemblerBlock.<init>(AssemblerBlock.java:36)
+	at TRANSFORMER/galacticmachinery@0.1.0/com.astroframe.galactic.machinery.blocks.MachineryBlocks.lambda$static$0(MachineryBlocks.java:41)
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$register$0(DeferredRegister.java:215)
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$register$1(DeferredRegister.java:234)
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$addEntries$2(DeferredRegister.java:375)
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.RegisterEvent.register(RegisterEvent.java:48)
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.addEntries(DeferredRegister.java:375)
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.ConsumerEventHandler.invoke(ConsumerEventHandler.java:26)
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:350)
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:329)
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModContainer.acceptEvent(ModContainer.java:177)
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.lambda$postEventWithWrapInModOrder$16(ModLoader.java:377)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModList.forEachModInOrder(ModList.java:174)
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWithWrapInModOrder(ModLoader.java:375)
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWrapContainerInModOrder(ModLoader.java:366)
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.GameData.postRegisterEvents(GameData.java:89)
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.internal.CommonModLoader.lambda$begin$0(CommonModLoader.java:54)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+[03May2025 23:32:06.447] [modloading-sync-worker/ERROR] [net.neoforged.fml.ModContainer/LOADING]: Caught exception during event net.neoforged.neoforge.registries.RegisterEvent@1397241 dispatch for modid galacticmachinery
+java.lang.NullPointerException: Block id not set
+	at java.base/java.util.Objects.requireNonNull(Objects.java:259) ~[?:?]
+	at TRANSFORMER/minecraft@1.21.5/net.minecraft.world.level.block.state.BlockBehaviour$Properties.effectiveDrops(BlockBehaviour.java:1170) ~[client-1.21.5-20250325.162830-srg.jar%23219!/:?]
+	at TRANSFORMER/minecraft@1.21.5/net.minecraft.world.level.block.state.BlockBehaviour.<init>(BlockBehaviour.java:108) ~[client-1.21.5-20250325.162830-srg.jar%23219!/:?]
+	at TRANSFORMER/minecraft@1.21.5/net.minecraft.world.level.block.Block.<init>(Block.java:226) ~[client-1.21.5-20250325.162830-srg.jar%23219!/:?]
+	at TRANSFORMER/galacticmachinery@0.1.0/com.astroframe.galactic.machinery.blocks.custom.AssemblerBlock.<init>(AssemblerBlock.java:36) ~[machinery_galacticmachinery-0.1.0.jar%23224!/:0.1.0]
+	at TRANSFORMER/galacticmachinery@0.1.0/com.astroframe.galactic.machinery.blocks.MachineryBlocks.lambda$static$0(MachineryBlocks.java:41) ~[machinery_galacticmachinery-0.1.0.jar%23224!/:0.1.0]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$register$0(DeferredRegister.java:215) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$register$1(DeferredRegister.java:234) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$addEntries$2(DeferredRegister.java:375) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.RegisterEvent.register(RegisterEvent.java:48) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.addEntries(DeferredRegister.java:375) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.ConsumerEventHandler.invoke(ConsumerEventHandler.java:26) ~[bus-8.0.2.jar%23123!/:?]
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:350) ~[bus-8.0.2.jar%23123!/:?]
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:329) ~[bus-8.0.2.jar%23123!/:?]
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModContainer.acceptEvent(ModContainer.java:177) ~[loader-7.0.10.jar%23120!/:7.0]
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.lambda$postEventWithWrapInModOrder$16(ModLoader.java:377) ~[loader-7.0.10.jar%23120!/:7.0]
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75) ~[?:?]
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModList.forEachModInOrder(ModList.java:174) ~[loader-7.0.10.jar%23120!/:7.0]
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWithWrapInModOrder(ModLoader.java:375) ~[loader-7.0.10.jar%23120!/:7.0]
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWrapContainerInModOrder(ModLoader.java:366) ~[loader-7.0.10.jar%23120!/:7.0]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.GameData.postRegisterEvents(GameData.java:89) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.internal.CommonModLoader.lambda$begin$0(CommonModLoader.java:54) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+[03May2025 23:32:06.451] [modloading-sync-worker/ERROR] [net.neoforged.fml.javafmlmod.FMLModContainer/]: Exception caught during firing event: Trying to access unbound value: ResourceKey[minecraft:block / galacticmachinery:assembler_block]
+	Index: 4
+	Listeners:
+		0: com.astroframe.galactic.machinery.registry.MachineryRegistry$$Lambda/0x0000000800e02498@2c500db1
+		1: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x0000000800ded8a0@5e4ce337
+		2: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x0000000800ded8a0@5d263362
+		3: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x0000000800ded8a0@3cc930fa
+		4: net.neoforged.neoforge.registries.DeferredRegister$$Lambda/0x0000000800ded8a0@51c7569c
+java.lang.NullPointerException: Trying to access unbound value: ResourceKey[minecraft:block / galacticmachinery:assembler_block]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredHolder.value(DeferredHolder.java:103)
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredHolder.get(DeferredHolder.java:117)
+	at TRANSFORMER/galacticmachinery@0.1.0/com.astroframe.galactic.machinery.items.MachineryItemBlocks.lambda$static$0(MachineryItemBlocks.java:28)
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$register$0(DeferredRegister.java:215)
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$register$1(DeferredRegister.java:234)
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$addEntries$2(DeferredRegister.java:375)
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.RegisterEvent.register(RegisterEvent.java:48)
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.addEntries(DeferredRegister.java:375)
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.ConsumerEventHandler.invoke(ConsumerEventHandler.java:26)
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:350)
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:329)
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModContainer.acceptEvent(ModContainer.java:177)
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.lambda$postEventWithWrapInModOrder$16(ModLoader.java:377)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModList.forEachModInOrder(ModList.java:174)
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWithWrapInModOrder(ModLoader.java:375)
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWrapContainerInModOrder(ModLoader.java:366)
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.GameData.postRegisterEvents(GameData.java:89)
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.internal.CommonModLoader.lambda$begin$0(CommonModLoader.java:54)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+[03May2025 23:32:06.452] [modloading-sync-worker/ERROR] [net.neoforged.fml.ModContainer/LOADING]: Caught exception during event net.neoforged.neoforge.registries.RegisterEvent@46494277 dispatch for modid galacticmachinery
+java.lang.NullPointerException: Trying to access unbound value: ResourceKey[minecraft:block / galacticmachinery:assembler_block]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredHolder.value(DeferredHolder.java:103) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredHolder.get(DeferredHolder.java:117) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/galacticmachinery@0.1.0/com.astroframe.galactic.machinery.items.MachineryItemBlocks.lambda$static$0(MachineryItemBlocks.java:28) ~[machinery_galacticmachinery-0.1.0.jar%23224!/:0.1.0]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$register$0(DeferredRegister.java:215) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$register$1(DeferredRegister.java:234) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$addEntries$2(DeferredRegister.java:375) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.RegisterEvent.register(RegisterEvent.java:48) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.addEntries(DeferredRegister.java:375) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.ConsumerEventHandler.invoke(ConsumerEventHandler.java:26) ~[bus-8.0.2.jar%23123!/:?]
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:350) ~[bus-8.0.2.jar%23123!/:?]
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:329) ~[bus-8.0.2.jar%23123!/:?]
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModContainer.acceptEvent(ModContainer.java:177) ~[loader-7.0.10.jar%23120!/:7.0]
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.lambda$postEventWithWrapInModOrder$16(ModLoader.java:377) ~[loader-7.0.10.jar%23120!/:7.0]
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75) ~[?:?]
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModList.forEachModInOrder(ModList.java:174) ~[loader-7.0.10.jar%23120!/:7.0]
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWithWrapInModOrder(ModLoader.java:375) ~[loader-7.0.10.jar%23120!/:7.0]
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWrapContainerInModOrder(ModLoader.java:366) ~[loader-7.0.10.jar%23120!/:7.0]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.GameData.postRegisterEvents(GameData.java:89) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.internal.CommonModLoader.lambda$begin$0(CommonModLoader.java:54) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+[03May2025 23:32:06.455] [modloading-sync-worker/ERROR] [GalacticMachinery/]: Error creating assembler block entity
+java.lang.NullPointerException: Trying to access unbound value: ResourceKey[minecraft:block / galacticmachinery:assembler_block]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredHolder.value(DeferredHolder.java:103) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredHolder.get(DeferredHolder.java:117) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/galacticmachinery@0.1.0/com.astroframe.galactic.machinery.blockentity.MachineryBlockEntities.lambda$static$1(MachineryBlockEntities.java:46) ~[machinery_galacticmachinery-0.1.0.jar%23224!/:0.1.0]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$register$0(DeferredRegister.java:215) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$register$1(DeferredRegister.java:234) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$addEntries$2(DeferredRegister.java:375) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.RegisterEvent.register(RegisterEvent.java:48) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.addEntries(DeferredRegister.java:375) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.ConsumerEventHandler.invoke(ConsumerEventHandler.java:26) ~[bus-8.0.2.jar%23123!/:?]
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:350) ~[bus-8.0.2.jar%23123!/:?]
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:329) ~[bus-8.0.2.jar%23123!/:?]
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModContainer.acceptEvent(ModContainer.java:177) ~[loader-7.0.10.jar%23120!/:7.0]
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.lambda$postEventWithWrapInModOrder$16(ModLoader.java:377) ~[loader-7.0.10.jar%23120!/:7.0]
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75) ~[?:?]
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModList.forEachModInOrder(ModList.java:174) ~[loader-7.0.10.jar%23120!/:7.0]
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWithWrapInModOrder(ModLoader.java:375) ~[loader-7.0.10.jar%23120!/:7.0]
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWrapContainerInModOrder(ModLoader.java:366) ~[loader-7.0.10.jar%23120!/:7.0]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.GameData.postRegisterEvents(GameData.java:89) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.internal.CommonModLoader.lambda$begin$0(CommonModLoader.java:54) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+[03May2025 23:32:06.552] [modloading-sync-worker/ERROR] [net.neoforged.neoforge.registries.GameData/]: Failed to register some entries, see suppressed exceptions for details
+java.lang.RuntimeException: null
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.GameData.postRegisterEvents(GameData.java:80) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.internal.CommonModLoader.lambda$begin$0(CommonModLoader.java:54) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+	Suppressed: net.neoforged.fml.ModLoadingException: Loading errors encountered:
+	- Galactic Machinery (galacticmachinery) encountered an error while dispatching the net.neoforged.neoforge.registries.RegisterEvent event
+	  java.lang.NullPointerException: Block id not set
+
+		at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModContainer.acceptEvent(ModContainer.java:181) ~[loader-7.0.10.jar%23120!/:7.0]
+		at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.lambda$postEventWithWrapInModOrder$16(ModLoader.java:377) ~[loader-7.0.10.jar%23120!/:7.0]
+		at java.base/java.lang.Iterable.forEach(Iterable.java:75) ~[?:?]
+		at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModList.forEachModInOrder(ModList.java:174) ~[loader-7.0.10.jar%23120!/:7.0]
+		at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWithWrapInModOrder(ModLoader.java:375) ~[loader-7.0.10.jar%23120!/:7.0]
+		at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWrapContainerInModOrder(ModLoader.java:366) ~[loader-7.0.10.jar%23120!/:7.0]
+		at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.GameData.postRegisterEvents(GameData.java:89) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+		at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.internal.CommonModLoader.lambda$begin$0(CommonModLoader.java:54) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+		at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804) ~[?:?]
+		at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+		at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+		at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+	Suppressed: net.neoforged.fml.ModLoadingException: Loading errors encountered:
+	- Galactic Machinery (galacticmachinery) encountered an error while dispatching the net.neoforged.neoforge.registries.RegisterEvent event
+	  java.lang.NullPointerException: Trying to access unbound value: ResourceKey[minecraft:block / galacticmachinery:assembler_block]
+
+		at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModContainer.acceptEvent(ModContainer.java:181) ~[loader-7.0.10.jar%23120!/:7.0]
+		at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.lambda$postEventWithWrapInModOrder$16(ModLoader.java:377) ~[loader-7.0.10.jar%23120!/:7.0]
+		at java.base/java.lang.Iterable.forEach(Iterable.java:75) ~[?:?]
+		at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModList.forEachModInOrder(ModList.java:174) ~[loader-7.0.10.jar%23120!/:7.0]
+		at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWithWrapInModOrder(ModLoader.java:375) ~[loader-7.0.10.jar%23120!/:7.0]
+		at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWrapContainerInModOrder(ModLoader.java:366) ~[loader-7.0.10.jar%23120!/:7.0]
+		at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.GameData.postRegisterEvents(GameData.java:89) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+		at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.internal.CommonModLoader.lambda$begin$0(CommonModLoader.java:54) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?]
+		at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804) ~[?:?]
+		at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+		at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+		at java.base/java.lang.Thread.run(Thread.java:1583) [?:?]
+[03May2025 23:32:06.561] [modloading-sync-worker/ERROR] [net.neoforged.neoforge.registries.GameData/]: Rolling back to VANILLA state
+[03May2025 23:32:07.006] [main/FATAL] [net.neoforged.fml.ModLoader/LOADING]: Failed to wait for future Registry initialization, 2 errors found
+[03May2025 23:32:07.114] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/knox/curseforge/minecraft/Install/libraries/net/minecraft/client/1.21.5-20250325.162830/client-1.21.5-20250325.162830-srg.jar%23219!/assets/.mcassetsroot' uses unexpected schema
+[03May2025 23:32:07.116] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/knox/curseforge/minecraft/Install/libraries/net/minecraft/client/1.21.5-20250325.162830/client-1.21.5-20250325.162830-srg.jar%23219!/data/.mcassetsroot' uses unexpected schema
+[03May2025 23:32:07.144] [Render thread/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[03May2025 23:32:07.153] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Setting user: knoxhack
+[03May2025 23:32:07.235] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent to a broken mod state
+[03May2025 23:32:07.266] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Backend library: LWJGL version 3.3.3+5
+[03May2025 23:32:07.387] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Using optional rendering extensions: GL_KHR_debug, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access
+[03May2025 23:32:07.387] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.ConfigureMainRenderTargetEvent to a broken mod state
+[03May2025 23:32:07.478] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterItemModelsEvent to a broken mod state
+[03May2025 23:32:07.479] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent to a broken mod state
+[03May2025 23:32:07.487] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterColorHandlersEvent$ItemTintSources to a broken mod state
+[03May2025 23:32:07.510] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterSelectItemModelPropertyEvent to a broken mod state
+[03May2025 23:32:07.520] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterConditionalItemModelPropertyEvent to a broken mod state
+[03May2025 23:32:07.533] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterRangeSelectItemModelPropertyEvent to a broken mod state
+[03May2025 23:32:07.546] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterSpriteSourcesEvent to a broken mod state
+[03May2025 23:32:07.628] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.sound.SoundEngineLoadEvent to a broken mod state
+[03May2025 23:32:07.651] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterColorHandlersEvent$Block to a broken mod state
+[03May2025 23:32:07.652] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.ModelEvent$RegisterLoaders to a broken mod state
+[03May2025 23:32:07.657] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterMaterialAtlasesEvent to a broken mod state
+[03May2025 23:32:07.675] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterRenderBuffersEvent to a broken mod state
+[03May2025 23:32:07.752] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent to a broken mod state
+[03May2025 23:32:07.789] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RenderLevelStageEvent$RegisterStageEvent to a broken mod state
+[03May2025 23:32:07.842] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent to a broken mod state
+[03May2025 23:32:07.865] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterMenuScreensEvent to a broken mod state
+[03May2025 23:32:07.875] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterJsonAnimationTypesEvent to a broken mod state
+[03May2025 23:32:07.877] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterBlockStateModels to a broken mod state
+[03May2025 23:32:07.877] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.InitializeClientRegistriesEvent to a broken mod state
+[03May2025 23:32:07.881] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.AddClientReloadListenersEvent to a broken mod state
+[03May2025 23:32:07.883] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.EntityRenderersEvent$RegisterLayerDefinitions to a broken mod state
+[03May2025 23:32:07.883] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.EntityRenderersEvent$CreateSkullModels to a broken mod state
+[03May2025 23:32:07.883] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.EntityRenderersEvent$RegisterRenderers to a broken mod state
+[03May2025 23:32:07.884] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent to a broken mod state
+[03May2025 23:32:07.884] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent to a broken mod state
+[03May2025 23:32:07.885] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterEntitySpectatorShadersEvent to a broken mod state
+[03May2025 23:32:07.885] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterRecipeBookSearchCategoriesEvent to a broken mod state
+[03May2025 23:32:07.885] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterGuiLayersEvent to a broken mod state
+[03May2025 23:32:07.887] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent to a broken mod state
+[03May2025 23:32:07.888] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterNamedRenderTypesEvent to a broken mod state
+[03May2025 23:32:07.889] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterColorHandlersEvent$ColorResolvers to a broken mod state
+[03May2025 23:32:07.890] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterItemDecorationsEvent to a broken mod state
+[03May2025 23:32:07.898] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterPresetEditorsEvent to a broken mod state
+[03May2025 23:32:07.899] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.gui.map.RegisterMapDecorationRenderersEvent to a broken mod state
+[03May2025 23:32:07.899] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterDimensionTransitionScreenEvent to a broken mod state
+[03May2025 23:32:07.899] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent to a broken mod state
+[03May2025 23:32:07.900] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.pipeline.RegisterPipelineModifiersEvent to a broken mod state
+[03May2025 23:32:07.954] [Render thread/INFO] [net.minecraft.server.packs.resources.ReloadableResourceManager/]: Reloading ResourceManager: vanilla
+[03May2025 23:32:08.044] [Worker-Main-9/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.ModelEvent$RegisterStandalone to a broken mod state
+[03May2025 23:32:08.046] [Worker-Main-10/INFO] [net.minecraft.client.gui.font.providers.UnihexProvider/]: Found unifont_all_no_pua-16.0.01.hex, loading
+[03May2025 23:32:08.325] [Worker-Main-2/INFO] [net.minecraft.client.gui.font.providers.UnihexProvider/]: Found unifont_jp_patch-16.0.01.hex, loading
+[03May2025 23:32:08.331] [Worker-Main-4/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.RegisterSpecialBlockModelRendererEvent to a broken mod state
+[03May2025 23:32:09.112] [Worker-Main-9/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.ModelEvent$ModifyBakingResult to a broken mod state
+[03May2025 23:32:09.179] [Render thread/WARN] [com.mojang.blaze3d.opengl.GlProgram/]: minecraft:pipeline/entity_translucent_emissive shader program does not use sampler Sampler2 defined in the pipeline. This might be a bug.
+[03May2025 23:32:09.237] [Render thread/INFO] [com.mojang.blaze3d.audio.Library/]: OpenAL initialized on device OpenAL Soft on Speakers (Realtek(R) Audio)
+[03May2025 23:32:09.238] [Render thread/INFO] [net.minecraft.client.sounds.SoundEngine/SOUNDS]: Sound engine started
+[03May2025 23:32:09.238] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.sound.SoundEngineLoadEvent to a broken mod state
+[03May2025 23:32:09.430] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x512x4 minecraft:textures/atlas/blocks.png-atlas
+[03May2025 23:32:09.442] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent to a broken mod state
+[03May2025 23:32:09.443] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/signs.png-atlas
+[03May2025 23:32:09.446] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent to a broken mod state
+[03May2025 23:32:09.446] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
+[03May2025 23:32:09.447] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent to a broken mod state
+[03May2025 23:32:09.447] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
+[03May2025 23:32:09.448] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent to a broken mod state
+[03May2025 23:32:09.448] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 2048x1024x4 minecraft:textures/atlas/armor_trims.png-atlas
+[03May2025 23:32:09.451] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent to a broken mod state
+[03May2025 23:32:09.452] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 128x64x4 minecraft:textures/atlas/decorated_pot.png-atlas
+[03May2025 23:32:09.457] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent to a broken mod state
+[03May2025 23:32:09.458] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/chest.png-atlas
+[03May2025 23:32:09.458] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent to a broken mod state
+[03May2025 23:32:09.458] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
+[03May2025 23:32:09.459] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent to a broken mod state
+[03May2025 23:32:09.459] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
+[03May2025 23:32:09.459] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent to a broken mod state
+[03May2025 23:32:09.459] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.ModelEvent$BakingCompleted to a broken mod state
+[03May2025 23:32:09.462] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 64x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[03May2025 23:32:09.463] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent to a broken mod state
+[03May2025 23:32:09.625] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.EntityRenderersEvent$AddLayers to a broken mod state
+[03May2025 23:32:09.643] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[03May2025 23:32:09.644] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent to a broken mod state
+[03May2025 23:32:09.645] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[03May2025 23:32:09.645] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent to a broken mod state
+[03May2025 23:32:09.645] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x128x0 minecraft:textures/atlas/mob_effects.png-atlas
+[03May2025 23:32:09.645] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent to a broken mod state
+[03May2025 23:32:09.645] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x512x0 minecraft:textures/atlas/gui.png-atlas
+[03May2025 23:32:09.646] [Render thread/ERROR] [net.neoforged.fml.ModLoader/]: Cowardly refusing to send event net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent to a broken mod state
+[03May2025 23:32:09.754] [Render thread/ERROR] [net.minecraft.CrashReport/]: Negative index in crash report handler (0/28)
+[03May2025 23:32:09.764] [Render thread/FATAL] [net.neoforged.neoforge.common.NeoForgeMod/]: Preparing crash report with UUID 61e4449f-def1-45f9-ada7-21f5bebb5d32
+[03May2025 23:32:09.765] [Render thread/FATAL] [net.neoforged.neoforge.client.loading.ClientModLoader/]: Crash report saved to C:\Users\knox\curseforge\minecraft\Instances\1\crash-reports\crash-2025-05-03_23.32.09-fml.txt
+[03May2025 23:32:09.767] [Render thread/FATAL] [net.neoforged.neoforge.common.NeoForgeMod/]: Preparing crash report with UUID 861986bf-1893-46be-bba0-985fe25bfa58

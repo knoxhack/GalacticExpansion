@@ -1,7 +1,6 @@
 package com.astroframe.galactic.machinery.blocks;
 
 import com.astroframe.galactic.machinery.GalacticMachinery;
-import com.astroframe.galactic.machinery.blocks.custom.AssemblerBlock;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -14,6 +13,8 @@ import java.util.function.Supplier;
 
 /**
  * Registry for all blocks in the Machinery module.
+ * For compatibility with NeoForge 1.21.5, we're using basic Block implementations until
+ * the custom implementations are fixed.
  */
 public class MachineryBlocks {
 
@@ -33,12 +34,13 @@ public class MachineryBlocks {
             .sound(SoundType.METAL);
     }
 
-    // Create blocks using standard Supplier pattern with proper debugging
+    // TEMPORARY: Using basic blocks instead of custom implementations for NeoForge 1.21.5 compatibility
+    
     public static final Supplier<Block> ASSEMBLER = BLOCKS.register(
         "assembler_block", 
         () -> {
-            GalacticMachinery.LOGGER.debug("Creating assembler block with ID: galacticmachinery:assembler_block");
-            return new AssemblerBlock(createStandardProperties());
+            GalacticMachinery.LOGGER.debug("Creating basic assembler block with ID: galacticmachinery:assembler_block");
+            return new Block(createStandardProperties());
         }
     );
 
@@ -88,7 +90,7 @@ public class MachineryBlocks {
      * Called during the module's registry phase.
      */
     public static void init(IEventBus eventBus) {
-        GalacticMachinery.LOGGER.info("Registering machinery blocks");
+        GalacticMachinery.LOGGER.info("Registering machinery blocks (basic placeholders only)");
         BLOCKS.register(eventBus);
     }
 }
