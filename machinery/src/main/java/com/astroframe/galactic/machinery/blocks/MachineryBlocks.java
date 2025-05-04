@@ -1,9 +1,7 @@
 package com.astroframe.galactic.machinery.blocks;
 
 import com.astroframe.galactic.machinery.GalacticMachinery;
-import com.astroframe.galactic.machinery.blocks.DisabledMachineBlock;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -36,52 +34,47 @@ public class MachineryBlocks {
             .sound(SoundType.METAL);
     }
 
-    // TEMPORARY: Using basic blocks for NeoForge 1.21.5 compatibility
-    // Custom implementations have been moved to the .disabled directories and will be
+    // TEMPORARY: Using simple blocks for NeoForge 1.21.5 compatibility
+    // More complex custom implementations have been moved to the .disabled directories and will be
     // reimplemented later when the compatibility issues are resolved.
     
     public static final Supplier<Block> ASSEMBLER = BLOCKS.register(
         "assembler_block", 
         () -> {
-            GalacticMachinery.LOGGER.debug("Creating disabled assembler block with ID: galacticmachinery:assembler_block");
-            ResourceLocation id = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "assembler_block");
-            return new DisabledMachineBlock(createStandardProperties(), "assembler", id);
+            GalacticMachinery.LOGGER.debug("Creating simple assembler block for galacticmachinery:assembler_block");
+            return new SimpleMachineBlock(createStandardProperties(), "assembler");
         }
     );
 
     public static final Supplier<Block> CRUSHER = BLOCKS.register(
         "crusher_block", 
         () -> {
-            GalacticMachinery.LOGGER.debug("Creating disabled crusher block with ID: galacticmachinery:crusher_block");
-            ResourceLocation id = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "crusher_block");
-            return new DisabledMachineBlock(createStandardProperties(), "crusher", id);
+            GalacticMachinery.LOGGER.debug("Creating simple crusher block for galacticmachinery:crusher_block");
+            return new SimpleMachineBlock(createStandardProperties(), "crusher");
         }
     );
 
     public static final Supplier<Block> CENTRIFUGE = BLOCKS.register(
         "centrifuge_block", 
         () -> {
-            GalacticMachinery.LOGGER.debug("Creating disabled centrifuge block with ID: galacticmachinery:centrifuge_block");
-            ResourceLocation id = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "centrifuge_block");
-            return new DisabledMachineBlock(createStandardProperties(), "centrifuge", id);
+            GalacticMachinery.LOGGER.debug("Creating simple centrifuge block for galacticmachinery:centrifuge_block");
+            return new SimpleMachineBlock(createStandardProperties(), "centrifuge");
         }
     );
 
     public static final Supplier<Block> SMELTER = BLOCKS.register(
         "smelter_block", 
         () -> {
-            GalacticMachinery.LOGGER.debug("Creating disabled smelter block with ID: galacticmachinery:smelter_block");
-            ResourceLocation id = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "smelter_block");
-            return new DisabledMachineBlock(createStandardProperties(), "smelter", id);
+            GalacticMachinery.LOGGER.debug("Creating simple smelter block for galacticmachinery:smelter_block");
+            return new SimpleMachineBlock(createStandardProperties(), "smelter");
         }
     );
 
     public static final Supplier<Block> EXTRACTOR = BLOCKS.register(
         "extractor_block", 
         () -> {
-            GalacticMachinery.LOGGER.debug("Creating disabled extractor block with ID: galacticmachinery:extractor_block");
-            ResourceLocation id = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "extractor_block");
-            return new DisabledMachineBlock(createStandardProperties(), "extractor", id);
+            GalacticMachinery.LOGGER.debug("Creating simple extractor block for galacticmachinery:extractor_block");
+            return new SimpleMachineBlock(createStandardProperties(), "extractor");
         }
     );
 
