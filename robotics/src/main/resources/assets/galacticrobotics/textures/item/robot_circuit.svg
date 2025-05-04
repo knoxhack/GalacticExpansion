@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <!-- Transparent background -->
+  <rect width="16" height="16" fill="#0A192F" fill-opacity="0" />
+  
+  <!-- Circuit board base -->
+  <rect x="2" y="3" width="12" height="10" rx="0.5" ry="0.5" fill="#0B2B5B" stroke="#4299E1" stroke-width="0.3" />
+  
+  <!-- Circuit traces -->
+  <path d="M4,5 L6,5 L6,7 L8,7 L8,9 L12,9 M4,11 L8,11 L8,9 M10,5 L12,5 L12,7 L10,7 L10,5" 
+        fill="none" stroke="#0BC5EA" stroke-width="0.5" />
+  
+  <!-- CPU/processor center -->
+  <rect x="6" y="7" width="4" height="2" rx="0.2" ry="0.2" fill="#1A365D" stroke="#4299E1" stroke-width="0.2" />
+  
+  <!-- Component nodes -->
+  <circle cx="4" cy="5" r="0.7" fill="#1A365D" stroke="#4299E1" stroke-width="0.2" />
+  <circle cx="12" cy="9" r="0.7" fill="#1A365D" stroke="#4299E1" stroke-width="0.2" />
+  <circle cx="4" cy="11" r="0.7" fill="#1A365D" stroke="#4299E1" stroke-width="0.2" />
+  <circle cx="10" cy="5" r="0.7" fill="#1A365D" stroke="#4299E1" stroke-width="0.2" />
+  
+  <!-- LED indicators -->
+  <circle cx="4" cy="5" r="0.3" fill="#0BC5EA" opacity="0.9" />
+  <circle cx="12" cy="9" r="0.3" fill="#0BC5EA" opacity="0.9" />
+  <circle cx="4" cy="11" r="0.3" fill="#0BC5EA" opacity="0.9" />
+  <circle cx="10" cy="5" r="0.3" fill="#0BC5EA" opacity="0.9" />
+  
+  <!-- CPU detail -->
+  <path d="M7,7.5 L9,7.5 M7,8 L9,8 M7,8.5 L9,8.5" 
+        stroke="#0BC5EA" stroke-width="0.2" />
+  
+  <!-- Corner connection points -->
+  <rect x="2.5" y="3.5" width="1" height="1" rx="0.2" ry="0.2" fill="#1A365D" stroke="#4299E1" stroke-width="0.1" />
+  <rect x="12.5" y="3.5" width="1" height="1" rx="0.2" ry="0.2" fill="#1A365D" stroke="#4299E1" stroke-width="0.1" />
+  <rect x="2.5" y="11.5" width="1" height="1" rx="0.2" ry="0.2" fill="#1A365D" stroke="#4299E1" stroke-width="0.1" />
+  <rect x="12.5" y="11.5" width="1" height="1" rx="0.2" ry="0.2" fill="#1A365D" stroke="#4299E1" stroke-width="0.1" />
+</svg>
