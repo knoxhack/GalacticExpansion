@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -23,7 +22,6 @@ public class AssemblerBlock extends Block {
 
     // State properties
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     /**
      * Creates a new AssemblerBlock with the given properties.
@@ -34,10 +32,9 @@ public class AssemblerBlock extends Block {
         // In NeoForge 1.21.5, we need to make sure the properties are fully initialized before passing to super
         super(properties);
         
-        // Register default state for powered and facing properties
+        // Register default state for powered property
         this.registerDefaultState(this.stateDefinition.any()
-            .setValue(POWERED, Boolean.FALSE)
-            .setValue(FACING, Direction.NORTH));
+            .setValue(POWERED, Boolean.FALSE));
     }
 
     /**
@@ -45,7 +42,7 @@ public class AssemblerBlock extends Block {
      */
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(POWERED, FACING);
+        builder.add(POWERED);
     }
     
     /**
@@ -55,7 +52,6 @@ public class AssemblerBlock extends Block {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return this.defaultBlockState()
-            .setValue(FACING, context.getHorizontalDirection().getOpposite())
             .setValue(POWERED, false);
     }
 }

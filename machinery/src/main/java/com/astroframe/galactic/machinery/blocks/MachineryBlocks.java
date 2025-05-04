@@ -42,7 +42,7 @@ public class MachineryBlocks {
     public static final Supplier<Block> ASSEMBLER = BLOCKS.register(
         "assembler_block", 
         () -> {
-            ResourceLocation blockId = new ResourceLocation(GalacticMachinery.MOD_ID, "assembler_block");
+            String blockId = GalacticMachinery.MOD_ID + ":assembler_block";
             GalacticMachinery.LOGGER.debug("Creating assembler block with ID: " + blockId);
             
             return new AssemblerBlock(createStandardProperties());
@@ -52,7 +52,7 @@ public class MachineryBlocks {
     public static final Supplier<Block> CRUSHER = BLOCKS.register(
         "crusher_block", 
         () -> {
-            ResourceLocation blockId = new ResourceLocation(GalacticMachinery.MOD_ID, "crusher_block");
+            String blockId = GalacticMachinery.MOD_ID + ":crusher_block";
             GalacticMachinery.LOGGER.debug("Creating crusher block with ID: " + blockId);
             
             return new Block(createStandardProperties());
@@ -62,7 +62,7 @@ public class MachineryBlocks {
     public static final Supplier<Block> CENTRIFUGE = BLOCKS.register(
         "centrifuge_block", 
         () -> {
-            ResourceLocation blockId = new ResourceLocation(GalacticMachinery.MOD_ID, "centrifuge_block");
+            String blockId = GalacticMachinery.MOD_ID + ":centrifuge_block";
             GalacticMachinery.LOGGER.debug("Creating centrifuge block with ID: " + blockId);
             
             return new Block(createStandardProperties());
@@ -72,7 +72,7 @@ public class MachineryBlocks {
     public static final Supplier<Block> SMELTER = BLOCKS.register(
         "smelter_block", 
         () -> {
-            ResourceLocation blockId = new ResourceLocation(GalacticMachinery.MOD_ID, "smelter_block");
+            String blockId = GalacticMachinery.MOD_ID + ":smelter_block";
             GalacticMachinery.LOGGER.debug("Creating smelter block with ID: " + blockId);
             
             return new Block(createStandardProperties());
@@ -82,7 +82,7 @@ public class MachineryBlocks {
     public static final Supplier<Block> EXTRACTOR = BLOCKS.register(
         "extractor_block", 
         () -> {
-            ResourceLocation blockId = new ResourceLocation(GalacticMachinery.MOD_ID, "extractor_block");
+            String blockId = GalacticMachinery.MOD_ID + ":extractor_block";
             GalacticMachinery.LOGGER.debug("Creating extractor block with ID: " + blockId);
             
             return new Block(createStandardProperties());
