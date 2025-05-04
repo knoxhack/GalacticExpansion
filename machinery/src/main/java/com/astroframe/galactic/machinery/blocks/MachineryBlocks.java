@@ -28,8 +28,8 @@ public class MachineryBlocks {
     public static final DeferredHolder<Block, Block> ASSEMBLER = BLOCKS.register(
         "assembler_block", 
         () -> {
-            // Create a ResourceLocation with the proper ID format
-            ResourceLocation assemblerBlockId = new ResourceLocation(GalacticMachinery.MOD_ID, "assembler_block");
+            // Create a ResourceLocation with the proper ID format using the public factory method
+            ResourceLocation assemblerBlockId = ResourceLocation.of(GalacticMachinery.MOD_ID, "assembler_block", ':');
             
             // Create properties with explicit block ID
             GalacticMachinery.LOGGER.debug("Creating assembler block with ID: " + assemblerBlockId);
@@ -49,8 +49,8 @@ public class MachineryBlocks {
     public static final DeferredHolder<Block, Block> CRUSHER = BLOCKS.register(
         "crusher_block", 
         () -> {
-            // Create a ResourceLocation with the proper ID format
-            ResourceLocation crusherId = new ResourceLocation(GalacticMachinery.MOD_ID, "crusher_block");
+            // Create a ResourceLocation with the proper ID format using the public factory method
+            ResourceLocation crusherId = ResourceLocation.of(GalacticMachinery.MOD_ID, "crusher_block", ':');
             
             // Create properties with explicit block ID
             GalacticMachinery.LOGGER.debug("Creating crusher block with ID: " + crusherId);
@@ -69,8 +69,8 @@ public class MachineryBlocks {
     public static final DeferredHolder<Block, Block> CENTRIFUGE = BLOCKS.register(
         "centrifuge_block", 
         () -> {
-            // Create a ResourceLocation with the proper ID format
-            ResourceLocation centrifugeId = new ResourceLocation(GalacticMachinery.MOD_ID, "centrifuge_block");
+            // Create a ResourceLocation with the proper ID format using the public factory method
+            ResourceLocation centrifugeId = ResourceLocation.of(GalacticMachinery.MOD_ID, "centrifuge_block", ':');
             
             // Create properties with explicit block ID
             GalacticMachinery.LOGGER.debug("Creating centrifuge block with ID: " + centrifugeId);
@@ -89,8 +89,8 @@ public class MachineryBlocks {
     public static final DeferredHolder<Block, Block> SMELTER = BLOCKS.register(
         "smelter_block", 
         () -> {
-            // Create a ResourceLocation with the proper ID format
-            ResourceLocation smelterId = new ResourceLocation(GalacticMachinery.MOD_ID, "smelter_block");
+            // Create a ResourceLocation with the proper ID format using the public factory method
+            ResourceLocation smelterId = ResourceLocation.of(GalacticMachinery.MOD_ID, "smelter_block", ':');
             
             // Create properties with explicit block ID
             GalacticMachinery.LOGGER.debug("Creating smelter block with ID: " + smelterId);
@@ -109,8 +109,8 @@ public class MachineryBlocks {
     public static final DeferredHolder<Block, Block> EXTRACTOR = BLOCKS.register(
         "extractor_block", 
         () -> {
-            // Create a ResourceLocation with the proper ID format
-            ResourceLocation extractorId = new ResourceLocation(GalacticMachinery.MOD_ID, "extractor_block");
+            // Create a ResourceLocation with the proper ID format using the public factory method
+            ResourceLocation extractorId = ResourceLocation.of(GalacticMachinery.MOD_ID, "extractor_block", ':');
             
             // Create properties with explicit block ID
             GalacticMachinery.LOGGER.debug("Creating extractor block with ID: " + extractorId);
