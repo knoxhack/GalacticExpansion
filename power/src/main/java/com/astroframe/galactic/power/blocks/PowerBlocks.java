@@ -45,14 +45,7 @@ public class PowerBlocks {
         }
     );
 
-    /**
-     * Register the block items for this module.
-     * Called during the PowerRegistry setup.
-     */
-    public static void registerBlockItems() {
-        // Register block items
-        GalacticPower.LOGGER.info("Registering power block items");
-    }
+    // Note: We're not using block items anymore, using standalone items instead
 
     /**
      * Initializes the blocks registry.

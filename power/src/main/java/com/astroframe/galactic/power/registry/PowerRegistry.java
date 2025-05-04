@@ -21,10 +21,7 @@ public class PowerRegistry {
         // Register blocks
         PowerBlocks.init(eventBus);
         
-        // Register items
+        // Register standalone items - we're using simplified approach without BlockItems
         PowerItems.init(eventBus);
-        
-        // Register block items after blocks and items are set up
-        PowerBlocks.registerBlockItems();
     }
 }

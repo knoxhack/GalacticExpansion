@@ -63,8 +63,8 @@ public class GalacticPower {
         
         // Compare with string representation to avoid ResourceLocation dependency
         if (event.getTabKey().location().toString().equals(galacticTabId)) {
-            // Add Power items
-            event.accept(PowerItems.BASIC_GENERATOR.get());
+            // Add Power items - using simplified item implementations
+            event.accept(PowerItems.BASIC_GENERATOR_ITEM.get());
             event.accept(PowerItems.ADVANCED_GENERATOR.get());
             event.accept(PowerItems.SOLAR_PANEL.get());
             event.accept(PowerItems.FUSION_REACTOR.get());
