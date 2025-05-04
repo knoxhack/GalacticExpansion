@@ -1,51 +1,56 @@
+
 package com.astroframe.galactic.machinery.items;
 
 import com.astroframe.galactic.machinery.GalacticMachinery;
 import com.astroframe.galactic.machinery.blocks.MachineryBlocks;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
+import net.minecraft.core.registries.Registries;
 
 /**
- * Registry class for block items in the Machinery module.
+ * Registry for block items in the Machinery module.
  */
 public class MachineryItemBlocks {
 
-    // Create a DeferredRegister for items
+    // Deferred Register for block items
     private static final DeferredRegister<Item> BLOCK_ITEMS = 
-        DeferredRegister.create(ForgeRegistries.ITEMS, GalacticMachinery.MOD_ID);
+        DeferredRegister.create(Registries.ITEM, GalacticMachinery.MOD_ID);
+        
+    // Block items for all machinery blocks
+    public static final DeferredHolder<Item, Item> ASSEMBLER_ITEM = BLOCK_ITEMS.register(
+        "assembler", 
+        () -> new BlockItem(MachineryBlocks.ASSEMBLER.get(), new Item.Properties())
+    );
+    
+    public static final DeferredHolder<Item, Item> CRUSHER_ITEM = BLOCK_ITEMS.register(
+        "crusher", 
+        () -> new BlockItem(MachineryBlocks.CRUSHER.get(), new Item.Properties())
+    );
+    
+    public static final DeferredHolder<Item, Item> CENTRIFUGE_ITEM = BLOCK_ITEMS.register(
+        "centrifuge", 
+        () -> new BlockItem(MachineryBlocks.CENTRIFUGE.get(), new Item.Properties())
+    );
+    
+    public static final DeferredHolder<Item, Item> SMELTER_ITEM = BLOCK_ITEMS.register(
+        "smelter", 
+        () -> new BlockItem(MachineryBlocks.SMELTER.get(), new Item.Properties())
+    );
+    
+    public static final DeferredHolder<Item, Item> EXTRACTOR_ITEM = BLOCK_ITEMS.register(
+        "extractor", 
+        () -> new BlockItem(MachineryBlocks.EXTRACTOR.get(), new Item.Properties())
+    );
 
     /**
-     * Initializes block items for the machinery module.
-     * Called during registry phase.
+     * Initializes the block items registry.
+     * Called during the module's registry phase.
      */
     public static void init() {
-        GalacticMachinery.LOGGER.info("Initializing machinery block items");
-
         try {
-            // Register block items with proper item properties
-            // Assembler block item
-            BLOCK_ITEMS.register("assembler", 
-                () -> new BlockItem(MachineryBlocks.ASSEMBLER.get(), new Item.Properties()));
-
-            // Crusher block item
-            BLOCK_ITEMS.register("crusher_block",
-                () -> new BlockItem(MachineryBlocks.CRUSHER.get(), new Item.Properties()));
-
-            // Centrifuge block item
-            BLOCK_ITEMS.register("centrifuge_block",
-                    () -> new BlockItem(MachineryBlocks.CENTRIFUGE.get(), new Item.Properties()));
-
-            // Smelter block item
-            BLOCK_ITEMS.register("smelter_block",
-                    () -> new BlockItem(MachineryBlocks.SMELTER.get(), new Item.Properties()));
-
-            // Extractor block item
-            BLOCK_ITEMS.register("extractor_block",
-                    () -> new BlockItem(MachineryBlocks.EXTRACTOR.get(), new Item.Properties()));
-
-
+            GalacticMachinery.LOGGER.info("Registering machinery block items");
             GalacticMachinery.LOGGER.debug("Machinery block items registered successfully");
         } catch (Exception e) {
             // Log any errors that occur during registration

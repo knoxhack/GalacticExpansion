@@ -1,8 +1,8 @@
+
 package com.astroframe.galactic.machinery.blocks;
 
 import com.astroframe.galactic.machinery.GalacticMachinery;
 import com.astroframe.galactic.machinery.blocks.custom.AssemblerBlock;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -10,10 +10,10 @@ import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.Registries;
+import net.minecraft.core.registries.Registries;
 
 /**
- * Registry for all blocks in the Machinery module.
+ * Registry class for all blocks in the Machinery module.
  */
 public class MachineryBlocks {
 
@@ -32,7 +32,7 @@ public class MachineryBlocks {
     );
 
     public static final DeferredHolder<Block, Block> CRUSHER = BLOCKS.register(
-        "crusher_block", 
+        "crusher", 
         () -> new Block(BlockBehaviour.Properties.of()
             .mapColor(MapColor.METAL)
             .requiresCorrectToolForDrops()
@@ -41,7 +41,7 @@ public class MachineryBlocks {
     );
 
     public static final DeferredHolder<Block, Block> CENTRIFUGE = BLOCKS.register(
-        "centrifuge_block", 
+        "centrifuge", 
         () -> new Block(BlockBehaviour.Properties.of()
             .mapColor(MapColor.METAL)
             .requiresCorrectToolForDrops()
@@ -50,7 +50,7 @@ public class MachineryBlocks {
     );
 
     public static final DeferredHolder<Block, Block> SMELTER = BLOCKS.register(
-        "smelter_block", 
+        "smelter", 
         () -> new Block(BlockBehaviour.Properties.of()
             .mapColor(MapColor.METAL)
             .requiresCorrectToolForDrops()
@@ -59,7 +59,7 @@ public class MachineryBlocks {
     );
 
     public static final DeferredHolder<Block, Block> EXTRACTOR = BLOCKS.register(
-        "extractor_block", 
+        "extractor", 
         () -> new Block(BlockBehaviour.Properties.of()
             .mapColor(MapColor.METAL)
             .requiresCorrectToolForDrops()

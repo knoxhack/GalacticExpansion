@@ -1,13 +1,40 @@
-//This file is incomplete due to missing original code.  Please provide the original MachineryBlocks.java file and AssemblerBlock class definition.
 
-// Placeholder for MachineryBlocks.java content
+package com.astroframe.galactic.machinery.blocks.custom;
 
-// Placeholder for AssemblerBlock class content
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import org.jetbrains.annotations.Nullable;
 
-public class AssemblerBlock extends Block { // Assuming Block is a superclass
+/**
+ * The assembler block for creating modular machines.
+ */
+public class AssemblerBlock extends Block {
 
+    // State properties
+    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
+
+    /**
+     * Creates a new AssemblerBlock with the given properties.
+     *
+     * @param properties The block properties
+     */
     public AssemblerBlock(Properties properties) {
         super(properties);
-        // Additional setup if needed can go here
+        // Set default state for the block
+        this.registerDefaultState(this.stateDefinition.any()
+            .setValue(POWERED, Boolean.FALSE));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(POWERED);
     }
 }
