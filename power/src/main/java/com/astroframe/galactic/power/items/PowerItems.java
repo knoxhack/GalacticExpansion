@@ -1,12 +1,9 @@
 package com.astroframe.galactic.power.items;
 
 import com.astroframe.galactic.power.GalacticPower;
-import com.astroframe.galactic.power.blocks.PowerBlocks;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
@@ -25,10 +22,10 @@ public class PowerItems {
         return new Item.Properties();
     }
 
-    // Block items for the power blocks
-    public static final Supplier<BlockItem> BASIC_GENERATOR = ITEMS.register(
-        "basic_generator_block",
-        () -> new BlockItem(PowerBlocks.BASIC_GENERATOR.get(), defaultProperties())
+    // Simplified placeholder items to avoid dependency issues
+    public static final Supplier<Item> BASIC_GENERATOR_ITEM = ITEMS.register(
+        "basic_generator_item",
+        () -> new Item(defaultProperties())
     );
     
     // For use in creative tab - these are placeholder items

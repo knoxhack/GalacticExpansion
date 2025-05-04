@@ -12,22 +12,19 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * A placeholder implementation for power blocks with disabled functionality.
  * Used in place of the actual functional blocks until NeoForge compatibility issues are resolved.
  */
-public class DisabledPowerBlock extends Block {
+public class SimplePowerBlock extends Block {
     private final String powerType;
-    private final ResourceLocation powerId;
     
     /**
-     * Constructs a new disabled power block.
+     * Constructs a new simplified power block.
      * This is a placeholder for power blocks whose functional implementations have been disabled.
      *
      * @param properties Block properties
      * @param powerType Type of the power block (e.g., "generator", "battery")
-     * @param powerId The resource location ID for the block
      */
-    public DisabledPowerBlock(Properties properties, String powerType, ResourceLocation powerId) {
+    public SimplePowerBlock(Properties properties, String powerType) {
         super(properties);
         this.powerType = powerType;
-        this.powerId = powerId;
     }
     
     /**
@@ -39,18 +36,9 @@ public class DisabledPowerBlock extends Block {
         return powerType;
     }
     
-    /**
-     * Gets the power block ID.
-     *
-     * @return Resource location
-     */
-    public ResourceLocation getPowerId() {
-        return powerId;
-    }
-    
     @Override
     public String toString() {
-        return "DisabledPowerBlock(" + powerType + "):" + powerId;
+        return "SimplePowerBlock(" + powerType + ")";
     }
     
     @Override
