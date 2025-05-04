@@ -1,7 +1,7 @@
 package com.astroframe.galactic.space.registry;
 
 import com.astroframe.galactic.space.GalacticSpace;
-import com.astroframe.galactic.space.implementation.assembly.RocketAssemblyTable;
+import com.astroframe.galactic.space.implementation.assembly.SimpleRocketAssemblyTable;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -24,10 +24,11 @@ public class SpaceBlocks {
     public static final DeferredRegister<Item> BLOCK_ITEMS = 
             DeferredRegister.create(Registries.ITEM, GalacticSpace.MOD_ID);
     
-    // Register the rocket assembly table
+    // Register the rocket assembly table with a simplified implementation
+    // Using SimpleRocketAssemblyTable instead of the complex implementation to avoid errors
     public static final Supplier<Block> ROCKET_ASSEMBLY_TABLE = 
             BLOCKS.register("rocket_assembly_table", () -> {
-                return new RocketAssemblyTable(Block.Properties.of().strength(3.5F).requiresCorrectToolForDrops());
+                return new SimpleRocketAssemblyTable(Block.Properties.of().strength(3.5F).requiresCorrectToolForDrops());
             });
     
     // Register the rocket assembly table item
