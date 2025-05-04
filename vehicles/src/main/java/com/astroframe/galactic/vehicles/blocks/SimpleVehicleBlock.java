@@ -7,8 +7,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.core.Direction;
 
 import java.util.function.Function;
 
@@ -17,7 +18,7 @@ import java.util.function.Function;
  * This is a placeholder block without complex functionality.
  */
 public class SimpleVehicleBlock extends HorizontalDirectionalBlock {
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    // Use the FACING property directly from the parent class
     
     public static final MapCodec<SimpleVehicleBlock> CODEC = simpleCodec(
         props -> new SimpleVehicleBlock());
