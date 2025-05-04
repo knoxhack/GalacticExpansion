@@ -18,7 +18,7 @@ public class EnergyCapability {
      * Register the energy capability.
      */
     public static void register() {
-        GalacticEnergy.getLogger().info("Registering energy capability");
+        GalacticEnergy.LOGGER.info("Registering energy capability");
     }
     
     /**
@@ -26,7 +26,7 @@ public class EnergyCapability {
      * This will be called during mod initialization.
      */
     public static void registerCapabilities() {
-        GalacticEnergy.getLogger().info("Registering energy capability adapter");
+        GalacticEnergy.LOGGER.info("Registering energy capability adapter");
     }
     
     /**
