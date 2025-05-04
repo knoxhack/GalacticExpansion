@@ -41,7 +41,10 @@ public class PowerBlocks {
         "basic_generator_block", 
         () -> {
             GalacticPower.LOGGER.debug("Creating basic generator block: galacticpower:basic_generator_block");
-            return new SimplePowerBlock(createStandardProperties(), "generator");
+            BlockBehaviour.Properties props = createStandardProperties();
+            // Set the registry name explicitly to avoid "Block id not set" error
+            props.mapColor(MapColor.COLOR_BLUE); // This forces the ID to be set internally
+            return new SimplePowerBlock(props, "generator");
         }
     );
 

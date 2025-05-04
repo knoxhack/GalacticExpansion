@@ -1,81 +1,81 @@
 [
   {
     "version": "0.1.0.b1-20250504",
-    "date": "2025-05-04T09:39:32.892Z",
+    "date": "2025-05-04T09:44:49.686Z",
     "buildNumber": 1,
     "buildMetrics": {
       "result": "success",
-      "duration": 3481,
+      "duration": 8042,
       "moduleStatuses": {
         "core": {
           "status": "success",
-          "lastUpdate": "2025-05-04T09:39:32.398Z",
-          "lastBuild": "2025-05-04T09:39:32.562Z",
+          "lastUpdate": "2025-05-04T09:44:49.246Z",
+          "lastBuild": "2025-05-04T09:44:49.344Z",
           "lastTask": ":core:jar",
           "currentTask": "jarJar"
         },
         "power": {
           "status": "building",
-          "lastUpdate": "2025-05-04T09:39:32.600Z",
-          "lastBuild": "2025-05-04T09:39:32.531Z",
+          "lastUpdate": "2025-05-04T09:44:49.416Z",
+          "lastBuild": "2025-05-04T09:44:49.294Z",
           "lastTask": ":power:jar",
           "currentTask": "jar"
         },
         "machinery": {
           "status": "success",
-          "lastUpdate": "2025-05-04T09:39:02.981Z",
-          "lastBuild": "2025-05-04T09:39:03.046Z",
+          "lastUpdate": "2025-05-04T09:44:30.991Z",
+          "lastBuild": "2025-05-04T09:44:31.318Z",
           "lastTask": ":machinery:jar",
-          "currentTask": "classes"
+          "currentTask": "jarJar"
         },
         "biotech": {
-          "status": "building",
-          "lastUpdate": "2025-05-04T09:37:37.660Z",
-          "lastBuild": "2025-05-04T09:37:37.615Z",
+          "status": "success",
+          "lastUpdate": "2025-05-04T09:43:46.926Z",
+          "lastBuild": "2025-05-04T09:43:47.009Z",
           "lastTask": ":biotech:build",
-          "currentTask": "testClasses"
+          "currentTask": "compileJava"
         },
         "construction": {
           "status": "building",
-          "lastUpdate": "2025-05-04T09:38:12.172Z",
-          "lastBuild": "2025-05-04T09:38:12.111Z",
+          "lastUpdate": "2025-05-04T09:44:04.427Z",
+          "lastBuild": "2025-05-04T09:44:04.337Z",
           "lastTask": ":construction:build",
-          "currentTask": "testClasses"
+          "currentTask": "test"
         },
         "robotics": {
           "status": "building",
-          "lastUpdate": "2025-05-04T09:39:32.697Z",
-          "lastBuild": "2025-05-04T09:39:32.604Z",
+          "lastUpdate": "2025-05-04T09:44:49.424Z",
+          "lastBuild": "2025-05-04T09:44:49.399Z",
           "lastTask": ":robotics:build",
-          "currentTask": "check"
+          "currentTask": "jar"
         },
         "space": {
           "status": "building",
-          "lastUpdate": "2025-05-04T09:38:30.258Z",
-          "lastBuild": "2025-05-04T09:38:30.177Z",
+          "lastUpdate": "2025-05-04T09:44:13.984Z",
+          "lastBuild": "2025-05-04T09:44:13.926Z",
           "lastTask": ":space:build",
-          "currentTask": "build"
+          "currentTask": "test"
         },
         "utilities": {
-          "status": "success",
-          "lastUpdate": "2025-05-04T09:38:47.177Z",
-          "lastBuild": "2025-05-04T09:38:47.221Z",
+          "status": "building",
+          "lastUpdate": "2025-05-04T09:44:22.178Z",
+          "lastBuild": "2025-05-04T09:44:22.103Z",
           "lastTask": ":utilities:build",
-          "currentTask": "assemble"
+          "currentTask": "test"
         },
         "vehicles": {
           "status": "building",
-          "lastUpdate": "2025-05-04T09:39:03.142Z",
-          "lastBuild": "2025-05-04T09:39:03.107Z",
+          "lastUpdate": "2025-05-04T09:44:31.391Z",
+          "lastBuild": "2025-05-04T09:44:31.347Z",
           "lastTask": ":vehicles:build",
-          "currentTask": "testClasses"
+          "currentTask": "build"
         },
         "weaponry": {
           "status": "building",
-          "lastUpdate": "2025-05-04T09:39:18.761Z",
-          "lastBuild": "2025-05-04T09:39:18.685Z",
+          "lastUpdate": "2025-05-04T09:44:39.964Z",
+          "lastBuild": "2025-05-04T09:44:39.931Z",
           "lastTask": ":weaponry:build",
-          "currentTask": "check"
+          "currentTask": "compileTestJava"
         }
       }
     }
