@@ -14,9 +14,7 @@ const clearOutputBtn = document.getElementById('clearOutput');
 const autoScrollCheckbox = document.getElementById('autoScroll');
 const themeToggleBtn = document.getElementById('themeToggle');
 
-// Version information elements
-const currentVersionElement = document.getElementById('currentVersion');
-const lastReleaseDateElement = document.getElementById('lastReleaseDate');
+// Initialize websocket connection
 
 // Establish WebSocket connection
 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -953,18 +951,8 @@ createReleaseBtn.addEventListener('click', () => {
 
 // Update version info in UI
 function updateVersionInfo(versionInfo) {
-    if (!versionInfo) return;
-    
-    // Update version number
-    if (currentVersionElement && versionInfo.version) {
-        currentVersionElement.textContent = versionInfo.version;
-    }
-    
-    // Update last release date
-    if (lastReleaseDateElement && versionInfo.lastReleaseDate) {
-        const releaseDate = new Date(versionInfo.lastReleaseDate);
-        lastReleaseDateElement.textContent = `Last Release: ${releaseDate.toLocaleDateString()}`;
-    }
+    // Version information display has been removed
+    console.log('Version info received but display removed:', versionInfo);
 }
 
 // Update checkpoint status

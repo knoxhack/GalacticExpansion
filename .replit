@@ -5,7 +5,7 @@ channel = "stable-24_05"
 packages = ["unzip", "jdk21_headless", "wget", "imagemagick", "jq", "zip"]
 
 [workflows]
-runButton = "Build Mod (All Modules)"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "Project"
@@ -47,6 +47,7 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd buildwidget && node server.js"
+waitForPort = 5004
 
 [[workflows.workflow]]
 name = "Build Widget Proxy"
