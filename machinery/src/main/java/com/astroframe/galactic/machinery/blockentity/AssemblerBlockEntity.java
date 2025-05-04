@@ -157,4 +157,31 @@ public class AssemblerBlockEntity extends MachineBlockEntity {
         this.processingTime = 0;
         return true;
     }
+    
+    /**
+     * Starts the machine's operation.
+     * Required by the Machine interface.
+     * 
+     * @return True if the machine was started successfully
+     */
+    @Override
+    public boolean start() {
+        if (canProcess() && hasSufficientEnergy()) {
+            this.isActive = true;
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Gets the efficiency of the machine.
+     * Higher efficiency means better performance and lower energy usage.
+     * 
+     * @return The efficiency factor from 0.0 to 1.0
+     */
+    @Override
+    public float getEfficiency() {
+        // Basic implementation - tier 1 assembler has moderate efficiency
+        return 0.75f;
+    }
 }

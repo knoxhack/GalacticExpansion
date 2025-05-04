@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import java.util.Set;
 
 /**
  * Registry for all block entities in the Machinery module.
@@ -24,9 +25,9 @@ public class MachineryBlockEntities {
         BLOCK_ENTITIES.register(
             "assembler", 
             () -> new BlockEntityType<>(
-                AssemblerBlockEntity::new, 
+                (pos, state) -> new AssemblerBlockEntity(pos, state), 
                 Set.of(MachineryBlocks.ASSEMBLER.get()),
-                null
+                false // Don't validate - this is the expected boolean parameter for the constructor
             )
         );
     
