@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <!-- Energy Conduit Block -->
+  
+  <!-- Background Glow -->
+  <filter id="glow">
+    <feGaussianBlur stdDeviation="0.5" result="blur"/>
+    <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+  </filter>
+
+  <!-- Base Block -->
+  <rect x="1" y="1" width="14" height="14" fill="#070b18" stroke="#112452" stroke-width="0.5"/>
+  
+  <!-- Main Design -->
+  <rect x="2" y="2" width="12" height="12" fill="#0c1a3a" stroke="#1d3b7a" stroke-width="0.3"/>
+  
+  <!-- Center Conduit -->
+  <rect x="6" y="2" width="4" height="12" fill="#0f4c9e" stroke="#2377de" stroke-width="0.3"/>
+  <rect x="2" y="6" width="12" height="4" fill="#0f4c9e" stroke="#2377de" stroke-width="0.3"/>
+  
+  <!-- Energy Flow -->
+  <circle cx="8" cy="8" r="2.5" fill="#4ca5ff" filter="url(#glow)" opacity="0.7"/>
+  
+  <!-- Technical Patterns - Glowing Lines -->
+  <line x1="3" y1="8" x2="5" y2="8" stroke="#4ca5ff" stroke-width="0.4"/>
+  <line x1="11" y1="8" x2="13" y2="8" stroke="#4ca5ff" stroke-width="0.4"/>
+  <line x1="8" y1="3" x2="8" y2="5" stroke="#4ca5ff" stroke-width="0.4"/>
+  <line x1="8" y1="11" x2="8" y2="13" stroke="#4ca5ff" stroke-width="0.4"/>
+  
+  <!-- Corner Accents -->
+  <circle cx="3" cy="3" r="0.5" fill="#1d3b7a" stroke="#2377de" stroke-width="0.2"/>
+  <circle cx="13" cy="3" r="0.5" fill="#1d3b7a" stroke="#2377de" stroke-width="0.2"/>
+  <circle cx="3" cy="13" r="0.5" fill="#1d3b7a" stroke="#2377de" stroke-width="0.2"/>
+  <circle cx="13" cy="13" r="0.5" fill="#1d3b7a" stroke="#2377de" stroke-width="0.2"/>
+  
+  <!-- Small Energy Sparkles -->
+  <circle cx="3" cy="3" r="0.2" fill="#7bc5ff"/>
+  <circle cx="13" cy="3" r="0.2" fill="#7bc5ff"/>
+  <circle cx="3" cy="13" r="0.2" fill="#7bc5ff"/>
+  <circle cx="13" cy="13" r="0.2" fill="#7bc5ff"/>
+</svg>
