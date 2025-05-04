@@ -23,109 +23,109 @@ public class MachineryBlocks {
     // Deferred Register for blocks
     private static final DeferredRegister<Block> BLOCKS = 
         DeferredRegister.create(Registries.BLOCK, GalacticMachinery.MOD_ID);
-    
+
     // Machinery Blocks with deferred holders - must match resource file names
     public static final DeferredHolder<Block, Block> ASSEMBLER = BLOCKS.register(
-        "assembler_block", 
+        "assembler", 
         () -> {
             // Create a ResourceLocation with the proper ID format using proper NeoForge 1.21.5 syntax
-            ResourceLocation assemblerBlockId = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "assembler_block");
-            
+            ResourceLocation assemblerBlockId = new ResourceLocation(GalacticMachinery.MOD_ID, "assembler");
+
             // Create properties with explicit block ID
             GalacticMachinery.LOGGER.debug("Creating assembler block with ID: " + assemblerBlockId);
-            
+
             // Use this more verbose approach to ensure the block ID is properly set
             BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
                 .requiresCorrectToolForDrops()
                 .strength(5.0F, 6.0F)
                 .sound(SoundType.METAL);
-            
+
             // Return the block with properties that have a properly set ID
             return new AssemblerBlock(properties, assemblerBlockId);
         }
     );
-    
+
     public static final DeferredHolder<Block, Block> CRUSHER = BLOCKS.register(
         "crusher_block", 
         () -> {
             // Create a ResourceLocation with the proper ID format using proper NeoForge 1.21.5 syntax
-            ResourceLocation crusherId = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "crusher_block");
-            
+            ResourceLocation crusherId = new ResourceLocation(GalacticMachinery.MOD_ID, "crusher_block");
+
             // Create properties with explicit block ID
             GalacticMachinery.LOGGER.debug("Creating crusher block with ID: " + crusherId);
-            
+
             // Use this more verbose approach to ensure the block ID is properly set
             BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
                 .requiresCorrectToolForDrops()
                 .strength(5.0F, 6.0F)
                 .sound(SoundType.METAL);
-            
+
             return new Block(properties);
         }
     );
-    
+
     public static final DeferredHolder<Block, Block> CENTRIFUGE = BLOCKS.register(
         "centrifuge_block", 
         () -> {
             // Create a ResourceLocation with the proper ID format using proper NeoForge 1.21.5 syntax
-            ResourceLocation centrifugeId = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "centrifuge_block");
-            
+            ResourceLocation centrifugeId = new ResourceLocation(GalacticMachinery.MOD_ID, "centrifuge_block");
+
             // Create properties with explicit block ID
             GalacticMachinery.LOGGER.debug("Creating centrifuge block with ID: " + centrifugeId);
-            
+
             // Use this more verbose approach to ensure the block ID is properly set
             BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
                 .requiresCorrectToolForDrops()
                 .strength(5.0F, 6.0F)
                 .sound(SoundType.METAL);
-            
+
             return new Block(properties);
         }
     );
-    
+
     public static final DeferredHolder<Block, Block> SMELTER = BLOCKS.register(
         "smelter_block", 
         () -> {
             // Create a ResourceLocation with the proper ID format using proper NeoForge 1.21.5 syntax
-            ResourceLocation smelterId = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "smelter_block");
-            
+            ResourceLocation smelterId = new ResourceLocation(GalacticMachinery.MOD_ID, "smelter_block");
+
             // Create properties with explicit block ID
             GalacticMachinery.LOGGER.debug("Creating smelter block with ID: " + smelterId);
-            
+
             // Use this more verbose approach to ensure the block ID is properly set
             BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
                 .requiresCorrectToolForDrops()
                 .strength(5.0F, 6.0F)
                 .sound(SoundType.METAL);
-            
+
             return new Block(properties);
         }
     );
-    
+
     public static final DeferredHolder<Block, Block> EXTRACTOR = BLOCKS.register(
         "extractor_block", 
         () -> {
             // Create a ResourceLocation with the proper ID format using proper NeoForge 1.21.5 syntax
-            ResourceLocation extractorId = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":" + "extractor_block");
-            
+            ResourceLocation extractorId = new ResourceLocation(GalacticMachinery.MOD_ID, "extractor_block");
+
             // Create properties with explicit block ID
             GalacticMachinery.LOGGER.debug("Creating extractor block with ID: " + extractorId);
-            
+
             // Use this more verbose approach to ensure the block ID is properly set
             BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
                 .requiresCorrectToolForDrops()
                 .strength(5.0F, 6.0F)
                 .sound(SoundType.METAL);
-            
+
             return new Block(properties);
         }
     );
-    
+
     /**
      * Register the block items for this module.
      * Called during the MachineryRegistry setup.
@@ -134,7 +134,7 @@ public class MachineryBlocks {
         // Register block items
         GalacticMachinery.LOGGER.info("Registering machinery block items");
     }
-    
+
     /**
      * Initializes the blocks registry.
      * Called during the module's registry phase.
