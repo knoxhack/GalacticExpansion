@@ -1,4 +1,3 @@
-
 package com.astroframe.galactic.machinery.blocks;
 
 import com.astroframe.galactic.machinery.GalacticMachinery;

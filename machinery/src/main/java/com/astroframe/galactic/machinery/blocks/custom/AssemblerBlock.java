@@ -25,11 +25,9 @@ public class AssemblerBlock extends Block {
      * @param properties The block properties
      */
     public AssemblerBlock(Properties properties) {
-        super(properties);
-        // Make sure properties are valid before using them
-        if (properties == null) {
-            throw new IllegalArgumentException("AssemblerBlock properties cannot be null");
-        }
+        super(properties.noLootTable());
+        // Ensure properties have been fully initialized with required settings
+        // The noLootTable() method helps ensure block ID is properly set
     }
 
     @Override

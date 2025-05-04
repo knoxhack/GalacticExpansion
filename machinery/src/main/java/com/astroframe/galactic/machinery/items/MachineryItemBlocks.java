@@ -1,4 +1,3 @@
-
 package com.astroframe.galactic.machinery.items;
 
 import com.astroframe.galactic.machinery.GalacticMachinery;
@@ -19,28 +18,28 @@ public class MachineryItemBlocks {
     // Deferred Register for block items
     private static final DeferredRegister.Items BLOCK_ITEMS = 
         DeferredRegister.createItems(GalacticMachinery.MOD_ID);
-    
+
     // Machinery Block Items - corresponding to blocks from MachineryBlocks
     public static final DeferredHolder<Item, Item> ASSEMBLER_ITEM = BLOCK_ITEMS.registerItem(
         "assembler",
         properties -> new BlockItem(MachineryBlocks.ASSEMBLER.get(), properties)
     );
-    
+
     public static final DeferredHolder<Item, Item> CRUSHER_ITEM = BLOCK_ITEMS.registerItem(
         "crusher",
         properties -> new BlockItem(MachineryBlocks.CRUSHER.get(), properties)
     );
-    
+
     public static final DeferredHolder<Item, Item> CENTRIFUGE_ITEM = BLOCK_ITEMS.registerItem(
         "centrifuge",
         properties -> new BlockItem(MachineryBlocks.CENTRIFUGE.get(), properties)
     );
-    
+
     public static final DeferredHolder<Item, Item> SMELTER_ITEM = BLOCK_ITEMS.registerItem(
         "smelter",
         properties -> new BlockItem(MachineryBlocks.SMELTER.get(), properties)
     );
-    
+
     public static final DeferredHolder<Item, Item> EXTRACTOR_ITEM = BLOCK_ITEMS.registerItem(
         "extractor",
         properties -> new BlockItem(MachineryBlocks.EXTRACTOR.get(), properties)
@@ -52,7 +51,7 @@ public class MachineryItemBlocks {
      */
     public static void init() {
         GalacticMachinery.LOGGER.info("Registering machinery block items");
-        
+
         // Register the block items deferred register
         BLOCK_ITEMS.register(GalacticMachinery.MOD_EVENT_BUS);
     }
