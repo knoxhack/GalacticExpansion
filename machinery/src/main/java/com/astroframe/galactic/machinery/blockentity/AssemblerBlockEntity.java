@@ -129,7 +129,6 @@ public class AssemblerBlockEntity extends MachineBlockEntity {
      *
      * @return The machine type
      */
-    @Override
     public MachineType getMachineType() {
         return MachineType.PROCESSOR;
     }
@@ -148,11 +147,14 @@ public class AssemblerBlockEntity extends MachineBlockEntity {
     /**
      * Stops the machine's processing.
      * Required by the Machine interface.
+     * 
+     * @return True if the machine was stopped successfully
      */
     @Override
-    public void stop() {
+    public boolean stop() {
         // Stop processing
         this.isActive = false;
         this.processingTime = 0;
+        return true;
     }
 }
