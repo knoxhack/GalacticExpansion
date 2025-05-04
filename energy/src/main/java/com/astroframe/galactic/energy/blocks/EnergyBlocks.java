@@ -1,11 +1,13 @@
 package com.astroframe.galactic.energy.blocks;
 
 import com.astroframe.galactic.energy.GalacticEnergy;
+import com.astroframe.galactic.energy.registry.EnergyRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.function.Supplier;
 
@@ -15,7 +17,7 @@ import java.util.function.Supplier;
 public class EnergyBlocks {
 
     // Block registry
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(BuiltInRegistries.BLOCK, GalacticEnergy.MODID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(BuiltInRegistries.BLOCK, GalacticEnergy.MOD_ID);
 
     // Energy Transformer - Converts between energy types
     public static final Supplier<Block> ENERGY_TRANSFORMER_BLOCK = BLOCKS.register("energy_transformer_block", 
@@ -26,10 +28,25 @@ public class EnergyBlocks {
             DisabledEnergyBlock::new);
 
     /**
-     * Register all blocks in this class.
-     * @param event The register event
+     * Initialize the block registry
+     * @param eventBus The event bus to register on
      */
-    public static void register(RegisterEvent event) {
-        BLOCKS.register(event);
+    public static void init(IEventBus eventBus) {
+        GalacticEnergy.LOGGER.info("Registering Energy blocks");
+        BLOCKS.register(eventBus);
+    }
+    
+    /**
+     * Register block items for all blocks
+     */
+    public static void registerBlockItems() {
+        GalacticEnergy.LOGGER.info("Registering Energy block items");
+        
+        // Register block items
+        EnergyRegistry.ITEMS.register("energy_transformer_block", 
+                () -> new BlockItem(ENERGY_TRANSFORMER_BLOCK.get(), EnergyRegistry.createStandardItemProperties()));
+        
+        EnergyRegistry.ITEMS.register("energy_emitter_block", 
+                () -> new BlockItem(ENERGY_EMITTER_BLOCK.get(), EnergyRegistry.createStandardItemProperties()));
     }
 }
