@@ -5,63 +5,46 @@ import com.astroframe.galactic.machinery.blocks.MachineryBlocks;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.ForgeRegistries;
 
 /**
- * Registry for block items in the Machinery module.
- * These are items that place blocks.
+ * Registry class for block items in the Machinery module.
  */
 public class MachineryItemBlocks {
 
-    /**
-     * Define a Items DeferredRegister with the registerItem helper method
-     * This properly sets the item ID in the Item.Properties as required in NeoForge 1.21.5+
-     */
-    private static final DeferredRegister.Items BLOCK_ITEMS = DeferredRegister.createItems(GalacticMachinery.MOD_ID);
+    // Create a DeferredRegister for items
+    private static final DeferredRegister<Item> BLOCK_ITEMS = 
+        DeferredRegister.create(ForgeRegistries.ITEMS, GalacticMachinery.MOD_ID);
 
     /**
-     * Initializes the block items registry.
-     * Called during the module's registry phase.
+     * Initializes block items for the machinery module.
+     * Called during registry phase.
      */
     public static void init() {
-        GalacticMachinery.LOGGER.info("Registering machinery block items");
+        GalacticMachinery.LOGGER.info("Initializing machinery block items");
 
         try {
-            // Add debug logging to track registration process
-            GalacticMachinery.LOGGER.debug("Beginning machinery block items registration");
+            // Register block items with proper item properties
+            // Assembler block item
+            BLOCK_ITEMS.register("assembler", 
+                () -> new BlockItem(MachineryBlocks.ASSEMBLER.get(), new Item.Properties()));
 
-            // Use a lambda that references the block holder but doesn't call .get() immediately
-            // This defers the actual access until the creation time, when blocks should be registered
+            // Crusher block item
+            BLOCK_ITEMS.register("crusher_block",
+                () -> new BlockItem(MachineryBlocks.CRUSHER.get(), new Item.Properties()));
 
-            // Register block items for each machinery block with proper logging and deferred access
-            GalacticMachinery.LOGGER.debug("Registering assembler block item");
-            BLOCK_ITEMS.registerItem("assembler", props -> {
-                GalacticMachinery.LOGGER.debug("Creating assembler block item");
-                return new BlockItem(MachineryBlocks.ASSEMBLER.get(), new Item.Properties().stacksTo(64));
-            });
+            // Centrifuge block item
+            BLOCK_ITEMS.register("centrifuge_block",
+                    () -> new BlockItem(MachineryBlocks.CENTRIFUGE.get(), new Item.Properties()));
 
-            GalacticMachinery.LOGGER.debug("Registering crusher block item");
-            BLOCK_ITEMS.registerItem("crusher_block", props -> {
-                GalacticMachinery.LOGGER.debug("Creating crusher block item");
-                return new BlockItem(MachineryBlocks.CRUSHER.get(), props);
-            });
+            // Smelter block item
+            BLOCK_ITEMS.register("smelter_block",
+                    () -> new BlockItem(MachineryBlocks.SMELTER.get(), new Item.Properties()));
 
-            GalacticMachinery.LOGGER.debug("Registering centrifuge block item");
-            BLOCK_ITEMS.registerItem("centrifuge_block", props -> {
-                GalacticMachinery.LOGGER.debug("Creating centrifuge block item");
-                return new BlockItem(MachineryBlocks.CENTRIFUGE.get(), props);
-            });
+            // Extractor block item
+            BLOCK_ITEMS.register("extractor_block",
+                    () -> new BlockItem(MachineryBlocks.EXTRACTOR.get(), new Item.Properties()));
 
-            GalacticMachinery.LOGGER.debug("Registering smelter block item");
-            BLOCK_ITEMS.registerItem("smelter_block", props -> {
-                GalacticMachinery.LOGGER.debug("Creating smelter block item");
-                return new BlockItem(MachineryBlocks.SMELTER.get(), props);
-            });
-
-            GalacticMachinery.LOGGER.debug("Registering extractor block item");
-            BLOCK_ITEMS.registerItem("extractor_block", props -> {
-                GalacticMachinery.LOGGER.debug("Creating extractor block item");
-                return new BlockItem(MachineryBlocks.EXTRACTOR.get(), props);
-            });
 
             GalacticMachinery.LOGGER.debug("Machinery block items registered successfully");
         } catch (Exception e) {
