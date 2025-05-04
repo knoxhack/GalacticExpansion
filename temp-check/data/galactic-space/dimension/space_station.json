@@ -1,0 +1,27 @@
+{
+  "type": "galactic-space:space_station_type",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "layers": [
+        {
+          "height": 1,
+          "block": "minecraft:bedrock"
+        },
+        {
+          "height": 32,
+          "block": "minecraft:stone"
+        },
+        {
+          "height": 1,
+          "block": "minecraft:iron_block"
+        }
+      ],
+      "biome": "minecraft:the_void",
+      "features": false,
+      "structures": {
+        "structures": {}
+      }
+    }
+  }
+}

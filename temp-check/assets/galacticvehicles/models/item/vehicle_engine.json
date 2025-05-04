@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "galacticvehicles:item/vehicle_engine"
+  }
+}

@@ -1,0 +1,38 @@
+# This is the unified mods.toml file for the all-in-one JAR
+# All individual module mods.toml files have been disabled
+
+modLoader="javafml"
+loaderVersion="[47,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="galacticexpansion"
+version="0.1.0"
+displayName="Galactic Expansion (All-in-One)"
+logoFile="assets/galacticexpansion/textures/galacticexpansion.png"
+credits="AstroFrame Team"
+authors="AstroFrame"
+description='''
+The complete Galactic Expansion mod package.
+This all-in-one JAR contains all modules in a single file.
+
+Explore space, build rockets, and discover new technologies
+in this comprehensive space exploration mod for Minecraft.
+'''
+
+# No dependencies on individual galactic modules
+# All required dependency JARs are built into this single JAR
+
+[[dependencies.galacticexpansion]]
+modId="neoforge"
+mandatory=true
+versionRange="[21.5,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.galacticexpansion]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.21.1,1.22)"
+ordering="NONE"
+side="BOTH"

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <!-- Moon Dust Texture -->
+  <rect x="0" y="0" width="16" height="16" fill="#000000" opacity="0" />
+  
+  <!-- Light gray dust particles -->
+  <circle cx="3" cy="4" r="1.5" fill="#cccccc" />
+  <circle cx="6" cy="7" r="2" fill="#dddddd" />
+  <circle cx="9" cy="5" r="1.2" fill="#bbbbbb" />
+  <circle cx="12" cy="9" r="1.8" fill="#cccccc" />
+  <circle cx="5" cy="10" r="1.3" fill="#dddddd" />
+  <circle cx="7" cy="3" r="1" fill="#aaaaaa" />
+  <circle cx="13" cy="5" r="1.5" fill="#cccccc" />
+  <circle cx="10" cy="12" r="1.8" fill="#dddddd" />
+  <circle cx="2" cy="8" r="1.2" fill="#bbbbbb" />
+  <circle cx="8" cy="9" r="0.8" fill="#aaaaaa" />
+  <circle cx="4" cy="13" r="1.4" fill="#dddddd" />
+</svg>

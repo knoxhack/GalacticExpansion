@@ -1,0 +1,8 @@
+{
+  "parent": "block/orientable",
+  "textures": {
+    "front": "galacticvehicles:block/rover",
+    "top": "galacticvehicles:block/rover",
+    "side": "galacticvehicles:block/rover"
+  }
+}

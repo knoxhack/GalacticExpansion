@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <!-- Base item shape - slightly smaller than block texture -->
+  <rect x="1" y="1" width="14" height="14" rx="2" fill="#1a2837" />
+  
+  <!-- Subtle grid pattern for tech feel -->
+  <path d="M1,5 L15,5 M1,9 L15,9 M1,13 L15,13 M5,1 L5,15 M9,1 L9,15 M13,1 L13,15" stroke="#223244" stroke-width="0.3" />
+  
+  <!-- Main frame border -->
+  <rect x="1" y="1" width="14" height="14" rx="2" fill="none" stroke="#2c3e50" stroke-width="0.8" />
+  
+  <!-- Central centrifuge mechanism visualization -->
+  <rect x="3.5" y="3.5" width="9" height="9" rx="1" fill="#0d1a26" />
+  <rect x="4.5" y="4.5" width="7" height="7" rx="0.5" fill="#152638" />
+  
+  <!-- Centrifuge spinning mechanism -->
+  <circle cx="8" cy="8" r="2.5" fill="#0a1520" />
+  <circle cx="8" cy="8" r="2" fill="#0f2638" stroke="#2c3e50" stroke-width="0.3" />
+  
+  <!-- Centrifuge tubes - shown in rotation -->
+  <g transform="rotate(30, 8, 8)">
+    <rect x="6" y="6" width="0.8" height="3.5" rx="0.4" fill="#07c8f9" opacity="0.5" />
+    <rect x="9.2" y="6" width="0.8" height="3.5" rx="0.4" fill="#07c8f9" opacity="0.5" />
+  </g>
+  <g transform="rotate(150, 8, 8)">
+    <rect x="6" y="6" width="0.8" height="3.5" rx="0.4" fill="#07c8f9" opacity="0.5" />
+    <rect x="9.2" y="6" width="0.8" height="3.5" rx="0.4" fill="#07c8f9" opacity="0.5" />
+  </g>
+  <g transform="rotate(270, 8, 8)">
+    <rect x="6" y="6" width="0.8" height="3.5" rx="0.4" fill="#07c8f9" opacity="0.5" />
+    <rect x="9.2" y="6" width="0.8" height="3.5" rx="0.4" fill="#07c8f9" opacity="0.5" />
+  </g>
+  
+  <!-- Centrifuge central hub -->
+  <circle cx="8" cy="8" r="1" fill="#152638" />
+  <circle cx="8" cy="8" r="0.7" fill="#07c8f9" opacity="0.7" />
+  <circle cx="8" cy="8" r="0.4" fill="#07c8f9" />
+  
+  <!-- Circuit-like accent pattern -->
+  <path d="M5,8 L6,8 M10,8 L11,8 M8,5 L8,6 M8,10 L8,11" stroke="#07c8f9" stroke-width="0.3" opacity="0.8" />
+  
+  <!-- Corner details -->
+  <circle cx="3" cy="3" r="0.8" fill="#0a1520" />
+  <circle cx="13" cy="3" r="0.8" fill="#0a1520" />
+  <circle cx="3" cy="13" r="0.8" fill="#0a1520" />
+  <circle cx="13" cy="13" r="0.8" fill="#0a1520" />
+  
+  <!-- Small indicator lights -->
+  <circle cx="3" cy="3" r="0.4" fill="#07c8f9" opacity="0.9" />
+  <circle cx="13" cy="3" r="0.4" fill="#07c8f9" opacity="0.8" />
+  <circle cx="3" cy="13" r="0.4" fill="#07c8f9" opacity="0.7" />
+  <circle cx="13" cy="13" r="0.4" fill="#07c8f9" opacity="1" />
+  
+  <!-- Rotation indicators -->
+  <path d="M8,8 m-2.2,0 a2.2,2.2 0 1,1 4.4,0" stroke="#07c8f9" stroke-width="0.2" stroke-dasharray="0.4,0.4" opacity="0.7" fill="none" />
+  <path d="M8,8 m-2.2,0 a2.2,2.2 0 1,0 4.4,0" stroke="#07c8f9" stroke-width="0.2" stroke-dasharray="0.4,0.4" opacity="0.7" fill="none" />
+</svg>

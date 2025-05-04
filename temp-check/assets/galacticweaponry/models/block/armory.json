@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "galacticweaponry:block/armory",
+    "up": "galacticweaponry:block/armory",
+    "north": "galacticweaponry:block/armory",
+    "south": "galacticweaponry:block/armory",
+    "east": "galacticweaponry:block/armory",
+    "west": "galacticweaponry:block/armory",
+    "particle": "galacticweaponry:block/armory"
+  }
+}

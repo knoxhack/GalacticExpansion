@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <rect width="16" height="16" fill="none" />
+  
+  <!-- Base machine block -->
+  <rect x="0" y="0" width="16" height="16" fill="#1a2536" />
+  
+  <!-- Machine edge highlights -->
+  <rect x="0" y="0" width="16" height="1" fill="#2a3546" />
+  <rect x="0" y="0" width="1" height="16" fill="#2a3546" />
+  <rect x="0" y="15" width="16" height="1" fill="#101520" />
+  <rect x="15" y="0" width="1" height="16" fill="#101520" />
+  
+  <!-- Machine frame details -->
+  <rect x="2" y="2" width="12" height="12" fill="#121a26" stroke="#1e2c3c" stroke-width="0.5" />
+  
+  <!-- Centrifuge chamber -->
+  <circle cx="8" cy="8" r="4" fill="#0a111c" stroke="#0af" stroke-width="0.2" />
+  
+  <!-- Centrifuge rotor -->
+  <circle cx="8" cy="8" r="3" fill="#0f1c2c" stroke="#0af" stroke-width="0.2" />
+  
+  <!-- Centrifuge center hub -->
+  <circle cx="8" cy="8" r="1" fill="#1e2c3c" stroke="#0af" stroke-width="0.3" />
+  
+  <!-- Centrifuge arms -->
+  <path d="M8,8 L5,5" stroke="#0af" stroke-width="0.5" />
+  <path d="M8,8 L11,5" stroke="#0af" stroke-width="0.5" />
+  <path d="M8,8 L11,11" stroke="#0af" stroke-width="0.5" />
+  <path d="M8,8 L5,11" stroke="#0af" stroke-width="0.5" />
+  
+  <!-- Centrifuge arm weights -->
+  <circle cx="5" cy="5" r="0.7" fill="#1e2c3c" stroke="#0af" stroke-width="0.2" />
+  <circle cx="11" cy="5" r="0.7" fill="#1e2c3c" stroke="#0af" stroke-width="0.2" />
+  <circle cx="11" cy="11" r="0.7" fill="#1e2c3c" stroke="#0af" stroke-width="0.2" />
+  <circle cx="5" cy="11" r="0.7" fill="#1e2c3c" stroke="#0af" stroke-width="0.2" />
+  
+  <!-- Glow effect around rotor -->
+  <circle cx="8" cy="8" r="3.3" fill="none" stroke="#0af" stroke-width="0.1" opacity="0.6" />
+  
+  <!-- Input and output tubes -->
+  <rect x="3" y="3" width="1" height="2" fill="#1e2c3c" stroke="#0af" stroke-width="0.2" />
+  <rect x="12" y="3" width="1" height="2" fill="#1e2c3c" stroke="#0af" stroke-width="0.2" />
+  
+  <!-- Control panel -->
+  <rect x="3" y="12" width="3" height="1" fill="#0f1c2c" stroke="#0af" stroke-width="0.2" />
+  <circle cx="3.7" cy="12.5" r="0.3" fill="#0af" />
+  <circle cx="4.7" cy="12.5" r="0.3" fill="#0af" />
+  <circle cx="5.7" cy="12.5" r="0.3" fill="#0af" />
+  
+  <!-- Circuit pattern -->
+  <path d="M3.5,10.5 L3.5,12" stroke="#0af" stroke-width="0.2" />
+  <path d="M4.5,10.5 L4.5,12" stroke="#0af" stroke-width="0.2" />
+  <path d="M5.5,10.5 L5.5,12" stroke="#0af" stroke-width="0.2" />
+</svg>
