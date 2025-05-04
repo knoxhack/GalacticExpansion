@@ -1,7 +1,7 @@
 package com.astroframe.galactic.power.blocks;
 
-import com.astroframe.galactic.machinery.blocks.DisabledMachineBlock;
 import com.astroframe.galactic.power.GalacticPower;
+import com.astroframe.galactic.power.blocks.DisabledPowerBlock;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -44,7 +44,7 @@ public class PowerBlocks {
         () -> {
             GalacticPower.LOGGER.debug("Creating basic generator block with ID: galacticpower:basic_generator_block");
             ResourceLocation id = ResourceLocation.parse(GalacticPower.MOD_ID + ":" + "basic_generator_block");
-            return new DisabledMachineBlock(createStandardProperties(), "generator", id);
+            return new DisabledPowerBlock(createStandardProperties(), "generator", id);
         }
     );
 
