@@ -36,11 +36,15 @@ public class MachineryBlockEntities {
                 BiFunction<BlockPos, BlockState, AssemblerBlockEntity> factory = 
                     (pos, state) -> new AssemblerBlockEntity(pos, state);
                 
+                // Create a set of valid blocks for this entity type
+                Set<Block> validBlocks = Set.of(MachineryBlocks.ASSEMBLER.get());
+                
                 // Create block entity type with explicit factory and type parameter
+                // In NeoForge 1.21.5, the third parameter is a boolean for dataSaver (not null)
                 return new BlockEntityType<AssemblerBlockEntity>(
                     factory::apply, 
-                    Set.of(MachineryBlocks.ASSEMBLER.get()),
-                    null
+                    validBlocks,
+                    false // false for dataSaver parameter (was null in older versions)
                 );
             }
         );
