@@ -1,6 +1,8 @@
 package com.astroframe.galactic.machinery.blocks.custom;
 
+import com.astroframe.galactic.machinery.GalacticMachinery;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -25,9 +27,9 @@ public class AssemblerBlock extends Block {
      * @param properties The block properties
      */
     public AssemblerBlock(Properties properties) {
-        super(properties.noLootTable());
-        // Ensure properties have been fully initialized with required settings
-        // The noLootTable() method helps ensure block ID is properly set
+        // Don't use noLootTable() in NeoForge 1.21.5 as it's causing initialization issues
+        super(properties);
+        registerDefaultState(this.stateDefinition.any().setValue(POWERED, Boolean.FALSE));
     }
 
     @Override
