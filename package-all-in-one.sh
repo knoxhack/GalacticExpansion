@@ -39,6 +39,43 @@ for jar in "${module_jars[@]}"; do
   (cd temp-extraction && jar xf "../$jar")
 done
 
+# Fix module dependencies in all mods.toml files
+echo "Fixing module dependencies in mods.toml files..."
+find temp-extraction -name "mods.toml" | while read toml_file; do
+  # Create a backup
+  cp "$toml_file" "${toml_file}.bak"
+  module_name=$(basename "$(dirname "$(dirname "$toml_file")")")
+  
+  echo "Processing $toml_file for module $module_name"
+  
+  # Comment out all [[dependencies.X]] sections for galactic modules
+  # We're doing this by adding '#' at the beginning of the dependency lines
+  sed -i 's/\[\[dependencies\.\(galactic[a-z]*\)\]\]/#[[dependencies.\1]]/' "$toml_file"
+  sed -i 's/modId *= *"\(galactic[a-z]*\)"/#modId = "\1"/' "$toml_file"
+  sed -i 's/mandatory *= *\(true\|false\)/#mandatory = \1/' "$toml_file"
+  sed -i 's/versionRange *= *"[^"]*"/#versionRange = "0.1.0"/' "$toml_file"
+  sed -i 's/ordering *= *"\(NONE\|BEFORE\|AFTER\)"/#ordering = "\1"/' "$toml_file"
+  sed -i 's/side *= *"\(BOTH\|CLIENT\|SERVER\)"/#side = "\1"/' "$toml_file"
+  
+  # Add a note explaining why dependencies are commented out
+  sed -i '1 i\# Inter-module dependencies are disabled in the all-in-one JAR\n# All modules are included in this JAR so dependencies are satisfied internally\n' "$toml_file"
+  
+  echo "Fixed dependencies in $toml_file"
+done
+
+# Create a combined logo for the all-in-one JAR
+echo "Creating combined logo..."
+mkdir -p temp-extraction/assets/galacticexpansion/textures
+# If a logo exists in core, copy it as the all-in-one logo
+if [ -f "temp-extraction/assets/galacticcore/icon.png" ]; then
+  cp "temp-extraction/assets/galacticcore/icon.png" "temp-extraction/assets/galacticexpansion/galacticexpansion.png"
+elif [ -f "temp-extraction/assets/galacticcore/textures/icon.png" ]; then
+  cp "temp-extraction/assets/galacticcore/textures/icon.png" "temp-extraction/assets/galacticexpansion/galacticexpansion.png"
+else
+  # Create a simple logo if none exists
+  echo "No existing logo found, a placeholder will be used."
+fi
+
 # Create special merged manifest
 echo "Creating merged manifest..."
 cat > temp-extraction/META-INF/MANIFEST.MF << EOF
@@ -47,7 +84,47 @@ Implementation-Title: Galactic Expansion (All-in-One)
 Implementation-Version: 0.1.0
 Specification-Vendor: AstroFrame
 Implementation-Vendor: AstroFrame
-FMLModType: LIBRARY
+Implementation-Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+FMLModType: MOD
+EOF
+
+# Create special mods.toml file for the all-in-one mod
+echo "Creating unified mods.toml file..."
+cat > temp-extraction/META-INF/mods.toml << EOF
+# This file contains the unified modid for the all-in-one JAR
+# It replaces the individual module mods.toml files
+modLoader="javafml"
+loaderVersion="[47,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="galacticexpansion"
+version="0.1.0"
+displayName="Galactic Expansion (All-in-One)"
+logoFile="galacticexpansion.png"
+credits="AstroFrame Team"
+authors="AstroFrame"
+description='''
+The complete Galactic Expansion mod package.
+This all-in-one JAR contains all modules in a single file.
+
+Explore space, build rockets, and discover new technologies
+in this comprehensive space exploration mod for Minecraft.
+'''
+
+[[dependencies.galacticexpansion]]
+modId="neoforge"
+mandatory=true
+versionRange="[21.5,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.galacticexpansion]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.21.1,1.22)"
+ordering="NONE"
+side="BOTH"
 EOF
 
 # Create the combined JAR

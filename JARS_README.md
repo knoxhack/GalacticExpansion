@@ -24,6 +24,8 @@ For convenience, we also provide an all-in-one JAR file that includes all module
 
 - `galacticexpansion_all-in-one-0.1.0.jar` - Contains all modules in one JAR
 
+This all-in-one JAR exposes a unified modid `galacticexpansion` which replaces the individual module IDs.
+
 ## Installation
 
 ### Using Individual Modules
@@ -41,3 +43,8 @@ For convenience, we also provide an all-in-one JAR file that includes all module
 - Using individual module JARs gives you more control over which features are installed
 - The core module is required regardless of which other modules you install
 - All JARs are compatible with NeoForge 1.21.5 for Minecraft 1.21
+
+## Important
+- **DO NOT** mix the all-in-one JAR with individual module JARs. This will cause conflicts.
+- Choose either the all-in-one JAR *OR* the individual module JARs approach, not both.
+- If you were previously using individual module JARs, remove them all before installing the all-in-one JAR.
