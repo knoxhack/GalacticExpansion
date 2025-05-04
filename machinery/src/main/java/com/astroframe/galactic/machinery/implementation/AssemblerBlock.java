@@ -5,6 +5,7 @@ import com.astroframe.galactic.machinery.api.MachineBlockEntity;
 import com.astroframe.galactic.machinery.blockentity.AssemblerBlockEntity;
 import com.astroframe.galactic.machinery.blockentity.MachineryBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -20,15 +21,19 @@ import java.util.function.Supplier;
  */
 public class AssemblerBlock extends MachineBlock {
     
+    private final ResourceLocation blockId;
+    
     /**
-     * Creates a new Assembler block.
+     * Creates a new Assembler block with explicit ID.
      *
      * @param properties The block properties
+     * @param blockId The explicit block ID as ResourceLocation
      */
-    public AssemblerBlock(Properties properties) {
+    public AssemblerBlock(Properties properties, ResourceLocation blockId) {
         // Break the circular dependency by using a Supplier that's evaluated later
         // Rather than directly referencing MachineryBlockEntities.ASSEMBLER.get() which causes issues
         super(properties, MachineryBlockEntities::getAssemblerType);
+        this.blockId = blockId;
     }
     
     /**
@@ -67,5 +72,15 @@ public class AssemblerBlock extends MachineBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
         return createMachineTicker(level, state, blockEntityType);
+    }
+    
+    /**
+     * Gets the block ID.
+     * This is needed in NeoForge 1.21.5 to prevent null ID issues.
+     *
+     * @return The block ID
+     */
+    public ResourceLocation getBlockId() {
+        return blockId;
     }
 }

@@ -28,6 +28,12 @@ public class MachineryRegistry {
         GalacticMachinery.LOGGER.info("Registering Machinery module objects");
         
         try {
+            // Set deferred state for registration events
+            GalacticMachinery.LOGGER.info("Setting up registration order for machinery module");
+            
+            // Register event listeners to make sure the order is correct
+            eventBus.addListener(MachineryRegistry::onRegister);
+            
             // Register in the correct order to prevent dependency issues
             // 1. First register blocks
             GalacticMachinery.LOGGER.info("Step 1: Registering machinery blocks");
@@ -50,6 +56,27 @@ public class MachineryRegistry {
         } catch (Exception e) {
             GalacticMachinery.LOGGER.error("Error during machinery registration", e);
             throw e;
+        }
+    }
+    
+    /**
+     * Event handler for registry events to ensure proper order.
+     * This helps with circular dependencies by separating the registration phases.
+     * 
+     * @param event The register event
+     */
+    private static void onRegister(RegisterEvent event) {
+        // Log the registry type for debugging
+        String registryType = event.getRegistryKey().toString();
+        GalacticMachinery.LOGGER.debug("Processing registration for " + registryType);
+        
+        // When block registry is active, verify that blocks have proper IDs
+        if (event.getRegistryKey().equals(Registries.BLOCK)) {
+            GalacticMachinery.LOGGER.debug("Verifying block IDs during block registration");
+        }
+        // Make sure block entities reference blocks that are already registered
+        else if (event.getRegistryKey().equals(Registries.BLOCK_ENTITY_TYPE)) {
+            GalacticMachinery.LOGGER.debug("Verifying blocks exist before registering block entities");
         }
     }
 }

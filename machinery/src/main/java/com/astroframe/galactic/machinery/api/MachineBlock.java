@@ -1,8 +1,11 @@
 package com.astroframe.galactic.machinery.api;
 
 // Use the correct Minecraft imports for NeoForge 1.21.5
+import com.astroframe.galactic.machinery.GalacticMachinery;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -43,10 +46,26 @@ public abstract class MachineBlock extends Block implements EntityBlock {
         super(properties);
         this.blockEntityType = blockEntityType;
         
+        // Debug the block registration to track down the issue
+        // For NeoForge 1.21.5, even when no explicit ID is provided, we'll try to infer it
+        if (getRegistryName() == null) {
+            GalacticMachinery.LOGGER.warn("Warning: Block ID not set for " + this.getClass().getSimpleName());
+        }
+        
         // Set default state with horizontal direction
         registerDefaultState(stateDefinition.any()
                 .setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH)
                 .setValue(ACTIVE, false));
+    }
+    
+    /**
+     * Gets the registry name for this block.
+     * In NeoForge 1.21.5, we need to get this from the registry.
+     * 
+     * @return The registry name or null if not registered
+     */
+    public ResourceLocation getRegistryName() {
+        return BuiltInRegistries.BLOCK.getKey(this);
     }
     
     @Override

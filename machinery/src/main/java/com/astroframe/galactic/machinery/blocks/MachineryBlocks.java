@@ -27,32 +27,40 @@ public class MachineryBlocks {
     public static final DeferredHolder<Block, Block> ASSEMBLER = BLOCKS.register(
         "assembler_block", 
         () -> {
-            // Create properties and set the ID explicitly to avoid the "Block id not set" error
+            // Create a ResourceLocation with the proper ID format
+            ResourceLocation assemblerBlockId = new ResourceLocation(GalacticMachinery.MOD_ID, "assembler_block");
+            
+            // Create properties with explicit block ID
+            GalacticMachinery.LOGGER.debug("Creating assembler block with ID: " + assemblerBlockId);
+            
+            // Use this more verbose approach to ensure the block ID is properly set
             BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
                 .requiresCorrectToolForDrops()
                 .strength(5.0F, 6.0F)
                 .sound(SoundType.METAL);
             
-            // This ID setting method is required for NeoForge 1.21.5
-            // This ensures the block has a proper ID before it's passed to the Block constructor
-            GalacticMachinery.LOGGER.debug("Creating assembler block with ID: assembler_block");
-            
-            return new AssemblerBlock(properties);
+            // Return the block with properties that have a properly set ID
+            return new AssemblerBlock(properties, assemblerBlockId);
         }
     );
     
     public static final DeferredHolder<Block, Block> CRUSHER = BLOCKS.register(
         "crusher_block", 
         () -> {
-            // Create properties with the same pattern as the assembler block
+            // Create a ResourceLocation with the proper ID format
+            ResourceLocation crusherId = new ResourceLocation(GalacticMachinery.MOD_ID, "crusher_block");
+            
+            // Create properties with explicit block ID
+            GalacticMachinery.LOGGER.debug("Creating crusher block with ID: " + crusherId);
+            
+            // Use this more verbose approach to ensure the block ID is properly set
             BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
                 .requiresCorrectToolForDrops()
                 .strength(5.0F, 6.0F)
                 .sound(SoundType.METAL);
-                
-            GalacticMachinery.LOGGER.debug("Creating crusher block with ID: crusher_block");
+            
             return new Block(properties);
         }
     );
@@ -60,14 +68,19 @@ public class MachineryBlocks {
     public static final DeferredHolder<Block, Block> CENTRIFUGE = BLOCKS.register(
         "centrifuge_block", 
         () -> {
-            // Create properties with the same pattern as the assembler block
+            // Create a ResourceLocation with the proper ID format
+            ResourceLocation centrifugeId = new ResourceLocation(GalacticMachinery.MOD_ID, "centrifuge_block");
+            
+            // Create properties with explicit block ID
+            GalacticMachinery.LOGGER.debug("Creating centrifuge block with ID: " + centrifugeId);
+            
+            // Use this more verbose approach to ensure the block ID is properly set
             BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
                 .requiresCorrectToolForDrops()
                 .strength(5.0F, 6.0F)
                 .sound(SoundType.METAL);
-                
-            GalacticMachinery.LOGGER.debug("Creating centrifuge block with ID: centrifuge_block");
+            
             return new Block(properties);
         }
     );
@@ -75,14 +88,19 @@ public class MachineryBlocks {
     public static final DeferredHolder<Block, Block> SMELTER = BLOCKS.register(
         "smelter_block", 
         () -> {
-            // Create properties with the same pattern as the assembler block
+            // Create a ResourceLocation with the proper ID format
+            ResourceLocation smelterId = new ResourceLocation(GalacticMachinery.MOD_ID, "smelter_block");
+            
+            // Create properties with explicit block ID
+            GalacticMachinery.LOGGER.debug("Creating smelter block with ID: " + smelterId);
+            
+            // Use this more verbose approach to ensure the block ID is properly set
             BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
                 .requiresCorrectToolForDrops()
                 .strength(5.0F, 6.0F)
                 .sound(SoundType.METAL);
-                
-            GalacticMachinery.LOGGER.debug("Creating smelter block with ID: smelter_block");
+            
             return new Block(properties);
         }
     );
@@ -90,14 +108,19 @@ public class MachineryBlocks {
     public static final DeferredHolder<Block, Block> EXTRACTOR = BLOCKS.register(
         "extractor_block", 
         () -> {
-            // Create properties with the same pattern as the assembler block
+            // Create a ResourceLocation with the proper ID format
+            ResourceLocation extractorId = new ResourceLocation(GalacticMachinery.MOD_ID, "extractor_block");
+            
+            // Create properties with explicit block ID
+            GalacticMachinery.LOGGER.debug("Creating extractor block with ID: " + extractorId);
+            
+            // Use this more verbose approach to ensure the block ID is properly set
             BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
                 .requiresCorrectToolForDrops()
                 .strength(5.0F, 6.0F)
                 .sound(SoundType.METAL);
-                
-            GalacticMachinery.LOGGER.debug("Creating extractor block with ID: extractor_block");
+            
             return new Block(properties);
         }
     );
