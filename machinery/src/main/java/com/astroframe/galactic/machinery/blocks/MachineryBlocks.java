@@ -23,9 +23,9 @@ public class MachineryBlocks {
     private static final DeferredRegister<Block> BLOCKS = 
         DeferredRegister.create(Registries.BLOCK, GalacticMachinery.MOD_ID);
     
-    // Machinery Blocks with deferred holders
+    // Machinery Blocks with deferred holders - must match resource file names
     public static final DeferredHolder<Block, Block> ASSEMBLER = BLOCKS.register(
-        "assembler_block", 
+        "assembler", 
         () -> new AssemblerBlock(
             BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
