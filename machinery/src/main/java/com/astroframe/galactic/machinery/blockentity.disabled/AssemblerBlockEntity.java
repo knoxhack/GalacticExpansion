@@ -23,7 +23,7 @@ public class AssemblerBlockEntity extends MachineBlockEntity {
      * @param state The block state
      */
     public AssemblerBlockEntity(BlockPos pos, BlockState state) {
-        super(MachineryBlockEntities.ASSEMBLER.get(), pos, state);
+        super(MachineryBlockEntities.getAssemblerType(), pos, state);
     }
     
     /**

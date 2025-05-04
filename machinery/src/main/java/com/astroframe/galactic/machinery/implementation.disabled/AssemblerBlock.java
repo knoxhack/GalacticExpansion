@@ -32,7 +32,7 @@ public class AssemblerBlock extends MachineBlock {
     public AssemblerBlock(Properties properties, ResourceLocation blockId) {
         // Break the circular dependency by using a Supplier that's evaluated later
         // Rather than directly referencing MachineryBlockEntities.ASSEMBLER.get() which causes issues
-        super(properties, MachineryBlockEntities::getAssemblerType);
+        super(properties, () -> MachineryBlockEntities.getAssemblerType());
         this.blockId = blockId;
     }
     
