@@ -20,6 +20,12 @@ public class SpaceRegistry {
         
         // Register creative tabs
         SpaceCreativeTabs.initialize(modEventBus);
+        
+        // Register blocks
+        SpaceBlocks.initialize(modEventBus);
+        
+        // Register block entities (currently disabled)
+        SpaceBlockEntities.initialize(modEventBus);
     }
     
     /**
