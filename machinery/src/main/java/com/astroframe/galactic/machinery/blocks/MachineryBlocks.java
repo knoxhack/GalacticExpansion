@@ -2,17 +2,15 @@ package com.astroframe.galactic.machinery.blocks;
 
 import com.astroframe.galactic.machinery.GalacticMachinery;
 import com.astroframe.galactic.machinery.blocks.custom.AssemblerBlock;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
@@ -23,7 +21,7 @@ import java.util.function.Supplier;
 public class MachineryBlocks {
 
     // Deferred Register for blocks - use simple create method instead of createBlocks
-    private static final DeferredRegister<Block> BLOCKS = 
+    public static final DeferredRegister<Block> BLOCKS = 
         DeferredRegister.create(Registries.BLOCK, GalacticMachinery.MOD_ID);
     
     /**
@@ -38,55 +36,30 @@ public class MachineryBlocks {
             .sound(SoundType.METAL);
     }
 
-    // Machinery Blocks with deferred holders - must match resource file names
-    public static final Supplier<Block> ASSEMBLER = BLOCKS.register(
+    // Create blocks using DeferredBlock pattern which ensures proper registry ID
+    public static final DeferredBlock<Block> ASSEMBLER = BLOCKS.registerBlock(
         "assembler_block", 
-        () -> {
-            String blockId = GalacticMachinery.MOD_ID + ":assembler_block";
-            GalacticMachinery.LOGGER.debug("Creating assembler block with ID: " + blockId);
-            
-            return new AssemblerBlock(createStandardProperties());
-        }
+        () -> new AssemblerBlock(createStandardProperties())
     );
 
-    public static final Supplier<Block> CRUSHER = BLOCKS.register(
+    public static final DeferredBlock<Block> CRUSHER = BLOCKS.registerBlock(
         "crusher_block", 
-        () -> {
-            String blockId = GalacticMachinery.MOD_ID + ":crusher_block";
-            GalacticMachinery.LOGGER.debug("Creating crusher block with ID: " + blockId);
-            
-            return new Block(createStandardProperties());
-        }
+        () -> new Block(createStandardProperties())
     );
 
-    public static final Supplier<Block> CENTRIFUGE = BLOCKS.register(
+    public static final DeferredBlock<Block> CENTRIFUGE = BLOCKS.registerBlock(
         "centrifuge_block", 
-        () -> {
-            String blockId = GalacticMachinery.MOD_ID + ":centrifuge_block";
-            GalacticMachinery.LOGGER.debug("Creating centrifuge block with ID: " + blockId);
-            
-            return new Block(createStandardProperties());
-        }
+        () -> new Block(createStandardProperties())
     );
 
-    public static final Supplier<Block> SMELTER = BLOCKS.register(
+    public static final DeferredBlock<Block> SMELTER = BLOCKS.registerBlock(
         "smelter_block", 
-        () -> {
-            String blockId = GalacticMachinery.MOD_ID + ":smelter_block";
-            GalacticMachinery.LOGGER.debug("Creating smelter block with ID: " + blockId);
-            
-            return new Block(createStandardProperties());
-        }
+        () -> new Block(createStandardProperties())
     );
 
-    public static final Supplier<Block> EXTRACTOR = BLOCKS.register(
+    public static final DeferredBlock<Block> EXTRACTOR = BLOCKS.registerBlock(
         "extractor_block", 
-        () -> {
-            String blockId = GalacticMachinery.MOD_ID + ":extractor_block";
-            GalacticMachinery.LOGGER.debug("Creating extractor block with ID: " + blockId);
-            
-            return new Block(createStandardProperties());
-        }
+        () -> new Block(createStandardProperties())
     );
 
     /**

@@ -6,19 +6,14 @@ import com.astroframe.galactic.machinery.blockentity.MachineryBlockEntities;
 import com.astroframe.galactic.machinery.items.MachineryItemBlocks;
 import com.astroframe.galactic.machinery.items.MachineryItems;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.RegisterEvent;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * Registry handler for the Machinery module.
  * This centralizes all registrations for the module.
  */
 public class MachineryRegistry {
-
-    // Deferred Registers
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, GalacticMachinery.MOD_ID);
 
     /**
      * Registers all registry objects with the given event bus.
@@ -35,22 +30,23 @@ public class MachineryRegistry {
             // Register event listeners to make sure the order is correct
             eventBus.addListener(MachineryRegistry::onRegister);
             
-            // Register in the correct order to prevent dependency issues
+            // CRITICAL: The registration order must ensure blocks are registered before items that reference them
+            
             // 1. First register blocks
             GalacticMachinery.LOGGER.info("Step 1: Registering machinery blocks");
             MachineryBlocks.init(eventBus);
             
-            // 2. Then register items
-            GalacticMachinery.LOGGER.info("Step 2: Registering machinery items");
+            // 2. Register block entities that depend on blocks
+            GalacticMachinery.LOGGER.info("Step 2: Registering machinery block entities");
+            MachineryBlockEntities.init(eventBus);
+            
+            // 3. Then register regular items
+            GalacticMachinery.LOGGER.info("Step 3: Registering machinery items");
             MachineryItems.init(eventBus);
             
-            // 3. Register block items (after blocks are registered)
-            GalacticMachinery.LOGGER.info("Step 3: Registering machinery block items");
+            // 4. Finally register block items (which depend on blocks being registered)
+            GalacticMachinery.LOGGER.info("Step 4: Registering machinery block items");
             MachineryItemBlocks.init(eventBus);
-            
-            // 4. Finally register block entities (which depend on blocks)
-            GalacticMachinery.LOGGER.info("Step 4: Registering machinery block entities");
-            MachineryBlockEntities.init(eventBus);
             
             GalacticMachinery.LOGGER.info("Machinery module registration complete");
         } catch (Exception e) {
