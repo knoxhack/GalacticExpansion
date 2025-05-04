@@ -26,7 +26,9 @@ public class AssemblerBlock extends MachineBlock {
      * @param properties The block properties
      */
     public AssemblerBlock(Properties properties) {
-        super(properties, () -> MachineryBlockEntities.ASSEMBLER.get());
+        // Break the circular dependency by using a Supplier that's evaluated later
+        // Rather than directly referencing MachineryBlockEntities.ASSEMBLER.get() which causes issues
+        super(properties, MachineryBlockEntities::getAssemblerType);
     }
     
     /**

@@ -24,6 +24,9 @@ public class MachineryBlockEntities {
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = 
         DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, GalacticMachinery.MOD_ID);
     
+    // Store the instance once created to avoid duplicate creation
+    private static BlockEntityType<AssemblerBlockEntity> ASSEMBLER_TYPE = null;
+    
     // Block entity types
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AssemblerBlockEntity>> ASSEMBLER = 
         BLOCK_ENTITIES.register(
@@ -43,13 +46,48 @@ public class MachineryBlockEntities {
                 
                 // Create block entity type with explicit factory and type parameter
                 // In NeoForge 1.21.5, the third parameter is a boolean for dataSaver (not null)
-                return new BlockEntityType<>(
+                ASSEMBLER_TYPE = new BlockEntityType<>(
                     factory::apply, 
                     validBlocks,
                     false // false for dataSaver parameter (was null in older versions)
                 );
+                
+                return ASSEMBLER_TYPE;
             }
         );
+    
+    /**
+     * Gets the assembler block entity type.
+     * This method breaks the circular dependency with AssemblerBlock.
+     * 
+     * @return The block entity type for assemblers
+     */
+    public static BlockEntityType<AssemblerBlockEntity> getAssemblerType() {
+        // If already created, return the instance
+        if (ASSEMBLER_TYPE != null) {
+            return ASSEMBLER_TYPE;
+        }
+        
+        // Otherwise get from the deferred holder if registered
+        try {
+            return ASSEMBLER.get();
+        } catch (Exception e) {
+            // During initial registration, we may not have the type yet.
+            // In that case, create a temporary type that will be replaced later.
+            GalacticMachinery.LOGGER.debug("Creating temporary assembler block entity type");
+            BiFunction<BlockPos, BlockState, AssemblerBlockEntity> factory = 
+                (pos, state) -> new AssemblerBlockEntity(pos, state);
+            
+            // Use an empty set here since this is just a temporary registration
+            ASSEMBLER_TYPE = new BlockEntityType<>(
+                factory::apply, 
+                Set.of(), // Empty set since this is temporary
+                false
+            );
+            
+            return ASSEMBLER_TYPE;
+        }
+    }
     
     /**
      * Initializes the block entities registry.
