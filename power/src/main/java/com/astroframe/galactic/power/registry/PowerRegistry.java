@@ -1,9 +1,11 @@
 package com.astroframe.galactic.power.registry;
 
 import com.astroframe.galactic.power.GalacticPower;
+import com.astroframe.galactic.power.blocks.PowerBlocks;
 import com.astroframe.galactic.power.items.PowerItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -15,6 +17,7 @@ public class PowerRegistry {
 
     // Deferred Registers
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, GalacticPower.MOD_ID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, GalacticPower.MOD_ID);
 
     /**
      * Registers all registry objects with the given event bus.
@@ -26,6 +29,9 @@ public class PowerRegistry {
         
         // Initialize items
         PowerItems.init();
+        
+        // Initialize blocks (placeholder versions)
+        PowerBlocks.init(eventBus);
         
         // Register objects
         ITEMS.register(eventBus);
