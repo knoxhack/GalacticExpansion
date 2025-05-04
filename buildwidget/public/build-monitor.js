@@ -2,277 +2,270 @@
  * Enhanced Build Monitor for Galactic Expansion Mod
  * Provides real-time WebSocket-based monitoring with improved UI feedback
  */
-
 class BuildMonitor {
   constructor() {
+    // Initialize variables
     this.socket = null;
-    this.reconnectTimer = null;
+    this.reconnectInterval = 1500; // Start with 1.5s
     this.reconnectAttempts = 0;
     this.maxReconnectAttempts = 10;
-    this.reconnectDelay = 2000; // Start with 2 seconds
-    this.maxReconnectDelay = 30000; // Max 30 seconds
-    this.connectionStatusElement = document.getElementById('connectionStatus');
+    this.connected = false;
     this.moduleElements = {};
-    this.notificationsContainer = document.getElementById('notificationsContainer');
-    this.isConnected = false;
-    this.pendingMessages = [];
-
-    // Initialize module elements cache
+    this.lastStatus = {};
+    
+    // Initialize the module DOM elements references
     this.initModuleElements();
-
-    // Set up WebSocket connection
+    
+    // Connect to WebSocket server
     this.connect();
+    
+    // Setup event handlers for UI elements
+    this.setupUIEventHandlers();
   }
-
+  
   /**
    * Cache all module DOM elements for faster access
    */
   initModuleElements() {
-    const moduleNames = [
-      'core', 'power', 'machinery', 'biotech', 'energy', 'construction',
-      'space', 'utilities', 'vehicles', 'weaponry', 'robotics'
-    ];
-
-    moduleNames.forEach(moduleName => {
-      const moduleElement = document.getElementById(`module-${moduleName}`);
-      if (moduleElement) {
-        this.moduleElements[moduleName] = {
-          container: moduleElement,
-          progressBar: moduleElement.querySelector('.module-progress-bar'),
-          indicator: moduleElement.querySelector('.module-indicator'),
-          nameElement: moduleElement.querySelector('.module-name'),
-          taskElement: moduleElement.querySelector('.module-task')
-        };
-      }
+    const modules = ['core', 'power', 'machinery', 'biotech', 'energy', 
+                     'construction', 'space', 'utilities', 'vehicles', 
+                     'weaponry', 'robotics'];
+    
+    modules.forEach(module => {
+      this.moduleElements[module] = {
+        container: document.getElementById(`module-${module}`),
+        progressBar: document.querySelector(`#module-${module} .module-progress-bar`),
+        indicator: document.querySelector(`#module-${module} .module-indicator`),
+        task: document.querySelector(`#module-${module} .module-task`)
+      };
     });
   }
-
+  
   /**
    * Connect to the WebSocket server
    */
   connect() {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
-
     try {
-      // Update UI to show connecting status
-      this.updateConnectionStatus('connecting', 'Connecting to build server...');
-      this.showNotification('Connection', 'Connecting to build server...', 'info', 5000);
-
-      // Create new WebSocket connection
+      console.log("Connecting to WebSocket...");
+      
+      // Use the correct protocol based on page protocol
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const wsUrl = `${protocol}//${window.location.host}/ws`;
+      
       this.socket = new WebSocket(wsUrl);
+      this.updateConnectionStatus('connecting', 'Connecting to build server...');
+      
+      // Setup WebSocket event handlers
       this.setupSocketHandlers();
     } catch (error) {
-      console.error('Failed to create WebSocket connection:', error);
+      console.error("Error connecting to WebSocket:", error);
+      this.updateConnectionStatus('error', `Connection error: ${error.message}`);
       this.handleConnectionFailure();
     }
   }
-
+  
   /**
    * Setup WebSocket event handlers
    */
   setupSocketHandlers() {
-    // Connection opened
     this.socket.addEventListener('open', () => {
-      console.log('WebSocket connection established');
-      this.isConnected = true;
+      console.log("WebSocket connection established");
+      this.connected = true;
       this.reconnectAttempts = 0;
-      this.reconnectDelay = 2000;
-      
-      // Update UI
+      this.reconnectInterval = 1500;
       this.updateConnectionStatus('connected', 'Connected to build server');
-      this.showNotification('Connected', 'Build server connection established', 'success', 3000);
       
       // Request initial data
-      this.socket.send(JSON.stringify({ type: 'requestStatus' }));
-      this.socket.send(JSON.stringify({ type: 'requestShortCommits', limit: 10 }));
-      
-      // Process any pending messages
-      if (this.pendingMessages.length > 0) {
-        console.log(`Processing ${this.pendingMessages.length} pending messages`);
-        this.pendingMessages.forEach(msg => this.socket.send(msg));
-        this.pendingMessages = [];
-      }
+      this.sendMessage({ type: 'requestStatus' });
+      this.sendMessage({ type: 'requestOutput' });
+      this.sendMessage({ type: 'requestNotifications' });
+      this.sendMessage({ type: 'requestShortCommits', limit: 10 });
     });
-
-    // Message received
+    
     this.socket.addEventListener('message', (event) => {
       try {
         const message = JSON.parse(event.data);
+        console.log("Received message type:", message.type);
         this.handleMessage(message);
       } catch (error) {
-        console.error('Error parsing WebSocket message:', error);
+        console.error("Error handling message:", error, event.data);
       }
     });
-
-    // Connection closed
+    
     this.socket.addEventListener('close', (event) => {
-      this.isConnected = false;
-      console.log(`WebSocket connection closed. Code: ${event.code}, Reason: ${event.reason}`);
+      console.log("WebSocket connection closed:", event.code, event.reason);
+      this.connected = false;
       this.updateConnectionStatus('disconnected', 'Disconnected from build server');
       this.handleConnectionFailure();
     });
-
-    // Connection error
+    
     this.socket.addEventListener('error', (error) => {
-      console.error('WebSocket error:', error);
+      console.error("WebSocket error:", error);
       this.updateConnectionStatus('error', 'Connection error');
-      
-      // Don't need to call handleConnectionFailure() here as close event will fire
     });
   }
-
+  
   /**
    * Handle connection failures with exponential backoff
    */
   handleConnectionFailure() {
-    if (this.reconnectTimer) {
-      clearTimeout(this.reconnectTimer);
-    }
-
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
-      const delay = Math.min(this.reconnectDelay * Math.pow(1.5, this.reconnectAttempts - 1), this.maxReconnectDelay);
+      const delay = Math.min(30000, this.reconnectInterval * Math.pow(1.5, this.reconnectAttempts - 1));
       
-      console.log(`Reconnect attempt ${this.reconnectAttempts} in ${Math.round(delay / 1000)} seconds`);
-      this.updateConnectionStatus('reconnecting', `Reconnecting (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
+      console.log(`Reconnecting (attempt ${this.reconnectAttempts}) in ${(delay/1000).toFixed(1)}s`);
+      this.updateConnectionStatus('reconnecting', `Reconnecting (attempt ${this.reconnectAttempts})...`);
       
-      this.reconnectTimer = setTimeout(() => {
-        this.connect();
-      }, delay);
+      setTimeout(() => this.connect(), delay);
     } else {
-      this.updateConnectionStatus('failed', 'Connection failed. Please reload the page.');
-      this.showNotification(
-        'Connection Failed', 
-        'Could not connect to build server. Please reload the page.', 
-        'error',
-        0 // No auto-hide
-      );
+      this.updateConnectionStatus('failed', 'Connection failed after maximum attempts');
+      console.error("Maximum reconnection attempts reached");
     }
   }
-
+  
   /**
    * Process an incoming WebSocket message
    * @param {Object} message - The parsed message
    */
   handleMessage(message) {
-    if (!message || !message.type) {
-      console.error('Invalid message format:', message);
-      return;
-    }
-
-    const data = message.data || {};
-    
-    console.log('Received message type:', message.type);
-    
-    try {
-      switch (message.type) {
-        case 'status':
-          this.updateBuildStatus(data);
-          if (data.modules) {
-            this.updateModuleStatus(data.modules);
-          }
-          break;
-          
-        case 'buildOutput':
-          this.updateBuildOutput(data);
-          break;
-          
-        case 'notifications':
-          this.handleNotifications(data);
-          break;
-          
-        case 'moduleStatus':
-          this.updateModuleStatus(data);
-          break;
-          
-        case 'error':
-          this.showNotification('Error', data.message || String(data), 'error');
-          break;
-          
-        default:
-          // Forward other messages to the main handler
-          if (window.handleMessageData) {
-            window.handleMessageData(message);
-          } else {
-            console.warn('Unknown message type:', message.type);
-          }
-      }
-    } catch (error) {
-      console.error('Error handling message:', error);
+    switch (message.type) {
+      case 'status':
+        this.updateBuildStatus(message.data);
+        this.updateBuildTime(message.data);
+        this.updateModuleStatus(message.data.modules);
+        break;
+        
+      case 'buildOutput':
+        this.updateBuildOutput(message.data);
+        break;
+        
+      case 'notifications':
+        this.handleNotifications(message.data);
+        break;
+        
+      case 'tasks':
+        // Handle task updates (to be implemented)
+        break;
+        
+      case 'error':
+        console.error("Server error:", message.data);
+        this.showNotification("Server Error", message.data, 'error');
+        break;
+        
+      case 'shortCommits':
+        // Handle short commit history (to be implemented)
+        break;
+        
+      case 'metrics':
+        // Handle build metrics (to be implemented)
+        break;
+        
+      default:
+        console.warn("Unknown message type:", message.type);
     }
   }
-
+  
   /**
    * Update the connection status indicator
    * @param {string} status - Status type: connected, connecting, disconnected, error, failed
    * @param {string} tooltip - Tooltip text
    */
   updateConnectionStatus(status, tooltip) {
-    if (this.connectionStatusElement) {
-      this.connectionStatusElement.className = `connection-status ${status}`;
-      this.connectionStatusElement.title = tooltip || '';
-    }
+    const statusElement = document.getElementById('connectionStatus');
+    if (!statusElement) return;
+    
+    // Remove all previous classes
+    statusElement.classList.remove('connected', 'connecting', 'disconnected', 'error', 'reconnecting', 'failed');
+    
+    // Add the current status class
+    statusElement.classList.add(status);
+    
+    // Update tooltip
+    statusElement.title = tooltip || '';
   }
-
+  
   /**
    * Update the build status display
    * @param {Object} data - Build status data
    */
   updateBuildStatus(data) {
-    const buildStatusText = document.getElementById('buildStatusText');
-    const progressBar = document.getElementById('progressBar');
-    const progressText = document.getElementById('progressText');
+    const statusTextElement = document.getElementById('buildStatusText');
+    const progressBarElement = document.getElementById('progressBar');
+    const progressTextElement = document.getElementById('progressText');
     
-    if (!data) return;
-    
-    // Update build status text
-    if (buildStatusText) {
-      let statusDisplay = data.status || 'Unknown';
-      // Capitalize first letter
-      statusDisplay = statusDisplay.charAt(0).toUpperCase() + statusDisplay.slice(1);
-      buildStatusText.textContent = statusDisplay;
+    if (statusTextElement) {
+      let statusText = 'Unknown';
+      let statusClass = '';
       
-      // Add class for styling
-      buildStatusText.className = data.status || '';
-    }
-    
-    // Update progress bar
-    if (progressBar && progressText) {
-      const progress = data.progress || 0;
-      const progressPercentage = Math.round(progress * 100);
+      switch (data.status) {
+        case 'building':
+          statusText = 'Building';
+          statusClass = 'building';
+          break;
+        case 'success':
+          statusText = 'Success';
+          statusClass = 'success';
+          break;
+        case 'failed':
+          statusText = 'Failed';
+          statusClass = 'failed';
+          break;
+        case 'canceled':
+          statusText = 'Canceled';
+          statusClass = 'canceled';
+          break;
+        case 'idle':
+          statusText = 'Idle';
+          statusClass = 'idle';
+          break;
+      }
       
-      progressBar.style.width = `${progressPercentage}%`;
-      progressText.textContent = `${progressPercentage}%`;
+      statusTextElement.textContent = statusText;
       
-      // Add class for status-based styling
-      progressBar.className = 'progress-bar';
-      if (data.status) {
-        progressBar.classList.add(data.status);
+      // Remove all status classes and add the current one
+      statusTextElement.classList.remove('building', 'success', 'failed', 'canceled', 'idle');
+      if (statusClass) {
+        statusTextElement.classList.add(statusClass);
       }
     }
     
-    // Update build time display
-    this.updateBuildTime(data);
+    // Update progress bar
+    if (progressBarElement && progressTextElement) {
+      const progress = data.progress || 0;
+      progressBarElement.style.width = `${progress}%`;
+      progressTextElement.textContent = `${progress}%`;
+      
+      // Update progress bar class based on status
+      progressBarElement.classList.remove('building', 'success', 'failed');
+      if (data.status === 'building') {
+        progressBarElement.classList.add('building');
+      } else if (data.status === 'success') {
+        progressBarElement.classList.add('success');
+      } else if (data.status === 'failed') {
+        progressBarElement.classList.add('failed');
+      }
+    }
     
-    // Enable/disable buttons based on status
+    // Enable/disable UI buttons based on build status
     const startBuildBtn = document.getElementById('startBuild');
     const stopBuildBtn = document.getElementById('stopBuild');
     const createReleaseBtn = document.getElementById('createRelease');
     
-    if (startBuildBtn && stopBuildBtn && createReleaseBtn) {
-      if (data.status === 'building' || data.status === 'starting') {
+    if (startBuildBtn && stopBuildBtn) {
+      if (data.status === 'building') {
         startBuildBtn.disabled = true;
         stopBuildBtn.disabled = false;
-        createReleaseBtn.disabled = true;
       } else {
         startBuildBtn.disabled = false;
         stopBuildBtn.disabled = true;
-        createReleaseBtn.disabled = data.status !== 'success';
       }
     }
+    
+    if (createReleaseBtn) {
+      createReleaseBtn.disabled = data.status !== 'success';
+    }
   }
-
+  
   /**
    * Update the build time display
    * @param {Object} data - Build status data
@@ -281,125 +274,129 @@ class BuildMonitor {
     const buildTimeElement = document.getElementById('buildTime');
     if (!buildTimeElement) return;
     
-    if (data.status === 'building' || data.status === 'starting') {
-      // Show elapsed time
-      if (data.startTime) {
+    let timeText = '';
+    
+    if (data.startTime) {
+      if (data.status === 'building') {
+        // Calculate elapsed time for in-progress builds
         const startTime = new Date(data.startTime);
         const now = new Date();
         const elapsed = now - startTime;
-        buildTimeElement.textContent = formatDuration(elapsed);
+        timeText = `Elapsed: ${formatDuration(elapsed)}`;
         
-        // Start timer to update elapsed time
+        // Update continuously while building
         if (!this.buildTimeInterval) {
           this.buildTimeInterval = setInterval(() => {
-            const now = new Date();
-            const elapsed = now - startTime;
-            buildTimeElement.textContent = formatDuration(elapsed);
+            if (this.lastStatus.status === 'building') {
+              const startTime = new Date(this.lastStatus.startTime);
+              const now = new Date();
+              const elapsed = now - startTime;
+              buildTimeElement.textContent = `Elapsed: ${formatDuration(elapsed)}`;
+            } else {
+              clearInterval(this.buildTimeInterval);
+              this.buildTimeInterval = null;
+            }
           }, 1000);
         }
-      }
-    } else {
-      // Stop timer if running
-      if (this.buildTimeInterval) {
-        clearInterval(this.buildTimeInterval);
-        this.buildTimeInterval = null;
-      }
-      
-      // Show duration if available
-      if (data.duration) {
-        buildTimeElement.textContent = formatDuration(data.duration);
-      } else if (data.startTime && data.endTime) {
-        const startTime = new Date(data.startTime);
-        const endTime = new Date(data.endTime);
-        const duration = endTime - startTime;
-        buildTimeElement.textContent = formatDuration(duration);
-      } else {
-        buildTimeElement.textContent = '';
+      } else if (data.endTime && data.duration) {
+        // Display final build time for completed builds
+        timeText = `Duration: ${formatDuration(data.duration)}`;
+        
+        // Clear the interval if it exists
+        if (this.buildTimeInterval) {
+          clearInterval(this.buildTimeInterval);
+          this.buildTimeInterval = null;
+        }
       }
     }
+    
+    buildTimeElement.textContent = timeText;
+    this.lastStatus = data;
   }
-
+  
   /**
    * Update module status display
    * @param {Object} modules - Module status data
    */
   updateModuleStatus(modules) {
-    if (!modules) return;
-    
-    Object.entries(modules).forEach(([moduleName, status]) => {
-      const moduleElements = this.moduleElements[moduleName];
-      if (!moduleElements) return;
+    for (const [moduleName, moduleData] of Object.entries(modules)) {
+      const elements = this.moduleElements[moduleName];
+      if (!elements) continue;
       
-      const statusValue = typeof status === 'string' ? status : (status.status || 'pending');
+      // Store for logging
+      console.log(`Updating module ${moduleName} with status:`, moduleData);
       
-      // Update progress bar
-      if (moduleElements.progressBar) {
-        moduleElements.progressBar.className = 'module-progress-bar ' + statusValue;
+      // Update status classes
+      elements.container.classList.remove('building', 'success', 'failed', 'pending');
+      elements.progressBar.classList.remove('building', 'success', 'failed', 'pending');
+      elements.indicator.classList.remove('building', 'success', 'failed', 'pending');
+      
+      // Add appropriate class based on status
+      elements.container.classList.add(moduleData.status);
+      elements.progressBar.classList.add(moduleData.status);
+      elements.indicator.classList.add(moduleData.status);
+      
+      // Reset pulse animation and apply it again for new updates
+      elements.container.classList.remove('pulse');
+      void elements.container.offsetWidth; // Force reflow to restart animation
+      elements.container.classList.add('pulse');
+      
+      // Update task info if available
+      if (elements.task && moduleData.lastTask) {
+        elements.task.textContent = moduleData.lastTask;
+      } else if (elements.task) {
+        elements.task.textContent = '';
+      }
+      
+      // Update progress bar width based on status
+      if (elements.progressBar) {
+        let width = '0%';
         
-        let progressWidth = 0;
-        if (statusValue === 'success' || statusValue === 'failed') {
-          progressWidth = 100;
-        } else if (statusValue === 'building') {
-          // If we have progress info, use it, otherwise use 50%
-          const progress = typeof status === 'object' && status.progress ? status.progress : 0.5;
-          progressWidth = progress * 100;
+        if (moduleData.status === 'success') {
+          width = '100%';
+        } else if (moduleData.status === 'building') {
+          width = '60%'; // Indicate in-progress
+        } else if (moduleData.status === 'failed') {
+          width = '30%'; // Indicate partial progress before failure
         }
         
-        moduleElements.progressBar.style.width = `${progressWidth}%`;
+        elements.progressBar.style.width = width;
       }
-      
-      // Update status indicator
-      if (moduleElements.indicator) {
-        moduleElements.indicator.className = 'module-indicator ' + statusValue;
-      }
-      
-      // Update task display
-      if (moduleElements.taskElement) {
-        const taskValue = typeof status === 'object' ? (status.currentTask || status.lastTask || '') : '';
-        moduleElements.taskElement.textContent = taskValue;
-        
-        // For success status, add a check mark
-        if (statusValue === 'success' && !taskValue) {
-          moduleElements.taskElement.textContent = '✓';
-        }
-      }
-      
-      // Add a visual pulse effect to the module that's being updated
-      if (moduleElements.container) {
-        moduleElements.container.classList.add('pulse');
-        setTimeout(() => {
-          moduleElements.container.classList.remove('pulse');
-        }, 1000);
-      }
-    });
+    }
   }
-
+  
   /**
    * Update build output display
    * @param {string|Object|Array} output - Build output data
    */
   updateBuildOutput(output) {
-    const outputText = document.getElementById('outputText');
-    if (!outputText) return;
+    const outputElement = document.getElementById('outputText');
+    if (!outputElement) return;
     
     const filterSelect = document.getElementById('filterOutput');
     const currentFilter = filterSelect ? filterSelect.value : 'all';
+    const autoScroll = document.getElementById('autoScroll');
+    const shouldAutoScroll = autoScroll ? autoScroll.checked : true;
     
     if (Array.isArray(output)) {
-      output.forEach(item => {
-        this.appendOutputLine(item, outputText, currentFilter);
+      // Handle array of output lines
+      output.forEach(line => {
+        this.appendOutputLine(line, outputElement, currentFilter);
       });
-    } else {
-      this.appendOutputLine(output, outputText, currentFilter);
+    } else if (typeof output === 'object') {
+      // Handle single output object
+      this.appendOutputLine(output, outputElement, currentFilter);
+    } else if (typeof output === 'string') {
+      // Handle plain string
+      this.appendOutputLine({ type: 'info', message: output }, outputElement, currentFilter);
     }
     
-    // Auto-scroll if enabled
-    const autoScrollCheckbox = document.getElementById('autoScroll');
-    if (autoScrollCheckbox && autoScrollCheckbox.checked) {
-      outputText.scrollTop = outputText.scrollHeight;
+    // Apply auto-scrolling if enabled
+    if (shouldAutoScroll) {
+      outputElement.scrollTop = outputElement.scrollHeight;
     }
   }
-
+  
   /**
    * Append a single line to the output display
    * @param {string|Object} line - Line to append
@@ -407,65 +404,65 @@ class BuildMonitor {
    * @param {string} filter - Current filter
    */
   appendOutputLine(line, outputElement, filter) {
-    // Convert string to object if needed
-    let lineObj = typeof line === 'string' 
-      ? { type: 'info', message: line } 
-      : line;
+    // Normalize line to object format if it's a string
+    const outputLine = typeof line === 'string' ? { type: 'info', message: line } : line;
     
-    // Default to info type if not specified
-    const type = lineObj.type || 'info';
+    // Apply filter
+    if (filter !== 'all' && outputLine.type !== filter) {
+      return;
+    }
     
-    // Check filter
-    if (filter !== 'all' && filter !== type) return;
-    
-    // Create formatted line
+    // Create line element
     const lineElement = document.createElement('div');
-    lineElement.className = `output-line ${type}`;
+    lineElement.className = `output-line ${outputLine.type || 'info'}`;
     
     // Add timestamp
-    const timestamp = new Date().toLocaleTimeString();
-    lineElement.innerHTML = `<span class="timestamp">[${timestamp}]</span> `;
+    const timestamp = document.createElement('span');
+    timestamp.className = 'timestamp';
+    timestamp.textContent = new Date().toLocaleTimeString();
+    lineElement.appendChild(timestamp);
     
     // Add type badge
     const badge = document.createElement('span');
-    badge.className = `badge ${type}`;
-    badge.textContent = type.toUpperCase();
+    badge.className = `badge ${outputLine.type || 'info'}`;
+    badge.textContent = outputLine.type?.toUpperCase() || 'INFO';
     lineElement.appendChild(badge);
     
     // Add message
     const message = document.createElement('span');
     message.className = 'message';
-    message.textContent = ' ' + (lineObj.message || '');
+    message.textContent = outputLine.message || '';
     lineElement.appendChild(message);
     
-    // Add to output
     outputElement.appendChild(lineElement);
   }
-
+  
   /**
    * Handle notification messages
    * @param {Object|Array} notifications - Notifications data
    */
   handleNotifications(notifications) {
+    if (!notifications) return;
+    
     if (Array.isArray(notifications)) {
       notifications.forEach(notification => {
         this.showNotification(
-          notification.title || 'Notification',
-          notification.message || '',
+          notification.title || getDefaultTitle(notification.type),
+          notification.message,
           notification.type || 'info',
           notification.timeout || 5000
         );
       });
-    } else if (notifications && typeof notifications === 'object') {
+    } else {
       this.showNotification(
-        notifications.title || 'Notification',
-        notifications.message || '',
+        notifications.title || getDefaultTitle(notifications.type),
+        notifications.message,
         notifications.type || 'info',
         notifications.timeout || 5000
       );
     }
   }
-
+  
   /**
    * Display a notification
    * @param {string} title - Notification title
@@ -474,75 +471,133 @@ class BuildMonitor {
    * @param {number} timeout - Auto-dismiss timeout in ms, 0 for no auto-dismiss
    */
   showNotification(title, message, type = 'info', timeout = 5000) {
-    if (!this.notificationsContainer) return;
+    const container = document.getElementById('notificationsContainer');
+    if (!container) return;
     
-    // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
+    notification.innerHTML = `
+      <div class="notification-title">${title}</div>
+      <div class="notification-message">${message}</div>
+      <button class="notification-close">&times;</button>
+    `;
     
-    // Add title
-    const titleElement = document.createElement('div');
-    titleElement.className = 'notification-title';
-    titleElement.textContent = title;
-    notification.appendChild(titleElement);
-    
-    // Add message
-    const messageElement = document.createElement('div');
-    messageElement.className = 'notification-message';
-    messageElement.textContent = message;
-    notification.appendChild(messageElement);
-    
-    // Add close button
-    const closeButton = document.createElement('button');
-    closeButton.className = 'notification-close';
-    closeButton.innerHTML = '&times;';
-    closeButton.addEventListener('click', () => {
+    // Add close button handler
+    const closeBtn = notification.querySelector('.notification-close');
+    closeBtn.addEventListener('click', () => {
       notification.classList.add('hiding');
       setTimeout(() => {
-        if (notification.parentNode) {
-          notification.parentNode.removeChild(notification);
+        try {
+          container.removeChild(notification);
+        } catch (e) {
+          // Notification may have been removed already
         }
       }, 300);
     });
-    notification.appendChild(closeButton);
     
-    // Add to container
-    this.notificationsContainer.appendChild(notification);
+    // Add the notification to the container
+    container.appendChild(notification);
     
-    // Auto-dismiss after timeout if specified
+    // Set auto-dismiss timeout if specified
     if (timeout > 0) {
       setTimeout(() => {
         notification.classList.add('hiding');
         setTimeout(() => {
-          if (notification.parentNode) {
-            notification.parentNode.removeChild(notification);
+          try {
+            container.removeChild(notification);
+          } catch (e) {
+            // Notification may have been removed already
           }
         }, 300);
       }, timeout);
     }
   }
-
+  
+  /**
+   * Setup UI event handlers
+   */
+  setupUIEventHandlers() {
+    // Start build button
+    const startBuildBtn = document.getElementById('startBuild');
+    if (startBuildBtn) {
+      startBuildBtn.addEventListener('click', () => {
+        const buildCommand = document.getElementById('buildCommand');
+        const command = buildCommand ? buildCommand.value : 'build';
+        
+        this.sendMessage({
+          type: 'startBuild',
+          gradleCommand: command
+        });
+      });
+    }
+    
+    // Stop build button
+    const stopBuildBtn = document.getElementById('stopBuild');
+    if (stopBuildBtn) {
+      stopBuildBtn.addEventListener('click', () => {
+        this.sendMessage({ type: 'stopBuild' });
+      });
+    }
+    
+    // Filter output
+    const filterSelect = document.getElementById('filterOutput');
+    if (filterSelect) {
+      filterSelect.addEventListener('change', () => {
+        // Request full output and let the filter apply on update
+        this.sendMessage({ type: 'requestOutput' });
+      });
+    }
+    
+    // Clear output button
+    const clearOutputBtn = document.getElementById('clearOutput');
+    if (clearOutputBtn) {
+      clearOutputBtn.addEventListener('click', () => {
+        const outputElement = document.getElementById('outputText');
+        if (outputElement) {
+          outputElement.innerHTML = '';
+        }
+      });
+    }
+    
+    // Create checkpoint button
+    const createCheckpointBtn = document.getElementById('createCheckpointBtn');
+    if (createCheckpointBtn) {
+      createCheckpointBtn.addEventListener('click', () => {
+        // Implement checkpoint creation
+        const checkpointName = prompt('Enter a name for this checkpoint:', 
+                                      `Checkpoint ${new Date().toLocaleString()}`);
+        if (checkpointName) {
+          const description = prompt('Enter a description (optional):');
+          this.sendMessage({
+            type: 'createCheckpoint',
+            name: checkpointName,
+            description: description || ''
+          });
+        }
+      });
+    }
+    
+    // Create release button
+    const createReleaseBtn = document.getElementById('createRelease');
+    if (createReleaseBtn) {
+      createReleaseBtn.addEventListener('click', () => {
+        if (confirm('Create a new GitHub release with all module JARs?')) {
+          this.sendMessage({ type: 'createRelease' });
+        }
+      });
+    }
+  }
+  
   /**
    * Send a message to the server
    * @param {Object} message - Message to send
    */
   sendMessage(message) {
-    if (!message) return;
-    
-    const messageStr = typeof message === 'string' 
-      ? message 
-      : JSON.stringify(message);
-    
-    if (this.isConnected && this.socket && this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(messageStr);
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      this.socket.send(JSON.stringify(message));
     } else {
-      // Queue message to send when connected
-      this.pendingMessages.push(messageStr);
-      
-      // Try to reconnect if not already trying
-      if (!this.isConnected && !this.reconnectTimer) {
-        this.connect();
-      }
+      console.warn('Cannot send message, socket not connected');
+      this.showNotification('Connection Error', 'Not connected to server', 'error');
     }
   }
 }
@@ -553,84 +608,36 @@ class BuildMonitor {
  * @returns {string} Formatted duration string
  */
 function formatDuration(ms) {
-  const seconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
+  if (!ms || isNaN(ms)) return '0s';
   
-  const remainingMinutes = minutes % 60;
-  const remainingSeconds = seconds % 60;
+  const seconds = Math.floor(ms / 1000) % 60;
+  const minutes = Math.floor(ms / (1000 * 60)) % 60;
+  const hours = Math.floor(ms / (1000 * 60 * 60));
   
   let result = '';
+  if (hours > 0) result += `${hours}h `;
+  if (minutes > 0 || hours > 0) result += `${minutes}m `;
+  result += `${seconds}s`;
   
-  if (hours > 0) {
-    result += `${hours}h `;
-  }
-  
-  if (remainingMinutes > 0 || hours > 0) {
-    result += `${remainingMinutes}m `;
-  }
-  
-  result += `${remainingSeconds}s`;
-  
-  return result;
+  return result.trim();
 }
 
-// Initialize the build monitor when page is loaded
+/**
+ * Get a default title for a notification type
+ * @param {string} type - Notification type
+ * @returns {string} Default title
+ */
+function getDefaultTitle(type) {
+  switch (type) {
+    case 'success': return 'Success';
+    case 'error': return 'Error';
+    case 'warning': return 'Warning';
+    case 'info':
+    default: return 'Information';
+  }
+}
+
+// Initialize the monitor when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
   window.buildMonitor = new BuildMonitor();
-  
-  // Set up event handlers for controls
-  
-  // Start build button
-  const startBuildBtn = document.getElementById('startBuild');
-  if (startBuildBtn) {
-    startBuildBtn.addEventListener('click', () => {
-      const buildCommandSelect = document.getElementById('buildCommand');
-      const gradleCommand = buildCommandSelect ? buildCommandSelect.value : 'build';
-      
-      window.buildMonitor.sendMessage({
-        type: 'startBuild',
-        gradleCommand
-      });
-    });
-  }
-  
-  // Stop build button
-  const stopBuildBtn = document.getElementById('stopBuild');
-  if (stopBuildBtn) {
-    stopBuildBtn.addEventListener('click', () => {
-      window.buildMonitor.sendMessage({
-        type: 'stopBuild'
-      });
-    });
-  }
-  
-  // Create checkpoint button
-  const createCheckpointBtn = document.getElementById('createCheckpoint');
-  if (createCheckpointBtn) {
-    createCheckpointBtn.addEventListener('click', () => {
-      const checkpointName = prompt('Enter a name for this checkpoint:', 
-        `Checkpoint-${new Date().toISOString().slice(0, 10)}`);
-      
-      if (checkpointName) {
-        window.buildMonitor.sendMessage({
-          type: 'createCheckpoint',
-          name: checkpointName,
-          description: 'Manual checkpoint created from build widget'
-        });
-      }
-    });
-  }
-  
-  // Create release button
-  const createReleaseBtn = document.getElementById('createRelease');
-  if (createReleaseBtn) {
-    createReleaseBtn.addEventListener('click', () => {
-      if (confirm('Are you sure you want to create a GitHub release?')) {
-        window.buildMonitor.sendMessage({
-          type: 'createRelease'
-        });
-      }
-    });
-  }
 });
