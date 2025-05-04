@@ -74,6 +74,15 @@ author = "agent"
 task = "shell.exec"
 args = "export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35 && ./gradlew build"
 
+[[workflows.workflow]]
+name = "Debug Machinery Module"
+author = 42008590
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35 && ./gradlew :machinery:compileJava --stacktrace --info"
+
 [deployment]
 run = ["sh", "-c", "export JAVA_HOME=/nix/store/sziqmjk1i28cxcr5x29jbz3dzhiz1pii-openjdk-headless-21+35 && ./gradlew :core:build :power:build :machinery:build :biotech:build"]
 
