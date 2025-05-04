@@ -8,14 +8,14 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.core.Direction;
 
 /**
  * A space rover block.
  * This is a placeholder implementation to be expanded with proper vehicle mechanics.
  */
 public class RoverBlock extends HorizontalDirectionalBlock {
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    // Use the FACING property directly from the parent class
     
     public static final MapCodec<RoverBlock> CODEC = simpleCodec(
         props -> new RoverBlock());
