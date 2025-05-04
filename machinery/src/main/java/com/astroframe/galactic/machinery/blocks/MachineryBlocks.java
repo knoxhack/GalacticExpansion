@@ -29,7 +29,7 @@ public class MachineryBlocks {
         "assembler", 
         () -> {
             // Create a ResourceLocation with the proper ID format using proper NeoForge 1.21.5 syntax
-            ResourceLocation assemblerBlockId = new ResourceLocation(GalacticMachinery.MOD_ID, "assembler");
+            ResourceLocation assemblerBlockId = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":assembler");
 
             // Create properties with explicit block ID
             GalacticMachinery.LOGGER.debug("Creating assembler block with ID: " + assemblerBlockId);
@@ -50,7 +50,7 @@ public class MachineryBlocks {
         "crusher_block", 
         () -> {
             // Create a ResourceLocation with the proper ID format using proper NeoForge 1.21.5 syntax
-            ResourceLocation crusherId = new ResourceLocation(GalacticMachinery.MOD_ID, "crusher_block");
+            ResourceLocation crusherId = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":crusher_block");
 
             // Create properties with explicit block ID
             GalacticMachinery.LOGGER.debug("Creating crusher block with ID: " + crusherId);
@@ -70,7 +70,7 @@ public class MachineryBlocks {
         "centrifuge_block", 
         () -> {
             // Create a ResourceLocation with the proper ID format using proper NeoForge 1.21.5 syntax
-            ResourceLocation centrifugeId = new ResourceLocation(GalacticMachinery.MOD_ID, "centrifuge_block");
+            ResourceLocation centrifugeId = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":centrifuge_block");
 
             // Create properties with explicit block ID
             GalacticMachinery.LOGGER.debug("Creating centrifuge block with ID: " + centrifugeId);
@@ -90,7 +90,7 @@ public class MachineryBlocks {
         "smelter_block", 
         () -> {
             // Create a ResourceLocation with the proper ID format using proper NeoForge 1.21.5 syntax
-            ResourceLocation smelterId = new ResourceLocation(GalacticMachinery.MOD_ID, "smelter_block");
+            ResourceLocation smelterId = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":smelter_block");
 
             // Create properties with explicit block ID
             GalacticMachinery.LOGGER.debug("Creating smelter block with ID: " + smelterId);
@@ -110,7 +110,7 @@ public class MachineryBlocks {
         "extractor_block", 
         () -> {
             // Create a ResourceLocation with the proper ID format using proper NeoForge 1.21.5 syntax
-            ResourceLocation extractorId = new ResourceLocation(GalacticMachinery.MOD_ID, "extractor_block");
+            ResourceLocation extractorId = ResourceLocation.parse(GalacticMachinery.MOD_ID + ":extractor_block");
 
             // Create properties with explicit block ID
             GalacticMachinery.LOGGER.debug("Creating extractor block with ID: " + extractorId);
