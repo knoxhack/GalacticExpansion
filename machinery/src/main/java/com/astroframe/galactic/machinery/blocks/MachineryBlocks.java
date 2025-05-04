@@ -26,57 +26,80 @@ public class MachineryBlocks {
     // Machinery Blocks with deferred holders - must match resource file names
     public static final DeferredHolder<Block, Block> ASSEMBLER = BLOCKS.register(
         "assembler_block", 
-        () -> new AssemblerBlock(
-            BlockBehaviour.Properties.of()
+        () -> {
+            // Create properties and set the ID explicitly to avoid the "Block id not set" error
+            BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
                 .requiresCorrectToolForDrops()
                 .strength(5.0F, 6.0F)
-                .sound(SoundType.METAL)
-        )
+                .sound(SoundType.METAL);
+            
+            // This ID setting method is required for NeoForge 1.21.5
+            // This ensures the block has a proper ID before it's passed to the Block constructor
+            GalacticMachinery.LOGGER.debug("Creating assembler block with ID: assembler_block");
+            
+            return new AssemblerBlock(properties);
+        }
     );
     
     public static final DeferredHolder<Block, Block> CRUSHER = BLOCKS.register(
         "crusher_block", 
-        () -> new Block(
-            BlockBehaviour.Properties.of()
+        () -> {
+            // Create properties with the same pattern as the assembler block
+            BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
                 .requiresCorrectToolForDrops()
                 .strength(5.0F, 6.0F)
-                .sound(SoundType.METAL)
-        )
+                .sound(SoundType.METAL);
+                
+            GalacticMachinery.LOGGER.debug("Creating crusher block with ID: crusher_block");
+            return new Block(properties);
+        }
     );
     
     public static final DeferredHolder<Block, Block> CENTRIFUGE = BLOCKS.register(
         "centrifuge_block", 
-        () -> new Block(
-            BlockBehaviour.Properties.of()
+        () -> {
+            // Create properties with the same pattern as the assembler block
+            BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
                 .requiresCorrectToolForDrops()
                 .strength(5.0F, 6.0F)
-                .sound(SoundType.METAL)
-        )
+                .sound(SoundType.METAL);
+                
+            GalacticMachinery.LOGGER.debug("Creating centrifuge block with ID: centrifuge_block");
+            return new Block(properties);
+        }
     );
     
     public static final DeferredHolder<Block, Block> SMELTER = BLOCKS.register(
         "smelter_block", 
-        () -> new Block(
-            BlockBehaviour.Properties.of()
+        () -> {
+            // Create properties with the same pattern as the assembler block
+            BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
                 .requiresCorrectToolForDrops()
                 .strength(5.0F, 6.0F)
-                .sound(SoundType.METAL)
-        )
+                .sound(SoundType.METAL);
+                
+            GalacticMachinery.LOGGER.debug("Creating smelter block with ID: smelter_block");
+            return new Block(properties);
+        }
     );
     
     public static final DeferredHolder<Block, Block> EXTRACTOR = BLOCKS.register(
         "extractor_block", 
-        () -> new Block(
-            BlockBehaviour.Properties.of()
+        () -> {
+            // Create properties with the same pattern as the assembler block
+            BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
                 .requiresCorrectToolForDrops()
                 .strength(5.0F, 6.0F)
-                .sound(SoundType.METAL)
-        )
+                .sound(SoundType.METAL);
+                
+            GalacticMachinery.LOGGER.debug("Creating extractor block with ID: extractor_block");
+            return new Block(properties);
+        }
     );
     
     /**
