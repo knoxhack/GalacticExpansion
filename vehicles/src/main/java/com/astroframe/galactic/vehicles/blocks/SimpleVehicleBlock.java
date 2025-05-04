@@ -1,5 +1,7 @@
 package com.astroframe.galactic.vehicles.blocks;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -14,6 +16,13 @@ import net.minecraft.world.level.material.MapColor;
  */
 public class SimpleVehicleBlock extends HorizontalDirectionalBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    
+    public static final MapCodec<SimpleVehicleBlock> CODEC = simpleCodec(SimpleVehicleBlock::new);
+    
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return CODEC;
+    }
     
     public SimpleVehicleBlock() {
         super(Properties.of()

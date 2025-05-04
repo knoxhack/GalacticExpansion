@@ -1,5 +1,7 @@
 package com.astroframe.galactic.vehicles.blocks;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -14,6 +16,13 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
  */
 public class RoverBlock extends HorizontalDirectionalBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    
+    public static final MapCodec<RoverBlock> CODEC = simpleCodec(RoverBlock::new);
+    
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return CODEC;
+    }
     
     public RoverBlock() {
         super(Properties.of()
