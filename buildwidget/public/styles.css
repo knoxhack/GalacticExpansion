@@ -70,7 +70,7 @@ header h1 {
 
 header h2 {
     font-size: 20px;
-    color: #5f6368;
+    color: var(--secondary-text-color);
     font-weight: 400;
 }
 
@@ -178,7 +178,7 @@ button:disabled {
 
 .build-time {
     font-size: 14px;
-    color: #5f6368;
+    color: var(--secondary-text-color);
 }
 
 .progress-container {
@@ -232,7 +232,7 @@ button:disabled {
     display: flex;
     align-items: center;
     gap: 10px;
-    background-color: #f5f5f5;
+    background-color: var(--module-bar-bg);
     border-radius: 8px;
     padding: 12px 15px;
     transition: transform 0.2s, box-shadow 0.2s;
@@ -255,7 +255,7 @@ button:disabled {
     font-weight: 600;
     font-size: 14px;
     margin-bottom: 4px;
-    color: #333;
+    color: var(--text-color);
 }
 
 .module-progress {
@@ -393,7 +393,7 @@ button:disabled {
 
 .module-task {
     font-size: 12px;
-    color: #5f6368;
+    color: var(--secondary-text-color);
 }
 
 @media (max-width: 768px) {
@@ -459,7 +459,7 @@ button:disabled {
 
 .filter-label {
     font-size: 14px;
-    color: #5f6368;
+    color: var(--secondary-text-color);
 }
 
 .filter-select {
@@ -472,8 +472,8 @@ button:disabled {
 }
 
 .output-container {
-    background-color: #202124;
-    color: #e8eaed;
+    background-color: var(--console-bg);
+    color: var(--console-text);
     border-radius: 4px;
     padding: 15px;
     height: 300px;
@@ -682,6 +682,35 @@ pre {
     align-items: center;
     padding: 10px 0;
     margin-bottom: 20px;
+}
+
+/* Theme Toggle */
+.theme-toggle-container {
+    display: flex;
+    align-items: center;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+    background-color: var(--card-background);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.theme-toggle:hover {
+    background-color: var(--border-color);
+}
+
+.theme-toggle-icon {
+    font-size: 18px;
 }
 
 .connection-status {
