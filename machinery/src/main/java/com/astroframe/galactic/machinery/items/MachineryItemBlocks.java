@@ -25,21 +25,37 @@ public class MachineryItemBlocks {
     public static void init() {
         GalacticMachinery.LOGGER.info("Registering machinery block items");
         
-        // Register block items for each machinery block
-        BLOCK_ITEMS.registerItem("assembler", props -> 
-            new BlockItem(MachineryBlocks.ASSEMBLER.get(), props));
-        
-        BLOCK_ITEMS.registerItem("crusher", props -> 
-            new BlockItem(MachineryBlocks.CRUSHER.get(), props));
-        
-        BLOCK_ITEMS.registerItem("centrifuge", props -> 
-            new BlockItem(MachineryBlocks.CENTRIFUGE.get(), props));
-        
-        BLOCK_ITEMS.registerItem("smelter", props -> 
-            new BlockItem(MachineryBlocks.SMELTER.get(), props));
-        
-        BLOCK_ITEMS.registerItem("extractor", props -> 
-            new BlockItem(MachineryBlocks.EXTRACTOR.get(), props));
+        try {
+            // Add debug logging to track registration process
+            GalacticMachinery.LOGGER.debug("Beginning machinery block items registration");
+            
+            // Register block items for each machinery block with proper logging
+            GalacticMachinery.LOGGER.debug("Registering assembler block item");
+            BLOCK_ITEMS.registerItem("assembler", props -> 
+                new BlockItem(MachineryBlocks.ASSEMBLER.get(), props));
+            
+            GalacticMachinery.LOGGER.debug("Registering crusher block item");
+            BLOCK_ITEMS.registerItem("crusher_block", props -> 
+                new BlockItem(MachineryBlocks.CRUSHER.get(), props));
+            
+            GalacticMachinery.LOGGER.debug("Registering centrifuge block item");
+            BLOCK_ITEMS.registerItem("centrifuge_block", props -> 
+                new BlockItem(MachineryBlocks.CENTRIFUGE.get(), props));
+            
+            GalacticMachinery.LOGGER.debug("Registering smelter block item");
+            BLOCK_ITEMS.registerItem("smelter_block", props -> 
+                new BlockItem(MachineryBlocks.SMELTER.get(), props));
+            
+            GalacticMachinery.LOGGER.debug("Registering extractor block item");
+            BLOCK_ITEMS.registerItem("extractor_block", props -> 
+                new BlockItem(MachineryBlocks.EXTRACTOR.get(), props));
+            
+            GalacticMachinery.LOGGER.debug("Machinery block items registered successfully");
+        } catch (Exception e) {
+            // Log any errors that occur during registration
+            GalacticMachinery.LOGGER.error("Error registering machinery block items", e);
+            throw e;
+        }
         
         // Register the block items deferred register
         BLOCK_ITEMS.register(GalacticMachinery.MOD_EVENT_BUS);

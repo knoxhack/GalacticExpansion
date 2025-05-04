@@ -4,11 +4,15 @@ import com.astroframe.galactic.machinery.GalacticMachinery;
 import com.astroframe.galactic.machinery.blocks.MachineryBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.function.BiFunction;
 import java.util.Set;
 
 /**
@@ -24,11 +28,21 @@ public class MachineryBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AssemblerBlockEntity>> ASSEMBLER = 
         BLOCK_ENTITIES.register(
             "assembler", 
-            () -> new BlockEntityType<>(
-                (pos, state) -> new AssemblerBlockEntity(pos, state), 
-                Set.of(MachineryBlocks.ASSEMBLER.get()),
-                false // Don't validate - this is the expected boolean parameter for the constructor
-            )
+            () -> {
+                // Log a clear message about block entity creation
+                GalacticMachinery.LOGGER.debug("Creating assembler block entity type");
+                
+                // Define a factory function for creating AssemblerBlockEntity instances
+                BiFunction<BlockPos, BlockState, AssemblerBlockEntity> factory = 
+                    (pos, state) -> new AssemblerBlockEntity(pos, state);
+                
+                // Create block entity type with explicit factory and type parameter
+                return new BlockEntityType<AssemblerBlockEntity>(
+                    factory::apply, 
+                    Set.of(MachineryBlocks.ASSEMBLER.get()),
+                    null
+                );
+            }
         );
     
     /**

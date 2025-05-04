@@ -27,19 +27,29 @@ public class MachineryRegistry {
     public static void register(IEventBus eventBus) {
         GalacticMachinery.LOGGER.info("Registering Machinery module objects");
         
-        // Initialize items
-        MachineryItems.init();
-        
-        // Initialize blocks and block entities
-        MachineryBlocks.init(eventBus);
-        MachineryBlockEntities.init(eventBus);
-        
-        // Initialize block items (these connect blocks to items)
-        MachineryItemBlocks.init();
-        
-        // Register objects
-        ITEMS.register(eventBus);
-        
-        GalacticMachinery.LOGGER.info("Machinery module registration complete");
+        try {
+            // Register in the correct order to prevent dependency issues
+            // 1. First register blocks
+            GalacticMachinery.LOGGER.info("Step 1: Registering machinery blocks");
+            MachineryBlocks.init(eventBus);
+            
+            // 2. Then register items
+            GalacticMachinery.LOGGER.info("Step 2: Registering machinery items");
+            MachineryItems.init();
+            ITEMS.register(eventBus);
+            
+            // 3. Wait until blocks are registered before creating block items
+            GalacticMachinery.LOGGER.info("Step 3: Registering machinery block items");
+            MachineryItemBlocks.init();
+            
+            // 4. Finally register block entities (which depend on blocks)
+            GalacticMachinery.LOGGER.info("Step 4: Registering machinery block entities");
+            MachineryBlockEntities.init(eventBus);
+            
+            GalacticMachinery.LOGGER.info("Machinery module registration complete");
+        } catch (Exception e) {
+            GalacticMachinery.LOGGER.error("Error during machinery registration", e);
+            throw e;
+        }
     }
 }
