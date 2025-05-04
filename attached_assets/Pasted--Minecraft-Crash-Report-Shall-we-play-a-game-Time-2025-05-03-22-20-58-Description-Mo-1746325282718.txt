@@ -1,0 +1,180 @@
+---- Minecraft Crash Report ----
+// Shall we play a game?
+
+Time: 2025-05-03 22:20:58
+Description: Mod loading failures have occurred; consult the issue messages for more details
+
+net.neoforged.neoforge.logging.CrashReportExtender$ModLoadingCrashException: Mod loading has failed
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at java.base/java.util.Objects.requireNonNull(Objects.java:259) ~[?:?] {}
+-- Mod loading issue for: galacticmachinery --
+Details:
+	Mod file: /C:/Users/knox/curseforge/minecraft/Instances/1/mods/machinery_galacticmachinery-0.1.0.jar
+	Failure message: Galactic Machinery (galacticmachinery) encountered an error while dispatching the net.neoforged.neoforge.registries.RegisterEvent event
+		java.lang.NullPointerException: Block id not set
+	Mod version: 0.1.0
+	Mod issues URL: https://github.com/AstroFrame/GalacticExpansion/issues
+	Exception message: java.lang.NullPointerException: Block id not set
+Stacktrace:
+	at java.base/java.util.Objects.requireNonNull(Objects.java:259) ~[?:?] {}
+	at TRANSFORMER/minecraft@1.21.5/net.minecraft.world.level.block.state.BlockBehaviour$Properties.effectiveDrops(BlockBehaviour.java:1170) ~[client-1.21.5-20250325.162830-srg.jar%23219!/:?] {re:classloading}
+	at TRANSFORMER/minecraft@1.21.5/net.minecraft.world.level.block.state.BlockBehaviour.<init>(BlockBehaviour.java:108) ~[client-1.21.5-20250325.162830-srg.jar%23219!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.5/net.minecraft.world.level.block.Block.<init>(Block.java:226) ~[client-1.21.5-20250325.162830-srg.jar%23219!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/galacticmachinery@0.1.0/com.astroframe.galactic.machinery.api.MachineBlock.<init>(MachineBlock.java:46) ~[machinery_galacticmachinery-0.1.0.jar%23224!/:0.1.0] {re:classloading}
+	at TRANSFORMER/galacticmachinery@0.1.0/com.astroframe.galactic.machinery.implementation.AssemblerBlock.<init>(AssemblerBlock.java:35) ~[machinery_galacticmachinery-0.1.0.jar%23224!/:0.1.0] {re:classloading}
+	at TRANSFORMER/galacticmachinery@0.1.0/com.astroframe.galactic.machinery.blocks.MachineryBlocks.lambda$static$0(MachineryBlocks.java:45) ~[machinery_galacticmachinery-0.1.0.jar%23224!/:0.1.0] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$register$0(DeferredRegister.java:215) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$register$1(DeferredRegister.java:234) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$addEntries$2(DeferredRegister.java:375) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.RegisterEvent.register(RegisterEvent.java:48) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.addEntries(DeferredRegister.java:375) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.ConsumerEventHandler.invoke(ConsumerEventHandler.java:26) ~[bus-8.0.2.jar%23123!/:?] {}
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:350) ~[bus-8.0.2.jar%23123!/:?] {}
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:329) ~[bus-8.0.2.jar%23123!/:?] {}
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModContainer.acceptEvent(ModContainer.java:177) ~[loader-7.0.10.jar%23120!/:7.0] {}
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.lambda$postEventWithWrapInModOrder$16(ModLoader.java:377) ~[loader-7.0.10.jar%23120!/:7.0] {}
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75) ~[?:?] {}
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModList.forEachModInOrder(ModList.java:174) ~[loader-7.0.10.jar%23120!/:7.0] {}
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWithWrapInModOrder(ModLoader.java:375) ~[loader-7.0.10.jar%23120!/:7.0] {}
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWrapContainerInModOrder(ModLoader.java:366) ~[loader-7.0.10.jar%23120!/:7.0] {}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.GameData.postRegisterEvents(GameData.java:89) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.internal.CommonModLoader.lambda$begin$0(CommonModLoader.java:54) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804) ~[?:?] {}
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?] {}
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?] {}
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[?:?] {}
+
+
+-- Mod loading issue for: galacticmachinery --
+Details:
+	Mod file: /C:/Users/knox/curseforge/minecraft/Instances/1/mods/machinery_galacticmachinery-0.1.0.jar
+	Failure message: Galactic Machinery (galacticmachinery) encountered an error while dispatching the net.neoforged.neoforge.registries.RegisterEvent event
+		java.lang.NullPointerException: Trying to access unbound value: ResourceKey[minecraft:block / galacticmachinery:assembler]
+	Mod version: 0.1.0
+	Mod issues URL: https://github.com/AstroFrame/GalacticExpansion/issues
+	Exception message: java.lang.NullPointerException: Trying to access unbound value: ResourceKey[minecraft:block / galacticmachinery:assembler]
+Stacktrace:
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredHolder.value(DeferredHolder.java:103) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredHolder.get(DeferredHolder.java:117) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/galacticmachinery@0.1.0/com.astroframe.galactic.machinery.items.MachineryItemBlocks.lambda$init$0(MachineryItemBlocks.java:39) ~[machinery_galacticmachinery-0.1.0.jar%23224!/:0.1.0] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister$Items.lambda$registerItem$2(DeferredRegister.java:593) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$register$1(DeferredRegister.java:234) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$addEntries$2(DeferredRegister.java:375) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.RegisterEvent.register(RegisterEvent.java:48) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.addEntries(DeferredRegister.java:375) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.ConsumerEventHandler.invoke(ConsumerEventHandler.java:26) ~[bus-8.0.2.jar%23123!/:?] {}
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:350) ~[bus-8.0.2.jar%23123!/:?] {}
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:329) ~[bus-8.0.2.jar%23123!/:?] {}
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModContainer.acceptEvent(ModContainer.java:177) ~[loader-7.0.10.jar%23120!/:7.0] {}
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.lambda$postEventWithWrapInModOrder$16(ModLoader.java:377) ~[loader-7.0.10.jar%23120!/:7.0] {}
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75) ~[?:?] {}
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModList.forEachModInOrder(ModList.java:174) ~[loader-7.0.10.jar%23120!/:7.0] {}
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWithWrapInModOrder(ModLoader.java:375) ~[loader-7.0.10.jar%23120!/:7.0] {}
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWrapContainerInModOrder(ModLoader.java:366) ~[loader-7.0.10.jar%23120!/:7.0] {}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.GameData.postRegisterEvents(GameData.java:89) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.internal.CommonModLoader.lambda$begin$0(CommonModLoader.java:54) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804) ~[?:?] {}
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?] {}
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?] {}
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[?:?] {}
+
+
+-- Mod loading issue for: galacticmachinery --
+Details:
+	Mod file: /C:/Users/knox/curseforge/minecraft/Instances/1/mods/machinery_galacticmachinery-0.1.0.jar
+	Failure message: Galactic Machinery (galacticmachinery) encountered an error while dispatching the net.neoforged.neoforge.registries.RegisterEvent event
+		java.lang.NullPointerException: Trying to access unbound value: ResourceKey[minecraft:block / galacticmachinery:assembler]
+	Mod version: 0.1.0
+	Mod issues URL: https://github.com/AstroFrame/GalacticExpansion/issues
+	Exception message: java.lang.NullPointerException: Trying to access unbound value: ResourceKey[minecraft:block / galacticmachinery:assembler]
+Stacktrace:
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredHolder.value(DeferredHolder.java:103) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredHolder.get(DeferredHolder.java:117) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/galacticmachinery@0.1.0/com.astroframe.galactic.machinery.blockentity.MachineryBlockEntities.lambda$static$1(MachineryBlockEntities.java:44) ~[machinery_galacticmachinery-0.1.0.jar%23224!/:0.1.0] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$register$0(DeferredRegister.java:215) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$register$1(DeferredRegister.java:234) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.lambda$addEntries$2(DeferredRegister.java:375) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.RegisterEvent.register(RegisterEvent.java:48) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.DeferredRegister.addEntries(DeferredRegister.java:375) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.ConsumerEventHandler.invoke(ConsumerEventHandler.java:26) ~[bus-8.0.2.jar%23123!/:?] {}
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:350) ~[bus-8.0.2.jar%23123!/:?] {}
+	at MC-BOOTSTRAP/net.neoforged.bus/net.neoforged.bus.EventBus.post(EventBus.java:329) ~[bus-8.0.2.jar%23123!/:?] {}
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModContainer.acceptEvent(ModContainer.java:177) ~[loader-7.0.10.jar%23120!/:7.0] {}
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.lambda$postEventWithWrapInModOrder$16(ModLoader.java:377) ~[loader-7.0.10.jar%23120!/:7.0] {}
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75) ~[?:?] {}
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModList.forEachModInOrder(ModList.java:174) ~[loader-7.0.10.jar%23120!/:7.0] {}
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWithWrapInModOrder(ModLoader.java:375) ~[loader-7.0.10.jar%23120!/:7.0] {}
+	at MC-BOOTSTRAP/fml_loader@7.0.10/net.neoforged.fml.ModLoader.postEventWrapContainerInModOrder(ModLoader.java:366) ~[loader-7.0.10.jar%23120!/:7.0] {}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.registries.GameData.postRegisterEvents(GameData.java:89) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at TRANSFORMER/neoforge@21.5.62-beta/net.neoforged.neoforge.internal.CommonModLoader.lambda$begin$0(CommonModLoader.java:54) ~[neoforge-21.5.62-beta-universal.jar%23220!/:?] {re:classloading}
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804) ~[?:?] {}
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?] {}
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?] {}
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[?:?] {}
+
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.5
+	Minecraft Version ID: 1.21.5
+	Operating System: Windows 10 (amd64) version 10.0
+	Java Version: 21.0.3, Microsoft
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode), Microsoft
+	Memory: 138164736 bytes (131 MiB) / 943718400 bytes (900 MiB) up to 4294967296 bytes (4096 MiB)
+	CPUs: 12
+	Processor Vendor: AuthenticAMD
+	Processor Name: AMD Ryzen 5 3600 6-Core Processor              
+	Identifier: AuthenticAMD Family 23 Model 113 Stepping 0
+	Microarchitecture: Zen 2
+	Frequency (GHz): 3.59
+	Number of physical packages: 1
+	Number of physical CPUs: 6
+	Number of logical CPUs: 12
+	Graphics card #0 name: NVIDIA GeForce GTX 1650 SUPER
+	Graphics card #0 vendor: NVIDIA
+	Graphics card #0 VRAM (MiB): 4096.00
+	Graphics card #0 deviceId: VideoController1
+	Graphics card #0 versionInfo: 32.0.15.6094
+	Memory slot #0 capacity (MiB): 8192.00
+	Memory slot #0 clockSpeed (GHz): 2.13
+	Memory slot #0 type: DDR4
+	Memory slot #1 capacity (MiB): 8192.00
+	Memory slot #1 clockSpeed (GHz): 2.13
+	Memory slot #1 type: DDR4
+	Memory slot #2 capacity (MiB): 8192.00
+	Memory slot #2 clockSpeed (GHz): 2.13
+	Memory slot #2 type: DDR4
+	Memory slot #3 capacity (MiB): 8192.00
+	Memory slot #3 clockSpeed (GHz): 2.13
+	Memory slot #3 type: DDR4
+	Virtual memory max (MiB): 37836.55
+	Virtual memory used (MiB): 20191.24
+	Swap memory total (MiB): 5120.00
+	Swap memory used (MiB): 44.23
+	Space in storage for jna.tmpdir (MiB): available: 31723.64, total: 113148.95
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): available: 31723.64, total: 113148.95
+	Space in storage for io.netty.native.workdir (MiB): available: 31723.64, total: 113148.95
+	Space in storage for java.io.tmpdir (MiB): available: 31723.64, total: 113148.95
+	Space in storage for workdir (MiB): available: 31723.64, total: 113148.95
+	JVM Flags: 4 total; -XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump -Xss1M -Xmx4096m -Xms256m
+	ModLauncher: 11.0.4+main.d2e20e43
+	ModLauncher launch target: neoforgeclient
+	ModLauncher services: 
+		sponge-mixin-0.15.2+mixin.0.8.7.jar mixin PLUGINSERVICE 
+		loader-7.0.10.jar slf4jfixer PLUGINSERVICE 
+		loader-7.0.10.jar runtime_enum_extender PLUGINSERVICE 
+		at-modlauncher-11.0.2.jar accesstransformer PLUGINSERVICE 
+		loader-7.0.10.jar runtimedistcleaner PLUGINSERVICE 
+		modlauncher-11.0.4.jar mixin TRANSFORMATIONSERVICE 
+		modlauncher-11.0.4.jar fml TRANSFORMATIONSERVICE 
+	FML Language Providers: 
+		javafml@7.0
+		minecraft@7.0
+	Mod List: 
