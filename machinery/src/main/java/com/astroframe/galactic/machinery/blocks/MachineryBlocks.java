@@ -27,23 +27,11 @@ public class MachineryBlocks {
     // Machinery Blocks with deferred holders - must match resource file names
     public static final DeferredHolder<Block, Block> ASSEMBLER = BLOCKS.register(
         "assembler", 
-        () -> {
-            BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
-                .mapColor(MapColor.METAL)
-                .requiresCorrectToolForDrops()
-                .strength(5.0F, 6.0F)
-                .sound(SoundType.METAL);
-                
-            return new AssemblerBlock(properties);
-        }
-                .mapColor(MapColor.METAL)
-                .requiresCorrectToolForDrops()
-                .strength(5.0F, 6.0F)
-                .sound(SoundType.METAL);
-
-            // Return the block with properties that have a properly set ID
-            return new AssemblerBlock(properties, assemblerBlockId);
-        }
+        () -> new AssemblerBlock(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.METAL)
+            .strength(3.5f)
+            .requiresCorrectToolForDrops()
+            .sound(SoundType.METAL))
     );
 
     public static final DeferredHolder<Block, Block> CRUSHER = BLOCKS.register(
