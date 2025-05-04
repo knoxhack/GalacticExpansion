@@ -27,7 +27,7 @@ public class MachineryBlockEntities {
     // Block entity types
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AssemblerBlockEntity>> ASSEMBLER = 
         BLOCK_ENTITIES.register(
-            "assembler", 
+            "assembler_block", 
             () -> {
                 // Log a clear message about block entity creation
                 GalacticMachinery.LOGGER.debug("Creating assembler block entity type");
@@ -37,15 +37,16 @@ public class MachineryBlockEntities {
                     (pos, state) -> new AssemblerBlockEntity(pos, state);
                 
                 // Create a set of valid blocks for this entity type
-                Set<Block> validBlocks = Set.of(MachineryBlocks.ASSEMBLER.get());
+                // We need to ensure MachineryBlocks is initialized before using it
+                Block assemblerBlock = MachineryBlocks.ASSEMBLER.get();
+                Set<Block> validBlocks = Set.of(assemblerBlock);
                 
                 // Create block entity type with explicit factory and type parameter
                 // In NeoForge 1.21.5, the third parameter is a boolean for dataSaver (not null)
-                return new BlockEntityType<AssemblerBlockEntity>(
+                return BlockEntityType.Builder.of(
                     factory::apply, 
-                    validBlocks,
-                    false // false for dataSaver parameter (was null in older versions)
-                );
+                    assemblerBlock
+                ).build(null); // Using builder pattern which handles dataSaver correctly
             }
         );
     

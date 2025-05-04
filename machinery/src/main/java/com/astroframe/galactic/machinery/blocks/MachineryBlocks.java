@@ -25,7 +25,7 @@ public class MachineryBlocks {
     
     // Machinery Blocks with deferred holders - must match resource file names
     public static final DeferredHolder<Block, Block> ASSEMBLER = BLOCKS.register(
-        "assembler", 
+        "assembler_block", 
         () -> new AssemblerBlock(
             BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
